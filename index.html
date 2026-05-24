@@ -1,0 +1,1449 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Consulta Fiscal e Retenções - Iguatama</title>
+       <style>
+        /* ESTILOS GERAIS E LAYOUT (MESMOS DO SEU ORIGINAL) */
+        body { font-family: Arial, Helvetica, sans-serif; background-color: #f4f6f8; color: #333; margin: 0; padding: 0; }
+        .top-navbar { background-color: #0f3b5e; color: #ffffff; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .top-navbar h1 { margin: 0; font-size: 18px; font-weight: normal; letter-spacing: 0.5px; }
+        .top-navbar span { font-size: 14px; color: #aebfd0; }
+
+        .panels-wrapper { display: flex; gap: 20px; max-width: 1500px; width: 98%; margin: 30px auto; align-items: flex-start; }
+        .panel { flex: 1; min-width: 320px; background: #ffffff; border: 1px solid #cfd7df; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        
+        .panel-header { padding: 18px 20px; border-bottom: 1px solid #cfd7df; background-color: #fbfcfd; }
+        .panel-header h2 { margin: 0; font-size: 15px; color: #2c3e50; }
+        .panel-body { padding: 20px; }
+
+        .search-form { display: flex; gap: 10px; margin-bottom: 20px; }
+        .form-group-calc { margin-bottom: 15px; }
+        .form-group-calc label { display: block; margin-bottom: 6px; font-size: 12px; font-weight: bold; color: #495057; }
+
+        input[type="text"], input[type="number"], select {
+            width: 100%; box-sizing: border-box; padding: 10px 12px;
+            border: 1px solid #bac5d0; border-radius: 3px; font-size: 13px; color: #333; background: #fff;
+        }
+
+        #panel-issqn #opcoes-deducao select,
+#panel-issqn #opcoes-deducao input[type="number"] {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    margin: 0 0 8px 0;
+    box-sizing: border-box;
+}
+        input[readonly] { background-color: #e9ecef; cursor: not-allowed; }
+        input:focus, select:focus { outline: none; border-color: #0f3b5e; box-shadow: 0 0 0 2px rgba(15, 59, 94, 0.15); }
+
+        button.btn-primary {
+            padding: 10px 18px; background-color: #0f3b5e; color: white; border: 1px solid #0a2942; border-radius: 3px;
+            cursor: pointer; font-size: 14px; transition: background-color 0.2s; white-space: nowrap; width: 100%;
+        }
+        button.btn-primary:hover { background-color: #0a2942; }
+
+        .btn-print {
+            padding: 10px 20px; background-color: #28a745; color: white; border: 1px solid #218838; border-radius: 3px;
+            cursor: pointer; font-size: 14px; margin-top: 10px; width: 100%;
+        }
+        .btn-print:hover { background-color: #218838; }
+
+        .loading { display: none; color: #667; font-size: 13px; margin-bottom: 20px; border-left: 3px solid #0f3b5e; padding-left: 10px; }
+        
+        .result-container { display: none; }
+        .data-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 12px; }
+        .data-table th, .data-table td { padding: 8px 10px; border-bottom: 1px solid #e9ecef; text-align: left; vertical-align: top; }
+        .data-table th { background-color: #f8f9fa; color: #495057; width: 36%; font-weight: bold; border-right: 1px solid #e9ecef; }
+        .data-table td { color: #212529; line-height: 1.45; }
+
+        .status-label { padding: 3px 8px; border-radius: 2px; font-size: 11px; font-weight: bold; display: inline-block; }
+        .status-sim { background-color: #e6f4ea; color: #1e4620; border: 1px solid #c8e6c9; }
+        .status-nao { background-color: #fce8e6; color: #a50e0e; border: 1px solid #f8bbd0; }
+
+        #panel-calculadora, #panel-issqn { opacity: 0.55; pointer-events: none; transition: opacity 0.3s; }
+
+        .alert-box { padding: 10px; border-radius: 3px; font-size: 12px; margin-bottom: 15px; line-height: 1.5; }
+        .alert-neutro { background-color: #f8f9fa; border: 1px solid #e9ecef; color: #6c757d; }
+        .alert-simples { background-color: #e6f4ea; border: 1px solid #c8e6c9; color: #1e4620; }
+        .alert-normal { background-color: #fff3cd; border: 1px solid #ffeeba; color: #856404; }
+
+        .resultado-caixa { display: none; margin-top: 15px; padding: 15px; background-color: #fbfcfd; border: 1px solid #cfd7df; border-radius: 3px; }
+        .resultado-caixa h3 { margin: 0 0 10px 0; color: #2c3e50; font-size: 13px; text-transform: uppercase; }
+        .resultado-caixa .valor-destaque { font-size: 24px; font-weight: bold; color: #a50e0e; margin-bottom: 8px; }
+        .resultado-caixa .valor-zero { color: #1e4620; }
+        .resultado-caixa p { margin: 6px 0; font-size: 12px; color: #666; line-height: 1.4; }
+        .campo-oculto {
+    display: none !important;
+}
+
+        .checkbox-group { margin-bottom: 8px; font-size: 12px; color: #333; display: flex; align-items: center; }
+        .checkbox-group input { width: auto; margin-right: 8px; }
+        .box-destaque { background-color: #f8f9fa; border: 1px dashed #bac5d0; padding: 12px; border-radius: 3px; margin-bottom: 15px; }
+
+        #area-impressao { display: none; }
+
+        .excecao-info { font-size: 12px; margin-top: 8px; padding: 8px; border-radius: 3px; background-color: #e9ecef; }
+        .excecao-sim { background-color: #fff3cd; color: #856404; border-left: 3px solid #ffc107; }
+        .excecao-nao { background-color: #e6f4ea; color: #1e4620; border-left: 3px solid #28a745; }
+
+        @media (max-width: 1024px) {
+            .panels-wrapper { flex-direction: column; }
+            .panel { width: 100%; min-width: 100%; }
+        }
+
+        /* ========================================================
+           NOVO ESTILO DE IMPRESSÃO - IDÊNTICO AO MODELO ENVIADO
+           ======================================================== */
+           @media print {
+    body { 
+        background: white; 
+        margin: 0; 
+        padding: 0; 
+        font-family: Arial, Helvetica, sans-serif; 
+        color: #555;
+        font-size: 19px;
+    }
+
+    .top-navbar, .panels-wrapper, .btn-primary, .btn-print { 
+        display: none !important; 
+    }
+    
+    #area-impressao { 
+        display: block !important;
+        width: calc(100% - 2px);
+        max-width: none;
+        margin: 0 1px;
+        padding-top: 6px;
+    }
+
+    .rfb-data { 
+        font-size: 17px;
+        color: #333;
+        margin-bottom: 12px;
+        line-height: 1.35;
+    }
+
+    .rfb-box { 
+        border: 1px solid #e4e4e4;
+        margin-bottom: 18px;
+        page-break-inside: avoid;
+        border-radius: 4px;
+    }
+
+    .rfb-box-header { 
+        background-color: #dcedc8 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+        color: #6f8f59;
+        padding: 11px 17px;
+        font-size: 16px;
+        line-height: 1.25;
+        border-bottom: 1px solid #e1edd6;
+        border-top-left-radius: 3px;
+        border-top-right-radius: 3px;
+        font-weight: normal;
+    }
+
+    .rfb-box-content { 
+        padding: 19px 17px 18px 17px;
+        line-height: 1.62;
+        font-size: 15px;
+        color: #555;
+    }
+
+    .rfb-aviso { 
+        font-size: 13px;
+        color: #777;
+        margin: 2px 0 14px 0;
+        line-height: 1.35;
+    }
+
+    .rfb-texto-verde { 
+        color: #0c6b2f !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+        font-weight: 700;
+    }
+
+    .rfb-btn-maisinfo {
+        display: inline-block;
+        background-color: #dcedc8 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+        color: #558b2f;
+        padding: 8px 15px;
+        font-size: 15px;
+        border: 1px solid #c5e1a5;
+        margin-bottom: 18px;
+        border-radius: 4px;
+        line-height: 1.2;
+    }
+
+    .rfb-btn-maisinfo strong {
+        font-size: 18px;
+        font-weight: bold;
+        margin-right: 4px;
+        color: #33691e;
+    }
+
+    .rfb-botoes-acao {
+        display: flex;
+        gap: 6px;
+        margin-top: 2px;
+    }
+
+    .rfb-btn-acao {
+        background-color: #6ea12d !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+        color: white !important;
+        padding: 10px 16px;
+        font-size: 15px;
+        line-height: 1.2;
+        border: none;
+        border-radius: 3px;
+    }
+}
+
+#painel-issqn .checkbox-group {
+    margin: 10px 0;
+    padding: 10px 12px;
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+    background: #fff;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+#painel-issqn .checkbox-group label {
+    display: inline-block;
+    margin-left: 6px;
+    line-height: 1.4;
+}
+
+#painel-issqn .checkbox-group input[type="checkbox"] {
+    vertical-align: top;
+    margin-top: 3px;
+}
+
+#painel-issqn .form-group,
+#painel-issqn .checkbox-group,
+#painel-issqn select,
+#painel-issqn input,
+#painel-issqn button {
+    box-sizing: border-box;
+}
+
+#opcoes-deducao {
+    display: none;
+    margin-top: 8px;
+}
+
+#opcoes-deducao select,
+#opcoes-deducao input {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+#bloco-materiais-efetivos {
+    margin: 10px 0;
+}
+
+#painel-issqn .form-group,
+#painel-issqn .checkbox-group,
+#painel-issqn .alerta-servico,
+#painel-issqn #opcoes-deducao {
+    width: 100%;
+    box-sizing: border-box;
+    margin-left: 0;
+    margin-right: 0;
+}
+
+#panel-issqn .form-group-calc {
+    margin-bottom: 15px;
+    width: 100%;
+}
+
+#panel-issqn .form-group-calc label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 12px;
+    font-weight: bold;
+    color: #495057;
+}
+
+#panel-issqn .form-group-calc input[type="text"],
+#panel-issqn .form-group-calc input[type="number"],
+#panel-issqn .form-group-calc select {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: 10px 12px;
+    box-sizing: border-box;
+    border: 1px solid #bac5d0;
+    border-radius: 3px;
+    font-size: 13px;
+    color: #333;
+    background: #fff;
+}
+
+#panel-issqn .linha-dupla-calc {
+    display: flex;
+    gap: 10px;
+}
+
+#panel-issqn .linha-dupla-calc .form-group-calc {
+    flex: 1;
+    min-width: 0;
+}
+    </style>
+</head>
+<body>
+
+    <div class="top-navbar">
+        <h1>SISTEMA DE CONSULTA FISCAL E RETENÇÕES</h1>
+        <span>Prefeitura Municipal de Iguatama - MG</span>
+    </div>
+
+    <div class="panels-wrapper">
+        
+        <!-- COLUNA 1: DADOS DO CNPJ -->
+        <div class="panel">
+            <div class="panel-header">
+                <h2>1. Consultar CNPJ</h2>
+            </div>
+            <div class="panel-body">
+                <div class="search-form">
+                    <input type="text" id="cnpjInput" placeholder="Digite o CNPJ" maxlength="18">
+                    <button class="btn-primary" onclick="consultarCNPJ()" style="width: auto;">Buscar</button>
+                </div>
+                <div class="loading" id="loading">Consultando base de dados...</div>
+                <div class="result-container" id="result">
+                    <table class="data-table" id="tabela-dados"></table>
+                    <button class="btn-print" onclick="window.print()">Imprimir Comprovante</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- COLUNA 2: IRF (Imposto de Renda Retido na Fonte) -->
+        <div class="panel" id="panel-calculadora">
+            <div class="panel-header">
+                <h2>2. IRF (Tomador Privado)</h2>
+            </div>
+            <div class="panel-body">
+                <div class="alert-box alert-neutro" id="status-enquadramento">
+                    Aguardando consulta do CNPJ...
+                </div>
+                
+                <!-- Checkbox COOPERATIVA -->
+                <div class="checkbox-group" style="margin-bottom: 15px;">
+                    <input type="checkbox" id="cooperativaCheck" onchange="atualizarOpcoesIRF()">
+                    <label for="cooperativaCheck"><strong>Prestador é Cooperativa</strong> (alíquotas especiais conforme IN RFB 1.234/2012)</label>
+                </div>
+
+                <div class="form-group-calc">
+                    <label>Natureza da operação</label>
+                    <select id="tipoOperacao" onchange="alternarTipoOperacao(); atualizarOpcoesIRF()">
+                        <option value="servico">Prestação de serviço</option>
+                        <option value="material">Aquisição de materiais / mercadorias</option>
+                    </select>
+                </div>
+
+                <div class="form-group-calc">
+                    <label>Valor bruto da nota fiscal (R$)</label>
+                    <input type="number" id="valorNota" placeholder="Ex: 1500.00" step="0.01">
+                </div>
+
+                <!-- Grupo dinâmico de alíquotas IRF -->
+                <div class="form-group-calc" id="grupo-aliquota-irf">
+                    <label>Classificação IRF</label>
+                    <select id="aliquotaIRF" onchange="calcularRetencao()"></select>
+                    <div id="info-coop" style="font-size: 11px; color: #666; margin-top: 4px;"></div>
+                </div>
+
+                <button class="btn-primary" onclick="calcularRetencao()">Calcular retenção IRF</button>
+                <div class="resultado-caixa" id="resultado-retencao">
+                    <h3>Valor a reter (IRRF)</h3>
+                    <div class="valor-destaque" id="valor-ir-tela">R$ 0,00</div>
+                    <p id="motivo-retencao"></p>
+                    <p id="detalhe-retencao"></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- COLUNA 3: ISSQN -->
+        <div class="panel" id="panel-issqn">
+            <div class="panel-header" style="background-color: #eef2f5;">
+                <h2>3. ISSQN - Município de Iguatama</h2>
+            </div>
+            <div class="panel-body">
+         <div class="checkbox-group">
+    <input type="checkbox" id="regime-mei" disabled>
+    <label for="regime-mei">
+        Microempreendedor Individual (MEI) - identificado via CNPJ
+        <br>
+        <span style="color:#666; font-weight:normal;">
+            (a identificação pelo CNPJ não dispensa, sozinha, a análise cadastral/municipal)
+        </span>
+    </label>
+</div>
+
+<div class="checkbox-group">
+    <input type="checkbox" id="regime-simples" disabled>
+    <label for="regime-simples">
+        Optante pelo Simples Nacional - identificado via CNPJ
+        <br>
+        <span style="color:#666; font-weight:normal;">
+            (o enquadramento no Simples não gera dispensa automática de retenção neste sistema)
+        </span>
+    </label>
+</div>
+
+<div class="checkbox-group">
+    <input type="checkbox" id="regime-autonomo">
+    <label for="regime-autonomo">
+        Profissional Autônomo
+        <br>
+        <span style="color:#666; font-weight:normal;">
+            (exige comprovação de inscrição cadastral/municipal para tratamento favorecido)
+        </span>
+    </label>
+</div>
+
+<div class="checkbox-group">
+    <input type="checkbox" id="regime-sociedade" onchange="toggleImpedimentosSociedade()">
+    <label for="regime-sociedade">
+        Sociedade de Profissionais (ex: clínicas, escritórios)
+        <br>
+        <span style="color:#666; font-weight:normal;">
+            (marque e informe abaixo se existe algum impedimento do art. 220, §2º)
+        </span>
+    </label>
+</div>
+
+<div id="impedimentos-sociedade-box" class="box-destaque campo-oculto" style="margin-top: 10px;">
+    <label style="font-weight: bold; margin-bottom: 8px; display: block;">
+        Impedimentos da Sociedade de Profissionais (art. 220, §2º)
+    </label>
+
+    <div class="checkbox-group">
+        <input type="checkbox" id="imp-socio-pj" onchange="atualizarStatusSociedade()">
+        <label for="imp-socio-pj">Há sócio pessoa jurídica</label>
+    </div>
+
+    <div class="checkbox-group">
+        <input type="checkbox" id="imp-atividade-diversa" onchange="atualizarStatusSociedade()">
+        <label for="imp-atividade-diversa">Há atividade diversa da habilitação profissional dos sócios</label>
+    </div>
+
+    <div class="checkbox-group">
+        <input type="checkbox" id="imp-socio-nao-habilitado" onchange="atualizarStatusSociedade()">
+        <label for="imp-socio-nao-habilitado">Há sócio não habilitado ao exercício da atividade</label>
+    </div>
+
+    <div class="checkbox-group">
+        <input type="checkbox" id="imp-socio-capitalista" onchange="atualizarStatusSociedade()">
+        <label for="imp-socio-capitalista">Há sócio apenas capitalista</label>
+    </div>
+
+    <div class="checkbox-group">
+        <input type="checkbox" id="imp-carater-empresarial" onchange="atualizarStatusSociedade()">
+        <label for="imp-carater-empresarial">A sociedade possui caráter empresarial</label>
+    </div>
+
+    <div class="checkbox-group">
+        <input type="checkbox" id="imp-pluriprofissionalidade" onchange="atualizarStatusSociedade()">
+        <label for="imp-pluriprofissionalidade">Há pluriprofissionalidade</label>
+    </div>
+
+    <div class="checkbox-group">
+        <input type="checkbox" id="imp-terceirizacao-fim" onchange="atualizarStatusSociedade()">
+        <label for="imp-terceirizacao-fim">Há terceirização da atividade-fim</label>
+    </div>
+
+    <div style="font-size: 11px; color:#666; line-height:1.45; margin-top:8px;">
+        Se qualquer impedimento estiver marcado, a sociedade perde o tratamento favorecido de ISS fixo e passa à tributação normal sobre o preço do serviço.
+    </div>
+</div>
+                    <div class="box-destaque" style="margin-top: 12px;">
+    <label style="font-weight: bold; margin-bottom: 8px; display: block;">
+        Confirmações jurídicas para análise do ISS
+    </label>
+
+    <div class="checkbox-group">
+        <input type="checkbox" id="cadastro-municipal-ok">
+        <label for="cadastro-municipal-ok">
+            Prestador com inscrição no cadastro de ISS da prefeitura (Cadastro Mobiliário) regular
+            <br>
+            <span style="color:#666; font-weight:normal;">
+                (Iguatama ou município de origem, quando exigível)
+            </span>
+        </label>
+    </div>
+
+   <div class="checkbox-group">
+    <input type="checkbox" id="sociedade-valida" disabled>
+    <label for="sociedade-valida">
+        Se for sociedade de profissionais, não há impedimentos do art. 220, §2º
+        <br>
+        <span style="color:#666; font-weight:normal;">
+            (sem sócio PJ, sem atividade diversa, sem sócio não habilitado, sem sócio capitalista, sem caráter empresarial, sem pluriprofissionalidade e sem terceirização da atividade-fim)
+        </span>
+    </label>
+</div>
+
+    <div id="bloco-materiais-efetivos" class="checkbox-group">
+        <input type="checkbox" id="materiais-efetivos">
+        <label for="materiais-efetivos">
+            Houve efetivo fornecimento de materiais pelo prestador
+            <br>
+            <span style="color:#666; font-weight:normal;">
+                (necessário para a redução de 20% nos serviços 7.02 e 7.05)
+            </span>
+        </label>
+    </div>
+</div>
+
+
+                <div class="form-group-calc">
+                    <label>Código do Serviço (Anexo I Completo)</label>
+                    <select id="issqn-servico" onchange="verificarConstrucaoCivil(); verificarExcecaoArt210()"></select>
+                </div>
+                <div id="excecao-art210-info" class="excecao-info"></div>
+
+                <div class="form-group-calc">
+                    <label>Valor Bruto do Serviço (R$)</label>
+                    <input type="number" id="issqn-valor" placeholder="Sincronizado c/ Coluna 2" step="0.01">
+                </div>
+
+                <div class="linha-dupla-calc">
+                    <div class="form-group-calc" style="flex: 1;">
+                        <label>Sede do Prestador</label>
+                        <input type="text" id="sede-prestador-text" readonly value="Aguardando consulta...">
+                    </div>
+                    <div class="form-group-calc" style="flex: 1;">
+                        <label>Local da Execução</label>
+                        <select id="issqn-execucao">
+                            <option value="iguatama">Iguatama</option>
+                            <option value="fora">Outro Município</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Box Construção Civil -->
+                <div id="box-construcao" class="box-destaque campo-oculto">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="issqn-deduzir-materiais" onchange="toggleDeducaoInputs()">
+                        <label for="issqn-deduzir-materiais" style="color:#a50e0e; font-weight:bold;">Subtrair materiais incorporados</label>
+                    </div>
+                   <div id="opcoes-deducao" class="campo-oculto">
+    <select id="issqn-tipo-deducao" onchange="toggleValorExato()" style="margin-bottom: 5px;">
+        <option value="20porcento">Redução padrão de 20%</option>
+        <option value="valorExato">Informar valor exato (R$)</option>
+    </select>
+    <input type="number" id="issqn-valor-exato" class="campo-oculto" placeholder="Valor (R$)" step="0.01">
+</div>
+                </div>
+
+                <button class="btn-primary" onclick="calcularISSQN()">Calcular ISSQN Devido</button>
+
+                <div class="resultado-caixa" id="resultado-issqn">
+                    <h3>Análise ISSQN - Iguatama (competência, retenção e cálculo)</h3>
+                    <div class="valor-destaque" id="valor-issqn-tela" style="color: #0f3b5e;">R$ 0,00</div>
+                    <p id="motivo-issqn" style="font-weight: bold;"></p>
+                    <p id="detalhe-issqn"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="area-impressao"></div>
+
+    <script>
+        // =========================================================
+        // BANCO DE DADOS DE SERVIÇOS (ANEXO I) - igual ao original
+        // =========================================================
+        const servicosISSQN = [
+  { cod: "1.01", desc: "1.01 - Análise e desenvolvimento de sistemas.", aliq: 3.0 },
+  { cod: "1.02", desc: "1.02 - Programação.", aliq: 3.0 },
+  { cod: "1.03", desc: "1.03 - Processamento, armazenamento ou hospedagem de dados, textos, imagens, vídeos, páginas eletrônicas, aplicativos e sistemas de informação.", aliq: 3.0 },
+  { cod: "1.04", desc: "1.04 - Elaboração de programas de computadores, inclusive de jogos eletrônicos.", aliq: 3.0 },
+  { cod: "1.05", desc: "1.05 - Licenciamento ou cessão de direito de uso de programas de computação.", aliq: 3.0 },
+  { cod: "1.06", desc: "1.06 - Assessoria e consultoria em informática.", aliq: 3.0 },
+  { cod: "1.07", desc: "1.07 - Suporte técnico em informática, inclusive instalação, configuração e manutenção de programas de computação e bancos de dados.", aliq: 3.0 },
+  { cod: "1.08", desc: "1.08 - Planejamento, confecção, manutenção e atualização de páginas eletrônicas.", aliq: 3.0 },
+  { cod: "1.09", desc: "1.09 - Disponibilização, sem cessão definitiva, de conteúdos de áudio, vídeo, imagem e texto por meio da internet.", aliq: 3.0 },
+  { cod: "2.01", desc: "2.01 - Serviços de pesquisas e desenvolvimento de qualquer natureza.", aliq: 5.0 },
+  { cod: "3.02", desc: "3.02 - Cessão de direito de uso de marcas e de sinais de propaganda.", aliq: 5.0 },
+  { cod: "3.03", desc: "3.03 - Exploração de salões de festas, centro de convenções, escritórios virtuais, stands, quadras esportivas, estádios, ginásios, auditórios, casas de espetáculos, parques de diversões, canchas e congêneres.", aliq: 3.0 },
+  { cod: "3.04", desc: "3.04 - Locação, sublocação, arrendamento, direito de passagem ou permissão de uso de ferrovia, rodovia, postes, cabos, dutos e condutos.", aliq: 5.0 },
+  { cod: "3.05", desc: "3.05 - Cessão de andaimes, palcos, coberturas e outras estruturas de uso temporário.", aliq: 3.0 },
+  { cod: "4.01", desc: "4.01 - Medicina e biomedicina.", aliq: 3.0 },
+  { cod: "4.02", desc: "4.02 - Análises clínicas, patologia, eletricidade médica, radioterapia, quimioterapia, ultra-sonografia, ressonância magnética, radiologia, tomografia e congêneres.", aliq: 3.0 },
+  { cod: "4.03", desc: "4.03 - Hospitais, clínicas, laboratórios, sanatórios, manicômios, casas de saúde, prontos-socorros, ambulatórios e congêneres.", aliq: 3.0 },
+  { cod: "4.04", desc: "4.04 - Instrumentação cirúrgica.", aliq: 3.0 },
+  { cod: "4.05", desc: "4.05 - Acupuntura.", aliq: 3.0 },
+  { cod: "4.06", desc: "4.06 - Enfermagem, inclusive serviços auxiliares.", aliq: 3.0 },
+  { cod: "4.07", desc: "4.07 - Serviços farmacêuticos.", aliq: 3.0 },
+  { cod: "4.08", desc: "4.08 - Terapia ocupacional, fisioterapia e fonoaudiologia.", aliq: 3.0 },
+  { cod: "4.09", desc: "4.09 - Terapias de qualquer espécie destinadas ao tratamento físico, orgânico e mental.", aliq: 3.0 },
+  { cod: "4.10", desc: "4.10 - Nutrição.", aliq: 3.0 },
+  { cod: "4.11", desc: "4.11 - Obstetrícia.", aliq: 3.0 },
+  { cod: "4.12", desc: "4.12 - Odontologia.", aliq: 3.0 },
+  { cod: "4.13", desc: "4.13 - Ortóptica.", aliq: 3.0 },
+  { cod: "4.14", desc: "4.14 - Próteses sob encomenda.", aliq: 3.0 },
+  { cod: "4.15", desc: "4.15 - Psicanálise.", aliq: 3.0 },
+  { cod: "4.16", desc: "4.16 - Psicologia.", aliq: 3.0 },
+  { cod: "4.17", desc: "4.17 - Casas de repouso e de recuperação, creches, asilos e congêneres.", aliq: 3.0 },
+  { cod: "4.18", desc: "4.18 - Inseminação artificial, fertilização in vitro e congêneres.", aliq: 3.0 },
+  { cod: "4.19", desc: "4.19 - Bancos de sangue, leite, pele, olhos, óvulos, sêmen e congêneres.", aliq: 3.0 },
+  { cod: "4.20", desc: "4.20 - Coleta de sangue, leite, tecidos, sêmen, órgãos e materiais biológicos de qualquer espécie.", aliq: 3.0 },
+  { cod: "4.21", desc: "4.21 - Unidade de atendimento, assistência ou tratamento móvel e congêneres.", aliq: 3.0 },
+  { cod: "4.22", desc: "4.22 - Planos de medicina de grupo ou individual e convênios para prestação de assistência médica, hospitalar, odontológica e congêneres.", aliq: 3.0 },
+  { cod: "4.23", desc: "4.23 - Outros planos de saúde que se cumpram através de serviços de terceiros contratados, credenciados, cooperados ou apenas pagos pelo operador do plano.", aliq: 3.0 },
+  { cod: "5.01", desc: "5.01 - Medicina veterinária e zootecnia.", aliq: 3.0 },
+  { cod: "5.02", desc: "5.02 - Hospitais, clínicas, ambulatórios, prontos-socorros e congêneres, na área veterinária.", aliq: 3.0 },
+  { cod: "5.03", desc: "5.03 - Laboratórios de análise na área veterinária.", aliq: 3.0 },
+  { cod: "5.04", desc: "5.04 - Inseminação artificial, fertilização in vitro e congêneres (veterinária).", aliq: 3.0 },
+  { cod: "5.05", desc: "5.05 - Bancos de sangue e de órgãos e congêneres (veterinária).", aliq: 3.0 },
+  { cod: "5.06", desc: "5.06 - Coleta de sangue, leite, tecidos, sêmen, órgãos e materiais biológicos (veterinária).", aliq: 3.0 },
+  { cod: "5.07", desc: "5.07 - Unidade de atendimento, assistência ou tratamento móvel e congêneres (veterinária).", aliq: 3.0 },
+  { cod: "5.08", desc: "5.08 - Guarda, tratamento, amestramento, embelezamento, alojamento e congêneres de animais.", aliq: 3.0 },
+  { cod: "5.09", desc: "5.09 - Planos de atendimento e assistência médico-veterinária.", aliq: 3.0 },
+  { cod: "6.01", desc: "6.01 - Barbearia, cabeleireiros, manicuros, pedicuros e congêneres.", aliq: 3.0 },
+  { cod: "6.02", desc: "6.02 - Esteticistas, tratamento de pele, depilação e congêneres.", aliq: 3.0 },
+  { cod: "6.03", desc: "6.03 - Banhos, duchas, sauna, massagens e congêneres.", aliq: 3.0 },
+  { cod: "6.04", desc: "6.04 - Ginástica, dança, esportes, natação, artes marciais e demais atividades físicas.", aliq: 3.0 },
+  { cod: "6.05", desc: "6.05 - Centros de emagrecimento, spa e congêneres.", aliq: 3.0 },
+  { cod: "6.06", desc: "6.06 - Aplicação de tatuagens, piercings e congêneres.", aliq: 3.0 },
+  { cod: "7.01", desc: "7.01 - Engenharia, agronomia, agrimensura, arquitetura, geologia, urbanismo, paisagismo e congêneres.", aliq: 3.0 },
+  { cod: "7.02", desc: "7.02 - Execução de obras de construção civil, hidráulica ou elétrica, inclusive sondagem, perfuração, terraplanagem, pavimentação, concretagem e instalação de equipamentos (exceto fornecimento de mercadorias).", aliq: 4.0 },
+  { cod: "7.03", desc: "7.03 - Elaboração de planos diretores, estudos de viabilidade, projetos básicos e executivos para trabalhos de engenharia.", aliq: 3.0 },
+  { cod: "7.04", desc: "7.04 - Demolição.", aliq: 3.0 },
+  { cod: "7.05", desc: "7.05 - Reparação, conservação e reforma de edifícios, estradas, pontes, portos e congêneres.", aliq: 3.0 },
+  { cod: "7.06", desc: "7.06 - Colocação e instalação de tapetes, carpetes, assoalhos, cortinas, revestimentos, vidros, divisórias, placas de gesso, com material fornecido pelo tomador.", aliq: 3.0 },
+  { cod: "7.07", desc: "7.07 - Recuperação, raspagem, polimento e lustração de pisos.", aliq: 3.0 },
+  { cod: "7.08", desc: "7.08 - Calafetação.", aliq: 3.0 },
+  { cod: "7.09", desc: "7.09 - Varrição, coleta, remoção, incineração, tratamento, reciclagem, separação e destinação final de lixo, rejeitos e outros resíduos.", aliq: 3.0 },
+  { cod: "7.10", desc: "7.10 - Limpeza, manutenção e conservação de vias e logradouros públicos, imóveis, chaminés, piscinas, parques, jardins.", aliq: 3.0 },
+  { cod: "7.11", desc: "7.11 - Decoração e jardinagem, inclusive corte e poda de árvores.", aliq: 3.0 },
+  { cod: "7.12", desc: "7.12 - Controle e tratamento de efluentes de qualquer natureza e de agentes físicos, químicos e biológicos.", aliq: 4.0 },
+  { cod: "7.13", desc: "7.13 - Dedetização, desinfecção, desinsetização, imunização, higienização, desratização, pulverização.", aliq: 4.0 },
+  { cod: "7.16", desc: "7.16 - Florestamento, reflorestamento, semeadura, adubação, reparação de solo, plantio, silagem, colheita, corte e descascamento de árvores, silvicultura, exploração florestal.", aliq: 3.0 },
+  { cod: "7.17", desc: "7.17 - Escoramento, contenção de encostas e serviços congêneres.", aliq: 3.0 },
+  { cod: "7.18", desc: "7.18 - Limpeza e dragagem de rios, portos, canais, baías, lagos, lagoas, represas, açudes.", aliq: 3.0 },
+  { cod: "7.19", desc: "7.19 - Acompanhamento e fiscalização da execução de obras de engenharia, arquitetura e urbanismo.", aliq: 3.0 },
+  { cod: "7.20", desc: "7.20 - Aerofotogrametria, cartografia, mapeamento, levantamentos topográficos, batimétricos, geográficos, geodésicos, geológicos, geofísicos.", aliq: 3.0 },
+  { cod: "7.21", desc: "7.21 - Pesquisa, perfuração, cimentação, mergulho, perfilagem, concretação, testemunhagem, pescaria, estimulação e outros serviços relacionados com a exploração de petróleo, gás natural e outros recursos minerais.", aliq: 4.0 },
+  { cod: "7.22", desc: "7.22 - Nucleação e bombardeamento de nuvens.", aliq: 3.0 },
+  { cod: "8.01", desc: "8.01 - Ensino regular pré-escolar, fundamental, médio e superior.", aliq: 3.0 },
+  { cod: "8.02", desc: "8.02 - Instrução, treinamento, orientação pedagógica e educacional, avaliação de conhecimentos de qualquer natureza.", aliq: 3.0 },
+  { cod: "9.01", desc: "9.01 - Hospedagem em hotéis, apart-service, flat, motéis, pensões e congêneres.", aliq: 3.0 },
+  { cod: "9.02", desc: "9.02 - Agenciamento, organização, promoção, intermediação e execução de programas de turismo, passeios, viagens, excursões, hospedagens.", aliq: 3.0 },
+  { cod: "9.03", desc: "9.03 - Guias de turismo.", aliq: 3.0 },
+  { cod: "10.01", desc: "10.01 - Agenciamento, corretagem ou intermediação de câmbio, de seguros, de cartões de crédito, de planos de saúde e de planos de previdência privada.", aliq: 3.0 },
+  { cod: "10.02", desc: "10.02 - Agenciamento, corretagem ou intermediação de títulos em geral, valores mobiliários e contratos quaisquer.", aliq: 3.0 },
+  { cod: "10.03", desc: "10.03 - Agenciamento, corretagem ou intermediação de direitos de propriedade industrial, artística ou literária.", aliq: 3.0 },
+  { cod: "10.04", desc: "10.04 - Agenciamento, corretagem ou intermediação de contratos de arrendamento mercantil (leasing), de franquia (franchising) e de faturização (factoring).", aliq: 5.0 },
+  { cod: "10.05", desc: "10.05 - Agenciamento, corretagem ou intermediação de bens móveis ou imóveis.", aliq: 3.0 },
+  { cod: "10.06", desc: "10.06 - Agenciamento de marítimo.", aliq: 3.0 },
+  { cod: "10.07", desc: "10.07 - Agenciamento de notícias.", aliq: 3.0 },
+  { cod: "10.08", desc: "10.08 - Agenciamento de publicidade e propaganda, inclusive o agenciamento de veiculação por quaisquer meios.", aliq: 3.0 },
+  { cod: "10.09", desc: "10.09 - Representação de qualquer natureza, inclusive comercial.", aliq: 3.0 },
+  { cod: "10.10", desc: "10.10 - Distribuição de bens de terceiros.", aliq: 3.0 },
+  { cod: "11.01", desc: "11.01 - Guarda e estacionamento de veículos terrestres automotores, de aeronaves e de embarcações.", aliq: 3.0 },
+  { cod: "11.02", desc: "11.02 - Vigilância, segurança ou monitoramento de bens, pessoas e semoventes.", aliq: 3.0 },
+  { cod: "11.03", desc: "11.03 - Escolta, inclusive de veículos e cargas.", aliq: 3.0 },
+  { cod: "11.04", desc: "11.04 - Armazenamento, depósito, carga, descarga, arrumação e guarda de bens de qualquer espécie.", aliq: 3.0 },
+  { cod: "11.05", desc: "11.05 - Serviços de monitoramento e rastreamento a distância de veículos, cargas, pessoas e semoventes, por telefonia móvel, satélite, rádio ou qualquer outro meio.", aliq: 3.0 },
+  { cod: "12.01", desc: "12.01 - Espetáculos teatrais.", aliq: 3.0 },
+  { cod: "12.02", desc: "12.02 - Exibições cinematográficas.", aliq: 3.0 },
+  { cod: "12.03", desc: "12.03 - Espetáculos circenses.", aliq: 3.0 },
+  { cod: "12.04", desc: "12.04 - Programas de auditório.", aliq: 3.0 },
+  { cod: "12.05", desc: "12.05 - Parques de diversões, centros de lazer e congêneres.", aliq: 3.0 },
+  { cod: "12.06", desc: "12.06 - Boates, taxi-dancing e congêneres.", aliq: 3.0 },
+  { cod: "12.07", desc: "12.07 - Shows, ballet, danças, desfiles, bailes, óperas, concertos, recitais, festivais.", aliq: 3.0 },
+  { cod: "12.08", desc: "12.08 - Feiras, exposições, congressos.", aliq: 3.0 },
+  { cod: "12.09", desc: "12.09 - Bilhares, boliches e diversões eletrônicas ou não.", aliq: 3.0 },
+  { cod: "12.10", desc: "12.10 - Corridas e competições de animais.", aliq: 3.0 },
+  { cod: "12.11", desc: "12.11 - Competições esportivas ou de destreza física ou intelectual.", aliq: 3.0 },
+  { cod: "12.12", desc: "12.12 - Execução de música.", aliq: 3.0 },
+  { cod: "12.13", desc: "12.13 - Produção, mediante ou sem encomenda prévia, de eventos, espetáculos, shows, ballet, danças, desfiles, bailes, teatros, óperas, concertos, recitais, festivais.", aliq: 3.0 },
+  { cod: "12.14", desc: "12.14 - Fornecimento de música para ambientes fechados ou não, mediante transmissão por qualquer processo.", aliq: 3.0 },
+  { cod: "12.15", desc: "12.15 - Desfiles de blocos carnavalescos ou folclóricos, trios elétricos.", aliq: 3.0 },
+  { cod: "12.16", desc: "12.16 - Exibição de filmes, entrevistas, musicais, espetáculos, shows, concertos, desfiles, óperas, competições esportivas.", aliq: 3.0 },
+  { cod: "12.17", desc: "12.17 - Recreação e animação, inclusive em festas e eventos de qualquer natureza.", aliq: 3.0 },
+  { cod: "13.02", desc: "13.02 - Fonografia ou gravação de sons, inclusive trucagem, dublagem, mixagem.", aliq: 3.0 },
+  { cod: "13.03", desc: "13.03 - Fotografia e cinematografia, inclusive revelação, ampliação, cópia, reprodução, trucagem.", aliq: 3.0 },
+  { cod: "13.04", desc: "13.04 - Reprografia, microfilmagem e digitalização.", aliq: 3.0 },
+  { cod: "13.05", desc: "13.05 - Composição gráfica, inclusive confecção de impressos gráficos, fotocomposição, clicheria, zincografia, litografia e fotolitografia, exceto se destinados a posterior comercialização ou industrialização.", aliq: 3.0 },
+  { cod: "14.01", desc: "14.01 - Lubrificação, limpeza, lustração, revisão, carga e recarga, conserto, restauração, blindagem, manutenção e conservação de máquinas, veículos, aparelhos, equipamentos, motores, elevadores ou de qualquer objeto.", aliq: 3.0 },
+  { cod: "14.02", desc: "14.02 - Assistência técnica.", aliq: 3.0 },
+  { cod: "14.03", desc: "14.03 - Recondicionamento de motores.", aliq: 3.0 },
+  { cod: "14.04", desc: "14.04 - Recauchutagem ou regeneração de pneus.", aliq: 3.0 },
+  { cod: "14.05", desc: "14.05 - Restauração, recondicionamento, acondicionamento, pintura, beneficiamento, lavagem, secagem, tingimento, galvanoplastia, anodização, corte, recorte, plastificação, costura, acabamento, polimento de objetos quaisquer.", aliq: 3.0 },
+  { cod: "14.06", desc: "14.06 - Instalação e montagem de aparelhos, máquinas e equipamentos, prestados ao usuário final, exclusivamente com material por ele fornecido.", aliq: 3.0 },
+  { cod: "14.07", desc: "14.07 - Colocação de molduras.", aliq: 3.0 },
+  { cod: "14.08", desc: "14.08 - Encadernação, gravação e douração de livros, revistas.", aliq: 3.0 },
+  { cod: "14.09", desc: "14.09 - Alfaiataria e costura, quando o material for fornecido pelo usuário final, exceto aviamento.", aliq: 3.0 },
+  { cod: "14.10", desc: "14.10 - Tinturaria e lavanderia.", aliq: 3.0 },
+  { cod: "14.11", desc: "14.11 - Tapeçaria e reforma de estofamentos em geral.", aliq: 3.0 },
+  { cod: "14.12", desc: "14.12 - Funilaria e lanternagem.", aliq: 3.0 },
+  { cod: "14.13", desc: "14.13 - Carpintaria e serralheria.", aliq: 3.0 },
+  { cod: "14.14", desc: "14.14 - Guincho intramunicipal, guindaste e içamento.", aliq: 3.0 },
+  { cod: "15.01", desc: "15.01 - Administração de fundos, consórcio, cartão de crédito/débito, carteira de clientes, cheques pré-datados.", aliq: 5.0 },
+  { cod: "15.02", desc: "15.02 - Abertura e manutenção de contas em geral, conta-corrente, investimentos, poupança.", aliq: 5.0 },
+  { cod: "15.03", desc: "15.03 - Locação e manutenção de cofres particulares, terminais eletrônicos, terminais de atendimento.", aliq: 5.0 },
+  { cod: "15.04", desc: "15.04 - Fornecimento ou emissão de atestados em geral, atestado de idoneidade, capacidade financeira.", aliq: 5.0 },
+  { cod: "15.05", desc: "15.05 - Cadastro, ficha cadastral, inclusão/exclusão no CCF ou outros bancos cadastrais.", aliq: 5.0 },
+  { cod: "15.06", desc: "15.06 - Emissão de avisos, comprovantes, abono de firmas, coleta/entrega de documentos, licenciamento eletrônico de veículos, transferência de veículos.", aliq: 5.0 },
+  { cod: "15.07", desc: "15.07 - Acesso, movimentação, atendimento e consulta a contas por qualquer meio (telefone, internet, terminais 24h, etc.).", aliq: 5.0 },
+  { cod: "15.08", desc: "15.08 - Emissão, alteração, cancelamento de contrato de crédito; estudo de operações de crédito; aval, fiança.", aliq: 5.0 },
+  { cod: "15.09", desc: "15.09 - Arrendamento mercantil (leasing) de quaisquer bens, inclusive cessão de direitos, alteração, cancelamento.", aliq: 5.0 },
+  { cod: "15.10", desc: "15.10 - Serviços de cobrança, recebimento ou pagamento em geral, de títulos, contas, câmbio, tributos; fornecimento de posição de cobrança.", aliq: 5.0 },
+  { cod: "15.11", desc: "15.11 - Devolução, protesto, sustação de protesto, manutenção e reapresentação de títulos.", aliq: 5.0 },
+  { cod: "15.12", desc: "15.12 - Custódia em geral, inclusive de títulos e valores mobiliários.", aliq: 5.0 },
+  { cod: "15.13", desc: "15.13 - Serviços de câmbio, emissão de registro de exportação, cheques de viagem, carta de crédito, etc.", aliq: 5.0 },
+  { cod: "15.14", desc: "15.14 - Fornecimento, emissão, renovação e manutenção de cartão magnético, cartão de crédito/débito, cartão salário.", aliq: 5.0 },
+  { cod: "15.15", desc: "15.15 - Compensação de cheques e títulos; serviços de depósito e saque em terminais eletrônicos.", aliq: 5.0 },
+  { cod: "15.16", desc: "15.16 - Emissão, liquidação, alteração, cancelamento de ordens de pagamento, ordens de crédito; transferência de valores, fundos, pagamentos.", aliq: 5.0 },
+  { cod: "15.17", desc: "15.17 - Emissão, fornecimento, devolução, sustação, cancelamento e oposição de cheques.", aliq: 5.0 },
+  { cod: "15.18", desc: "15.18 - Serviços de crédito imobiliário, avaliação e vistoria de imóvel/obra, análise técnica/jurídica, renegociação de contrato.", aliq: 5.0 },
+  { cod: "16.01", desc: "16.01 - Serviços de transporte coletivo municipal rodoviário, metroviário, ferroviário e aquaviário de passageiros.", aliq: 2.0 },
+  { cod: "16.02", desc: "16.02 - Outros serviços de transporte de natureza municipal.", aliq: 3.0 },
+  { cod: "17.01", desc: "17.01 - Assessoria ou consultoria de qualquer natureza; análise, coleta e fornecimento de dados e informações.", aliq: 3.0 },
+  { cod: "17.02", desc: "17.02 - Datilografia, digitação, estenografia, expediente, secretaria, redação, edição, tradução, apoio administrativo.", aliq: 3.0 },
+  { cod: "17.03", desc: "17.03 - Planejamento, coordenação, programação ou organização técnica, financeira ou administrativa.", aliq: 3.0 },
+  { cod: "17.04", desc: "17.04 - Recrutamento, agenciamento, seleção e colocação de mão-de-obra.", aliq: 3.0 },
+  { cod: "17.05", desc: "17.05 - Fornecimento de mão-de-obra, mesmo em caráter temporário.", aliq: 3.0 },
+  { cod: "17.06", desc: "17.06 - Propaganda e publicidade, promoção de vendas, planejamento de campanhas, elaboração de desenhos, textos e materiais publicitários.", aliq: 3.0 },
+  { cod: "17.08", desc: "17.08 - Franquia (franchising).", aliq: 5.0 },
+  { cod: "17.09", desc: "17.09 - Perícias, laudos, exames técnicos e análises técnicas.", aliq: 3.0 },
+  { cod: "17.10", desc: "17.10 - Planejamento, organização e administração de feiras, exposições, congressos.", aliq: 3.0 },
+  { cod: "17.11", desc: "17.11 - Organização de festas e recepções; bufê (exceto fornecimento de alimentação e bebidas).", aliq: 3.0 },
+  { cod: "17.12", desc: "17.12 - Administração em geral, inclusive de bens e negócios de terceiros.", aliq: 3.0 },
+  { cod: "17.13", desc: "17.13 - Leilão e congêneres.", aliq: 3.0 },
+  { cod: "17.14", desc: "17.14 - Advocacia.", aliq: 3.0 },
+  { cod: "17.15", desc: "17.15 - Arbitragem de qualquer espécie, inclusive jurídica.", aliq: 3.0 },
+  { cod: "17.16", desc: "17.16 - Auditoria.", aliq: 3.0 },
+  { cod: "17.17", desc: "17.17 - Análises de Organização e Métodos.", aliq: 3.0 },
+  { cod: "17.18", desc: "17.18 - Atuária e cálculos técnicos de qualquer natureza.", aliq: 3.0 },
+  { cod: "17.19", desc: "17.19 - Consultoria e assessoria econômica ou financeira.", aliq: 3.0 },
+  { cod: "17.20", desc: "17.20 - Contabilidade, inclusive serviços técnicos e auxiliares.", aliq: 3.0 },
+  { cod: "17.21", desc: "17.21 - Estatística.", aliq: 3.0 },
+  { cod: "17.22", desc: "17.22 - Cobrança em geral.", aliq: 3.0 },
+  { cod: "17.23", desc: "17.23 - Assessoria, análise, cadastro, gerenciamento de informações, administração de contas a receber/pagar, relacionados a factoring.", aliq: 3.0 },
+  { cod: "17.24", desc: "17.24 - Apresentação de palestras, conferências, seminários.", aliq: 3.0 },
+  { cod: "17.25", desc: "17.25 - Inserção de textos, desenhos e materiais de propaganda em qualquer meio (exceto livros, jornais, rádio e TV aberta).", aliq: 3.0 },
+  { cod: "18.01", desc: "18.01 - Serviços de regulação de sinistros vinculados a seguros; inspeção e avaliação de riscos; prevenção e gerência de riscos seguráveis.", aliq: 3.0 },
+  { cod: "19.01", desc: "19.01 - Distribuição e venda de bilhetes de loteria, bingos, cartões, cupons de apostas, sorteios, prêmios, títulos de capitalização.", aliq: 3.0 },
+  { cod: "20.01", desc: "20.01 - Serviços de movimentação de passageiros, reboque de embarcações, atracação, capatazia, armazenagem, logística portuária e marítima.", aliq: 3.0 },
+  { cod: "20.02", desc: "20.02 - Serviços aeroportuários, utilização de aeroporto, movimentação de passageiros, armazenagem, capatazia, logística aeroportuária.", aliq: 3.0 },
+  { cod: "20.03", desc: "20.03 - Serviços de terminais rodoviários, movimentação de passageiros, mercadorias, logística.", aliq: 3.0 },
+  { cod: "21.01", desc: "21.01 - Serviços de registros públicos, cartorários e notariais.", aliq: 3.0 },
+  { cod: "22.01", desc: "22.01 - Serviços de exploração de rodovia mediante cobrança de pedágio, conservação, manutenção, operação, monitoração, assistência a usuários.", aliq: 5.0 },
+  { cod: "23.01", desc: "23.01 - Serviços de programação e comunicação visual, desenho industrial.", aliq: 3.0 },
+  { cod: "24.01", desc: "24.01 - Serviços de chaveiros, confecção de carimbos, placas, sinalização visual, banners, adesivos.", aliq: 3.0 },
+  { cod: "25.01", desc: "25.01 - Funerais, fornecimento de caixão, urna, aluguel de capela, transporte de corpo, flores, embalsamento.", aliq: 3.0 },
+  { cod: "25.02", desc: "25.02 - Translado intramunicipal e cremação de corpos e partes de corpos cadavéricos.", aliq: 3.0 },
+  { cod: "25.03", desc: "25.03 - Planos ou convênios funerários.", aliq: 3.0 },
+  { cod: "25.04", desc: "25.04 - Manutenção e conservação de jazigos e cemitérios.", aliq: 3.0 },
+  { cod: "25.05", desc: "25.05 - Cessão de uso de espaços em cemitérios para sepultamento.", aliq: 2.0 },
+  { cod: "26.01", desc: "26.01 - Coleta, remessa ou entrega de correspondência, documentos, objetos, bens ou valores, inclusive pelos correios e agências franqueadas; courrier.", aliq: 5.0 },
+  { cod: "27.01", desc: "27.01 - Serviços de assistência social.", aliq: 3.0 },
+  { cod: "28.01", desc: "28.01 - Serviços de avaliação de bens e serviços de qualquer natureza.", aliq: 3.0 },
+  { cod: "29.01", desc: "29.01 - Serviços de biblioteconomia.", aliq: 3.0 },
+  { cod: "30.01", desc: "30.01 - Serviços de biologia, biotecnologia e química.", aliq: 3.0 },
+  { cod: "31.01", desc: "31.01 - Serviços técnicos em edificações, eletrônica, eletrotécnica, mecânica, telecomunicações.", aliq: 3.0 },
+  { cod: "32.01", desc: "32.01 - Serviços de desenhos técnicos.", aliq: 3.0 },
+  { cod: "33.01", desc: "33.01 - Serviços de desembaraço aduaneiro, comissários, despachantes.", aliq: 3.0 },
+  { cod: "34.01", desc: "34.01 - Serviços de investigações particulares, detetives.", aliq: 3.0 },
+  { cod: "35.01", desc: "35.01 - Serviços de reportagem, assessoria de imprensa, jornalismo e relações públicas.", aliq: 3.0 },
+  { cod: "36.01", desc: "36.01 - Serviços de meteorologia.", aliq: 3.0 },
+  { cod: "37.01", desc: "37.01 - Serviços de artistas, atletas, modelos e manequins.", aliq: 3.0 },
+  { cod: "38.01", desc: "38.01 - Serviços de museologia.", aliq: 3.0 },
+  { cod: "39.01", desc: "39.01 - Serviços de ourivesaria e lapidação (quando o material for fornecido pelo tomador do serviço).", aliq: 3.0 },
+  { cod: "40.01", desc: "40.01 - Obras de arte sob encomenda.", aliq: 3.0 }
+];
+
+        window.onload = function() {
+            const select = document.getElementById('issqn-servico');
+            select.innerHTML = '<option value="">-- Escolha o serviço --</option>';
+            servicosISSQN.forEach(srv => {
+                let opt = document.createElement('option');
+                opt.value = srv.cod;
+                opt.dataset.aliquota = srv.aliq;
+                opt.textContent = `${srv.desc} (${srv.aliq}%)`;
+                select.appendChild(opt);
+            });
+            atualizarOpcoesIRF();
+        };
+
+        // Sincronização valor nota
+        const inputRIR = document.getElementById('valorNota');
+        const inputISSQN = document.getElementById('issqn-valor');
+        const painelISSQN = document.getElementById('panel-issqn');
+        inputRIR.addEventListener('input', () => inputISSQN.value = inputRIR.value);
+        inputISSQN.addEventListener('input', () => inputRIR.value = inputISSQN.value);
+
+        // Alterna bloqueio da coluna 3 com base na natureza (serviço ou material)
+        function alternarTipoOperacao() {
+            const tipo = document.getElementById('tipoOperacao').value;
+            if (tipo === 'servico') {
+                painelISSQN.style.opacity = '1';
+                painelISSQN.style.pointerEvents = 'auto';
+            } else {
+                painelISSQN.style.opacity = '0.55';
+                painelISSQN.style.pointerEvents = 'none';
+                document.getElementById('resultado-issqn').style.display = 'none';
+            }
+            atualizarOpcoesIRF(); // atualiza opções conforme natureza + cooperativa
+        }
+
+        // =========================================================
+        // COLUNA 2 – IRF: opções dinâmicas para cooperativa ou não
+        // =========================================================
+      function atualizarOpcoesIRF() {
+    const tipo = document.getElementById('tipoOperacao').value;
+    const isCooperativa = document.getElementById('cooperativaCheck').checked;
+    const selectIRF = document.getElementById('aliquotaIRF');
+    const infoDiv = document.getElementById('info-coop');
+    
+    let opcoes = [];
+    let textoInfo = '';
+
+    if (tipo === 'servico') {
+        if (isCooperativa) {
+            opcoes = [
+                { valor: 0.015, texto: "Serviço prestado pelos próprios cooperados (alíquota 1,5%)", codigo: "Coop-Serv" },
+                { valor: 0.012, texto: "Serviço com emprego de materiais (discriminado) – 1,2%", codigo: "Coop-Mat" },
+                { valor: 0.048, texto: "Serviço prestado por terceiros (não cooperados) – 4,8%", codigo: "Coop-Terc" },
+                { valor: 0.048, texto: "Taxa de administração / intermediação – 4,8%", codigo: "Coop-Admin" }
+            ];
+            textoInfo = "ⓘ Cooperativa: alíquotas conforme IN RFB 1.234/2012.";
+        } else {
+            opcoes = [
+                { valor: 0.012, texto: "Serviços com emprego de materiais (1,2%) – cód. 6147", codigo: "6147" },
+                { valor: 0.024, texto: "Passagens aéreas/rodoviárias, serviços bancários, seguros, câmbio (2,40%) – cód. 6175/6188", codigo: "6175" },
+                { valor: 0.048, texto: "Demais serviços (regra geral – 4,8%) – cód. 6190", codigo: "6190" }
+            ];
+            textoInfo = "";
+        }
+    } else { // material
+        if (isCooperativa) {
+            opcoes = [
+                { valor: 0, texto: "Cooperativa em geral – FORNECIMENTO DE MATERIAIS: SEM RETENÇÃO (ato cooperativo)", codigo: "Coop-MatIsento" },
+                { valor: 0.012, texto: "Cooperativa de consumo – 1,2% (cód. 6147)", codigo: "Coop-Consumo" }
+            ];
+            textoInfo = "ⓘ Para aquisição de materiais: cooperativas em geral → isentas; cooperativas de consumo → retenção de 1,2%.";
+        } else {
+            opcoes = [
+                { valor: 0.012, texto: "Mercadorias e bens em geral / energia elétrica / alimentação (1,2%) – cód. 6147", codigo: "6147" },
+                { valor: 0.0024, texto: "Combustíveis (gasolina, diesel, GLP, etanol) – 0,24% – cód. 9060/8739", codigo: "9060" }
+            ];
+            textoInfo = "";
+        }
+    }
+    
+    selectIRF.innerHTML = "";
+    opcoes.forEach(opt => {
+        let option = document.createElement('option');
+        option.value = opt.valor;
+        option.textContent = opt.texto;
+        option.setAttribute('data-codigo', opt.codigo);
+        selectIRF.appendChild(option);
+    });
+    infoDiv.innerHTML = textoInfo;
+    // NÃO chamar calcularRetencao() aqui para evitar alertas indesejados
+}
+
+        let empresaSimplesNacional = false;
+        let empresaMEI = false;
+        function formatBRL(v) {
+    return v.toLocaleString('pt-BR', {
+        style: 'currency',
+        currency: 'BRL'
+    });
+}
+
+function analisarRetencaoISS() {
+    const selectServico = document.getElementById('issqn-servico');
+    const cod = selectServico.value;
+
+    if (!cod) {
+        return { erro: 'Selecione o serviço do ISS.' };
+    }
+
+    const sedeTexto = document.getElementById('sede-prestador-text').value;
+    const execIguatama = document.getElementById('issqn-execucao').value === 'iguatama';
+
+    const isMEI = document.getElementById('regime-mei').checked;
+    const isSimples = document.getElementById('regime-simples').checked;
+    const isAutonomo = document.getElementById('regime-autonomo').checked;
+    const isSociedade = document.getElementById('regime-sociedade').checked;
+
+   const cadastroOk = document.getElementById('cadastro-municipal-ok')?.checked || false;
+atualizarStatusSociedade();
+const sociedadeValida = document.getElementById('sociedade-valida')?.checked || false;
+const sociedadeTemImpedimentos = isSociedade && sociedadePossuiImpedimentos();
+
+    const sedeIguatama = sedeTexto === 'Iguatama';
+    const ehExcecao = listaExcecoesArt210.includes(cod);
+
+    let issDevidoEmIguatama = false;
+    let fundamentoCompetencia = '';
+    let retencaoPeloTomador = false;
+    let fundamentoRetencao = '';
+    let alertas = [];
+
+    if (ehExcecao) {
+        issDevidoEmIguatama = execIguatama;
+        fundamentoCompetencia = execIguatama
+            ? 'ISS devido em Iguatama por hipótese de exceção do art. 210.'
+            : 'ISS não devido em Iguatama, pois o serviço está em hipótese de exceção do art. 210 e foi executado fora do município.';
+    } else {
+        issDevidoEmIguatama = sedeIguatama;
+        fundamentoCompetencia = sedeIguatama
+            ? 'ISS devido em Iguatama pela regra geral do art. 210: local do estabelecimento prestador.'
+            : 'ISS não devido em Iguatama pela regra geral do art. 210: estabelecimento prestador situado em outro município.';
+    }
+
+    if (!issDevidoEmIguatama) {
+        return {
+            erro: null,
+            issDevidoEmIguatama: false,
+            retencaoPeloTomador: false,
+            fundamentoCompetencia,
+            fundamentoRetencao: 'Sem retenção por Iguatama, porque o ISS não é devido ao município neste cenário.',
+            alertas
+        };
+    }
+
+    if (isAutonomo) {
+        if (cadastroOk) {
+            retencaoPeloTomador = false;
+            fundamentoRetencao = 'Sem retenção automática: autônomo com confirmação cadastral.';
+        } else {
+            retencaoPeloTomador = true;
+            fundamentoRetencao = 'Retenção mantida por cautela: autônomo sem confirmação cadastral suficiente.';
+            alertas.push('O art. 209 equipara a empresa o autônomo que não comprovar inscrição no Cadastro Mobiliário.');
+        }
+
+        return {
+            erro: null,
+            issDevidoEmIguatama,
+            retencaoPeloTomador,
+            fundamentoCompetencia,
+            fundamentoRetencao,
+            alertas
+        };
+    }
+
+  if (isSociedade) {
+    if (sociedadeTemImpedimentos) {
+        retencaoPeloTomador = true;
+        fundamentoRetencao = 'Retenção mantida por cautela: foi identificado ao menos um impedimento do art. 220, §2º, o que afasta o regime favorecido da sociedade de profissionais.';
+        alertas.push('Com impedimento do art. 220, §2º, a sociedade perde o tratamento de ISS fixo e passa à tributação normal sobre o preço do serviço.');
+    } else if (cadastroOk && sociedadeValida) {
+        retencaoPeloTomador = false;
+        fundamentoRetencao = 'Sem retenção automática: sociedade de profissionais sem impedimentos identificados e com cadastro regular.';
+    } else {
+        retencaoPeloTomador = true;
+        fundamentoRetencao = 'Retenção mantida por cautela: sociedade de profissionais sem confirmação cadastral suficiente.';
+        alertas.push('A dispensa de retenção para sociedade de profissionais depende de cadastro regular e efetivo enquadramento legal.');
+    }
+
+    return {
+        erro: null,
+        issDevidoEmIguatama,
+        retencaoPeloTomador,
+        fundamentoCompetencia,
+        fundamentoRetencao,
+        alertas
+    };
+}
+
+    if (isMEI) {
+        if (cadastroOk) {
+            retencaoPeloTomador = false;
+            fundamentoRetencao = 'Sem retenção automática: MEI com confirmação cadastral suficiente.';
+        } else {
+            retencaoPeloTomador = true;
+            fundamentoRetencao = 'Retenção mantida por cautela: MEI sem confirmação cadastral suficiente.';
+            alertas.push('A dispensa de retenção não deve ser presumida sem confirmação cadastral.');
+        }
+
+        return {
+            erro: null,
+            issDevidoEmIguatama,
+            retencaoPeloTomador,
+            fundamentoCompetencia,
+            fundamentoRetencao,
+            alertas
+        };
+    }
+
+    if (isSimples) {
+        retencaoPeloTomador = true;
+        fundamentoRetencao = 'Optante do Simples Nacional não gera dispensa automática neste sistema; exige análise cautelosa.';
+        alertas.push('O sistema não presume dispensa automática apenas por ser Simples Nacional.');
+
+        return {
+            erro: null,
+            issDevidoEmIguatama,
+            retencaoPeloTomador,
+            fundamentoCompetencia,
+            fundamentoRetencao,
+            alertas
+        };
+    }
+
+    retencaoPeloTomador = true;
+    fundamentoRetencao = 'Retenção aplicável: ISS devido a Iguatama sem hipótese validada de dispensa automática no sistema.';
+
+    return {
+        erro: null,
+        issDevidoEmIguatama,
+        retencaoPeloTomador,
+        fundamentoCompetencia,
+        fundamentoRetencao,
+        alertas
+    };
+}
+
+        document.getElementById('cnpjInput').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 14) value = value.slice(0, 14);
+            let formatted = value.replace(/^(\d{2})(\d)/, "$1.$2");
+            formatted = formatted.replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3");
+            formatted = formatted.replace(/\.(\d{3})(\d)/, ".$1/$2");
+            formatted = formatted.replace(/(\d{4})(\d)/, "$1-$2");
+            e.target.value = formatted;
+        });
+
+        async function consultarCNPJ() {
+            const cnpj = document.getElementById('cnpjInput').value.replace(/\D/g, '');
+            if (cnpj.length !== 14) return alert('CNPJ inválido (14 dígitos).');
+
+            document.getElementById('result').style.display = 'none';
+            document.getElementById('resultado-retencao').style.display = 'none';
+            document.getElementById('panel-calculadora').style.opacity = '0.55';
+            document.getElementById('panel-calculadora').style.pointerEvents = 'none';
+            painelISSQN.style.opacity = '0.55';
+            painelISSQN.style.pointerEvents = 'none';
+            document.getElementById('loading').style.display = 'block';
+
+            try {
+                const response = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${cnpj}`);
+                if (!response.ok) throw new Error('CNPJ não encontrado.');
+                const data = await response.json();
+
+                empresaSimplesNacional = !!data.opcao_pelo_simples;
+                empresaMEI = !!data.opcao_pelo_mei;
+
+                document.getElementById('regime-mei').checked = empresaMEI;
+                document.getElementById('regime-simples').checked = empresaSimplesNacional;
+
+                // Atualiza campo "Sede do Prestador"
+                const isIguatama = (data.municipio && data.municipio.toUpperCase() === 'IGUATAMA');
+                document.getElementById('sede-prestador-text').value = isIguatama ? 'Iguatama' : 'Outro Município';
+
+                // Preenche tabela de dados
+                const classSimples = empresaSimplesNacional ? 'status-sim' : 'status-nao';
+                const classMEI = empresaMEI ? 'status-sim' : 'status-nao';
+                const nomeFantasia = data.nome_fantasia || 'Não informado';
+                const telefone = data.ddd_telefone_1 || data.ddd_telefone_2 || 'Não informado';
+                const enderecoCompleto = `${data.logradouro || ''}, ${data.numero || 'S/N'}${data.complemento ? ' - ' + data.complemento : ''}`;
+
+                document.getElementById('tabela-dados').innerHTML = `
+                    <tbody>
+                        <tr><th>Razão Social</th><td>${data.razao_social || 'Não informado'}</td></tr>
+                        <tr><th>Nome Fantasia</th><td>${nomeFantasia}</td></tr>
+                        <tr><th>CNPJ</th><td>${document.getElementById('cnpjInput').value}</td>
+                        <tr><th>Situação Cadastral</th><td>${data.descricao_situacao_cadastral || ''} (${data.data_situacao_cadastral || ''})</td>
+                        <tr><th>Natureza Jurídica</th><td>${data.natureza_juridica || 'Não informado'}</td>
+                        <tr><th>CNAE Principal</th><td>${data.cnae_fiscal || ''} - ${data.cnae_fiscal_descricao || ''}</td>
+                        <tr><th>Endereço</th><td>${enderecoCompleto}</td>
+                        <tr><th>Bairro</th><td>${data.bairro || 'Não informado'}</td>
+                        <tr><th>Cidade</th><td>${data.municipio || ''}</td>
+                        <tr><th>UF</th><td>${data.uf || ''}</td>
+                        <tr><th>CEP</th><td>${data.cep || ''}</td>
+                        <tr><th>Telefone</th><td>${telefone}</td>
+                        <tr><th>Simples Nacional</th><td><span class="status-label ${classSimples}">${empresaSimplesNacional ? 'OPTANTE' : 'NÃO OPTANTE'}</span></td>
+                        <tr><th>MEI</th><td><span class="status-label ${classMEI}">${empresaMEI ? 'OPTANTE' : 'NÃO OPTANTE'}</span></td>
+                    </tbody>
+                `;
+
+                document.getElementById('result').style.display = 'block';
+                document.getElementById('panel-calculadora').style.opacity = '1';
+                document.getElementById('panel-calculadora').style.pointerEvents = 'auto';
+                alternarTipoOperacao();
+
+                if (empresaSimplesNacional || empresaMEI) {
+                    document.getElementById('status-enquadramento').className = 'alert-box alert-simples';
+                    document.getElementById('status-enquadramento').innerHTML = '<strong>Enquadramento:</strong> MEI ou Simples Nacional → dispensa IRRF.';
+                } else {
+                    document.getElementById('status-enquadramento').className = 'alert-box alert-normal';
+                    document.getElementById('status-enquadramento').innerHTML = '<strong>Enquadramento:</strong> não optante Simples → avaliar retenção IRF.';
+                }
+
+                              document.getElementById('area-impressao').innerHTML = `
+                    <div class="rfb-data"><strong>Data da consulta:</strong> ${new Date().toLocaleString('pt-BR')}</div>
+                    
+                    <div class="rfb-box">
+                        <div class="rfb-box-header">Identificação do Contribuinte - CNPJ Matriz</div>
+                        <div class="rfb-box-content">
+                            CNPJ: <span class="rfb-texto-verde">${document.getElementById('cnpjInput').value}</span><br>
+                            <div class="rfb-aviso">A opção pelo Simples Nacional e/ou SIMEI abrange todos os estabelecimentos da empresa</div>
+                            Nome Empresarial: <span class="rfb-texto-verde">${data.razao_social}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="rfb-box">
+                        <div class="rfb-box-header">Situação Atual</div>
+                        <div class="rfb-box-content">
+                            Situação no Simples Nacional: <span class="rfb-texto-verde">${empresaSimplesNacional ? 'OPTANTE pelo Simples Nacional' : 'NÃO optante pelo Simples Nacional'}</span><br>
+                            Situação no SIMEI: <span class="rfb-texto-verde">${empresaMEI ? 'OPTANTE pelo SIMEI' : 'NÃO enquadrado no SIMEI'}</span>
+                        </div>
+                    </div>
+
+                    <div class="rfb-btn-maisinfo"><strong>+</strong> Mais informações</div>
+
+                    <div class="rfb-botoes-acao">
+                        <div class="rfb-btn-acao">Voltar</div>
+                        <div class="rfb-btn-acao">Gerar PDF</div>
+                    </div>
+                `;
+            } catch (error) {
+                alert('Erro na consulta do CNPJ.');
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        function calcularRetencao() {
+            const valorNota = parseFloat(document.getElementById('valorNota').value);
+            if (isNaN(valorNota) || valorNota <= 0) return alert('Informe o valor da nota.');
+            
+            const formatBRL = (v) => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            document.getElementById('resultado-retencao').style.display = 'block';
+
+            // Prioridade: MEI ou Simples Nacional -> dispensa total
+            if (empresaSimplesNacional || empresaMEI) {
+                document.getElementById('valor-ir-tela').textContent = 'R$ 0,00';
+                document.getElementById('valor-ir-tela').className = 'valor-destaque valor-zero';
+                document.getElementById('motivo-retencao').textContent = 'Dispensa de IRRF para MEI/Simples Nacional.';
+                document.getElementById('detalhe-retencao').innerHTML = `Valor Líquido: ${formatBRL(valorNota)}`;
+                return;
+            }
+
+            // Obter alíquota selecionada (pode ser 0, indicando isenção)
+            const aliquota = parseFloat(document.getElementById('aliquotaIRF').value);
+            let valorRetido = valorNota * aliquota;
+            
+            // Arredondamento para centavos
+            valorRetido = Math.round(valorRetido * 100) / 100;
+
+            document.getElementById('valor-ir-tela').textContent = formatBRL(valorRetido);
+            document.getElementById('valor-ir-tela').className = 'valor-destaque';
+            document.getElementById('motivo-retencao').textContent = 'Retenção calculada conforme classificação IRF.';
+            document.getElementById('detalhe-retencao').innerHTML = `Base: ${formatBRL(valorNota)} | Alíquota: ${(aliquota*100).toFixed(2)}%<br>Líquido: ${formatBRL(valorNota - valorRetido)}`;
+        }
+
+        // =========================================================
+        // COLUNA 3 – ISSQN (mantido igual ao anterior)
+        // =========================================================
+        function verificarConstrucaoCivil() {
+            const cod = document.getElementById('issqn-servico').value;
+            const box = document.getElementById('box-construcao');
+            if (cod === '7.02' || cod === '7.05') {
+                box.classList.remove('campo-oculto');
+            } else {
+                box.classList.add('campo-oculto');
+                document.getElementById('issqn-deduzir-materiais').checked = false;
+                toggleDeducaoInputs();
+            }
+        }
+
+        const listaExcecoesArt210 = [
+            '3.05', '7.02', '7.04', '7.05', '7.09', '7.10', '7.11', '7.12', '7.16', '7.17', '7.18', '7.19',
+            '11.01', '11.02', '11.04',
+            '12.01', '12.02', '12.03', '12.04', '12.05', '12.06', '12.07', '12.08', '12.09', '12.10', '12.11', '12.12',
+            '12.14', '12.15', '12.16', '12.17',
+            '16.01',
+            '17.05', '17.10',
+            '20.01', '20.02', '20.03',
+            '4.22', '4.23', '5.09',
+            '15.01', '15.09'
+        ];
+
+        function verificarExcecaoArt210() {
+            const cod = document.getElementById('issqn-servico').value;
+            const div = document.getElementById('excecao-art210-info');
+            if (!cod) { div.innerHTML = ''; return; }
+            const ehExcecao = listaExcecoesArt210.includes(cod);
+            if (ehExcecao) {
+                div.innerHTML = '<div class="excecao-sim">⚠️ Serviço na LISTA DE EXCEÇÕES (Art. 210). Iguatama DEVE reter o ISS se executado no município.</div>';
+            } else {
+                div.innerHTML = '<div class="excecao-nao">✅ Serviço NÃO é exceção. Competência do ISS é o município da sede do prestador.</div>';
+            }
+        }
+
+        function toggleDeducaoInputs() {
+            const opcoes = document.getElementById('opcoes-deducao');
+            if (document.getElementById('issqn-deduzir-materiais').checked) {
+                opcoes.classList.remove('campo-oculto');
+            } else {
+                opcoes.classList.add('campo-oculto');
+            }
+            toggleValorExato();
+            
+        }
+
+        function toggleValorExato() {
+            const exato = document.getElementById('issqn-valor-exato');
+            if (document.getElementById('issqn-tipo-deducao').value === 'exato' && document.getElementById('issqn-deduzir-materiais').checked) {
+                exato.classList.remove('campo-oculto');
+            } else {
+                exato.classList.add('campo-oculto');
+            }
+        }
+
+        function toggleImpedimentosSociedade() {
+    const regimeSociedade = document.getElementById('regime-sociedade');
+    const boxImpedimentos = document.getElementById('impedimentos-sociedade-box');
+    const sociedadeValida = document.getElementById('sociedade-valida');
+
+    if (!regimeSociedade.checked) {
+        boxImpedimentos.classList.add('campo-oculto');
+
+        [
+            'imp-socio-pj',
+            'imp-atividade-diversa',
+            'imp-socio-nao-habilitado',
+            'imp-socio-capitalista',
+            'imp-carater-empresarial',
+            'imp-pluriprofissionalidade',
+            'imp-terceirizacao-fim'
+        ].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.checked = false;
+        });
+
+        if (sociedadeValida) sociedadeValida.checked = false;
+        return;
+    }
+
+    boxImpedimentos.classList.remove('campo-oculto');
+    atualizarStatusSociedade();
+}
+
+function sociedadePossuiImpedimentos() {
+    return [
+        'imp-socio-pj',
+        'imp-atividade-diversa',
+        'imp-socio-nao-habilitado',
+        'imp-socio-capitalista',
+        'imp-carater-empresarial',
+        'imp-pluriprofissionalidade',
+        'imp-terceirizacao-fim'
+    ].some(id => document.getElementById(id)?.checked);
+}
+
+function atualizarStatusSociedade() {
+    const regimeSociedade = document.getElementById('regime-sociedade');
+    const sociedadeValida = document.getElementById('sociedade-valida');
+
+    if (!regimeSociedade.checked) {
+        if (sociedadeValida) sociedadeValida.checked = false;
+        return;
+    }
+
+    if (sociedadeValida) {
+        sociedadeValida.checked = !sociedadePossuiImpedimentos();
+    }
+}
+
+        function calcularISSQN() {
+    const selectServico = document.getElementById('issqn-servico');
+    if (!selectServico.value) {
+        return alert('Selecione o serviço na coluna 3.');
+    }
+
+    const valorBruto = parseFloat(document.getElementById('issqn-valor').value);
+    if (isNaN(valorBruto) || valorBruto <= 0) {
+        return alert('Informe o valor do serviço.');
+    }
+
+    const cod = selectServico.value;
+    const aliquota = parseFloat(selectServico.options[selectServico.selectedIndex].dataset.aliquota);
+
+    let baseCalculo = valorBruto;
+
+    const deduzirMateriais = document.getElementById('issqn-deduzir-materiais').checked;
+    const tipoDeducao = document.getElementById('issqn-tipo-deducao').value;
+    const materiaisEfetivos = document.getElementById('materiais-efetivos')?.checked || false;
+
+    if (deduzirMateriais) {
+        if (cod !== '7.02' && cod !== '7.05') {
+            return alert('A dedução/redução de materiais foi parametrizada apenas para os serviços 7.02 e 7.05.');
+        }
+
+        if (!materiaisEfetivos) {
+            return alert('Marque a confirmação de efetivo fornecimento de materiais pelo prestador antes de aplicar a dedução/redução.');
+        }
+
+        if (tipoDeducao === '20porcento') {
+            baseCalculo = valorBruto * 0.8;
+        } else {
+            const valorExato = parseFloat(document.getElementById('issqn-valor-exato').value || 0);
+
+            if (isNaN(valorExato) || valorExato < 0 || valorExato > valorBruto) {
+                return alert('Informe um valor exato de materiais válido.');
+            }
+
+            baseCalculo = valorBruto - valorExato;
+        }
+    }
+
+    if (baseCalculo < 0) {
+        baseCalculo = 0;
+    }
+
+    const analise = analisarRetencaoISS();
+
+    if (analise.erro) {
+        return alert(analise.erro);
+    }
+
+    const valorCalculado = baseCalculo * aliquota / 100;
+    const valorFinal = analise.retencaoPeloTomador ? valorCalculado : 0;
+
+    let msgPrincipal = '';
+    if (analise.retencaoPeloTomador) {
+        msgPrincipal = `<span style="color:#1e4620;"><strong>Iguatama deve reter/recolher o ISS neste cenário.</strong></span>`;
+    } else {
+        msgPrincipal = `<span style="color:#a50e0e;"><strong>Iguatama não fará retenção automática neste cenário.</strong></span>`;
+    }
+
+    const alertasHtml = analise.alertas.length
+        ? `<br><br><span style="color:#856404;"><strong>Atenção:</strong><br>${analise.alertas.join('<br>')}</span>`
+        : '';
+
+    document.getElementById('resultado-issqn').style.display = 'block';
+    document.getElementById('valor-issqn-tela').textContent = formatBRL(valorFinal);
+    document.getElementById('valor-issqn-tela').style.color = '#a50e0e';
+    document.getElementById('valor-issqn-tela').style.textDecoration = analise.retencaoPeloTomador ? 'none' : 'line-through';
+
+    document.getElementById('motivo-issqn').innerHTML =
+        `${msgPrincipal}<br><br>${analise.fundamentoCompetencia}<br>${analise.fundamentoRetencao}${alertasHtml}`;
+
+    document.getElementById('detalhe-issqn').innerHTML =
+        `Base de cálculo: ${formatBRL(baseCalculo)}<br>` +
+        `Alíquota: ${aliquota.toFixed(2)}%<br>` +
+        `ISS apurado: ${formatBRL(valorCalculado)}<br>` +
+        `ISS considerado pelo sistema: ${formatBRL(valorFinal)}`;
+        
+}
+
+
+function atualizarRegrasFormularioISS() {
+    const chkAutonomo = document.getElementById('regime-autonomo');
+    const chkSociedade = document.getElementById('regime-sociedade');
+    const chkCadastro = document.getElementById('cadastro-municipal-ok');
+    const chkSociedadeValida = document.getElementById('sociedade-valida');
+    const chkMateriaisEfetivos = document.getElementById('materiais-efetivos');
+
+    const selectServico = document.getElementById('issqn-servico');
+    const cod = selectServico.value;
+
+    const chkDeduzir = document.getElementById('issqn-deduzir-materiais');
+    const selectTipo = document.getElementById('issqn-tipo-deducao');
+    const campoValorExato = document.getElementById('issqn-valor-exato');
+   const blocoOpcoesDeducao = document.getElementById('opcoes-deducao');
+const blocoMateriais = document.getElementById('bloco-materiais-efetivos');
+
+    const servicoPermiteMateriais = cod === '7.02' || cod === '7.05';
+
+    if (chkAutonomo.checked && chkSociedade.checked) {
+        chkSociedade.checked = false;
+    }
+
+    if (!chkSociedade.checked) {
+        chkSociedadeValida.checked = false;
+        chkSociedadeValida.disabled = true;
+    } else {
+        chkSociedadeValida.disabled = false;
+    }
+
+    if (chkAutonomo.checked && !chkCadastro.checked) {
+        chkCadastro.checked = false;
+    }
+
+    if (!servicoPermiteMateriais) {
+    chkDeduzir.checked = false;
+    chkMateriaisEfetivos.checked = false;
+    selectTipo.value = '20porcento';
+    campoValorExato.value = '';
+    blocoOpcoesDeducao.style.display = 'none';
+    campoValorExato.style.display = 'none';
+    blocoMateriais.style.display = 'none';
+    chkMateriaisEfetivos.disabled = true;
+} else {
+    blocoMateriais.style.display = 'block';
+    chkMateriaisEfetivos.disabled = false;
+
+    if (chkDeduzir.checked) {
+        blocoOpcoesDeducao.style.display = 'block';
+
+        if (selectTipo.value === 'valorExato') {
+            campoValorExato.style.display = 'block';
+        } else {
+            campoValorExato.style.display = 'none';
+            campoValorExato.value = '';
+        }
+    } else {
+        blocoOpcoesDeducao.style.display = 'none';
+        campoValorExato.style.display = 'none';
+        campoValorExato.value = '';
+    }
+}
+}
+
+function atualizarHabilitacaoConfirmacoesISS() {
+    const mei = document.getElementById('regime-mei').checked;
+    const simples = document.getElementById('regime-simples').checked;
+    const autonomo = document.getElementById('regime-autonomo').checked;
+    const sociedade = document.getElementById('regime-sociedade').checked;
+
+    const cadastro = document.getElementById('cadastro-municipal-ok');
+    const sociedadeValida = document.getElementById('sociedade-valida');
+
+    const haEnquadramento = mei || simples || autonomo || sociedade;
+
+    cadastro.disabled = !haEnquadramento;
+    if (!haEnquadramento) {
+        cadastro.checked = false;
+    }
+
+    sociedadeValida.disabled = !sociedade;
+    if (!sociedade) {
+        sociedadeValida.checked = false;
+    }
+}
+
+document.getElementById('regime-mei').addEventListener('change', atualizarHabilitacaoConfirmacoesISS);
+document.getElementById('regime-simples').addEventListener('change', atualizarHabilitacaoConfirmacoesISS);
+document.getElementById('regime-autonomo').addEventListener('change', atualizarHabilitacaoConfirmacoesISS);
+document.getElementById('regime-sociedade').addEventListener('change', atualizarHabilitacaoConfirmacoesISS);
+
+atualizarHabilitacaoConfirmacoesISS();
+
+
+
+    </script>
+</body>
+</html>

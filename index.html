@@ -299,14 +299,285 @@
     flex: 1;
     min-width: 0;
 }
+/* =========================
+   LOGIN / CADASTRO OVERLAY
+   ========================= */
+
+.site-content.locked {
+    filter: blur(6px);
+    pointer-events: none;
+    user-select: none;
+}
+
+.auth-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(15, 27, 40, 0.35);
+    backdrop-filter: blur(4px);
+}
+
+.auth-overlay.active {
+    display: flex;
+}
+
+.auth-card {
+    width: 100%;
+    max-width: 430px;
+    background: #ffffff;
+    border-radius: 10px;
+    border: 1px solid #d6dee6;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.20);
+    overflow: hidden;
+}
+
+.auth-card-header {
+    background: #0f3b5e;
+    color: #fff;
+    padding: 20px 24px;
+}
+
+.auth-card-header h2 {
+    margin: 0 0 6px 0;
+    font-size: 22px;
+}
+
+.auth-card-header p {
+    margin: 0;
+    font-size: 13px;
+    color: #d6e3ef;
+    line-height: 1.5;
+}
+
+.auth-card-body {
+    padding: 22px 24px 24px 24px;
+}
+
+.auth-tabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 18px;
+}
+
+.auth-tab {
+    border: 1px solid #c8d2dc;
+    background: #f5f7fa;
+    color: #234;
+    border-radius: 4px;
+    padding: 10px 12px;
+    font-size: 13px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.auth-tab.active {
+    background: #0f3b5e;
+    color: #fff;
+    border-color: #0f3b5e;
+}
+
+.auth-form {
+    display: none;
+}
+
+.auth-form.active {
+    display: block;
+}
+
+.auth-form .form-group-auth {
+    margin-bottom: 14px;
+}
+
+.auth-form .form-group-auth label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 12px;
+    font-weight: bold;
+    color: #495057;
+}
+
+.auth-form .form-group-auth input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 11px 12px;
+    border: 1px solid #bac5d0;
+    border-radius: 4px;
+    font-size: 14px;
+    color: #333;
+    background: #fff;
+}
+
+.auth-form .form-group-auth input:focus {
+    outline: none;
+    border-color: #0f3b5e;
+    box-shadow: 0 0 0 2px rgba(15, 59, 94, 0.15);
+}
+
+.auth-btn {
+    width: 100%;
+    border: 1px solid #0a2942;
+    background: #0f3b5e;
+    color: #fff;
+    border-radius: 4px;
+    padding: 12px 16px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.auth-btn:hover {
+    background: #0a2942;
+}
+
+.auth-btn-secondary {
+    background: #f1f4f7;
+    color: #0f3b5e;
+    border: 1px solid #c9d2db;
+    margin-top: 10px;
+}
+
+.auth-btn-secondary:hover {
+    background: #e5ebf0;
+}
+
+.auth-message {
+    display: none;
+    margin-bottom: 14px;
+    padding: 10px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    line-height: 1.45;
+}
+
+.auth-message.show {
+    display: block;
+}
+
+.auth-message.error {
+    background: #fce8e6;
+    border: 1px solid #f4c7c3;
+    color: #a50e0e;
+}
+
+.auth-message.success {
+    background: #e6f4ea;
+    border: 1px solid #c8e6c9;
+    color: #1e4620;
+}
+
+.user-bar {
+    display: none;
+    align-items: center;
+    gap: 10px;
+}
+
+.user-bar.active {
+    display: flex;
+}
+
+.user-email {
+    font-size: 13px;
+    color: #d6e3ef;
+}
+
+.logout-btn {
+    background: transparent;
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.35);
+    border-radius: 4px;
+    padding: 8px 12px;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.logout-btn:hover {
+    background: rgba(255,255,255,0.08);
+}
+
+@media (max-width: 640px) {
+    .auth-card-header,
+    .auth-card-body {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+}
+
     </style>
 </head>
 <body>
 
-    <div class="top-navbar">
-        <h1>SISTEMA DE CONSULTA FISCAL E RETENÇÕES</h1>
-        <span>Prefeitura Municipal de Iguatama - MG</span>
+    <div id="authOverlay" class="auth-overlay active">
+        <div class="auth-card">
+            <div class="auth-card-header">
+                <h2>Acesso ao sistema</h2>
+                <p>Faça login ou crie sua conta para liberar o uso do algoritmo.</p>
+            </div>
+
+            <div class="auth-card-body">
+                <div id="authMessage" class="auth-message"></div>
+
+                <div class="auth-tabs">
+                    <button type="button" class="auth-tab active" id="tabLogin">Login</button>
+                    <button type="button" class="auth-tab" id="tabCadastro">Cadastro</button>
+                </div>
+
+                <form id="loginForm" class="auth-form active">
+                    <div class="form-group-auth">
+                        <label for="loginEmail">E-mail</label>
+                        <input type="email" id="loginEmail" placeholder="seuemail@exemplo.com" required>
+                    </div>
+
+                    <div class="form-group-auth">
+                        <label for="loginSenha">Senha</label>
+                        <input type="password" id="loginSenha" placeholder="Digite sua senha" required>
+                    </div>
+
+                    <button type="submit" class="auth-btn">Entrar</button>
+                    <button type="button" class="auth-btn auth-btn-secondary" id="btnRecuperarSenha">Esqueci minha senha</button>
+                </form>
+
+                <form id="cadastroForm" class="auth-form">
+                    <div class="form-group-auth">
+                        <label for="cadastroNome">Nome</label>
+                        <input type="text" id="cadastroNome" placeholder="Seu nome completo">
+                    </div>
+
+                    <div class="form-group-auth">
+                        <label for="cadastroEmail">E-mail</label>
+                        <input type="email" id="cadastroEmail" placeholder="seuemail@exemplo.com" required>
+                    </div>
+
+                    <div class="form-group-auth">
+                        <label for="cadastroSenha">Senha</label>
+                        <input type="password" id="cadastroSenha" placeholder="Crie uma senha" required>
+                    </div>
+
+                    <div class="form-group-auth">
+                        <label for="cadastroSenha2">Confirmar senha</label>
+                        <input type="password" id="cadastroSenha2" placeholder="Repita a senha" required>
+                    </div>
+
+                    <button type="submit" class="auth-btn">Criar conta</button>
+                </form>
+            </div>
+        </div>
     </div>
+
+    <div id="siteContent" class="site-content locked">
+        <div class="top-navbar">
+            <h1>SISTEMA DE CONSULTA FISCAL E RETENÇÕES - IGUATAMA</h1>
+            <div class="user-bar" id="userBar">
+                <span class="user-email" id="userEmail"></span>
+                <button type="button" class="logout-btn" id="logoutBtn">Sair</button>
+            </div>
+            <span id="navSubtitle">Prefeitura Municipal de Iguatama - MG</span>
+        </div>
 
     <div class="panels-wrapper">
         
@@ -1445,5 +1716,195 @@ atualizarHabilitacaoConfirmacoesISS();
 
 
     </script>
+
+   <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import {
+        getAuth,
+        onAuthStateChanged,
+        createUserWithEmailAndPassword,
+        signInWithEmailAndPassword,
+        sendPasswordResetEmail,
+        signOut,
+        updateProfile
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyB09-qIkz483j429m6QsBFzSjmThdO5ST8",
+        authDomain: "iguatama-4f8d3.firebaseapp.com",
+        projectId: "iguatama-4f8d3",
+        storageBucket: "iguatama-4f8d3.firebasestorage.app",
+        messagingSenderId: "897646784440",
+        appId: "1:897646784440:web:f0ba79eb55a1bbc76ba94d",
+        measurementId: "G-EMGN2ZMQ4X"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    const authOverlay = document.getElementById('authOverlay');
+    const siteContent = document.getElementById('siteContent');
+    const authMessage = document.getElementById('authMessage');
+
+    const tabLogin = document.getElementById('tabLogin');
+    const tabCadastro = document.getElementById('tabCadastro');
+
+    const loginForm = document.getElementById('loginForm');
+    const cadastroForm = document.getElementById('cadastroForm');
+
+    const loginEmail = document.getElementById('loginEmail');
+    const loginSenha = document.getElementById('loginSenha');
+
+    const cadastroNome = document.getElementById('cadastroNome');
+    const cadastroEmail = document.getElementById('cadastroEmail');
+    const cadastroSenha = document.getElementById('cadastroSenha');
+    const cadastroSenha2 = document.getElementById('cadastroSenha2');
+
+    const btnRecuperarSenha = document.getElementById('btnRecuperarSenha');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const userBar = document.getElementById('userBar');
+    const userEmail = document.getElementById('userEmail');
+    const navSubtitle = document.getElementById('navSubtitle');
+
+    function mostrarMensagem(texto, tipo = 'error') {
+        authMessage.textContent = texto;
+        authMessage.className = 'auth-message show ' + tipo;
+    }
+
+    function limparMensagem() {
+        authMessage.textContent = '';
+        authMessage.className = 'auth-message';
+    }
+
+    function ativarAba(tipo) {
+        limparMensagem();
+
+        if (tipo === 'login') {
+            tabLogin.classList.add('active');
+            tabCadastro.classList.remove('active');
+            loginForm.classList.add('active');
+            cadastroForm.classList.remove('active');
+        } else {
+            tabCadastro.classList.add('active');
+            tabLogin.classList.remove('active');
+            cadastroForm.classList.add('active');
+            loginForm.classList.remove('active');
+        }
+    }
+
+    function bloquearSite() {
+        authOverlay.classList.add('active');
+        siteContent.classList.add('locked');
+        userBar.classList.remove('active');
+        navSubtitle.style.display = 'inline';
+    }
+
+    function liberarSite(usuario) {
+        authOverlay.classList.remove('active');
+        siteContent.classList.remove('locked');
+        userBar.classList.add('active');
+        userEmail.textContent = usuario.email || 'Usuário autenticado';
+        navSubtitle.style.display = 'none';
+    }
+
+    tabLogin.addEventListener('click', () => ativarAba('login'));
+    tabCadastro.addEventListener('click', () => ativarAba('cadastro'));
+
+    cadastroForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        limparMensagem();
+
+        const nome = cadastroNome.value.trim();
+        const email = cadastroEmail.value.trim();
+        const senha = cadastroSenha.value;
+        const confirmar = cadastroSenha2.value;
+
+        if (!email || !senha || !confirmar) {
+            mostrarMensagem('Preencha os campos obrigatórios do cadastro.');
+            return;
+        }
+
+        if (senha.length < 6) {
+            mostrarMensagem('A senha deve ter pelo menos 6 caracteres.');
+            return;
+        }
+
+        if (senha !== confirmar) {
+            mostrarMensagem('As senhas não conferem.');
+            return;
+        }
+
+        try {
+            const cred = await createUserWithEmailAndPassword(auth, email, senha);
+
+            if (nome) {
+                await updateProfile(cred.user, { displayName: nome });
+            }
+
+            mostrarMensagem('Conta criada com sucesso. Aguarde...', 'success');
+        } catch (error) {
+            let msg = 'Não foi possível criar a conta.';
+            if (error.code === 'auth/email-already-in-use') msg = 'Este e-mail já está cadastrado.';
+            if (error.code === 'auth/invalid-email') msg = 'E-mail inválido.';
+            if (error.code === 'auth/weak-password') msg = 'Senha fraca. Use pelo menos 6 caracteres.';
+            mostrarMensagem(msg);
+        }
+    });
+
+    loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        limparMensagem();
+
+        const email = loginEmail.value.trim();
+        const senha = loginSenha.value;
+
+        if (!email || !senha) {
+            mostrarMensagem('Informe e-mail e senha para entrar.');
+            return;
+        }
+
+        try {
+            await signInWithEmailAndPassword(auth, email, senha);
+        } catch (error) {
+            let msg = 'Não foi possível fazer login.';
+            if (error.code === 'auth/invalid-credential') msg = 'E-mail ou senha inválidos.';
+            if (error.code === 'auth/invalid-email') msg = 'E-mail inválido.';
+            if (error.code === 'auth/too-many-requests') msg = 'Muitas tentativas. Tente novamente mais tarde.';
+            mostrarMensagem(msg);
+        }
+    });
+
+    btnRecuperarSenha.addEventListener('click', async () => {
+        limparMensagem();
+        const email = loginEmail.value.trim();
+
+        if (!email) {
+            mostrarMensagem('Digite seu e-mail no campo de login para recuperar a senha.');
+            return;
+        }
+
+        try {
+            await sendPasswordResetEmail(auth, email);
+            mostrarMensagem('E-mail de recuperação enviado com sucesso.', 'success');
+        } catch (error) {
+            let msg = 'Não foi possível enviar o e-mail de recuperação.';
+            if (error.code === 'auth/invalid-email') msg = 'E-mail inválido.';
+            mostrarMensagem(msg);
+        }
+    });
+
+    logoutBtn.addEventListener('click', async () => {
+        await signOut(auth);
+    });
+
+    onAuthStateChanged(auth, (usuario) => {
+        if (usuario) {
+            liberarSite(usuario);
+        } else {
+            bloquearSite();
+        }
+    });
+</script>
+</script>
 </body>
 </html>

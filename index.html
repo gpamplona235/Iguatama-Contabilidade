@@ -508,6 +508,35 @@
     }
 }
 
+#box-ia-irf {
+    margin-top: 15px;
+}
+
+#resultado-descricao-irf {
+    display: none;
+}
+
+#resultado-descricao-irf p {
+    margin: 8px 0;
+    font-size: 12px;
+    line-height: 1.45;
+}
+
+.texto-sucesso {
+    color: #1e4620;
+    font-weight: bold;
+}
+
+.texto-alerta {
+    color: #856404;
+    font-weight: bold;
+}
+
+.texto-erro {
+    color: #a50e0e;
+    font-weight: bold;
+}
+
     </style>
 </head>
 <body>
@@ -634,6 +663,37 @@
                     <select id="aliquotaIRF" onchange="calcularRetencao()"></select>
                     <div id="info-coop" style="font-size: 11px; color: #666; margin-top: 4px;"></div>
                 </div>
+                <div class="box-destaque" id="box-ia-irf">
+    <label style="font-weight: bold; margin-bottom: 8px; display: block;">
+        Sugestão de enquadramento por descrição
+    </label>
+
+    <div class="form-group-calc">
+        <label for="tipoDescricaoIRF">Tipo da operação</label>
+        <select id="tipoDescricaoIRF">
+            <option value="servico">Prestação de serviço</option>
+            <option value="bem">Aquisição de bem / mercadoria</option>
+        </select>
+    </div>
+
+    <div class="form-group-calc">
+        <label for="descricaoLivreIRF">Descreva o serviço ou bem</label>
+        <input type="text" id="descricaoLivreIRF" placeholder="Ex.: compra de porta de madeira, serviço de limpeza predial, passagem rodoviária">
+    </div>
+
+    <button type="button" class="btn-primary" onclick="analisarDescricaoIRF()">
+        Analisar descrição
+    </button>
+
+    <div class="resultado-caixa" id="resultado-descricao-irf">
+        <h3>Sugestão de enquadramento</h3>
+        <p id="desc-irf-categoria"></p>
+        <p id="desc-irf-aliquota-ir"></p>
+        <p id="desc-irf-codigo"></p>
+        <p id="desc-irf-confianca"></p>
+        <p id="desc-irf-observacao"></p>
+    </div>
+</div>
 
                 <button class="btn-primary" onclick="calcularRetencao()">Calcular retenção IRF</button>
                 <div class="resultado-caixa" id="resultado-retencao">
@@ -1713,7 +1773,341 @@ document.getElementById('regime-sociedade').addEventListener('change', atualizar
 
 atualizarHabilitacaoConfirmacoesISS();
 
+const tabelaIRFDescricao = [
+    {
+        id: "6147",
+        categoria: "Mercadorias e bens em geral / serviços com emprego de materiais / construção civil por empreitada com materiais / alimentação / energia elétrica / serviços hospitalares e de diagnóstico / transporte de cargas",
+        aliquotaIR: "1,2%",
+        codigo: "6147",
+        confiancaBase: "média",
+        tipo: ["bem", "servico"],
+        palavras: [
+            "mercadoria", "mercadorias", "bem", "bens", "material", "materiais",
+            "aquisicao", "aquisição", "compra", "fornecimento", "item", "produto", "produtos",
+            "equipamento", "equipamentos", "suprimento", "suprimentos", "insumo", "insumos",
+            "genero alimenticio", "gênero alimentício", "merenda", "alimentacao", "alimentação",
+            "alimento", "alimentos", "cesta basica", "cesta básica", "hortifruti", "hortifruti granjeiros",
+            "carne", "frango", "peixe", "leite", "pao", "pão", "arroz", "feijao", "feijão", "macarrao", "macarrão",
+            "agua mineral", "água mineral", "gas", "gás", "energia", "energia eletrica", "energia elétrica",
+            "material de consumo", "material escolar", "material pedagogico", "material pedagógico",
+            "material de expediente", "material de escritorio", "material de escritório", "papelaria",
+            "caneta", "lapis", "lápis", "borracha", "caderno", "envelope", "toner", "cartucho",
+            "material de limpeza", "detergente", "sabao", "sabão", "desinfetante", "papel higienico", "papel higiênico",
+            "material hospitalar", "material medico", "material médico", "insumo hospitalar",
+            "hospitalar", "diagnostico", "diagnóstico", "patologia", "patologia clinica", "patologia clínica",
+            "analise clinica", "análise clínica", "analises clinicas", "análises clínicas",
+            "imagenologia", "anatomia patologica", "anatomia patológica", "citopatologia", "citopatologia",
+            "medicina nuclear", "exame laboratorial", "exames laboratoriais", "coleta de exame",
+            "construcao civil", "construção civil", "empreitada", "obra com material", "servico com material",
+            "serviço com material", "reforma com material", "execucao de obra", "execução de obra",
+            "cimento", "cal", "areia", "brita", "tijolo", "bloco", "ferragem", "ferro", "aco", "aço",
+            "porta", "janela", "vidro", "tubo", "cano", "madeira", "compensado", "telha", "piso", "revestimento",
+            "transporte de cargas", "transporte de carga", "carga", "frete", "carreto", "entrega de carga",
+            "produto farmaceutico", "produto farmacêutico", "medicamento", "medicamentos",
+            "perfumaria", "toucador", "higiene pessoal", "cosmetico", "cosmético",
+            "mercadorias em geral", "bens em geral", "moveis", "móveis", "eletrodomestico", "eletrodoméstico",
+            "computador", "impressora", "notebook", "tablet", "ar condicionado", "geladeira", "fogao", "fogão",
+            "veiculo", "veículo", "peca", "peça", "pecas", "peças"
+        ]
+    },
+    {
+        id: "9060",
+        categoria: "Combustíveis adquiridos de refinaria, produtor, importador ou distribuidor específico",
+        aliquotaIR: "0,24%",
+        codigo: "9060",
+        confiancaBase: "média",
+        tipo: ["bem"],
+        palavras: [
+            "gasolina aviacao", "gasolina de aviacao", "gasolina de aviação",
+            "oleo diesel", "óleo diesel", "diesel s10", "diesel s500",
+            "glp", "gas liquefeito de petroleo", "gás liquefeito de petróleo",
+            "qav", "querosene de aviacao", "querosene de aviação",
+            "combustivel refinaria", "combustível refinaria", "refinaria",
+            "alcool etilico hidratado", "álcool etílico hidratado",
+            "etanol hidratado produtor", "etanol produtor",
+            "biodiesel produtor", "biodiesel importador",
+            "combustivel produtor", "combustível produtor",
+            "combustivel importador", "combustível importador",
+            "combustivel distribuidor autorizado", "combustível distribuidor autorizado"
+        ]
+    },
+    {
+        id: "8739",
+        categoria: "Combustíveis adquiridos de distribuidores e comerciantes varejistas",
+        aliquotaIR: "0,24%",
+        codigo: "8739",
+        confiancaBase: "média",
+        tipo: ["bem"],
+        palavras: [
+            "gasolina", "diesel", "combustivel", "combustível", "etanol", "alcool", "álcool",
+            "glp", "biodiesel", "posto", "posto de combustivel", "posto de combustível",
+            "varejista", "distribuidor", "abastecimento", "abastecer",
+            "abastecimento de veiculo", "abastecimento de veículo",
+            "combustivel frota", "combustível frota", "combustivel veiculo", "combustível veículo",
+            "gasolina comum", "gasolina aditivada", "diesel comum", "oleo diesel", "óleo diesel",
+            "etanol comum", "etanol hidratado", "gas veicular", "gás veicular"
+        ]
+    },
+    {
+        id: "8767",
+        categoria: "Transporte internacional de cargas / produtos farmacêuticos, perfumaria e higiene pessoal específicos / produtos ou serviços com Cofins e PIS/Pasep zero ou isentos",
+        aliquotaIR: "1,2%",
+        codigo: "8767",
+        confiancaBase: "baixa",
+        tipo: ["bem", "servico"],
+        palavras: [
+            "transporte internacional de cargas", "carga internacional", "frete internacional",
+            "exportacao de carga", "exportação de carga", "importacao de carga", "importação de carga",
+            "estaleiro", "embarcacao", "embarcação", "reparo de embarcacao", "reparo de embarcação",
+            "produto farmaceutico", "produto farmacêutico", "farmaceutico", "farmacêutico",
+            "perfumaria", "toucador", "higiene pessoal",
+            "produto beneficiado", "produto com aliquota zero", "produto com alíquota zero",
+            "isencao cofins", "isenção cofins", "isencao pis", "isenção pis",
+            "nao incidencia", "não incidência", "aliquota zero", "alíquota zero",
+            "cofins zero", "pis zero", "pasep zero", "produto isento", "servico isento", "serviço isento"
+        ]
+    },
+    {
+        id: "6175",
+        categoria: "Passagens aéreas, rodoviárias e demais serviços de transporte de passageiros",
+        aliquotaIR: "2,40%",
+        codigo: "6175",
+        confiancaBase: "alta",
+        tipo: ["servico"],
+        palavras: [
+            "passagem", "passagens", "passagem aerea", "passagem aérea",
+            "passagem rodoviaria", "passagem rodoviária", "passagem de onibus", "passagem de ônibus",
+            "passagem de aviao", "passagem de avião", "tarifa de embarque",
+            "transporte de passageiros", "transporte passageiro", "bilhete", "bilhete de passagem",
+            "viagem rodoviaria", "viagem rodoviária", "viagem aerea", "viagem aérea",
+            "passagem intermunicipal", "passagem interestadual", "passagem terrestre",
+            "passagem para servidor", "passagem para paciente", "translado de passageiro"
+        ]
+    },
+    {
+        id: "8850",
+        categoria: "Transporte internacional de passageiros efetuado por empresas nacionais",
+        aliquotaIR: "2,40%",
+        codigo: "8850",
+        confiancaBase: "alta",
+        tipo: ["servico"],
+        palavras: [
+            "transporte internacional de passageiros", "passagem internacional",
+            "voo internacional", "passageiro internacional", "bilhete internacional",
+            "trecho internacional", "embarque internacional", "viagem internacional"
+        ]
+    },
+    {
+        id: "8863",
+        categoria: "Serviços prestados por associações profissionais ou assemelhadas e cooperativas",
+        aliquotaIR: "0,0%",
+        codigo: "8863",
+        confiancaBase: "alta",
+        tipo: ["servico"],
+        palavras: [
+            "cooperativa", "cooperativas", "cooperado", "cooperados",
+            "associacao profissional", "associação profissional",
+            "associacao de classe", "associação de classe",
+            "entidade associativa", "entidade de classe",
+            "servico cooperativa", "serviço cooperativa",
+            "consulta cooperativa", "plantao cooperativa", "plantão cooperativa",
+            "cooperativa medica", "cooperativa médica",
+            "cooperativa de trabalho", "cooperativa de credito", "cooperativa de crédito"
+        ]
+    },
+    {
+        id: "6188",
+        categoria: "Serviços prestados por bancos, instituições financeiras, câmbio, arrendamento mercantil, seguros e entidades abertas de previdência complementar / seguro saúde",
+        aliquotaIR: "2,40%",
+        codigo: "6188",
+        confiancaBase: "alta",
+        tipo: ["servico"],
+        palavras: [
+            "banco", "bancario", "bancário", "instituicao financeira", "instituição financeira",
+            "caixa economica", "caixa econômica", "financiamento", "credito", "crédito",
+            "credito imobiliario", "crédito imobiliário", "sociedade de credito", "sociedade de crédito",
+            "investimento", "banco de investimento", "desenvolvimento", "conta bancaria", "conta bancária",
+            "tarifa bancaria", "tarifa bancária", "servico bancario", "serviço bancário",
+            "seguro", "seguros", "apolice", "apólice", "premio de seguro", "prêmio de seguro",
+            "seguro saude", "seguro saúde", "plano securitario", "plano securitário",
+            "capitalizacao", "capitalização", "previdencia complementar", "previdência complementar",
+            "cambio", "câmbio", "moeda estrangeira", "fechamento de cambio", "fechamento de câmbio",
+            "arrendamento mercantil", "leasing", "mercantil", "cooperativa de credito", "cooperativa de crédito",
+            "titulo mobiliario", "título mobiliário", "valores mobiliarios", "valores mobiliários"
+        ]
+    },
+    {
+        id: "6190",
+        categoria: "Água, telefone, correios, vigilância, limpeza, locação de mão de obra, intermediação de negócios, administração, locação ou cessão de bens móveis, imóveis e direitos, factoring, plano de saúde com valor fixo e demais serviços",
+        aliquotaIR: "4,80%",
+        codigo: "6190",
+        confiancaBase: "alta",
+        tipo: ["servico"],
+        palavras: [
+            "agua", "água", "abastecimento de agua", "abastecimento de água", "conta de agua", "conta de água",
+            "telefone", "telefonia", "telefonia fixa", "telefonia movel", "telefonia móvel",
+            "internet", "link de internet", "banda larga", "dados moveis", "dados móveis",
+            "correio", "correios", "telegrafo", "telégrafo", "courier", "sedex", "encomenda",
+            "vigilancia", "vigilância", "seguranca patrimonial", "segurança patrimonial",
+            "monitoramento", "portaria", "ronda", "alarme", "vigia", "guarda patrimonial",
+            "limpeza", "faxina", "asseio", "conservacao", "conservação", "higienizacao", "higienização",
+            "capina", "roçada", "rocada", "jardinagem", "coleta de lixo", "varricao", "varrição",
+            "locacao de mao de obra", "locação de mão de obra", "fornecimento de mao de obra", "fornecimento de mão de obra",
+            "terceirizacao", "terceirização", "posto de trabalho", "mao de obra terceirizada", "mão de obra terceirizada",
+            "intermediacao de negocios", "intermediação de negócios", "agenciamento", "intermediacao", "intermediação",
+            "administracao", "administração", "gestao", "gestão", "gerenciamento", "gestao administrativa", "gestão administrativa",
+            "locacao", "locação", "aluguel", "arrendamento", "cessao", "cessão", "comodato", "uso de bem",
+            "locacao de imovel", "locação de imóvel", "aluguel de imovel", "aluguel de imóvel",
+            "locacao de veiculo", "locação de veículo", "aluguel de veiculo", "aluguel de veículo",
+            "locacao de equipamentos", "locação de equipamentos", "aluguel de equipamentos",
+            "locacao de maquinas", "locação de máquinas", "aluguel de maquinas", "aluguel de máquinas",
+            "locacao de palco", "locação de palco", "locacao de som", "locação de som",
+            "locacao de estrutura", "locação de estrutura", "locacao de tendas", "locação de tendas",
+            "factoring", "faturizacao", "faturização", "cessao de credito", "cessão de crédito",
+            "plano de saude", "plano de saúde", "plano odontologico", "plano odontológico",
+            "plano veterinario", "plano veterinário", "valor fixo por servidor", "valor fixo por empregado",
+            "servico", "serviço", "prestacao", "prestação", "atividade", "execucao", "execução",
+            "consultoria", "assessoria", "apoio administrativo", "treinamento", "curso", "palestra",
+            "evento", "eventos", "show", "espetaculo", "espetáculo", "apresentacao", "apresentação",
+            "producao de evento", "produção de evento", "organizacao de evento", "organização de evento",
+            "locucao", "locução", "cerimonial", "mestres de cerimonia", "mestres de cerimônia",
+            "publicidade", "propaganda", "divulgacao", "divulgação", "campanha", "midia", "mídia",
+            "manutencao", "manutenção", "instalacao", "instalação", "montagem", "reparo",
+            "assistencia tecnica", "assistência técnica", "suporte tecnico", "suporte técnico",
+            "digitalizacao", "digitalização", "reprografia", "impressao", "impressão", "grafica", "gráfica",
+            "buffet", "ornamentacao", "ornamentação", "recepcao", "recepção", "decoracao", "decoração",
+            "locacao de software", "locação de software", "cessao de uso", "cessão de uso",
+            "licenciamento", "licenca", "licença", "assinatura", "mensalidade", "anuidade",
+            "hospedagem", "armazenamento de dados", "servico tecnico", "serviço técnico",
+            "consulta", "atendimento", "exame", "laudo", "pericia", "perícia",
+            "demais servicos", "demais serviços"
+        ]
+    }
+];
 
+function normalizarTexto(texto) {
+    return texto
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^\w\s]/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+}
+
+function analisarDescricaoIRF() {
+    const tipo = document.getElementById("tipoDescricaoIRF").value;
+    const descricaoOriginal = document.getElementById("descricaoLivreIRF").value.trim();
+    const descricao = normalizarTexto(descricaoOriginal);
+
+    const caixa = document.getElementById("resultado-descricao-irf");
+    const campoCategoria = document.getElementById("desc-irf-categoria");
+    const campoAliquotaIR = document.getElementById("desc-irf-aliquota-ir");
+    const campoCodigo = document.getElementById("desc-irf-codigo");
+    const campoConfianca = document.getElementById("desc-irf-confianca");
+    const campoObservacao = document.getElementById("desc-irf-observacao");
+
+    caixa.style.display = "block";
+
+    if (!descricao) {
+        campoCategoria.innerHTML = '<span class="texto-erro">Digite uma descrição para analisar.</span>';
+        campoAliquotaIR.textContent = "";
+        campoCodigo.textContent = "";
+        campoConfianca.textContent = "";
+        campoObservacao.textContent = "";
+        return;
+    }
+
+    let melhor = null;
+    let maiorPontuacao = 0;
+
+    tabelaIRFDescricao.forEach(item => {
+        if (!item.tipo.includes(tipo)) return;
+
+        let pontos = 0;
+
+        item.palavras.forEach(palavra => {
+            const palavraNormalizada = normalizarTexto(palavra);
+
+            if (descricao.includes(palavraNormalizada)) {
+                pontos += palavraNormalizada.split(" ").length > 1 ? 3 : 1;
+            }
+        });
+
+        if (tipo === "bem" && item.id === "6147") {
+            if (
+                descricao.includes("compra") ||
+                descricao.includes("aquisicao") ||
+                descricao.includes("aquisição")
+            ) {
+                pontos += 2;
+            }
+        }
+
+        if (tipo === "servico" && item.id === "6190") {
+            if (
+                descricao.includes("servico") ||
+                descricao.includes("serviço") ||
+                descricao.includes("prestacao") ||
+                descricao.includes("prestação") ||
+                descricao.includes("aluguel") ||
+                descricao.includes("locacao") ||
+                descricao.includes("locação") ||
+                descricao.includes("arrendamento")
+            ) {
+                pontos += 2;
+            }
+        }
+
+        if (pontos > maiorPontuacao) {
+            maiorPontuacao = pontos;
+            melhor = item;
+        }
+    });
+
+    const termosGeraisServico = [
+        "show", "evento", "eventos", "apresentacao", "apresentação",
+        "espetaculo", "espetáculo", "producao", "produção",
+        "organizacao", "organização", "palestra", "curso",
+        "treinamento", "montagem", "instalacao", "instalação",
+        "manutencao", "manutenção", "locucao", "locução",
+        "servico", "serviço", "prestacao", "prestação",
+        "aluguel", "locacao", "locação", "arrendamento", "cessao", "cessão"
+    ];
+
+    const pareceServicoGenerico = termosGeraisServico.some(termo =>
+        descricao.includes(normalizarTexto(termo))
+    );
+
+    if (!melhor && tipo === "servico" && pareceServicoGenerico) {
+        melhor = tabelaIRFDescricao.find(item => item.id === "6190");
+        maiorPontuacao = 1;
+    }
+
+    if (!melhor) {
+        campoCategoria.innerHTML = '<span class="texto-erro">Não foi possível classificar com segurança.</span>';
+        campoAliquotaIR.textContent = "";
+        campoCodigo.textContent = "";
+        campoConfianca.textContent = "";
+        campoObservacao.textContent = "Tente descrever melhor a operação ou faça a classificação manual.";
+        return;
+    }
+
+    let confiancaFinal = melhor.confiancaBase;
+    if (maiorPontuacao <= 1) confiancaFinal = "baixa";
+    if (maiorPontuacao >= 3) confiancaFinal = "alta";
+
+    campoCategoria.innerHTML = '<span class="texto-sucesso">Categoria sugerida:</span> ' + melhor.categoria;
+    campoAliquotaIR.innerHTML = '<strong>Alíquota de IR:</strong> ' + melhor.aliquotaIR;
+    campoCodigo.innerHTML = '<strong>Código da receita:</strong> ' + melhor.codigo;
+    campoConfianca.innerHTML = '<strong>Nível de confiança:</strong> ' + confiancaFinal;
+
+    if (confiancaFinal === "baixa") {
+        campoObservacao.innerHTML = '<span class="texto-alerta">Observação:</span> correspondência ampla; revise antes de usar.';
+    } else {
+        campoObservacao.innerHTML = '<span class="texto-sucesso">Observação:</span> enquadramento compatível com os grupos do Anexo I.';
+    }
+}
 
     </script>
 

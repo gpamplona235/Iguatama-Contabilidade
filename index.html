@@ -93,26 +93,7 @@
             .panel { width: 100%; min-width: 100%; }
         }
 
-        /* ========================================================
-           NOVO ESTILO DE IMPRESSÃO - IDÊNTICO AO MODELO ENVIADO
-           ======================================================== */
-           @media print {
-  .col-acoes {
-        display: none !important;
-    }
-            
-    body { 
-        background: white; 
-        margin: 0; 
-        padding: 0; 
-        font-family: Arial, Helvetica, sans-serif; 
-        color: #555;
-        font-size: 19px;
-    }
 
-    .top-navbar, .panels-wrapper, .btn-primary, .btn-print { 
-        display: none !important; 
-    }
     
     #area-impressao { 
         display: block !important;
@@ -656,30 +637,73 @@
             }
         }
 
-        @media print {
-            #tela-consulta,
-            .top-navbar,
-            .materiais-form,
-            .materiais-acoes,
-            .materiais-header {
-                display: none !important;
-            }
+/* ========================================================
+   BLOCOS DE IMPRESSÃO UNIFICADOS E CORRIGIDOS
+   ======================================================== */
+@media print {
+    /* 1. Esconde elementos globais da interface que nunca devem ser impressos */
+    .top-navbar, 
+    .btn-primary, 
+    .btn-print, 
+    .materiais-form, 
+    .materiais-acoes, 
+    .materiais-header,
+    .col-acoes { 
+        display: none !important; 
+    }
+    
+    body { 
+        background: white !important; 
+        margin: 0 !important; 
+        padding: 0 !important; 
+        font-family: Arial, Helvetica, sans-serif; 
+        color: #333;
+    }
 
-            #tela-materiais {
-                display: block !important;
-            }
+    /* 2. REGRA PARA QUANDO FOR IMPRIMIR A TELA DE CONSULTA 
+          (Se a tela de consulta estiver ativa, esconde a de materiais) */
+    #tela-consulta.active {
+        display: block !important;
+    }
+    #tela-consulta.active ~ #tela-materiais,
+    #tela-consulta:not(.active) {
+        display: none !important;
+    }
 
-            .materiais-wrapper,
-            .materiais-panel,
-            .materiais-body,
-            .materiais-folha {
-                width: 100% !important;
-                max-width: 100% !important;
-                margin: 0 !important;
-                border: none !important;
-                box-shadow: none !important;
-                padding: 0 !important;
-            }
+    /* Configurações específicas da área interna de impressão da consulta */
+    #tela-consulta.active #area-impressao { 
+        display: block !important;
+        width: calc(100% - 2px);
+        max-width: none;
+        margin: 0 1px;
+        padding-top: 6px;
+    }
+    #tela-consulta.active .panels-wrapper {
+        display: none !important; /* Esconde os painéis interativos na impressão */
+    }
+
+    /* 3. REGRA PARA QUANDO FOR IMPRIMIR A TELA DE MATERIAIS 
+          (Se a tela de materiais estiver ativa, garante que ela ocupe a página toda) */
+    #tela-materiais.active {
+        display: block !important;
+    }
+    #tela-materiais.active ~ #tela-consulta,
+    #tela-materiais:not(.active) {
+        display: none !important;
+    }
+
+    #tela-materiais.active .materiais-wrapper,
+    #tela-materiais.active .materiais-panel,
+    #tela-materials.active .materiais-body,
+    #tela-materiais.active .materiais-folha {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+    }
+}
 
             body {
                 background: #fff !important;

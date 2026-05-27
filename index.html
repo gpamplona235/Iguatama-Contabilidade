@@ -44,19 +44,19 @@
         }
         button.btn-primary:hover { background-color: #0a2942; }
 
-        .btn-print {
-            padding: 10px 20px; background-color: #28a745; color: white; border: 1px solid #218838; border-radius: 3px;
-            cursor: pointer; font-size: 14px; margin-top: 10px; width: 100%;
+               .btn-print {
+            padding: 10px 20px; background-color: #0f3b5e; color: white; border: 1px solid #0a2942; border-radius: 3px;
+            cursor: pointer; font-size: 14px; margin-top: 10px; width: 100%; transition: background-color 0.2s;
         }
-        .btn-print:hover { background-color: #218838; }
+        .btn-print:hover { background-color: #0a2942; }
 
         .loading { display: none; color: #667; font-size: 13px; margin-bottom: 20px; border-left: 3px solid #0f3b5e; padding-left: 10px; }
         
-        .result-container { display: none; }
-        .data-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 12px; }
-        .data-table th, .data-table td { padding: 8px 10px; border-bottom: 1px solid #e9ecef; text-align: left; vertical-align: top; }
-        .data-table th { background-color: #f8f9fa; color: #495057; width: 36%; font-weight: bold; border-right: 1px solid #e9ecef; }
-        .data-table td { color: #212529; line-height: 1.45; }
+               .data-table { width: 100%; border-collapse: separate; border-spacing: 0; border: 1px solid #dce4ec; border-radius: 4px; overflow: hidden; margin-bottom: 15px; font-size: 13px; }
+        .data-table th, .data-table td { padding: 10px 12px; border-bottom: 1px solid #dce4ec; text-align: left; vertical-align: middle; }
+        .data-table th { background-color: #f2f6f9; color: #0f3b5e; width: 35%; font-weight: 600; border-right: 1px solid #dce4ec; }
+        .data-table tr:last-child th, .data-table tr:last-child td { border-bottom: none; }
+        .data-table td { color: #333; line-height: 1.5; background-color: #ffffff; }
 
         .status-label { padding: 3px 8px; border-radius: 2px; font-size: 11px; font-weight: bold; display: inline-block; }
         .status-sim { background-color: #e6f4ea; color: #1e4620; border: 1px solid #c8e6c9; }
@@ -97,6 +97,10 @@
            NOVO ESTILO DE IMPRESSÃO - IDÊNTICO AO MODELO ENVIADO
            ======================================================== */
            @media print {
+  .col-acoes {
+        display: none !important;
+    }
+            
     body { 
         background: white; 
         margin: 0; 
@@ -537,6 +541,172 @@
     font-weight: bold;
 }
 
+
+        .screen-section { display: none; }
+        .screen-section.active { display: block; }
+
+        .materiais-wrapper {
+            max-width: 1500px;
+            width: 98%;
+            margin: 30px auto;
+        }
+
+        .materiais-panel {
+            background: #ffffff;
+            border: 1px solid #cfd7df;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            overflow: hidden;
+        }
+
+        .materiais-header {
+            padding: 18px 20px;
+            border-bottom: 1px solid #cfd7df;
+            background-color: #fbfcfd;
+        }
+
+        .materiais-header h2 {
+            margin: 0;
+            font-size: 15px;
+            color: #2c3e50;
+        }
+
+        .materiais-body {
+            padding: 20px;
+        }
+
+        .materiais-form {
+            display: grid;
+            grid-template-columns: 160px 160px 1.6fr 140px 140px 160px;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .materiais-acoes {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .materiais-folha {
+            background: #fff;
+            border: 1px solid #cfd7df;
+            padding: 40px 35px;
+            min-height: 700px;
+        }
+
+        .materiais-titulo {
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+            text-decoration: underline;
+            color: #111;
+            margin: 10px 0 40px;
+        }
+
+        .materiais-tabela {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            color: #111;
+        }
+
+        .materiais-tabela th,
+        .materiais-tabela td {
+            border: 1px solid #222;
+            padding: 6px 8px;
+            text-align: center;
+        }
+
+        .materiais-tabela th {
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            text-decoration: underline;
+            background: #f7f9fb;
+        }
+
+        .materiais-tabela td.col-fornecedor {
+            text-align: center;
+        }
+
+        .materiais-total {
+            width: 260px;
+            border: 1px solid #222;
+            border-top: none;
+            padding: 8px 10px;
+            font-weight: bold;
+            font-size: 16px;
+            text-align: center;
+        }
+
+        @media (max-width: 1100px) {
+            .materiais-form {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .materiais-folha {
+                overflow-x: auto;
+                padding: 20px 15px;
+            }
+
+            .materiais-tabela {
+                min-width: 900px;
+            }
+        }
+
+        @media print {
+            #tela-consulta,
+            .top-navbar,
+            .materiais-form,
+            .materiais-acoes,
+            .materiais-header {
+                display: none !important;
+            }
+
+            #tela-materiais {
+                display: block !important;
+            }
+
+            .materiais-wrapper,
+            .materiais-panel,
+            .materiais-body,
+            .materiais-folha {
+                width: 100% !important;
+                max-width: 100% !important;
+                margin: 0 !important;
+                border: none !important;
+                box-shadow: none !important;
+                padding: 0 !important;
+            }
+
+            body {
+                background: #fff !important;
+            }
+        }
+
+                .screen-section {
+            display: none;
+        }
+
+        .screen-section.active {
+            display: block;
+        }
+.btn-repetir-linha {
+    padding: 6px 10px;
+    background-color: #eef2f6;
+    color: #0f3b5e;
+    border: 1px solid #bac5d0;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.btn-repetir-linha:hover {
+    background-color: #dde6ee;
+}
     </style>
 </head>
 <body>
@@ -545,7 +715,7 @@
         <div class="auth-card">
             <div class="auth-card-header">
                 <h2>Acesso ao sistema</h2>
-                <p>Faça login ou crie sua conta para liberar o uso do algoritmo.</p>
+                <p>Faça login ou crie sua conta para liberar o acesso.</p>
             </div>
 
             <div class="auth-card-body">
@@ -599,34 +769,54 @@
     </div>
 
     <div id="siteContent" class="site-content locked">
-        <div class="top-navbar">
+    <div class="top-navbar">
+        <div style="display: flex; flex-direction: column; gap: 4px;">
             <h1>SISTEMA DE CONSULTA FISCAL E RETENÇÕES - IGUATAMA</h1>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+            <span id="navSubtitle">Prefeitura Municipal de Iguatama - MG</span>
+
+            <button type="button" class="btn-primary" onclick="mostrarTela('consulta')" style="width: auto; padding: 8px 14px;">Consulta Fiscal</button>
+            <button type="button" class="btn-primary" onclick="mostrarTela('materiais')" style="width: auto; padding: 8px 14px;">Notas de Consumo</button>
+
             <div class="user-bar" id="userBar">
                 <span class="user-email" id="userEmail"></span>
                 <button type="button" class="logout-btn" id="logoutBtn">Sair</button>
             </div>
-            <span id="navSubtitle">Prefeitura Municipal de Iguatama - MG</span>
         </div>
+    </div>
 
-    <div class="panels-wrapper">
-        
-        <!-- COLUNA 1: DADOS DO CNPJ -->
-        <div class="panel">
-            <div class="panel-header">
-                <h2>1. Consultar CNPJ</h2>
-            </div>
-            <div class="panel-body">
-                <div class="search-form">
-                    <input type="text" id="cnpjInput" placeholder="Digite o CNPJ" maxlength="18">
-                    <button class="btn-primary" onclick="consultarCNPJ()" style="width: auto;">Buscar</button>
+    <div id="tela-consulta" class="screen-section active">
+        <div class="panels-wrapper">
+
+            <!-- COLUNA 1: DADOS DO CNPJ -->
+            <div class="panel">
+                <div class="panel-header" style="display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+                    <h2 style="margin: 0;">1. Consultar CNPJ</h2>
+
+                    <label style="font-size: 11px; color: #495057; display: flex; align-items: center; gap: 5px; cursor: pointer; font-weight: normal; white-space: nowrap;">
+                        <input type="checkbox" id="autoPrintSimples">
+                        Imprimir automático se Simples
+                    </label>
                 </div>
-                <div class="loading" id="loading">Consultando base de dados...</div>
-                <div class="result-container" id="result">
-                    <table class="data-table" id="tabela-dados"></table>
-                    <button class="btn-print" onclick="window.print()">Imprimir Comprovante</button>
+
+                <div class="panel-body">
+                    <div class="search-form">
+                        <input type="text" id="cnpjInput" placeholder="Digite o CNPJ" maxlength="18">
+                        <button class="btn-primary" onclick="consultarCNPJ()" style="width: auto;">Buscar</button>
+                    </div>
+
+                    <div class="loading" id="loading">Consultando base de dados...</div>
+
+                    <div class="result-container" id="result">
+                        <table class="data-table" id="tabela-dados"></table>
+                        <button id="btnImprimir" class="btn-print" onclick="window.print()" style="display: none;">Imprimir Comprovante</button>
+                    </div>
                 </div>
             </div>
-        </div>
+
+            <!-- COLUNA 2 E COLUNA 3 CONTINUAM AQUI -->
 
         <!-- COLUNA 2: IRF (Imposto de Renda Retido na Fonte) -->
         <div class="panel" id="panel-calculadora">
@@ -891,7 +1081,62 @@
         </div>
     </div>
 
-    <div id="area-impressao"></div>
+   <div id="area-impressao"></div>
+    </div>
+</div>
+
+<div id="tela-materiais" class="screen-section">
+    <div class="materiais-wrapper">
+        <div class="materiais-panel">
+            <div class="materiais-header">
+                <h2>4. Saída de Notas - Materiais de Consumo</h2>
+            </div>
+
+            <div class="materiais-body">
+               <div class="materiais-form">
+    <input type="text" id="mcDataEntrada" placeholder="Data entrada" maxlength="10">
+    <input type="text" id="mcDataEmissao" placeholder="Data emissão" maxlength="10">
+    <div style="position: relative;">
+        <input type="text" id="mcFornecedor" placeholder="Nome completo do fornecedor" autocomplete="off">
+        <div id="listaFornecedores" style="display:none; position:absolute; top:100%; left:0; right:0; background:#fff; border:1px solid #bac5d0; border-top:none; z-index:20; max-height:180px; overflow-y:auto;"></div>
+    </div>
+    <input type="text" id="mcValorNota" placeholder="Valor da nota">
+    <input type="text" id="mcEmpenho" placeholder="Número do empenho">
+    <input type="text" id="mcNotaFiscal" placeholder="Número da nota fiscal">
+</div>
+
+<div class="materiais-acoes">
+    <button type="button" class="btn-primary" onclick="adicionarLinhaMaterial()" style="width: auto;">Adicionar linha</button>
+    <button type="button" class="btn-primary" onclick="repetirUltimaNota()" style="width: auto;">Repetir última</button>
+    <button type="button" class="btn-primary" onclick="window.print()" style="width: auto;">Imprimir folha</button>
+    <button type="button" class="btn-primary" onclick="limparTabelaMateriais()" style="width: auto;">Limpar tabela</button>
+</div>
+
+
+                <div class="materiais-folha">
+                    <div class="materiais-titulo">SAÍDA DE NOTAS – NF’s MATERIAIS DE CONSUMO</div>
+
+                    <table class="materiais-tabela">
+                       <thead>
+    <tr>
+        <th>Data Entrada</th>
+        <th>Data Emissão</th>
+        <th>Nome Completo do Fornecedor</th>
+        <th>Valor da Nota</th>
+        <th>Número do Empenho</th>
+        <th>Número da Nota Fiscal</th>
+        <th class="col-acoes">Ações</th>
+    </tr>
+</thead>
+                    <tbody id="materiaisTabelaBody"></tbody>
+                    </table>
+
+                   <div class="materiais-total" id="materiaisTotal">TOTAL DE NF’s: 0</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
     <script>
         // =========================================================
@@ -1318,19 +1563,18 @@ const sociedadeTemImpedimentos = isSociedade && sociedadePossuiImpedimentos();
     }
 
     if (isSimples) {
-        retencaoPeloTomador = true;
-        fundamentoRetencao = 'Optante do Simples Nacional não gera dispensa automática neste sistema; exige análise cautelosa.';
-        alertas.push('O sistema não presume dispensa automática apenas por ser Simples Nacional.');
-
-        return {
-            erro: null,
-            issDevidoEmIguatama,
-            retencaoPeloTomador,
-            fundamentoCompetencia,
-            fundamentoRetencao,
-            alertas
-        };
-    }
+    retencaoPeloTomador = true;
+    fundamentoRetencao = "Optante do Simples Nacional não gera dispensa automática neste sistema; exige análise cautelosa.";
+    alertas.push("O sistema não presume dispensa automática apenas por ser Simples Nacional.");
+    return {
+        erro: null,
+        issDevidoEmIguatama,
+        retencaoPeloTomador,
+        fundamentoCompetencia,
+        fundamentoRetencao,
+        alertas
+    };
+}
 
     retencaoPeloTomador = true;
     fundamentoRetencao = 'Retenção aplicável: ISS devido a Iguatama sem hipótese validada de dispensa automática no sistema.';
@@ -1359,7 +1603,8 @@ const sociedadeTemImpedimentos = isSociedade && sociedadePossuiImpedimentos();
             const cnpj = document.getElementById('cnpjInput').value.replace(/\D/g, '');
             if (cnpj.length !== 14) return alert('CNPJ inválido (14 dígitos).');
 
-            document.getElementById('result').style.display = 'none';
+                        document.getElementById('result').style.display = 'none';
+            document.getElementById('btnImprimir').style.display = 'none';
             document.getElementById('resultado-retencao').style.display = 'none';
             document.getElementById('panel-calculadora').style.opacity = '0.55';
             document.getElementById('panel-calculadora').style.pointerEvents = 'none';
@@ -1408,17 +1653,25 @@ const sociedadeTemImpedimentos = isSociedade && sociedadePossuiImpedimentos();
                     </tbody>
                 `;
 
-                document.getElementById('result').style.display = 'block';
+                                document.getElementById('result').style.display = 'block';
+                document.getElementById('btnImprimir').style.display = 'block';
                 document.getElementById('panel-calculadora').style.opacity = '1';
                 document.getElementById('panel-calculadora').style.pointerEvents = 'auto';
                 alternarTipoOperacao();
 
-                if (empresaSimplesNacional || empresaMEI) {
+                              if (empresaSimplesNacional || empresaMEI) {
                     document.getElementById('status-enquadramento').className = 'alert-box alert-simples';
                     document.getElementById('status-enquadramento').innerHTML = '<strong>Enquadramento:</strong> MEI ou Simples Nacional → dispensa IRRF.';
                 } else {
                     document.getElementById('status-enquadramento').className = 'alert-box alert-normal';
                     document.getElementById('status-enquadramento').innerHTML = '<strong>Enquadramento:</strong> não optante Simples → avaliar retenção IRF.';
+                }
+
+                const autoPrint = document.getElementById('autoPrintSimples')?.checked;
+                if (autoPrint && (empresaSimplesNacional || empresaMEI)) {
+                    setTimeout(() => {
+                        window.print();
+                    }, 500);
                 }
 
                               document.getElementById('area-impressao').innerHTML = `
@@ -1436,8 +1689,8 @@ const sociedadeTemImpedimentos = isSociedade && sociedadePossuiImpedimentos();
                     <div class="rfb-box">
                         <div class="rfb-box-header">Situação Atual</div>
                         <div class="rfb-box-content">
-                            Situação no Simples Nacional: <span class="rfb-texto-verde">${empresaSimplesNacional ? 'OPTANTE pelo Simples Nacional' : 'NÃO optante pelo Simples Nacional'}</span><br>
-                            Situação no SIMEI: <span class="rfb-texto-verde">${empresaMEI ? 'OPTANTE pelo SIMEI' : 'NÃO enquadrado no SIMEI'}</span>
+                             Situação no Simples Nacional: <span class="rfb-texto-verde">${empresaSimplesNacional ? 'OPTANTE pelo Simples Nacional' : 'NÃO optante pelo Simples Nacional'}${empresaSimplesNacional && data.data_opcao_pelo_simples ? ' desde ' + data.data_opcao_pelo_simples.split('-').reverse().join('/') : ''}</span><br>
+                            Situação no SIMEI: <span class="rfb-texto-verde">${empresaMEI ? 'OPTANTE pelo SIMEI' : 'NÃO enquadrado no SIMEI'}${empresaMEI && data.data_opcao_pelo_mei ? ' desde ' + data.data_opcao_pelo_mei.split('-').reverse().join('/') : ''}</span>
                         </div>
                     </div>
 
@@ -2109,6 +2362,271 @@ function analisarDescricaoIRF() {
     }
 }
 
+
+function mostrarTela(tela) {
+    const telaConsulta = document.getElementById('tela-consulta');
+    const telaMateriais = document.getElementById('tela-materiais');
+
+    if (!telaConsulta || !telaMateriais) {
+        alert('As telas tela-consulta ou tela-materiais não foram encontradas no HTML.');
+        return;
+    }
+
+    telaConsulta.classList.remove('active');
+    telaMateriais.classList.remove('active');
+
+    if (tela === 'materiais') {
+        telaMateriais.classList.add('active');
+    } else {
+        telaConsulta.classList.add('active');
+    }
+}
+
+
+let fornecedoresMateriais = JSON.parse(localStorage.getItem('fornecedoresMateriais') || '[]');
+let ultimaNotaMateriais = JSON.parse(localStorage.getItem('ultimaNotaMateriais') || 'null');
+
+function atualizarTotalMateriais() {
+    const total = document.querySelectorAll('#materiaisTabelaBody tr').length;
+    document.getElementById('materiaisTotal').textContent = `TOTAL DE NF’s: ${total}`;
+}
+
+function aplicarMascaraData(input) {
+    input.addEventListener('input', function () {
+        let v = this.value.replace(/\D/g, '').slice(0, 8);
+        if (v.length > 4) {
+            this.value = v.replace(/(\d{2})(\d{2})(\d{1,4})/, '$1/$2/$3');
+        } else if (v.length > 2) {
+            this.value = v.replace(/(\d{2})(\d{1,2})/, '$1/$2');
+        } else {
+            this.value = v;
+        }
+    });
+}
+
+function formatarValorBR(valor) {
+    const numero = Number(valor || 0);
+    return numero.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function limparValorParaNumero(texto) {
+    if (!texto) return 0;
+    return Number(
+        texto.replace(/\./g, '').replace(',', '.').replace(/[^\d.-]/g, '')
+    ) || 0;
+}
+
+function aplicarMascaraValor(input) {
+    input.addEventListener('input', function () {
+        let v = this.value.replace(/\D/g, '');
+        if (!v) {
+            this.value = '';
+            return;
+        }
+        const numero = parseFloat(v) / 100;
+        this.value = numero.toLocaleString('pt-BR', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+    });
+
+    input.addEventListener('blur', function () {
+        if (!this.value.trim()) return;
+        const numero = limparValorParaNumero(this.value);
+        this.value = formatarValorBR(numero);
+    });
+}
+
+function salvarFornecedor(nome) {
+    nome = nome.trim();
+    if (!nome) return;
+    if (!fornecedoresMateriais.includes(nome)) {
+        fornecedoresMateriais.unshift(nome);
+        fornecedoresMateriais = fornecedoresMateriais.slice(0, 50);
+        localStorage.setItem('fornecedoresMateriais', JSON.stringify(fornecedoresMateriais));
+    }
+}
+
+function mostrarSugestoesFornecedor(texto) {
+    const box = document.getElementById('listaFornecedores');
+    const termo = texto.trim().toLowerCase();
+
+    if (!termo) {
+        box.style.display = 'none';
+        box.innerHTML = '';
+        return;
+    }
+
+    const encontrados = fornecedoresMateriais.filter(f =>
+        f.toLowerCase().includes(termo)
+    ).slice(0, 8);
+
+    if (!encontrados.length) {
+        box.style.display = 'none';
+        box.innerHTML = '';
+        return;
+    }
+
+    box.innerHTML = encontrados.map(nome => `
+        <div class="item-fornecedor" style="padding:8px 10px; cursor:pointer; border-bottom:1px solid #eef2f5;" onclick="selecionarFornecedorSugestao('${nome.replace(/'/g, "\\'")}')">
+            ${nome}
+        </div>
+    `).join('');
+
+    box.style.display = 'block';
+}
+
+function selecionarFornecedorSugestao(nome) {
+    document.getElementById('mcFornecedor').value = nome;
+    document.getElementById('listaFornecedores').style.display = 'none';
+}
+
+function capturarDadosFormularioMateriais() {
+    return {
+        dataEntrada: document.getElementById('mcDataEntrada').value.trim(),
+        dataEmissao: document.getElementById('mcDataEmissao').value.trim(),
+        fornecedor: document.getElementById('mcFornecedor').value.trim(),
+        valorNota: document.getElementById('mcValorNota').value.trim(),
+        empenho: document.getElementById('mcEmpenho').value.trim(),
+        notaFiscal: document.getElementById('mcNotaFiscal').value.trim()
+    };
+}
+
+function preencherFormularioMateriais(dados) {
+    if (!dados) return;
+    document.getElementById('mcDataEntrada').value = dados.dataEntrada || '';
+    document.getElementById('mcDataEmissao').value = dados.dataEmissao || '';
+    document.getElementById('mcFornecedor').value = dados.fornecedor || '';
+    document.getElementById('mcValorNota').value = dados.valorNota || '';
+    document.getElementById('mcEmpenho').value = dados.empenho || '';
+    document.getElementById('mcNotaFiscal').value = dados.notaFiscal || '';
+}
+
+function limparFormularioMateriais(manterUltimos = false) {
+    if (manterUltimos && ultimaNotaMateriais) {
+        document.getElementById('mcDataEntrada').value = ultimaNotaMateriais.dataEntrada || '';
+        document.getElementById('mcDataEmissao').value = ultimaNotaMateriais.dataEmissao || '';
+        document.getElementById('mcFornecedor').value = ultimaNotaMateriais.fornecedor || '';
+        document.getElementById('mcValorNota').value = ultimaNotaMateriais.valorNota || '';
+        document.getElementById('mcEmpenho').value = '';
+        document.getElementById('mcNotaFiscal').value = '';
+        document.getElementById('mcEmpenho').focus();
+        return;
+    }
+
+    document.getElementById('mcDataEntrada').value = '';
+    document.getElementById('mcDataEmissao').value = '';
+    document.getElementById('mcFornecedor').value = '';
+    document.getElementById('mcValorNota').value = '';
+    document.getElementById('mcEmpenho').value = '';
+    document.getElementById('mcNotaFiscal').value = '';
+}
+
+function adicionarLinhaMaterial() {
+    const dados = capturarDadosFormularioMateriais();
+
+    if (!dados.dataEntrada || !dados.dataEmissao || !dados.fornecedor || !dados.valorNota || !dados.empenho || !dados.notaFiscal) {
+        alert('Preencha todos os campos antes de adicionar a linha.');
+        return;
+    }
+
+    const tbody = document.getElementById('materiaisTabelaBody');
+    const tr = document.createElement('tr');
+
+    tr.innerHTML = `
+        <td>${dados.dataEntrada}</td>
+        <td>${dados.dataEmissao}</td>
+        <td class="col-fornecedor">${dados.fornecedor}</td>
+        <td>${dados.valorNota}</td>
+        <td>${dados.empenho}</td>
+        <td>${dados.notaFiscal}</td>
+        <td class="col-acoes">
+            <button type="button" class="btn-repetir-linha" onclick="repetirLinhaMaterial(this)">Repetir</button>
+        </td>
+    `;
+
+    tbody.appendChild(tr);
+
+    salvarFornecedor(dados.fornecedor);
+
+    ultimaNotaMateriais = {
+        dataEntrada: dados.dataEntrada,
+        dataEmissao: dados.dataEmissao,
+        fornecedor: dados.fornecedor,
+        valorNota: dados.valorNota,
+        empenho: dados.empenho,
+        notaFiscal: dados.notaFiscal
+    };
+
+    localStorage.setItem('ultimaNotaMateriais', JSON.stringify(ultimaNotaMateriais));
+
+    atualizarTotalMateriais();
+    limparFormularioMateriais(true);
+}
+
+function repetirLinhaMaterial(botao) {
+    const tr = botao.closest('tr');
+    if (!tr) return;
+
+    const tds = tr.querySelectorAll('td');
+    if (tds.length < 6) return;
+
+    preencherFormularioMateriais({
+        dataEntrada: tds[0].textContent.trim(),
+        dataEmissao: tds[1].textContent.trim(),
+        fornecedor: tds[2].textContent.trim(),
+        valorNota: tds[3].textContent.trim(),
+        empenho: '',
+        notaFiscal: ''
+    });
+
+    document.getElementById('mcEmpenho').focus();
+}
+
+function repetirUltimaNota() {
+    if (!ultimaNotaMateriais) {
+        alert('Ainda não há nota anterior para repetir.');
+        return;
+    }
+
+    preencherFormularioMateriais({
+        dataEntrada: ultimaNotaMateriais.dataEntrada,
+        dataEmissao: ultimaNotaMateriais.dataEmissao,
+        fornecedor: ultimaNotaMateriais.fornecedor,
+        valorNota: ultimaNotaMateriais.valorNota,
+        empenho: '',
+        notaFiscal: ''
+    });
+
+    document.getElementById('mcEmpenho').focus();
+}
+
+function limparTabelaMateriais() {
+    document.getElementById('materiaisTabelaBody').innerHTML = '';
+    atualizarTotalMateriais();
+}
+
+function iniciarMateriais() {
+    aplicarMascaraData(document.getElementById('mcDataEntrada'));
+    aplicarMascaraData(document.getElementById('mcDataEmissao'));
+    aplicarMascaraValor(document.getElementById('mcValorNota'));
+
+    const fornecedorInput = document.getElementById('mcFornecedor');
+    fornecedorInput.addEventListener('input', function () {
+        mostrarSugestoesFornecedor(this.value);
+    });
+
+    fornecedorInput.addEventListener('blur', function () {
+        setTimeout(() => {
+            document.getElementById('listaFornecedores').style.display = 'none';
+        }, 150);
+    });
+
+    atualizarTotalMateriais();
+}
+
+window.addEventListener('load', iniciarMateriais);
+
     </script>
 
    <script type="module">
@@ -2298,7 +2816,10 @@ function analisarDescricaoIRF() {
             bloquearSite();
         }
     });
-</script>
+
+                   
+
+      
 </script>
 </body>
 </html>

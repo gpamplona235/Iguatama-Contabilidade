@@ -93,7 +93,26 @@
             .panel { width: 100%; min-width: 100%; }
         }
 
+        /* ========================================================
+           NOVO ESTILO DE IMPRESSÃO - IDÊNTICO AO MODELO ENVIADO
+           ======================================================== */
+           @media print {
+  .col-acoes {
+        display: none !important;
+    }
+            
+    body { 
+        background: white; 
+        margin: 0; 
+        padding: 0; 
+        font-family: Arial, Helvetica, sans-serif; 
+        color: #555;
+        font-size: 19px;
+    }
 
+    .top-navbar, .panels-wrapper, .btn-primary, .btn-print { 
+        display: none !important; 
+    }
     
     #area-impressao { 
         display: block !important;
@@ -637,73 +656,32 @@
             }
         }
 
-/* ========================================================
-   BLOCOS DE IMPRESSÃO UNIFICADOS E CORRIGIDOS
-   ======================================================== */
-@media print {
-    /* 1. Esconde elementos globais da interface que nunca devem ser impressos */
-    .top-navbar, 
-    .btn-primary, 
-    .btn-print, 
-    .materiais-form, 
-    .materiais-acoes, 
-    .materiais-header,
-    .col-acoes { 
-        display: none !important; 
-    }
-    
-    body { 
-        background: white !important; 
-        margin: 0 !important; 
-        padding: 0 !important; 
-        font-family: Arial, Helvetica, sans-serif; 
-        color: #333;
-    }
+       @media print {
+            /* Garante que apenas a tela selecionada no menu seja impressa */
+            .screen-section:not(.active) {
+                display: none !important;
+            }
 
-    /* 2. REGRA PARA QUANDO FOR IMPRIMIR A TELA DE CONSULTA 
-          (Se a tela de consulta estiver ativa, esconde a de materiais) */
-    #tela-consulta.active {
-        display: block !important;
-    }
-    #tela-consulta.active ~ #tela-materiais,
-    #tela-consulta:not(.active) {
-        display: none !important;
-    }
+            /* Oculta elementos que não devem aparecer na impressão */
+            .top-navbar,
+            .materiais-form,
+            .materiais-acoes,
+            .materiais-header {
+                display: none !important;
+            }
 
-    /* Configurações específicas da área interna de impressão da consulta */
-    #tela-consulta.active #area-impressao { 
-        display: block !important;
-        width: calc(100% - 2px);
-        max-width: none;
-        margin: 0 1px;
-        padding-top: 6px;
-    }
-    #tela-consulta.active .panels-wrapper {
-        display: none !important; /* Esconde os painéis interativos na impressão */
-    }
-
-    /* 3. REGRA PARA QUANDO FOR IMPRIMIR A TELA DE MATERIAIS 
-          (Se a tela de materiais estiver ativa, garante que ela ocupe a página toda) */
-    #tela-materiais.active {
-        display: block !important;
-    }
-    #tela-materiais.active ~ #tela-consulta,
-    #tela-materiais:not(.active) {
-        display: none !important;
-    }
-
-    #tela-materiais.active .materiais-wrapper,
-    #tela-materiais.active .materiais-panel,
-    #tela-materials.active .materiais-body,
-    #tela-materiais.active .materiais-folha {
-        width: 100% !important;
-        max-width: 100% !important;
-        margin: 0 !important;
-        border: none !important;
-        box-shadow: none !important;
-        padding: 0 !important;
-    }
-}
+            /* Formatação da folha de Materiais de Consumo */
+            .materiais-wrapper,
+            .materiais-panel,
+            .materiais-body,
+            .materiais-folha {
+                width: 100% !important;
+                max-width: 100% !important;
+                margin: 0 !important;
+                border: none !important;
+                box-shadow: none !important;
+                padding: 0 !important;
+            }
 
             body {
                 background: #fff !important;
@@ -728,9 +706,95 @@
     font-weight: bold;
 }
 
+.btn-editar-linha {
+    padding: 6px 10px;
+    background-color: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeeba;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: bold;
+    margin-left: 4px;
+}
+
+.btn-editar-linha:hover {
+    background-color: #ffe8a1;
+}
+
+.btn-excluir-linha {
+    padding: 6px 10px;
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: bold;
+    margin-left: 4px;
+}
+
+.btn-excluir-linha:hover {
+    background-color: #f1b0b7;
+}
+
 .btn-repetir-linha:hover {
     background-color: #dde6ee;
 }
+
+
+/* Modal Estilizado para o Sistema */
+.modal-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(15, 59, 94, 0.4); /* Azul do site, mas meio transparente */
+    z-index: 9999; display: flex; align-items: center; justify-content: center;
+}
+
+.modal-panel {
+    background-color: #ffffff;
+    border: 1px solid #bac5d0; /* Mesma borda dos seus inputs */
+    border-radius: 5px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    width: 380px;
+    overflow: hidden;
+}
+
+.modal-header-custom {
+    background-color: #0f3b5e; /* Azul idêntico à sua top-navbar */
+    color: #ffffff;
+    padding: 12px 20px;
+}
+
+.modal-body-custom {
+    padding: 20px;
+    color: #333;
+    font-size: 15px;
+}
+
+.modal-footer-custom {
+    padding: 12px 20px;
+    background-color: #f4f6f8; /* Mesmo fundo do body do seu site */
+    border-top: 1px solid #bac5d0;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.btn-cancelar-modal {
+    padding: 8px 15px; background-color: #ffffff; color: #0f3b5e; 
+    border: 1px solid #bac5d0; border-radius: 3px;
+    cursor: pointer; font-size: 13px; font-weight: bold;
+}
+
+.btn-cancelar-modal:hover { background-color: #eef2f6; }
+
+.btn-excluir-modal {
+    padding: 8px 15px; background-color: #d9534f; color: white; 
+    border: 1px solid #c9302c; border-radius: 3px;
+    cursor: pointer; font-size: 13px; font-weight: bold;
+}
+
+.btn-excluir-modal:hover { background-color: #c9302c; }
     </style>
 </head>
 <body>
@@ -794,22 +858,23 @@
 
     <div id="siteContent" class="site-content locked">
     <div class="top-navbar">
-        <div style="display: flex; flex-direction: column; gap: 4px;">
-            <h1>SISTEMA DE CONSULTA FISCAL E RETENÇÕES - IGUATAMA</h1>
-        </div>
+    <div style="display: flex; flex-direction: column; gap: 4px;">
+        <h1>SISTEMA DE CONSULTA FISCAL E RETENÇÕES - IGUATAMA</h1>
+    </div>
 
-        <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-            <span id="navSubtitle">Prefeitura Municipal de Iguatama - MG</span>
+    <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+        <span id="navSubtitle">Prefeitura Municipal de Iguatama - MG</span>
 
-            <button type="button" class="btn-primary" onclick="mostrarTela('consulta')" style="width: auto; padding: 8px 14px;">Consulta Fiscal</button>
-            <button type="button" class="btn-primary" onclick="mostrarTela('materiais')" style="width: auto; padding: 8px 14px;">Notas de Consumo</button>
+        <button type="button" class="btn-primary" onclick="mostrarTela('consulta')" style="width: auto; padding: 8px 14px;">Consulta Fiscal</button>
+        <button type="button" class="btn-primary" onclick="mostrarTela('materiais')" style="width: auto; padding: 8px 14px;">Notas de Consumo</button>
+        <button type="button" class="btn-primary" onclick="mostrarTela('fornecedores'); if(window.carregarFornecedoresNuvem) window.carregarFornecedoresNuvem();" style="width: auto; padding: 8px 14px;">Cadastro &gt; Fornecedores</button>
 
-            <div class="user-bar" id="userBar">
-                <span class="user-email" id="userEmail"></span>
-                <button type="button" class="logout-btn" id="logoutBtn">Sair</button>
-            </div>
+        <div class="user-bar" id="userBar">
+            <span class="user-email" id="userEmail"></span>
+            <button type="button" class="logout-btn" id="logoutBtn">Sair</button>
         </div>
     </div>
+</div>
 
     <div id="tela-consulta" class="screen-section active">
         <div class="panels-wrapper">
@@ -1159,6 +1224,32 @@
                 </div>
             </div>
         </div>
+    </div>
+</div>
+
+
+<!-- NOVA TELA DE FORNECEDORES -->
+<div id="tela-fornecedores" class="screen-section">
+    <div style="max-width: 1200px; margin: 30px auto; background: #fff; padding: 25px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border: 1px solid #bac5d0;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #bac5d0; padding-bottom: 10px; margin-bottom: 20px;">
+            <h2 style="color: #0f3b5e; margin: 0;">Fornecedores Salvos na Nuvem (Firebase)</h2>
+            <button class="btn-primary" onclick="window.carregarFornecedoresNuvem()" style="width: auto;">Atualizar Tabela</button>
+        </div>
+        
+        <table style="width: 100%; border-collapse: collapse; text-align: left;">
+            <thead>
+                <tr style="background-color: #0f3b5e; color: white;">
+                    <th style="padding: 12px; border: 1px solid #bac5d0;">CNPJ</th>
+                    <th style="padding: 12px; border: 1px solid #bac5d0;">Razão Social</th>
+                    <th style="padding: 12px; border: 1px solid #bac5d0;">Nome Fantasia</th>
+                    <th style="padding: 12px; border: 1px solid #bac5d0;">Município/UF</th>
+                    <th style="padding: 12px; border: 1px solid #bac5d0;">Última Consulta</th>
+                </tr>
+            </thead>
+            <tbody id="tabela-fornecedores-nuvem">
+                <tr><td colspan="5" style="text-align: center; padding: 20px;">Clique em "Atualizar Tabela" para carregar os dados.</td></tr>
+            </tbody>
+        </table>
     </div>
 </div>
 
@@ -1676,6 +1767,18 @@ const sociedadeTemImpedimentos = isSociedade && sociedadePossuiImpedimentos();
                         <tr><th>MEI</th><td><span class="status-label ${classMEI}">${empresaMEI ? 'OPTANTE' : 'NÃO OPTANTE'}</span></td>
                     </tbody>
                 `;
+
+                                // ---- INÍCIO DO ENVIO PARA A NUVEM ----
+                if (window.salvarFornecedorNuvem) {
+                    window.salvarFornecedorNuvem(
+                        cnpj, 
+                        data.razao_social || 'Não informado', 
+                        data.nome_fantasia || 'Não informado', 
+                        data.municipio || 'Não informado', 
+                        data.uf || 'Não informado'
+                    );
+                }
+                // ---- FIM DO ENVIO PARA A NUVEM ----
 
                                 document.getElementById('result').style.display = 'block';
                 document.getElementById('btnImprimir').style.display = 'block';
@@ -2390,22 +2493,25 @@ function analisarDescricaoIRF() {
 function mostrarTela(tela) {
     const telaConsulta = document.getElementById('tela-consulta');
     const telaMateriais = document.getElementById('tela-materiais');
+    const telaFornecedores = document.getElementById('tela-fornecedores');
 
-    if (!telaConsulta || !telaMateriais) {
-        alert('As telas tela-consulta ou tela-materiais não foram encontradas no HTML.');
+    if (!telaConsulta || !telaMateriais || !telaFornecedores) {
+        alert('Uma das telas do sistema não foi encontrada no HTML.');
         return;
     }
 
     telaConsulta.classList.remove('active');
     telaMateriais.classList.remove('active');
+    telaFornecedores.classList.remove('active');
 
     if (tela === 'materiais') {
         telaMateriais.classList.add('active');
+    } else if (tela === 'fornecedores') {
+        telaFornecedores.classList.add('active');
     } else {
         telaConsulta.classList.add('active');
     }
 }
-
 
 let fornecedoresMateriais = JSON.parse(localStorage.getItem('fornecedoresMateriais') || '[]');
 let ultimaNotaMateriais = JSON.parse(localStorage.getItem('ultimaNotaMateriais') || 'null');
@@ -2557,15 +2663,17 @@ function adicionarLinhaMaterial() {
     const tbody = document.getElementById('materiaisTabelaBody');
     const tr = document.createElement('tr');
 
-    tr.innerHTML = `
+              tr.innerHTML = `
         <td>${dados.dataEntrada}</td>
         <td>${dados.dataEmissao}</td>
         <td class="col-fornecedor">${dados.fornecedor}</td>
         <td>${dados.valorNota}</td>
         <td>${dados.empenho}</td>
         <td>${dados.notaFiscal}</td>
-        <td class="col-acoes">
+        <td class="col-acoes" style="white-space: nowrap;">
             <button type="button" class="btn-repetir-linha" onclick="repetirLinhaMaterial(this)">Repetir</button>
+            <button type="button" class="btn-editar-linha" onclick="editarLinhaMaterial(this)">Editar</button>
+            <button type="button" class="btn-excluir-linha" onclick="prepararExclusaoLinha(this)">Excluir</button>
         </td>
     `;
 
@@ -2586,6 +2694,50 @@ function adicionarLinhaMaterial() {
 
     atualizarTotalMateriais();
     limparFormularioMateriais(true);
+}
+
+function editarLinhaMaterial(botao) {
+    const tr = botao.closest('tr');
+    if (!tr) return;
+
+    const tds = tr.querySelectorAll('td');
+    if (tds.length < 6) return;
+
+    // Preenche o formulário com os dados da linha selecionada
+    preencherFormularioMateriais({
+        dataEntrada: tds[0].textContent.trim(),
+        dataEmissao: tds[1].textContent.trim(),
+        fornecedor: tds[2].textContent.trim(),
+        valorNota: tds[3].textContent.trim(),
+        empenho: tds[4].textContent.trim(),
+        notaFiscal: tds[5].textContent.trim()
+    });
+
+    // Remove a linha atual, pois ela será readicionada após o usuário consertar e clicar em "Adicionar"
+    tr.remove();
+    atualizarTotalMateriais();
+}
+
+let linhaParaExcluir = null;
+
+function prepararExclusaoLinha(botao) {
+    // Guarda a linha e abre o modal com o estilo do site
+    linhaParaExcluir = botao.closest('tr');
+    document.getElementById('modalConfirmacao').style.display = 'flex';
+    
+    // Configura o clique do botão "Excluir" dentro do Modal
+    document.getElementById('btnConfirmarExclusao').onclick = function() {
+        if (linhaParaExcluir) {
+            linhaParaExcluir.remove();
+            atualizarTotalMateriais();
+        }
+        fecharModalExclusao();
+    };
+}
+
+function fecharModalExclusao() {
+    document.getElementById('modalConfirmacao').style.display = 'none';
+    linhaParaExcluir = null;
 }
 
 function repetirLinhaMaterial(botao) {
@@ -2653,7 +2805,7 @@ window.addEventListener('load', iniciarMateriais);
 
     </script>
 
-   <script type="module">
+ <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import {
         getAuth,
@@ -2664,6 +2816,14 @@ window.addEventListener('load', iniciarMateriais);
         signOut,
         updateProfile
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+    import {
+        getFirestore,
+        doc,
+        setDoc,
+        getDocs,
+        collection
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyB09-qIkz483j429m6QsBFzSjmThdO5ST8",
@@ -2677,6 +2837,7 @@ window.addEventListener('load', iniciarMateriais);
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
+    const db = getFirestore(app);
 
     const authOverlay = document.getElementById('authOverlay');
     const siteContent = document.getElementById('siteContent');
@@ -2701,6 +2862,69 @@ window.addEventListener('load', iniciarMateriais);
     const userBar = document.getElementById('userBar');
     const userEmail = document.getElementById('userEmail');
     const navSubtitle = document.getElementById('navSubtitle');
+
+        window.salvarFornecedorNuvem = async function(cnpj, razaoSocial, nomeFantasia, municipio, uf) {
+        if (!auth.currentUser) {
+            console.warn("Usuário não está logado.");
+            return;
+        }
+
+        try {
+            await setDoc(doc(db, "Fornecedores", cnpj), {
+                cnpj: cnpj,
+                razaoSocial: razaoSocial,
+                nomeFantasia: nomeFantasia,
+                municipio: municipio,
+                uf: uf,
+                dataAtualizacao: new Date().toISOString()
+            });
+            console.log("Fornecedor salvo com sucesso no Firebase.");
+        } catch (erro) {
+            console.error("Erro ao salvar fornecedor:", erro);
+        }
+    };
+
+    window.carregarFornecedoresNuvem = async function() {
+        if (!auth.currentUser) {
+            console.warn("Usuário não está logado.");
+            return;
+        }
+
+        const tbody = document.getElementById('tabela-fornecedores-nuvem');
+        if (!tbody) return;
+
+        tbody.innerHTML = '<tr><td colspan=\"5\" style=\"padding: 16px; text-align: center;\">Carregando fornecedores...</td></tr>';
+
+        try {
+            const snapshot = await getDocs(collection(db, "Fornecedores"));
+
+            if (snapshot.empty) {
+                tbody.innerHTML = '<tr><td colspan=\"5\" style=\"padding: 16px; text-align: center;\">Nenhum fornecedor cadastrado.</td></tr>';
+                return;
+            }
+
+            let html = '';
+
+            snapshot.forEach((docItem) => {
+                const f = docItem.data();
+
+                html += `
+                    <tr>
+                        <td>${f.cnpj || ''}</td>
+                        <td>${f.razaoSocial || ''}</td>
+                        <td>${f.nomeFantasia || ''}</td>
+                        <td>${f.municipio || ''}/${f.uf || ''}</td>
+                        <td>${f.dataAtualizacao || ''}</td>
+                    </tr>
+                `;
+            });
+
+            tbody.innerHTML = html;
+        } catch (erro) {
+            console.error("Erro ao carregar fornecedores:", erro);
+            tbody.innerHTML = '<tr><td colspan=\"5\" style=\"padding: 16px; text-align: center; color: red;\">Erro ao carregar fornecedores.</td></tr>';
+        }
+    };
 
     function mostrarMensagem(texto, tipo = 'error') {
         authMessage.textContent = texto;
@@ -2842,8 +3066,42 @@ window.addEventListener('load', iniciarMateriais);
     });
 
                    
-
+    // === CÓDIGO NOVO PARA SALVAR NA NUVEM ===
+    window.salvarFornecedorNuvem = async function(cnpj, razaoSocial, nomeFantasia, municipio, uf) {
+        if (!db) return;
+        try {
+            // Salva os dados no banco usando o CNPJ como documento
+            await setDoc(doc(db, "Fornecedores", cnpj), {
+                cnpj: cnpj,
+                razaoSocial: razaoSocial,
+                nomeFantasia: nomeFantasia,
+                municipio: municipio,
+                uf: uf,
+                dataAtualizacao: new Date().toLocaleDateString('pt-BR')
+            });
+            console.log("Salvo na nuvem com sucesso!");
+        } catch (e) {
+            console.error("Erro ao salvar: ", e);
+        }
+    };
       
 </script>
+
+<!-- Modal de Confirmação com o Estilo do Sistema -->
+<div id="modalConfirmacao" class="modal-overlay" style="display: none;">
+    <div class="modal-panel">
+        <div class="modal-header-custom">
+            <h3 style="margin: 0; font-size: 16px;">Atenção</h3>
+        </div>
+        <div class="modal-body-custom">
+            <p>Tem certeza que deseja excluir esta nota da tabela?</p>
+        </div>
+        <div class="modal-footer-custom">
+            <button class="btn-cancelar-modal" onclick="fecharModalExclusao()">Cancelar</button>
+            <button class="btn-excluir-modal" id="btnConfirmarExclusao">Excluir</button>
+        </div>
+    </div>
+</div>
+</div>
 </body>
 </html>

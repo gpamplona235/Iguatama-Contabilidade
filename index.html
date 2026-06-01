@@ -98,117 +98,129 @@
            ======================================================== */
            @media print {
   .col-acoes {
-        display: none !important;
-    }
-            
-    body { 
-        background: white; 
-        margin: 0; 
-        padding: 0; 
-        font-family: Arial, Helvetica, sans-serif; 
-        color: #555;
-        font-size: 19px;
-    }
+    display: none !important;
+  }
 
-    .top-navbar, .panels-wrapper, .btn-primary, .btn-print { 
-        display: none !important; 
-    }
-    
-    #area-impressao { 
-        display: block !important;
-        width: calc(100% - 2px);
-        max-width: none;
-        margin: 0 1px;
-        padding-top: 6px;
-    }
+  body {
+    background: white;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    color: #555;
+    font-size: 19px;
+  }
 
-    .rfb-data { 
-        font-size: 17px;
-        color: #333;
-        margin-bottom: 12px;
-        line-height: 1.35;
-    }
+  .top-navbar,
+  .panels-wrapper,
+  .btn-primary,
+  .btn-print,
+  .bottom-sheet-overlay,
+  #bottomSheetOverlay,
+  .bottom-sheet,
+  #bottomSheet,
+  .bottom-sheet-handle,
+  .bottom-sheet-header,
+  .bottom-sheet-body,
+  .bottom-sheet-close {
+    display: none !important;
+    visibility: hidden !important;
+  }
 
-    .rfb-box { 
-        border: 1px solid #e4e4e4;
-        margin-bottom: 18px;
-        page-break-inside: avoid;
-        border-radius: 4px;
-    }
+  #area-impressao {
+    display: block !important;
+    width: calc(100% - 2px);
+    max-width: none;
+    margin: 0 1px;
+    padding-top: 6px;
+  }
 
-    .rfb-box-header { 
-        background-color: #dcedc8 !important;
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-        color: #6f8f59;
-        padding: 11px 17px;
-        font-size: 16px;
-        line-height: 1.25;
-        border-bottom: 1px solid #e1edd6;
-        border-top-left-radius: 3px;
-        border-top-right-radius: 3px;
-        font-weight: normal;
-    }
+  .rfb-data {
+    font-size: 17px;
+    color: #333;
+    margin-bottom: 12px;
+    line-height: 1.35;
+  }
 
-    .rfb-box-content { 
-        padding: 19px 17px 18px 17px;
-        line-height: 1.62;
-        font-size: 15px;
-        color: #555;
-    }
+  .rfb-box {
+    border: 1px solid #e4e4e4;
+    margin-bottom: 18px;
+    page-break-inside: avoid;
+    border-radius: 4px;
+  }
 
-    .rfb-aviso { 
-        font-size: 13px;
-        color: #777;
-        margin: 2px 0 14px 0;
-        line-height: 1.35;
-    }
+  .rfb-box-header {
+    background-color: #dcedc8 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    color: #6f8f59;
+    padding: 11px 17px;
+    font-size: 16px;
+    line-height: 1.25;
+    border-bottom: 1px solid #e1edd6;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+    font-weight: normal;
+  }
 
-    .rfb-texto-verde { 
-        color: #0c6b2f !important;
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-        font-weight: 700;
-    }
+  .rfb-box-content {
+    padding: 19px 17px 18px 17px;
+    line-height: 1.62;
+    font-size: 15px;
+    color: #555;
+  }
 
-    .rfb-btn-maisinfo {
-        display: inline-block;
-        background-color: #dcedc8 !important;
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-        color: #558b2f;
-        padding: 8px 15px;
-        font-size: 15px;
-        border: 1px solid #c5e1a5;
-        margin-bottom: 18px;
-        border-radius: 4px;
-        line-height: 1.2;
-    }
+  .rfb-aviso {
+    font-size: 13px;
+    color: #777;
+    margin: 2px 0 14px 0;
+    line-height: 1.35;
+  }
 
-    .rfb-btn-maisinfo strong {
-        font-size: 18px;
-        font-weight: bold;
-        margin-right: 4px;
-        color: #33691e;
-    }
+  .rfb-texto-verde {
+    color: #0c6b2f !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    font-weight: 700;
+  }
 
-    .rfb-botoes-acao {
-        display: flex;
-        gap: 6px;
-        margin-top: 2px;
-    }
+  .rfb-btn-maisinfo {
+    display: inline-block;
+    background-color: #dcedc8 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    color: #558b2f;
+    padding: 8px 15px;
+    font-size: 15px;
+    border: 1px solid #c5e1a5;
+    margin-bottom: 18px;
+    border-radius: 4px;
+    line-height: 1.2;
+  }
 
-    .rfb-btn-acao {
-        background-color: #6ea12d !important;
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-        color: white !important;
-        padding: 10px 16px;
-        font-size: 15px;
-        line-height: 1.2;
-        border: none;
-        border-radius: 3px;
-    }
+  .rfb-btn-maisinfo strong {
+    font-size: 18px;
+    font-weight: bold;
+    margin-right: 4px;
+    color: #33691e;
+  }
+
+  .rfb-botoes-acao {
+    display: flex;
+    gap: 6px;
+    margin-top: 2px;
+  }
+
+  .rfb-btn-acao {
+    background-color: #6ea12d !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    color: white !important;
+    padding: 10px 16px;
+    font-size: 15px;
+    line-height: 1.2;
+    border: none;
+    border-radius: 3px;
+  }
 }
 
 #painel-issqn .checkbox-group {
@@ -576,11 +588,29 @@
         }
 
         .materiais-form {
-            display: grid;
-            grid-template-columns: 160px 160px 1.6fr 140px 140px 160px;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
+    display: grid;
+    grid-template-columns: 150px 150px 1.6fr 160px 140px 160px;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+@media (max-width: 1300px) {
+    .materiais-form {
+        grid-template-columns: repeat(3, minmax(220px, 1fr));
+    }
+}
+
+@media (max-width: 1100px) {
+    .materiais-form {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 640px) {
+    .materiais-form {
+        grid-template-columns: 1fr;
+    }
+}
 
         .materiais-acoes {
             display: flex;
@@ -795,6 +825,390 @@
 }
 
 .btn-excluir-modal:hover { background-color: #c9302c; }
+
+.menu-dropdown-cadastro {
+    position: relative;
+    display: inline-block;
+}
+
+.btn-dropdown-cadastro {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.submenu-dropdown-cadastro {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    min-width: 180px;
+    background: #ffffff;
+    border: 1px solid #bac5d0;
+    border-top: none;
+    border-radius: 0 0 6px 6px;
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.10);
+    overflow: hidden;
+    z-index: 1000;
+}
+
+.submenu-dropdown-cadastro button {
+    width: 100%;
+    text-align: left;
+    padding: 10px 14px;
+    background: #ffffff;
+    border: none;
+    color: #0f3b5e;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.submenu-dropdown-cadastro button:hover {
+    background: #eef3f7;
+}
+
+.menu-dropdown-cadastro:hover .submenu-dropdown-cadastro {
+    display: block;
+}
+
+.tabela-empenhos-resumida th,
+.tabela-empenhos-resumida td {
+    padding: 8px 10px;
+    font-size: 12.5px;
+    line-height: 1.3;
+    vertical-align: middle;
+}
+
+.tabela-empenhos-resumida td:nth-child(1),
+.tabela-empenhos-resumida td:nth-child(2),
+.tabela-empenhos-resumida td:nth-child(4),
+.tabela-empenhos-resumida td:nth-child(5) {
+    white-space: nowrap;
+}
+
+.tabela-empenhos-resumida td:nth-child(3) {
+    white-space: normal;
+    word-break: break-word;
+}
+
+.tabela-empenhos-resumida .acoes-empenho {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.tabela-empenhos-resumida .acoes-empenho .btn-primary {
+    padding: 5px 10px;
+    font-size: 12px;
+}
+
+.col-retencao {
+    display: none;
+}
+
+body.print-retencao .col-retencao {
+    display: table-cell !important;
+}
+
+.materiais-totais-print {
+    display: flex;
+    align-items: stretch;
+    margin-top: 0;
+    width: 520px;
+}
+
+.materiais-total-box {
+    border: 1px solid #222;
+    border-top: none;
+    padding: 8px 10px;
+    font-weight: bold;
+    font-size: 15px;
+    text-align: center;
+    box-sizing: border-box;
+    min-height: 54px;
+    line-height: 1.25;
+}
+
+.materiais-total-box.box-principal {
+    width: 260px;
+}
+
+.materiais-total-box.box-retencao {
+    width: 260px;
+    margin-left: -1px;
+}
+
+
+.bottom-sheet-overlay {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: block;
+  background: transparent;
+  z-index: 9998;
+  pointer-events: none;
+}
+
+.bottom-sheet {
+  width: min(720px, calc(100% - 18px));
+  margin: 0 auto;
+  background: #ffffff;
+  border: 1px solid #bac5d0;
+  border-bottom: none;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+  box-shadow: 0 -3px 12px rgba(0, 0, 0, 0.10);
+  transform: translateY(calc(100% - 46px));
+  transition: transform 0.22s ease;
+  overflow: hidden;
+  pointer-events: auto;
+}
+
+.bottom-sheet.active {
+  transform: translateY(0);
+}
+
+.bottom-sheet-handle {
+  height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #eef3f7;
+  border-bottom: 1px solid #bac5d0;
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+}
+
+.bottom-sheet-handle::before {
+  content: "";
+  width: 42px;
+  height: 4px;
+  background: #8fa1b2;
+  border-radius: 2px;
+  margin-right: 10px;
+}
+
+.bottom-sheet-handle::after {
+  content: "Resumo Fiscal";
+  font-size: 12px;
+  font-weight: bold;
+  color: #0f3b5e;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+.bottom-sheet-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-bottom: 1px solid #dce4ec;
+  background: #fbfcfd;
+}
+
+.bottom-sheet-header h3 {
+  margin: 0;
+  font-size: 14px;
+  color: #2c3e50;
+  text-transform: uppercase;
+}
+
+.bottom-sheet-header p {
+  margin: 3px 0 0 0;
+  font-size: 11px;
+  color: #6c757d;
+  line-height: 1.35;
+}
+
+.bottom-sheet-close {
+  border: 1px solid #bac5d0;
+  background: #ffffff;
+  color: #0f3b5e;
+  border-radius: 3px;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.bottom-sheet-close:hover {
+  background: #eef3f7;
+}
+
+.bottom-sheet-body {
+  padding: 14px;
+  max-height: 58vh;
+  overflow-y: auto;
+  background: #f9fbfc;
+}
+
+.bs-topbar {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.bs-total-box,
+.bs-liquido-box {
+  background: #ffffff;
+  border: 1px solid #cfd7df;
+  border-radius: 3px;
+  padding: 10px 12px;
+}
+
+.bs-label {
+  font-size: 11px;
+  font-weight: bold;
+  color: #495057;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.bs-total,
+.bs-liquido {
+  font-size: 24px;
+  font-weight: bold;
+  line-height: 1.1;
+}
+
+.bs-total {
+  color: #0f3b5e;
+}
+
+.bs-liquido {
+  color: #1e4620;
+}
+
+.bs-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.bs-card {
+  background: #ffffff;
+  border: 1px solid #cfd7df;
+  border-radius: 3px;
+}
+
+.bs-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  background: #f2f6f9;
+  border-bottom: 1px solid #dce4ec;
+}
+
+.bs-tag {
+  background: #e9eef3;
+  color: #0f3b5e;
+  border: 1px solid #c9d4dd;
+  border-radius: 2px;
+  padding: 3px 7px;
+  font-size: 10px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.bs-card-header strong {
+  font-size: 11px;
+  color: #5a6774;
+}
+
+.bs-card-content {
+  padding: 10px;
+}
+
+.bs-card-value {
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 6px;
+}
+
+.bs-card-value.valor-positivo {
+  color: #a50e0e;
+}
+
+.bs-card-value.valor-zero {
+  color: #1e4620;
+}
+
+.bs-card-text {
+  font-size: 12px;
+  color: #333;
+  line-height: 1.45;
+  margin-bottom: 6px;
+}
+
+.bs-card-detail {
+  font-size: 11px;
+  color: #666;
+  line-height: 1.45;
+}
+
+.bs-cupom {
+  background: #ffffff;
+  border: 1px dashed #bac5d0;
+  border-radius: 3px;
+  padding: 10px 12px;
+}
+
+.bs-cupom-title {
+  font-size: 12px;
+  font-weight: bold;
+  color: #2c3e50;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.bs-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 7px 0;
+  border-bottom: 1px dashed #dce4ec;
+  font-size: 12px;
+  color: #333;
+}
+
+.bs-row:last-child {
+  border-bottom: none;
+}
+
+.bs-row-total {
+  font-size: 14px;
+  font-weight: bold;
+  color: #0f3b5e;
+}
+
+@media (max-width: 768px) {
+  .bottom-sheet {
+    width: calc(100% - 8px);
+    transform: translateY(calc(100% - 42px));
+  }
+
+  .bottom-sheet-handle {
+    height: 42px;
+  }
+
+  .bs-topbar,
+  .bs-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .bottom-sheet-body {
+    padding: 10px;
+    max-height: 62vh;
+  }
+}
+
     </style>
 </head>
 <body>
@@ -863,17 +1277,36 @@
     </div>
 
     <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-        <span id="navSubtitle">Prefeitura Municipal de Iguatama - MG</span>
+    <span id="navSubtitle">Prefeitura Municipal de Iguatama - MG</span>
 
-        <button type="button" class="btn-primary" onclick="mostrarTela('consulta')" style="width: auto; padding: 8px 14px;">Consulta Fiscal</button>
-        <button type="button" class="btn-primary" onclick="mostrarTela('materiais')" style="width: auto; padding: 8px 14px;">Notas de Consumo</button>
-        <button type="button" class="btn-primary" onclick="mostrarTela('fornecedores'); if(window.carregarFornecedoresNuvem) window.carregarFornecedoresNuvem();" style="width: auto; padding: 8px 14px;">Cadastro &gt; Fornecedores</button>
+    <button type="button" class="btn-primary" onclick="mostrarTela('consulta')" style="width: auto; padding: 8px 14px;">
+        Consulta Fiscal
+    </button>
 
-        <div class="user-bar" id="userBar">
-            <span class="user-email" id="userEmail"></span>
-            <button type="button" class="logout-btn" id="logoutBtn">Sair</button>
-        </div>
+    <button type="button" class="btn-primary" onclick="mostrarTela('materiais')" style="width: auto; padding: 8px 14px;">
+        Notas de Consumo
+    </button>
+
+    <div class="menu-dropdown-cadastro">
+        <button type="button" class="btn-primary btn-dropdown-cadastro" style="width: auto; padding: 8px 14px;">
+            Cadastro ▾
+        </button>
+
+        <div class="submenu-dropdown-cadastro">
+    <button type="button" onclick="mostrarTela('fornecedores'); if(window.carregarFornecedoresNuvem) window.carregarFornecedoresNuvem(true);">
+        Fornecedores
+    </button>
+    <button type="button" onclick="mostrarTela('empenhos'); if(window.carregarEmpenhosNuvem) window.carregarEmpenhosNuvem(true);">
+        Empenhos
+    </button>
+</div>
     </div>
+
+    <div class="user-bar" id="userBar">
+        <span class="user-email" id="userEmail"></span>
+        <button type="button" class="logout-btn" id="logoutBtn">Sair</button>
+    </div>
+</div>
 </div>
 
     <div id="tela-consulta" class="screen-section active">
@@ -891,18 +1324,35 @@
                 </div>
 
                 <div class="panel-body">
-                    <div class="search-form">
-                        <input type="text" id="cnpjInput" placeholder="Digite o CNPJ" maxlength="18">
-                        <button class="btn-primary" onclick="consultarCNPJ()" style="width: auto;">Buscar</button>
-                    </div>
+    <div style="display: flex; flex-direction: column; gap: 16px;">
+        <div style="background: #f8fafc; border: 1px solid #d7e0e8; border-radius: 8px; padding: 16px;">
 
-                    <div class="loading" id="loading">Consultando base de dados...</div>
+            <div class="search-form" style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                <input type="text" id="cnpjInput" placeholder="Digite o CNPJ" maxlength="18" style="flex: 1; min-width: 220px;">
+                <button class="btn-primary" onclick="consultarCNPJ()" style="width: auto; padding: 10px 18px;">
+                    Buscar
+                </button>
+            </div>
+        </div>
 
-                    <div class="result-container" id="result">
-                        <table class="data-table" id="tabela-dados"></table>
-                        <button id="btnImprimir" class="btn-print" onclick="window.print()" style="display: none;">Imprimir Comprovante</button>
-                    </div>
+        <div class="loading" id="loading" style="display: none;">
+            Consultando base de dados...
+        </div>
+
+        <div class="result-container" id="result" style="display: none;">
+            <div style="background: #ffffff; border: 1px solid #d7e0e8; border-radius: 8px; padding: 16px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 1px;">
+
                 </div>
+
+                <table class="data-table" id="tabela-dados"></table>
+                                    <button id="btnImprimir" class="btn-print" onclick="window.print()" style="display: none;">
+                        Imprimir Comprovante
+                    </button>
+            </div>
+        </div>
+    </div>
+</div>
             </div>
 
             <!-- COLUNA 2 E COLUNA 3 CONTINUAM AQUI -->
@@ -1002,14 +1452,14 @@
 </div>
 
 <div class="checkbox-group">
-    <input type="checkbox" id="regime-simples" disabled>
-    <label for="regime-simples">
-        Optante pelo Simples Nacional - identificado via CNPJ
-        <br>
-        <span style="color:#666; font-weight:normal;">
-            (o enquadramento no Simples não gera dispensa automática de retenção neste sistema)
-        </span>
-    </label>
+  <input type="checkbox" id="regime-simples" disabled>
+  <label for="regime-simples">
+    Optante pelo Simples Nacional - identificado via CNPJ
+    <br>
+    <span style="color:#666; font-weight:normal">
+      nesta rotina, o optante pelo Simples Nacional não sofre retenção de ISS
+    </span>
+  </label>
 </div>
 
 <div class="checkbox-group">
@@ -1170,6 +1620,87 @@
         </div>
     </div>
 
+
+    <div id="bottomSheetOverlay" class="bottom-sheet-overlay" onclick="fecharBottomSheet(event)">
+  <div id="bottomSheet" class="bottom-sheet" onclick="event.stopPropagation()">
+    <div class="bottom-sheet-handle"></div>
+
+    <div class="bottom-sheet-header">
+      <div>
+        <h3>Resumo da Nota e Retenções</h3>
+        <p>Visualização rápida do valor bruto, tributos e fundamentos</p>
+      </div>
+      <button type="button" class="bottom-sheet-close" onclick="fecharBottomSheet()">
+        Fechar
+      </button>
+    </div>
+
+    <div class="bottom-sheet-body">
+  <div class="bs-topbar">
+    <div class="bs-total-box">
+      <div class="bs-label">Valor bruto</div>
+      <div class="bs-total" id="bs-valor-bruto">R$ 0,00</div>
+    </div>
+
+    <div class="bs-liquido-box">
+      <div class="bs-label">Líquido estimado</div>
+      <div class="bs-liquido" id="bs-cupom-liquido">R$ 0,00</div>
+    </div>
+  </div>
+
+  <div class="bs-grid">
+    <div class="bs-card">
+      <div class="bs-card-header">
+        <span class="bs-tag">IRF</span>
+        <strong id="bs-irf-status">Aguardando cálculo</strong>
+      </div>
+      <div class="bs-card-content">
+        <div class="bs-card-value valor-zero" id="bs-irf-valor">R$ 0,00</div>
+        <div class="bs-card-text" id="bs-irf-motivo">Nenhum cálculo realizado.</div>
+        <div class="bs-card-detail" id="bs-irf-detalhe"></div>
+      </div>
+    </div>
+
+    <div class="bs-card">
+      <div class="bs-card-header">
+        <span class="bs-tag">ISSQN</span>
+        <strong id="bs-iss-status">Aguardando cálculo</strong>
+      </div>
+      <div class="bs-card-content">
+        <div class="bs-card-value valor-zero" id="bs-iss-valor">R$ 0,00</div>
+        <div class="bs-card-text" id="bs-iss-motivo">Nenhum cálculo realizado.</div>
+        <div class="bs-card-detail" id="bs-iss-detalhe"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bs-cupom">
+    <div class="bs-cupom-title">Espelho da retenção</div>
+
+    <div class="bs-row">
+      <span>Valor bruto</span>
+      <strong id="bs-cupom-bruto">R$ 0,00</strong>
+    </div>
+
+    <div class="bs-row">
+      <span>IRF retido</span>
+      <strong id="bs-cupom-irf">R$ 0,00</strong>
+    </div>
+
+    <div class="bs-row">
+      <span>ISS retido</span>
+      <strong id="bs-cupom-iss">R$ 0,00</strong>
+    </div>
+
+    <div class="bs-row bs-row-total">
+      <span>Total retenções</span>
+      <strong id="bs-cupom-total-retencoes">R$ 0,00</strong>
+    </div>
+  </div>
+</div>
+  </div>
+</div>
+
    <div id="area-impressao"></div>
     </div>
 </div>
@@ -1185,42 +1716,135 @@
                <div class="materiais-form">
     <input type="text" id="mcDataEntrada" placeholder="Data entrada" maxlength="10">
     <input type="text" id="mcDataEmissao" placeholder="Data emissão" maxlength="10">
+
     <div style="position: relative;">
         <input type="text" id="mcFornecedor" placeholder="Nome completo do fornecedor" autocomplete="off">
         <div id="listaFornecedores" style="display:none; position:absolute; top:100%; left:0; right:0; background:#fff; border:1px solid #bac5d0; border-top:none; z-index:20; max-height:180px; overflow-y:auto;"></div>
     </div>
-    <input type="text" id="mcValorNota" placeholder="Valor da nota">
-    <input type="text" id="mcEmpenho" placeholder="Número do empenho">
-    <input type="text" id="mcNotaFiscal" placeholder="Número da nota fiscal">
+
+   <select id="mcTipoNota">
+    <option value="">Tipo</option>
+    <option value="Mercadoria">Mercadoria</option>
+    <option value="Serviço">Serviço</option>
+</select>
+
+<select id="mcSecretaria">
+    <option value="">Secretaria</option>
+    <option value="ADM/FIN">ADM/FIN</option>
+    <option value="GOVERNO">GOVERNO</option>
+    <option value="EDUC/ESP">EDUC/ESP</option>
+    <option value="ASSIST. SOCIAL">ASSIST. SOCIAL</option>
+    <option value="SAÚDE">SAÚDE</option>
+    <option value="OBRAS/TRANSP">OBRAS/TRANSP</option>
+    <option value="IND/COM/AGRO">IND/COM/AGRO</option>
+    <option value="CULT/TUR">CULT/TUR</option>
+    <option value="LIMP/SAN">LIMP/SAN</option>
+</select>
+
+<input type="text" id="mcValorNota" placeholder="Valor da nota">
+<input type="text" id="mcEmpenho" placeholder="Número do empenho">
+<input type="text" id="mcNotaFiscal" placeholder="Número da nota fiscal">
 </div>
 
 <div class="materiais-acoes">
     <button type="button" class="btn-primary" onclick="adicionarLinhaMaterial()" style="width: auto;">Adicionar linha</button>
     <button type="button" class="btn-primary" onclick="repetirUltimaNota()" style="width: auto;">Repetir última</button>
-    <button type="button" class="btn-primary" onclick="window.print()" style="width: auto;">Imprimir folha</button>
+    <button type="button" class="btn-primary" onclick="abrirModalImpressaoMateriais()" style="width: auto;">Imprimir folha</button>
     <button type="button" class="btn-primary" onclick="limparTabelaMateriais()" style="width: auto;">Limpar tabela</button>
+    <button type="button" class="btn-primary" onclick="if(window.cadastrarEmpenhosDaTabela) window.cadastrarEmpenhosDaTabela(this)" style="width: auto; background-color: #27ae60; border-color: #219653;">Salvar Empenhos da Tabela</button>
+</div>
+
+<div class="materiais-folha">
+    <div class="materiais-titulo">SAÍDA DE NOTAS NFs MATERIAIS DE CONSUMO</div>
+    <table class="materiais-tabela">
+        <thead>
+            <tr>
+                <th>Data Saída</th>
+                <th>Data Emissão</th>
+                <th>Nome do Fornecedor</th>
+                <th>Tipo</th>
+                <th>Sec.</th>
+                <th>Valor da Nota</th>
+                <th class="col-retencao">Retenção</th>
+                <th>Empenho</th>
+                <th>Número da NF</th>
+                <th class="col-acoes">Ações</th>
+            </tr>
+        </thead>
+        <tbody id="materiaisTabelaBody"></tbody>
+    </table>
+    <div class="materiais-total" id="materiaisTotal">TOTAL DE NFs 0</div>
+</div>
+            </div>
+        </div>
+    </div>
 </div>
 
 
-                <div class="materiais-folha">
-                    <div class="materiais-titulo">SAÍDA DE NOTAS – NF’s MATERIAIS DE CONSUMO</div>
+<div id="tela-fornecedores" class="screen-section">
+    <div class="panels-wrapper">
+        <div class="panel" style="width: 100%; max-width: 1400px;">
+            <div class="panel-header" style="display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;">
+                <h2 style="margin: 0;">Cadastro de Fornecedores Salvos na Nuvem</h2>
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                    <button class="btn-primary" type="button" onclick="window.carregarFornecedoresNuvem(true)" style="width: auto;">
+                        Atualizar Lista
+                    </button>
+                    <button class="btn-primary" type="button" onclick="window.proximaPaginaFornecedores()" style="width: auto;">
+                        Próxima Página
+                    </button>
+                </div>
+            </div>
 
-                    <table class="materiais-tabela">
-                       <thead>
-    <tr>
-        <th>Data Entrada</th>
-        <th>Data Emissão</th>
-        <th>Nome Completo do Fornecedor</th>
-        <th>Valor da Nota</th>
-        <th>Número do Empenho</th>
-        <th>Número da Nota Fiscal</th>
-        <th class="col-acoes">Ações</th>
-    </tr>
-</thead>
-                    <tbody id="materiaisTabelaBody"></tbody>
+            <div class="panel-body">
+                <div style="display: grid; grid-template-columns: 1.2fr 1fr 180px; gap: 12px; margin-bottom: 18px;">
+                    <input type="text" id="filtroFornecedorTexto" placeholder="Filtrar por razão social, nome fantasia ou CNPJ">
+                    <input type="text" id="filtroFornecedorCidade" placeholder="Filtrar por município">
+                    <button class="btn-primary" type="button" onclick="window.aplicarFiltroFornecedor()" style="width: 100%;">
+                        Filtrar
+                    </button>
+                </div>
+
+                <div id="fornecedoresResumo" class="alert-box alert-neutro" style="margin-bottom: 16px;">
+                    Aguardando carregamento dos fornecedores...
+                </div>
+
+                <div style="overflow-x: auto;">
+                    <table class="data-table" style="min-width: 980px;">
+                        <thead>
+                            <tr>
+                                <th>CNPJ</th>
+                                <th>Razão Social</th>
+                                <th>Município/UF</th>
+                                <th>Simples</th>
+                                <th>MEI</th>
+                                <th>CNAE Principal</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabela-fornecedores-nuvem">
+                            <tr>
+                                <td colspan="7" style="text-align: center; padding: 18px;">
+                                    Clique em "Atualizar Lista" para carregar os dados.
+                                </td>
+                            </tr>
+                        </tbody>
                     </table>
+                </div>
 
-                   <div class="materiais-total" id="materiaisTotal">TOTAL DE NF’s: 0</div>
+                <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 18px; flex-wrap: wrap;">
+                    <div id="fornecedoresPaginacaoInfo" style="font-size: 13px; color: #54606b;">
+                        Página ainda não carregada.
+                    </div>
+
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                        <button class="btn-primary" type="button" onclick="window.voltarPaginaFornecedores()" id="btnPaginaAnteriorFornecedores" style="width: auto;" disabled>
+                            Página Anterior
+                        </button>
+                        <button class="btn-primary" type="button" onclick="window.proximaPaginaFornecedores()" id="btnProximaPaginaFornecedores" style="width: auto;" disabled>
+                            Próxima Página
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1228,32 +1852,179 @@
 </div>
 
 
-<!-- NOVA TELA DE FORNECEDORES -->
-<div id="tela-fornecedores" class="screen-section">
-    <div style="max-width: 1200px; margin: 30px auto; background: #fff; padding: 25px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border: 1px solid #bac5d0;">
-        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #bac5d0; padding-bottom: 10px; margin-bottom: 20px;">
-            <h2 style="color: #0f3b5e; margin: 0;">Fornecedores Salvos na Nuvem (Firebase)</h2>
-            <button class="btn-primary" onclick="window.carregarFornecedoresNuvem()" style="width: auto;">Atualizar Tabela</button>
-        </div>
-        
-        <table style="width: 100%; border-collapse: collapse; text-align: left;">
-            <thead>
-                <tr style="background-color: #0f3b5e; color: white;">
-                    <th style="padding: 12px; border: 1px solid #bac5d0;">CNPJ</th>
-                    <th style="padding: 12px; border: 1px solid #bac5d0;">Razão Social</th>
-                    <th style="padding: 12px; border: 1px solid #bac5d0;">Nome Fantasia</th>
-                    <th style="padding: 12px; border: 1px solid #bac5d0;">Município/UF</th>
-                    <th style="padding: 12px; border: 1px solid #bac5d0;">Última Consulta</th>
-                </tr>
-            </thead>
-            <tbody id="tabela-fornecedores-nuvem">
-                <tr><td colspan="5" style="text-align: center; padding: 20px;">Clique em "Atualizar Tabela" para carregar os dados.</td></tr>
-            </tbody>
-        </table>
+<div id="tela-empenhos" class="screen-section">
+    <div class="panels-wrapper">
+        <div class="panel" style="width: 100%; max-width: 1400px;">
+            <div class="panel-header" style="display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;">
+                <h2 style="margin: 0;">Cadastro de Empenhos Salvos na Nuvem</h2>
+
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                    <button class="btn-primary" type="button" onclick="window.toggleFormularioEmpenho()" style="width: auto; background-color: #27ae60; border-color: #219653;">
+                        Novo Empenho
+                    </button>
+
+                    <button class="btn-primary" type="button" onclick="window.carregarEmpenhosNuvem(true)" style="width: auto;">
+                        Atualizar Lista
+                    </button>
+                </div>
+            </div>
+
+            <div class="panel-body">
+                <div id="empenhosResumo" class="alert-box alert-neutro" style="margin-bottom: 16px;">
+                    Aguardando carregamento dos empenhos...
+                </div>
+
+                <div id="formularioNovoEmpenho" style="display: none; background: #f8fafc; border: 1px solid #d7e0e8; border-radius: 8px; padding: 18px; margin-bottom: 20px;">
+    <div style="font-size: 18px; font-weight: bold; color: #0f3b5e; margin-bottom: 14px;">
+        Cadastrar Novo Empenho
+    </div>
+
+    <div style="display: grid; grid-template-columns: 130px 150px 150px 160px 1.6fr 170px; gap: 12px;">
+    <input type="text" id="empNumero" placeholder="Nº empenho" maxlength="6">
+    
+    <select id="empTipo">
+        <option value="">Tipo</option>
+        <option value="Ordinário">Ordinário</option>
+        <option value="Global">Global</option>
+        <option value="Estimativo">Estimativo</option>
+    </select>
+
+    <input type="text" id="empData" placeholder="Data empenho" maxlength="10">
+    <input type="text" id="empValor" placeholder="Valor">
+
+    <div style="position: relative;">
+        <input type="text" id="empFornecedor" placeholder="Fornecedor" autocomplete="off" style="width: 100%;">
+        <div id="listaFornecedoresEmpenho" style="display:none; position:absolute; top:100%; left:0; right:0; background:#fff; border:1px solid #bac5d0; border-top:none; z-index:30; max-height:220px; overflow-y:auto;"></div>
+    </div>
+
+    <input type="text" id="empCnpj" placeholder="CNPJ" maxlength="18">
+</div>
+
+    <div style="display: grid; grid-template-columns: 180px 140px 140px 1fr 1fr; gap: 12px; margin-top: 12px;">
+        <input type="text" id="empNotaFiscal" placeholder="Nota fiscal">
+        <input type="text" id="empDataEntrada" placeholder="Data entrada" maxlength="10">
+        <input type="text" id="empDataEmissao" placeholder="Data emissão" maxlength="10">
+        <input type="text" id="empCentroCusto" placeholder="Centro de custo / setor">
+        <input type="text" id="empProcesso" placeholder="Processo / referência">
+    </div>
+
+    <div style="margin-top: 12px;">
+        <textarea id="empObservacao" placeholder="Observações do empenho" style="width: 100%; min-height: 85px; resize: vertical;"></textarea>
+    </div>
+
+    <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px;">
+        <button type="button" class="btn-primary" onclick="window.salvarEmpenhoManualNuvem(this)" style="width: auto; background-color: #27ae60; border-color: #219653;">
+            Salvar Empenho
+        </button>
+
+        <button type="button" class="btn-primary" onclick="window.buscarFornecedorEmpenhoPorCNPJ()" style="width: auto;">
+            Buscar CNPJ
+        </button>
+
+        <button type="button" class="btn-primary" onclick="window.limparFormularioEmpenho()" style="width: auto; background-color: #6c7a86; border-color: #5d6974;">
+            Limpar
+        </button>
     </div>
 </div>
 
+                <div style="overflow-x: auto;">
+    <table class="data-table tabela-empenhos-resumida" style="min-width: 820px; table-layout: fixed;">
+        <thead>
+            <tr>
+                <th style="width: 110px;">Empenho</th>
+                <th style="width: 110px;">Tipo</th>
+                <th>Fornecedor</th>
+                <th style="width: 110px;">Valor</th>
+                <th style="width: 100px;">Data</th>
+                <th style="width: 150px;">Ações</th>
+            </tr>
+        </thead>
+        <tbody id="tabela-empenhos-nuvem">
+            <tr>
+                <td colspan="6" style="text-align: center; padding: 18px;">
+                    Clique em "Atualizar Lista" para carregar os dados.
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
     <script>
+
+        
+
+function fecharModalEmpenho() {
+    document.getElementById('modalEmpenho').style.display = 'none';
+}
+
+function fecharModalSistema() {
+    const modal = document.getElementById('modalSistema');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}
+
+
+
+function mostrarAvisoSistema(titulo, mensagem, textoBotao = 'Fechar') {
+    const modal = document.getElementById('modalSistema');
+    const tituloEl = document.getElementById('modalTitulo');
+    const mensagemEl = document.getElementById('modalMensagem');
+    const footerEl = document.getElementById('modalFooter');
+
+    if (!modal || !tituloEl || !mensagemEl || !footerEl) return;
+
+    tituloEl.textContent = titulo;
+    mensagemEl.innerHTML = mensagem;
+
+    footerEl.innerHTML = `
+        <button type="button" class="btn-cancelar-modal" onclick="fecharModalSistema()">
+            ${textoBotao}
+        </button>
+    `;
+
+    modal.style.display = 'flex';
+}
+
+function mostrarConfirmacaoSistema(titulo, mensagem, onConfirm) {
+    const modal = document.getElementById('modalSistema');
+    const tituloEl = document.getElementById('modalTitulo');
+    const mensagemEl = document.getElementById('modalMensagem');
+    const footerEl = document.getElementById('modalFooter');
+
+    if (!modal || !tituloEl || !mensagemEl || !footerEl) return;
+
+    tituloEl.textContent = titulo;
+    mensagemEl.innerHTML = mensagem;
+
+    footerEl.innerHTML = `
+        <button type="button" class="btn-cancelar-modal" onclick="fecharModalSistema()">
+            Cancelar
+        </button>
+        <button type="button" class="btn-excluir-modal" id="btnConfirmarModal">
+            Confirmar
+        </button>
+    `;
+
+    modal.style.display = 'flex';
+
+    const btnConfirmar = document.getElementById('btnConfirmarModal');
+    if (btnConfirmar) {
+        btnConfirmar.onclick = function() {
+            fecharModalSistema();
+            if (typeof onConfirm === 'function') {
+                onConfirm();
+            }
+        };
+    }
+}
         // =========================================================
         // BANCO DE DADOS DE SERVIÇOS (ANEXO I) - igual ao original
         // =========================================================
@@ -1677,18 +2448,18 @@ const sociedadeTemImpedimentos = isSociedade && sociedadePossuiImpedimentos();
         };
     }
 
-    if (isSimples) {
-    retencaoPeloTomador = true;
-    fundamentoRetencao = "Optante do Simples Nacional não gera dispensa automática neste sistema; exige análise cautelosa.";
-    alertas.push("O sistema não presume dispensa automática apenas por ser Simples Nacional.");
-    return {
-        erro: null,
-        issDevidoEmIguatama,
-        retencaoPeloTomador,
-        fundamentoCompetencia,
-        fundamentoRetencao,
-        alertas
-    };
+   if (isSimples) {
+  retencaoPeloTomador = false;
+  fundamentoRetencao = 'Sem retenção automática: optante pelo Simples Nacional identificado via CNPJ.';
+  alertas.push('Regra aplicada nesta rotina: optante pelo Simples Nacional não sofre retenção de ISS.');
+  return {
+    erro: null,
+    issDevidoEmIguatama,
+    retencaoPeloTomador,
+    fundamentoCompetencia,
+    fundamentoRetencao,
+    alertas
+  };
 }
 
     retencaoPeloTomador = true;
@@ -1704,33 +2475,35 @@ const sociedadeTemImpedimentos = isSociedade && sociedadePossuiImpedimentos();
     };
 }
 
-        document.getElementById('cnpjInput').addEventListener('input', function(e) {
-            let value = e.target.value.replace(/\D/g, '');
-            if (value.length > 14) value = value.slice(0, 14);
-            let formatted = value.replace(/^(\d{2})(\d)/, "$1.$2");
-            formatted = formatted.replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3");
-            formatted = formatted.replace(/\.(\d{3})(\d)/, ".$1/$2");
-            formatted = formatted.replace(/(\d{4})(\d)/, "$1-$2");
-            e.target.value = formatted;
-        });
+     let ultimoCNPJConsultado = '';
 
-        async function consultarCNPJ() {
-            const cnpj = document.getElementById('cnpjInput').value.replace(/\D/g, '');
-            if (cnpj.length !== 14) return alert('CNPJ inválido (14 dígitos).');
+document.getElementById('cnpjInput').addEventListener('input', function (e) {
+  let value = e.target.value.replace(/\D/g, '');
+  if (value.length > 14) value = value.slice(0, 14);
 
-                        document.getElementById('result').style.display = 'none';
-            document.getElementById('btnImprimir').style.display = 'none';
-            document.getElementById('resultado-retencao').style.display = 'none';
-            document.getElementById('panel-calculadora').style.opacity = '0.55';
-            document.getElementById('panel-calculadora').style.pointerEvents = 'none';
-            painelISSQN.style.opacity = '0.55';
-            painelISSQN.style.pointerEvents = 'none';
-            document.getElementById('loading').style.display = 'block';
+  let formatted = value.replace(/^(\d{2})(\d)/, '$1.$2');
+  formatted = formatted.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3');
+  formatted = formatted.replace(/\.(\d{3})(\d)/, '.$1/$2');
+  formatted = formatted.replace(/(\d{4})(\d)/, '$1-$2');
+  e.target.value = formatted;
 
-            try {
+  if (value !== ultimoCNPJConsultado) {
+    resetarCamposAposNovoCNPJ();
+  }
+});
+
+       async function consultarCNPJ() {
+    const cnpj = document.getElementById('cnpjInput').value.replace(/\D/g, '');
+    if (cnpj.length !== 14) return alert('CNPJ inválido (14 dígitos).');
+
+    resetarCamposAposNovoCNPJ();
+    document.getElementById('loading').style.display = 'block';
+
+    try {
                 const response = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${cnpj}`);
                 if (!response.ok) throw new Error('CNPJ não encontrado.');
                 const data = await response.json();
+                ultimoCNPJConsultado = cnpj;
 
                 empresaSimplesNacional = !!data.opcao_pelo_simples;
                 empresaMEI = !!data.opcao_pelo_mei;
@@ -1769,15 +2542,35 @@ const sociedadeTemImpedimentos = isSociedade && sociedadePossuiImpedimentos();
                 `;
 
                                 // ---- INÍCIO DO ENVIO PARA A NUVEM ----
-                if (window.salvarFornecedorNuvem) {
-                    window.salvarFornecedorNuvem(
-                        cnpj, 
-                        data.razao_social || 'Não informado', 
-                        data.nome_fantasia || 'Não informado', 
-                        data.municipio || 'Não informado', 
-                        data.uf || 'Não informado'
-                    );
-                }
+             if (window.salvarFornecedorNuvem) {
+    const salvouFornecedor = await window.salvarFornecedorNuvem({
+        cnpj: cnpj,
+        razaoSocial: data.razao_social || 'Não informado',
+        nomeFantasia: data.nome_fantasia || 'Não informado',
+        municipio: data.municipio || 'Não informado',
+        uf: data.uf || 'Não informado',
+        logradouro: data.logradouro || '',
+        numero: data.numero || '',
+        complemento: data.complemento || '',
+        bairro: data.bairro || '',
+        cep: data.cep || '',
+        telefone: data.ddd_telefone_1 || data.ddd_telefone_2 || 'Não informado',
+        email: data.email || 'Não informado',
+        naturezaJuridica: data.natureza_juridica || 'Não informado',
+        porte: data.porte || 'Não informado',
+        capitalSocial: data.capital_social || 'Não informado',
+        cnaePrincipal: data.cnae_fiscal_descricao || 'Não informado',
+        cnaePrincipalCodigo: data.cnae_fiscal || 'Não informado',
+        simplesNacional: !!data.opcao_pelo_simples,
+        mei: !!data.opcao_pelo_mei,
+        situacaoCadastral: data.descricao_situacao_cadastral || 'Não informado',
+        dataSituacaoCadastral: data.data_situacao_cadastral || 'Não informado'
+    });
+
+    if (salvouFornecedor && window.carregarFornecedoresNuvem) {
+        await window.carregarFornecedoresNuvem();
+    }
+}
                 // ---- FIM DO ENVIO PARA A NUVEM ----
 
                                 document.getElementById('result').style.display = 'block';
@@ -1835,34 +2628,144 @@ const sociedadeTemImpedimentos = isSociedade && sociedadePossuiImpedimentos();
             }
         }
 
-        function calcularRetencao() {
-            const valorNota = parseFloat(document.getElementById('valorNota').value);
-            if (isNaN(valorNota) || valorNota <= 0) return alert('Informe o valor da nota.');
-            
-            const formatBRL = (v) => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-            document.getElementById('resultado-retencao').style.display = 'block';
+       function calcularRetencao() {
+  const valorNota = parseFloat(document.getElementById('valorNota').value);
 
-            // Prioridade: MEI ou Simples Nacional -> dispensa total
-            if (empresaSimplesNacional || empresaMEI) {
-                document.getElementById('valor-ir-tela').textContent = 'R$ 0,00';
-                document.getElementById('valor-ir-tela').className = 'valor-destaque valor-zero';
-                document.getElementById('motivo-retencao').textContent = 'Dispensa de IRRF para MEI/Simples Nacional.';
-                document.getElementById('detalhe-retencao').innerHTML = `Valor Líquido: ${formatBRL(valorNota)}`;
-                return;
-            }
+  if (isNaN(valorNota) || valorNota <= 0) {
+    return alert('Informe o valor da nota.');
+  }
 
-            // Obter alíquota selecionada (pode ser 0, indicando isenção)
-            const aliquota = parseFloat(document.getElementById('aliquotaIRF').value);
-            let valorRetido = valorNota * aliquota;
-            
-            // Arredondamento para centavos
-            valorRetido = Math.round(valorRetido * 100) / 100;
+  document.getElementById('resultado-retencao').style.display = 'block';
 
-            document.getElementById('valor-ir-tela').textContent = formatBRL(valorRetido);
-            document.getElementById('valor-ir-tela').className = 'valor-destaque';
-            document.getElementById('motivo-retencao').textContent = 'Retenção calculada conforme classificação IRF.';
-            document.getElementById('detalhe-retencao').innerHTML = `Base: ${formatBRL(valorNota)} | Alíquota: ${(aliquota*100).toFixed(2)}%<br>Líquido: ${formatBRL(valorNota - valorRetido)}`;
-        }
+  if (empresaSimplesNacional || empresaMEI) {
+    document.getElementById('valor-ir-tela').textContent = 'R$ 0,00';
+    document.getElementById('valor-ir-tela').className = 'valor-destaque valor-zero';
+    document.getElementById('motivo-retencao').textContent = 'Dispensa de IRRF para MEI/Simples Nacional.';
+    document.getElementById('detalhe-retencao').innerHTML = `Valor líquido: ${formatBRL(valorNota)}`;
+    atualizarBottomSheetIRF();
+    return;
+  }
+
+  const aliquota = parseFloat(document.getElementById('aliquotaIRF').value || '0');
+  let valorRetido = valorNota * aliquota;
+  valorRetido = Math.round(valorRetido * 100) / 100;
+
+  document.getElementById('valor-ir-tela').textContent = formatBRL(valorRetido);
+  document.getElementById('valor-ir-tela').className = valorRetido > 0
+    ? 'valor-destaque'
+    : 'valor-destaque valor-zero';
+
+  document.getElementById('motivo-retencao').textContent = valorRetido > 0
+    ? 'Retenção calculada conforme classificação IRF.'
+    : 'Não houve retenção de IRRF para a classificação selecionada.';
+
+  document.getElementById('detalhe-retencao').innerHTML =
+    `Base: ${formatBRL(valorNota)} | Alíquota: ${(aliquota * 100).toFixed(2)}%<br>Líquido: ${formatBRL(valorNota - valorRetido)}`;
+
+  atualizarBottomSheetIRF();
+}
+
+
+function resetarCamposAposNovoCNPJ() {
+  empresaSimplesNacional = false;
+  empresaMEI = false;
+
+  document.getElementById('result').style.display = 'none';
+  document.getElementById('btnImprimir').style.display = 'none';
+  document.getElementById('loading').style.display = 'none';
+
+  document.getElementById('tabela-dados').innerHTML = '';
+
+  document.getElementById('status-enquadramento').className = 'alert-box alert-neutro';
+  document.getElementById('status-enquadramento').innerHTML = 'Aguardando consulta do CNPJ...';
+
+  document.getElementById('valorNota').value = '';
+  document.getElementById('resultado-retencao').style.display = 'none';
+  document.getElementById('valor-ir-tela').textContent = 'R$ 0,00';
+  document.getElementById('valor-ir-tela').className = 'valor-destaque valor-zero';
+  document.getElementById('motivo-retencao').textContent = '';
+  document.getElementById('detalhe-retencao').innerHTML = '';
+
+  document.getElementById('tipoOperacao').value = 'servico';
+  document.getElementById('cooperativaCheck').checked = false;
+
+  document.getElementById('tipoDescricaoIRF').value = 'servico';
+  document.getElementById('descricaoLivreIRF').value = '';
+  document.getElementById('resultado-descricao-irf').style.display = 'none';
+  document.getElementById('desc-irf-categoria').textContent = '';
+  document.getElementById('desc-irf-aliquota-ir').textContent = '';
+  document.getElementById('desc-irf-codigo').textContent = '';
+  document.getElementById('desc-irf-confianca').textContent = '';
+  document.getElementById('desc-irf-observacao').textContent = '';
+
+  document.getElementById('regime-mei').checked = false;
+  document.getElementById('regime-simples').checked = false;
+  document.getElementById('regime-autonomo').checked = false;
+  document.getElementById('regime-sociedade').checked = false;
+  document.getElementById('sociedade-valida').checked = false;
+  document.getElementById('cadastro-municipal-ok').checked = false;
+  document.getElementById('materiais-efetivos').checked = false;
+
+  document.getElementById('imp-socio-pj').checked = false;
+  document.getElementById('imp-atividade-diversa').checked = false;
+  document.getElementById('imp-socio-nao-habilitado').checked = false;
+  document.getElementById('imp-socio-capitalista').checked = false;
+  document.getElementById('imp-carater-empresarial').checked = false;
+  document.getElementById('imp-pluriprofissionalidade').checked = false;
+  document.getElementById('imp-terceirizacao-fim').checked = false;
+
+  document.getElementById('impedimentos-sociedade-box').classList.add('campo-oculto');
+
+  document.getElementById('issqn-servico').selectedIndex = 0;
+  document.getElementById('issqn-valor').value = '';
+  document.getElementById('issqn-execucao').value = 'iguatama';
+  document.getElementById('sede-prestador-text').value = 'Aguardando consulta...';
+
+  document.getElementById('issqn-deduzir-materiais').checked = false;
+  document.getElementById('issqn-tipo-deducao').value = '20porcento';
+  document.getElementById('issqn-valor-exato').value = '';
+  document.getElementById('box-construcao').classList.add('campo-oculto');
+  document.getElementById('opcoes-deducao').classList.add('campo-oculto');
+  document.getElementById('issqn-valor-exato').classList.add('campo-oculto');
+  document.getElementById('excecao-art210-info').innerHTML = '';
+
+  document.getElementById('resultado-issqn').style.display = 'none';
+  document.getElementById('valor-issqn-tela').textContent = 'R$ 0,00';
+  document.getElementById('valor-issqn-tela').style.color = '#0f3b5e';
+  document.getElementById('valor-issqn-tela').style.textDecoration = 'none';
+  document.getElementById('motivo-issqn').innerHTML = '';
+  document.getElementById('detalhe-issqn').innerHTML = '';
+
+  document.getElementById('bs-valor-bruto').textContent = 'R$ 0,00';
+  document.getElementById('bs-irf-status').textContent = 'Aguardando cálculo';
+  document.getElementById('bs-irf-valor').textContent = 'R$ 0,00';
+  document.getElementById('bs-irf-motivo').textContent = 'Nenhum cálculo realizado.';
+  document.getElementById('bs-irf-detalhe').innerHTML = '';
+  document.getElementById('bs-iss-status').textContent = 'Aguardando cálculo';
+  document.getElementById('bs-iss-valor').textContent = 'R$ 0,00';
+  document.getElementById('bs-iss-motivo').textContent = 'Nenhum cálculo realizado.';
+  document.getElementById('bs-iss-detalhe').innerHTML = '';
+  document.getElementById('bs-cupom-bruto').textContent = 'R$ 0,00';
+  document.getElementById('bs-cupom-irf').textContent = 'R$ 0,00';
+  document.getElementById('bs-cupom-iss').textContent = 'R$ 0,00';
+  document.getElementById('bs-cupom-liquido').textContent = 'R$ 0,00';
+
+  const bottomSheet = document.getElementById('bottomSheet');
+  if (bottomSheet) bottomSheet.classList.remove('active');
+
+  document.getElementById('panel-calculadora').style.opacity = '0.55';
+  document.getElementById('panel-calculadora').style.pointerEvents = 'none';
+
+  const painelISSQN = document.getElementById('panel-issqn');
+  if (painelISSQN) {
+    painelISSQN.style.opacity = '0.55';
+    painelISSQN.style.pointerEvents = 'none';
+  }
+
+  atualizarOpcoesIRF();
+  toggleDeducaoInputs?.();
+  atualizarStatusSociedade?.();
+}
 
         // =========================================================
         // COLUNA 3 – ISSQN (mantido igual ao anterior)
@@ -2057,6 +2960,7 @@ function atualizarStatusSociedade() {
         `Alíquota: ${aliquota.toFixed(2)}%<br>` +
         `ISS apurado: ${formatBRL(valorCalculado)}<br>` +
         `ISS considerado pelo sistema: ${formatBRL(valorFinal)}`;
+        atualizarBottomSheetISS();
         
 }
 
@@ -2375,117 +3279,293 @@ function normalizarTexto(texto) {
         .trim();
 }
 
-function analisarDescricaoIRF() {
-    const tipo = document.getElementById("tipoDescricaoIRF").value;
-    const descricaoOriginal = document.getElementById("descricaoLivreIRF").value.trim();
-    const descricao = normalizarTexto(descricaoOriginal);
+async function analisarDescricaoIRF() {
+    const tipo = document.getElementById('tipoDescricaoIRF').value;
+    const descricaoOriginal = document.getElementById('descricaoLivreIRF').value.trim();
 
-    const caixa = document.getElementById("resultado-descricao-irf");
-    const campoCategoria = document.getElementById("desc-irf-categoria");
-    const campoAliquotaIR = document.getElementById("desc-irf-aliquota-ir");
-    const campoCodigo = document.getElementById("desc-irf-codigo");
-    const campoConfianca = document.getElementById("desc-irf-confianca");
-    const campoObservacao = document.getElementById("desc-irf-observacao");
+    const caixa = document.getElementById('resultado-descricao-irf');
+    const campoCategoria = document.getElementById('desc-irf-categoria');
+    const campoAliquotaIR = document.getElementById('desc-irf-aliquota-ir');
+    const campoCodigo = document.getElementById('desc-irf-codigo');
+    const campoConfianca = document.getElementById('desc-irf-confianca');
+    const campoObservacao = document.getElementById('desc-irf-observacao');
 
-    caixa.style.display = "block";
+    caixa.style.display = 'block';
 
-    if (!descricao) {
+    if (!descricaoOriginal) {
         campoCategoria.innerHTML = '<span class="texto-erro">Digite uma descrição para analisar.</span>';
-        campoAliquotaIR.textContent = "";
-        campoCodigo.textContent = "";
-        campoConfianca.textContent = "";
-        campoObservacao.textContent = "";
+        campoAliquotaIR.textContent = '';
+        campoCodigo.textContent = '';
+        campoConfianca.textContent = '';
+        campoObservacao.textContent = '';
         return;
     }
 
-    let melhor = null;
-    let maiorPontuacao = 0;
+    campoCategoria.innerHTML = '<span class="texto-alerta">Analisando descrição com Gemini...</span>';
+    campoAliquotaIR.textContent = '';
+    campoCodigo.textContent = '';
+    campoConfianca.textContent = '';
+    campoObservacao.textContent = '';
 
-    tabelaIRFDescricao.forEach(item => {
-        if (!item.tipo.includes(tipo)) return;
+    function normalizarTexto(texto) {
+        return (texto || '')
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .replace(/[^\w\s]/g, ' ')
+            .replace(/\s+/g, ' ')
+            .trim();
+    }
 
-        let pontos = 0;
+    function aplicarResultadoNaTela(resultado, origemTexto) {
+        campoCategoria.innerHTML = `<span class="texto-sucesso"><strong>Categoria sugerida:</strong> ${resultado.categoria || 'Não informado'}</span>`;
+        campoAliquotaIR.innerHTML = `<strong>Alíquota de IR:</strong> ${resultado.aliquotaIR || 'Não informada'}`;
+        campoCodigo.innerHTML = `<strong>Código da receita:</strong> ${resultado.codigo || 'Não informado'}`;
+        campoConfianca.innerHTML = `<strong>Nível de confiança:</strong> ${resultado.confianca || 'Não informado'}`;
+        campoObservacao.innerHTML = `<span class="texto-alerta"><strong>Observação:</strong> ${resultado.observacao || ''} ${origemTexto}</span>`;
 
-        item.palavras.forEach(palavra => {
-            const palavraNormalizada = normalizarTexto(palavra);
+        const selectIRF = document.getElementById('aliquotaIRF');
+        if (selectIRF && resultado.codigo) {
+            let encontrou = false;
 
-            if (descricao.includes(palavraNormalizada)) {
-                pontos += palavraNormalizada.split(" ").length > 1 ? 3 : 1;
+            Array.from(selectIRF.options).forEach((opt, index) => {
+                const codigo = opt.getAttribute('data-codigo');
+                if (String(codigo) === String(resultado.codigo)) {
+                    selectIRF.selectedIndex = index;
+                    encontrou = true;
+                }
+            });
+
+            if (!encontrou) {
+                Array.from(selectIRF.options).forEach((opt, index) => {
+                    const texto = (opt.textContent || '').toLowerCase();
+                    if (
+                        (String(resultado.codigo) === '6147' && texto.includes('6147')) ||
+                        (String(resultado.codigo) === '6175' && texto.includes('6175')) ||
+                        (String(resultado.codigo) === '6188' && texto.includes('6188')) ||
+                        (String(resultado.codigo) === '6190' && texto.includes('6190')) ||
+                        (String(resultado.codigo) === '9060' && texto.includes('9060')) ||
+                        (String(resultado.codigo) === '8739' && texto.includes('8739'))
+                    ) {
+                        selectIRF.selectedIndex = index;
+                    }
+                });
+            }
+        }
+
+        if (document.getElementById('valorNota').value) {
+            calcularRetencao();
+        }
+    }
+
+    function fallbackLocal() {
+        const descricao = normalizarTexto(descricaoOriginal);
+
+        const tabelaIRFDescricao = [
+            {
+                categoria: 'Mercadorias e bens em geral / serviços com emprego de materiais',
+                aliquotaIR: '1,20%',
+                codigo: '6147',
+                confianca: 'média',
+                palavras: [
+                    'mercadoria', 'mercadorias', 'bem', 'bens', 'material', 'materiais',
+                    'fornecimento', 'compra', 'aquisição', 'aquisicao', 'porta', 'janela',
+                    'cimento', 'areia', 'brita', 'tijolo', 'madeira', 'material de construção',
+                    'material de construcao', 'obra', 'empreitada', 'reforma',
+                    'energia elétrica', 'energia eletrica', 'alimentação', 'alimentacao',
+                    'serviço hospitalar', 'servico hospitalar', 'diagnóstico', 'diagnostico'
+                ]
+            },
+            {
+                categoria: 'Passagens aéreas, rodoviárias e transporte de passageiros',
+                aliquotaIR: '2,40%',
+                codigo: '6175',
+                confianca: 'alta',
+                palavras: [
+                    'passagem', 'passagens', 'passagem aérea', 'passagem aerea',
+                    'passagem rodoviária', 'passagem rodoviaria', 'bilhete',
+                    'tarifa de embarque', 'embarque', 'viagem', 'transporte de passageiros'
+                ]
+            },
+            {
+                categoria: 'Serviços bancários, seguros, câmbio e arrendamento mercantil',
+                aliquotaIR: '2,40%',
+                codigo: '6188',
+                confianca: 'alta',
+                palavras: [
+                    'banco', 'bancário', 'bancario', 'seguro', 'seguros',
+                    'apólice', 'apolice', 'câmbio', 'cambio', 'leasing',
+                    'arrendamento mercantil', 'instituição financeira', 'instituicao financeira'
+                ]
+            },
+            {
+                categoria: 'Combustíveis',
+                aliquotaIR: '0,24%',
+                codigo: '9060',
+                confianca: 'alta',
+                palavras: [
+                    'combustível', 'combustivel', 'gasolina', 'diesel', 'etanol', 'glp',
+                    'abastecimento', 'posto', 'óleo diesel', 'oleo diesel'
+                ]
+            },
+            {
+                categoria: 'Demais serviços',
+                aliquotaIR: '4,80%',
+                codigo: '6190',
+                confianca: 'média',
+                palavras: [
+                    'serviço', 'servico', 'prestação', 'prestacao', 'limpeza', 'vigilância',
+                    'vigilancia', 'locação', 'locacao', 'assessoria', 'consultoria',
+                    'administração', 'administracao', 'internet', 'telefonia', 'correios'
+                ]
+            }
+        ];
+
+        let melhor = null;
+        let maiorPontuacao = 0;
+        let melhoresAchados = [];
+
+        tabelaIRFDescricao.forEach(item => {
+            let pontos = 0;
+            let achados = [];
+
+            item.palavras.forEach(palavra => {
+                const p = normalizarTexto(palavra);
+                if (descricao.includes(p)) {
+                    pontos += p.includes(' ') ? 3 : 1;
+                    achados.push(palavra);
+                }
+            });
+
+            if (tipo === 'bem' && item.codigo === '6147') {
+                if (
+                    descricao.includes('compra') ||
+                    descricao.includes('aquisição') ||
+                    descricao.includes('aquisicao') ||
+                    descricao.includes('fornecimento') ||
+                    descricao.includes('material') ||
+                    descricao.includes('mercadoria')
+                ) {
+                    pontos += 4;
+                }
+            }
+
+            if (tipo === 'servico' && item.codigo === '6190') {
+                if (
+                    descricao.includes('serviço') ||
+                    descricao.includes('servico') ||
+                    descricao.includes('prestação') ||
+                    descricao.includes('prestacao')
+                ) {
+                    pontos += 2;
+                }
+            }
+
+            if (pontos > maiorPontuacao) {
+                maiorPontuacao = pontos;
+                melhor = item;
+                melhoresAchados = achados;
             }
         });
 
-        if (tipo === "bem" && item.id === "6147") {
-            if (
-                descricao.includes("compra") ||
-                descricao.includes("aquisicao") ||
-                descricao.includes("aquisição")
-            ) {
-                pontos += 2;
-            }
+        if (!melhor) {
+            campoCategoria.innerHTML = '<span class="texto-erro">Não foi possível classificar com segurança.</span>';
+            campoAliquotaIR.textContent = '';
+            campoCodigo.textContent = '';
+            campoConfianca.textContent = '';
+            campoObservacao.textContent = 'Nenhuma correspondência suficiente foi encontrada.';
+            return;
         }
 
-        if (tipo === "servico" && item.id === "6190") {
-            if (
-                descricao.includes("servico") ||
-                descricao.includes("serviço") ||
-                descricao.includes("prestacao") ||
-                descricao.includes("prestação") ||
-                descricao.includes("aluguel") ||
-                descricao.includes("locacao") ||
-                descricao.includes("locação") ||
-                descricao.includes("arrendamento")
-            ) {
-                pontos += 2;
-            }
-        }
+        let confiancaFinal = 'baixa';
+        if (maiorPontuacao >= 4) confiancaFinal = 'média';
+        if (maiorPontuacao >= 8) confiancaFinal = 'alta';
 
-        if (pontos > maiorPontuacao) {
-            maiorPontuacao = pontos;
-            melhor = item;
-        }
-    });
-
-    const termosGeraisServico = [
-        "show", "evento", "eventos", "apresentacao", "apresentação",
-        "espetaculo", "espetáculo", "producao", "produção",
-        "organizacao", "organização", "palestra", "curso",
-        "treinamento", "montagem", "instalacao", "instalação",
-        "manutencao", "manutenção", "locucao", "locução",
-        "servico", "serviço", "prestacao", "prestação",
-        "aluguel", "locacao", "locação", "arrendamento", "cessao", "cessão"
-    ];
-
-    const pareceServicoGenerico = termosGeraisServico.some(termo =>
-        descricao.includes(normalizarTexto(termo))
-    );
-
-    if (!melhor && tipo === "servico" && pareceServicoGenerico) {
-        melhor = tabelaIRFDescricao.find(item => item.id === "6190");
-        maiorPontuacao = 1;
+        aplicarResultadoNaTela(
+            {
+                categoria: melhor.categoria,
+                aliquotaIR: melhor.aliquotaIR,
+                codigo: melhor.codigo,
+                confianca: confiancaFinal,
+                observacao: `Classificação feita pela base local. Termos encontrados: ${melhoresAchados.slice(0, 6).join(', ') || 'sem destaque específico'}.`
+            },
+            '(fallback local)'
+        );
     }
 
-    if (!melhor) {
-        campoCategoria.innerHTML = '<span class="texto-erro">Não foi possível classificar com segurança.</span>';
-        campoAliquotaIR.textContent = "";
-        campoCodigo.textContent = "";
-        campoConfianca.textContent = "";
-        campoObservacao.textContent = "Tente descrever melhor a operação ou faça a classificação manual.";
-        return;
-    }
+    try {
+        const resposta = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview:generateContent?key=AQ.Ab8RN6KgnBXF2vNFONEiveWqIDLLz71fYiSKGhl735sp6inoLA', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                system_instruction: {
+                    parts: [{
+                        text: `Você é um classificador fiscal de IRRF para órgão público municipal.
+Responda somente em JSON válido, sem markdown e sem comentários.
 
-    let confiancaFinal = melhor.confiancaBase;
-    if (maiorPontuacao <= 1) confiancaFinal = "baixa";
-    if (maiorPontuacao >= 3) confiancaFinal = "alta";
+Campos obrigatórios:
+categoria
+aliquotaIR
+codigo
+confianca
+observacao
 
-    campoCategoria.innerHTML = '<span class="texto-sucesso">Categoria sugerida:</span> ' + melhor.categoria;
-    campoAliquotaIR.innerHTML = '<strong>Alíquota de IR:</strong> ' + melhor.aliquotaIR;
-    campoCodigo.innerHTML = '<strong>Código da receita:</strong> ' + melhor.codigo;
-    campoConfianca.innerHTML = '<strong>Nível de confiança:</strong> ' + confiancaFinal;
+Regras obrigatórias:
+- tipo = "servico" ou "bem"
+- Use apenas um destes códigos:
+6147, 6175, 6188, 6190, 9060, 8739
+- Use apenas uma destas alíquotas:
+1,20%
+2,40%
+4,80%
+0,24%
+0,00%
+- confianca deve ser: baixa, média ou alta
+- Seja conservador em caso de dúvida.`
+                    }]
+                },
+                contents: [{
+                    role: 'user',
+                    parts: [{
+                        text: JSON.stringify({
+                            tipo: tipo,
+                            descricao: descricaoOriginal
+                        })
+                    }]
+                }],
+                generationConfig: {
+                    temperature: 0.1
+                }
+            })
+        });
 
-    if (confiancaFinal === "baixa") {
-        campoObservacao.innerHTML = '<span class="texto-alerta">Observação:</span> correspondência ampla; revise antes de usar.';
-    } else {
-        campoObservacao.innerHTML = '<span class="texto-sucesso">Observação:</span> enquadramento compatível com os grupos do Anexo I.';
+        if (!resposta.ok) {
+            throw new Error('Falha ao consultar Gemini');
+        }
+
+        const dados = await resposta.json();
+        const texto = dados?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+
+        const inicio = texto.indexOf('{');
+        const fim = texto.lastIndexOf('}');
+
+        if (inicio === -1 || fim === -1) {
+            throw new Error('Gemini não retornou JSON válido');
+        }
+
+        const jsonLimpo = texto.slice(inicio, fim + 1);
+        const analise = JSON.parse(jsonLimpo);
+
+        if (!analise.codigo || !analise.aliquotaIR || !analise.categoria) {
+            throw new Error('Resposta incompleta do Gemini');
+        }
+
+        aplicarResultadoNaTela(analise, '(classificação por Gemini)');
+    } catch (erro) {
+        console.error('Erro ao consultar Gemini:', erro);
+        fallbackLocal();
     }
 }
 
@@ -2494,20 +3574,23 @@ function mostrarTela(tela) {
     const telaConsulta = document.getElementById('tela-consulta');
     const telaMateriais = document.getElementById('tela-materiais');
     const telaFornecedores = document.getElementById('tela-fornecedores');
+    const telaEmpenhos = document.getElementById('tela-empenhos'); // Novo
 
-    if (!telaConsulta || !telaMateriais || !telaFornecedores) {
-        alert('Uma das telas do sistema não foi encontrada no HTML.');
-        return;
-    }
+    if (!telaConsulta || !telaMateriais || !telaFornecedores || !telaEmpenhos) return;
 
     telaConsulta.classList.remove('active');
     telaMateriais.classList.remove('active');
     telaFornecedores.classList.remove('active');
+    telaEmpenhos.classList.remove('active'); // Novo
 
     if (tela === 'materiais') {
         telaMateriais.classList.add('active');
     } else if (tela === 'fornecedores') {
         telaFornecedores.classList.add('active');
+        if (window.carregarFornecedoresNuvem) window.carregarFornecedoresNuvem(true);
+    } else if (tela === 'empenhos') {
+        telaEmpenhos.classList.add('active'); // Novo
+        if (window.carregarEmpenhosNuvem) window.carregarEmpenhosNuvem(true);
     } else {
         telaConsulta.classList.add('active');
     }
@@ -2515,6 +3598,9 @@ function mostrarTela(tela) {
 
 let fornecedoresMateriais = JSON.parse(localStorage.getItem('fornecedoresMateriais') || '[]');
 let ultimaNotaMateriais = JSON.parse(localStorage.getItem('ultimaNotaMateriais') || 'null');
+
+let fornecedoresFirebaseMateriais = [];
+let fornecedorSelecionadoMateriais = null;
 
 function atualizarTotalMateriais() {
     const total = document.querySelectorAll('#materiaisTabelaBody tr').length;
@@ -2567,6 +3653,277 @@ function aplicarMascaraValor(input) {
     });
 }
 
+
+function visualizarFornecedor(dadosCodificados) {
+    const fornecedor = JSON.parse(decodeURIComponent(dadosCodificados));
+    const conteudo = document.getElementById('conteudoModalFornecedor');
+    const modal = document.getElementById('modalFornecedor');
+
+    const enderecoCompleto = [
+        fornecedor.logradouro || '',
+        fornecedor.numero || '',
+        fornecedor.complemento ? ' - ' + fornecedor.complemento : ''
+    ].filter(Boolean).join(' ');
+
+    const campo = (label, valor, col = '1fr') => `
+        <div style="display: flex; flex-direction: column; gap: 4px; min-width: 0; grid-column: span 1;">
+            <label style="font-size: 12px; color: #5f6b76; font-weight: bold; text-transform: uppercase; letter-spacing: 0.3px;">
+                ${label}
+            </label>
+            <div style="
+                min-height: 34px;
+                padding: 7px 10px;
+                background: #ffffff;
+                border: 1px solid #bac5d0;
+                border-radius: 5px;
+                color: #243746;
+                font-size: 13px;
+                line-height: 1.35;
+                display: flex;
+                align-items: center;
+                box-shadow: inset 0 1px 1px rgba(0,0,0,0.02);
+            ">
+                ${valor || 'Não informado'}
+            </div>
+        </div>
+    `;
+
+    const badgeSimples = fornecedor.simplesNacional
+        ? '<span style="display:inline-block; padding:6px 10px; background:#dff3e4; color:#1f6b38; border:1px solid #b9dfc5; border-radius:999px; font-size:12px; font-weight:bold;">OPTANTE</span>'
+        : '<span style="display:inline-block; padding:6px 10px; background:#f8d7da; color:#8a2632; border:1px solid #efb8be; border-radius:999px; font-size:12px; font-weight:bold;">NÃO OPTANTE</span>';
+
+    const badgeMEI = fornecedor.mei
+        ? '<span style="display:inline-block; padding:6px 10px; background:#dff3e4; color:#1f6b38; border:1px solid #b9dfc5; border-radius:999px; font-size:12px; font-weight:bold;">OPTANTE</span>'
+        : '<span style="display:inline-block; padding:6px 10px; background:#f8d7da; color:#8a2632; border:1px solid #efb8be; border-radius:999px; font-size:12px; font-weight:bold;">NÃO OPTANTE</span>';
+
+    conteudo.innerHTML = `
+        <div style="display: flex; flex-direction: column; gap: 18px;">
+
+            <div style="
+                background: #ffffff;
+                border: 1px solid #bac5d0;
+                border-radius: 8px;
+                padding: 18px 20px;
+            ">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; flex-wrap: wrap;">
+                    <div>
+                        <div style="font-size: 12px; color: #6c7a86; text-transform: uppercase; font-weight: bold; margin-bottom: 6px;">
+                            Ficha cadastral do fornecedor
+                        </div>
+                        <div style="font-size: 23px; color: #0f3b5e; font-weight: bold; line-height: 1.2;">
+                            ${fornecedor.razaoSocial || 'Fornecedor sem nome'}
+                        </div>
+                        <div style="font-size: 14px; color: #5d6b78; margin-top: 6px;">
+                            ${fornecedor.nomeFantasia || 'Sem nome fantasia'}
+                        </div>
+                    </div>
+
+                    <div style="text-align: right;">
+                        <div style="font-size: 12px; color: #6c7a86; text-transform: uppercase; font-weight: bold; margin-bottom: 6px;">
+                            Última atualização
+                        </div>
+                        <div style="font-size: 14px; color: #243746; font-weight: bold;">
+                            ${fornecedor.dataAtualizacao || 'Não informado'}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="
+                background: #ffffff;
+                border: 1px solid #bac5d0;
+                border-radius: 8px;
+                overflow: hidden;
+            ">
+                <div style="background: #eef3f7; padding: 12px 16px; border-bottom: 1px solid #bac5d0; font-weight: bold; color: #0f3b5e;">
+                    Dados principais
+                </div>
+                <div style="padding: 16px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px;">
+                    ${campo('CNPJ', fornecedor.cnpj)}
+                    ${campo('Nome Fantasia', fornecedor.nomeFantasia)}
+                    ${campo('Razão Social', fornecedor.razaoSocial)}
+                    ${campo('Natureza Jurídica', fornecedor.naturezaJuridica)}
+                    ${campo('Porte', fornecedor.porte)}
+                    ${campo('Capital Social', fornecedor.capitalSocial)}
+                </div>
+            </div>
+
+            <div style="
+                background: #ffffff;
+                border: 1px solid #bac5d0;
+                border-radius: 8px;
+                overflow: hidden;
+            ">
+                <div style="background: #eef3f7; padding: 12px 16px; border-bottom: 1px solid #bac5d0; font-weight: bold; color: #0f3b5e;">
+                    Endereço e contato
+                </div>
+                <div style="padding: 16px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px;">
+                    ${campo('Logradouro', enderecoCompleto)}
+                    ${campo('Bairro', fornecedor.bairro)}
+                    ${campo('Município / UF', `${fornecedor.municipio || ''} / ${fornecedor.uf || ''}`)}
+                    ${campo('CEP', fornecedor.cep)}
+                    ${campo('Telefone', fornecedor.telefone)}
+                    ${campo('E-mail', fornecedor.email)}
+                </div>
+            </div>
+
+            <div style="
+                background: #ffffff;
+                border: 1px solid #bac5d0;
+                border-radius: 8px;
+                overflow: hidden;
+            ">
+                <div style="background: #eef3f7; padding: 12px 16px; border-bottom: 1px solid #bac5d0; font-weight: bold; color: #0f3b5e;">
+                    Enquadramento fiscal
+                </div>
+                <div style="padding: 16px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px;">
+                    ${campo('CNAE Principal', `${fornecedor.cnaePrincipalCodigo || ''} - ${fornecedor.cnaePrincipal || ''}`)}
+                    ${campo('Situação Cadastral', fornecedor.situacaoCadastral)}
+
+                    <div style="display: flex; flex-direction: column; gap: 4px;">
+    <label style="font-size: 12px; color: #5f6b76; font-weight: bold; text-transform: uppercase;">
+        Alíquota manual de retenção (%)
+    </label>
+   <input
+    type="text"
+    id="fornecedorAliquotaManual"
+    data-cnpj="${String(fornecedor.cnpj || '').replace(/\D/g, '')}"
+    value="${fornecedor.aliquotaRetencaoManual || ''}"
+    placeholder="Ex.: 0,24"
+    style="min-height: 42px; padding: 8px 12px; background: #fff; border: 1px solid #bac5d0; border-radius: 6px; color: #243746; font-size: 13px;"
+>
+</div>
+
+                    ${campo('Data da Situação Cadastral', fornecedor.dataSituacaoCadastral)}
+
+                    <div style="display: flex; flex-direction: column; gap: 4px;">
+                        <label style="font-size: 12px; color: #5f6b76; font-weight: bold; text-transform: uppercase;">Simples Nacional</label>
+                        <div style="min-height: 42px; padding: 8px 12px; background: #fff; border: 1px solid #bac5d0; border-radius: 6px; display: flex; align-items: center;">
+                            ${badgeSimples}
+                        </div>
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; gap: 4px;">
+                        <label style="font-size: 12px; color: #5f6b76; font-weight: bold; text-transform: uppercase;">MEI</label>
+                        <div style="min-height: 42px; padding: 8px 12px; background: #fff; border: 1px solid #bac5d0; border-radius: 6px; display: flex; align-items: center;">
+                            ${badgeMEI}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    `;
+
+    modal.style.display = 'flex';
+}
+
+function fecharModalFornecedor() {
+    document.getElementById('modalFornecedor').style.display = 'none';
+}
+
+window.salvarAliquotaManualFornecedor = async function () {
+    const campoAliquota = document.getElementById('fornecedorAliquotaManual');
+
+    if (!campoAliquota) {
+        mostrarAvisoSistema('Erro', 'Campo da alíquota não encontrado.');
+        return;
+    }
+
+    const cnpjOriginal = String(campoAliquota.dataset.cnpj || '').trim();
+    const cnpjAtual = cnpjOriginal.replace(/\D/g, '');
+
+    if (!cnpjAtual || cnpjAtual.length !== 14) {
+        mostrarAvisoSistema('Erro', 'CNPJ do fornecedor não informado ou inválido.');
+        return;
+    }
+
+    const aliquotaDigitada = String(campoAliquota.value || '').trim();
+
+    if (aliquotaDigitada === '') {
+        mostrarAvisoSistema('Campo obrigatório', 'Informe a alíquota manual antes de salvar.');
+        campoAliquota.focus();
+        return;
+    }
+
+    const aliquotaNumerica = Number(
+        aliquotaDigitada
+            .replace(/\./g, '')
+            .replace(',', '.')
+            .replace('%', '')
+            .trim()
+    );
+
+    if (Number.isNaN(aliquotaNumerica) || aliquotaNumerica < 0) {
+        mostrarAvisoSistema('Valor inválido', 'Informe uma alíquota válida. Ex.: 0,24 ou 1,20');
+        campoAliquota.focus();
+        return;
+    }
+
+    const aliquotaParaSalvar = aliquotaNumerica.toLocaleString('pt-BR', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    });
+
+    try {
+        if (!window.db) {
+            throw new Error('Firestore não inicializado.');
+        }
+
+        if (!window.fsDoc || !window.fsSetDoc) {
+            throw new Error('Funções do Firestore não disponíveis no escopo global.');
+        }
+
+        const docRef = window.fsDoc(window.db, 'Fornecedores', cnpjAtual);
+
+        await window.fsSetDoc(docRef, {
+            cnpj: cnpjAtual,
+            aliquotaRetencaoManual: aliquotaParaSalvar,
+            dataAtualizacao: new Date().toISOString()
+        }, { merge: true });
+
+        campoAliquota.value = aliquotaParaSalvar;
+        campoAliquota.dataset.cnpj = cnpjAtual;
+
+        if (Array.isArray(window.fornecedoresFirebaseMateriais)) {
+            const fornecedorLista = window.fornecedoresFirebaseMateriais.find(f =>
+                String(f.cnpj || '').replace(/\D/g, '') === cnpjAtual
+            );
+
+            if (fornecedorLista) {
+                fornecedorLista.aliquotaRetencaoManual = aliquotaParaSalvar;
+            }
+        }
+
+        const linhasMateriais = document.querySelectorAll('#materiaisTabelaBody tr');
+        linhasMateriais.forEach(tr => {
+            const tdRetencao = tr.querySelector('.col-retencao');
+            if (!tdRetencao) return;
+            tdRetencao.textContent = calcularRetencaoTextoLinha(tr);
+        });
+
+        if (window.carregarFornecedoresParaMateriais) {
+            await window.carregarFornecedoresParaMateriais();
+        }
+
+        mostrarAvisoSistema('Sucesso', 'Alíquota manual salva com sucesso.');
+    } catch (erro) {
+        console.error('Erro detalhado ao salvar alíquota manual:', erro);
+
+        let mensagem = 'Falha ao atualizar a alíquota do fornecedor.';
+
+        if (erro?.code === 'permission-denied') {
+            mensagem = 'O Firebase negou a gravação. Verifique as regras de segurança do Firestore.';
+        } else if (erro?.code === 'unavailable') {
+            mensagem = 'O Firestore está indisponível no momento. Tente novamente.';
+        } else if (erro?.message) {
+            mensagem = 'Falha ao atualizar a alíquota do fornecedor: ' + erro.message;
+        }
+
+        mostrarAvisoSistema('Erro', mensagem);
+    }
+};
+
 function salvarFornecedor(nome) {
     nome = nome.trim();
     if (!nome) return;
@@ -2577,38 +3934,263 @@ function salvarFornecedor(nome) {
     }
 }
 
+function normalizarTextoBusca(texto) {
+    return (texto || '')
+        .toString()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .trim();
+}
+
 function mostrarSugestoesFornecedor(texto) {
     const box = document.getElementById('listaFornecedores');
-    const termo = texto.trim().toLowerCase();
+    const termoOriginal = texto.trim();
 
-    if (!termo) {
+    if (!termoOriginal) {
         box.style.display = 'none';
         box.innerHTML = '';
         return;
     }
 
-    const encontrados = fornecedoresMateriais.filter(f =>
-        f.toLowerCase().includes(termo)
-    ).slice(0, 8);
+    let fornecedorSelecionadoEmpenho = null;
+
+function mostrarSugestoesFornecedorEmpenho(texto) {
+    const box = document.getElementById('listaFornecedoresEmpenho');
+    const termoOriginal = (texto || '').trim();
+
+    if (!box) return;
+
+    if (!termoOriginal) {
+        box.style.display = 'none';
+        box.innerHTML = '';
+        return;
+    }
+
+    const termo = normalizarTextoBusca(termoOriginal);
+    const termoNumerico = termoOriginal.replace(/\D/g, '');
+    const listaFirebase = window.fornecedoresFirebaseMateriais || [];
+
+    const encontrados = listaFirebase
+        .map(function(f) {
+            const razao = normalizarTextoBusca(f.razaoSocial || '');
+            const fantasia = normalizarTextoBusca(f.nomeFantasia || '');
+            const cnpj = (f.cnpj || '').replace(/\D/g, '');
+
+            let pontuacao = 0;
+
+            if (razao === termo) pontuacao += 100;
+            if (fantasia === termo) pontuacao += 95;
+            if (razao.startsWith(termo)) pontuacao += 60;
+            if (fantasia.startsWith(termo)) pontuacao += 55;
+            if (razao.includes(termo)) pontuacao += 30;
+            if (fantasia.includes(termo)) pontuacao += 25;
+            if (termoNumerico && cnpj.startsWith(termoNumerico)) pontuacao += 80;
+            if (termoNumerico && cnpj.includes(termoNumerico)) pontuacao += 40;
+
+            return {
+                ...f,
+                pontuacao: pontuacao
+            };
+        })
+        .filter(function(f) {
+            return f.pontuacao > 0;
+        })
+        .sort(function(a, b) {
+            return b.pontuacao - a.pontuacao || (a.razaoSocial || '').localeCompare(b.razaoSocial || '');
+        })
+        .slice(0, 8);
 
     if (!encontrados.length) {
-        box.style.display = 'none';
-        box.innerHTML = '';
+        box.innerHTML = `
+            <div style="padding: 10px; border-bottom: 1px solid #eef2f5; color: #6b7782;">
+                Nenhum fornecedor encontrado.
+            </div>
+            <div style="padding: 10px; cursor: pointer; color: #0f3b5e; font-weight: bold;"
+                 onmousedown="window.buscarFornecedorEmpenhoPorCNPJ()">
+                + Buscar fornecedor por CNPJ
+            </div>
+        `;
+        box.style.display = 'block';
         return;
     }
 
-    box.innerHTML = encontrados.map(nome => `
-        <div class="item-fornecedor" style="padding:8px 10px; cursor:pointer; border-bottom:1px solid #eef2f5;" onclick="selecionarFornecedorSugestao('${nome.replace(/'/g, "\\'")}')">
-            ${nome}
-        </div>
-    `).join('');
+    box.innerHTML = encontrados.map(function(f) {
+        const nomeSeguro = (f.razaoSocial || '').replace(/"/g, '&quot;');
+        const cnpjSeguro = (f.cnpj || '').replace(/"/g, '&quot;');
+
+        return `
+            <div
+                class="item-fornecedor-empenho"
+                style="padding: 10px; border-bottom: 1px solid #eef2f5; cursor: pointer;"
+                data-nome="${nomeSeguro}"
+                data-cnpj="${cnpjSeguro}"
+                onmousedown="selecionarFornecedorEmpenhoElemento(this)"
+            >
+                <div style="font-weight: bold; color: #1f2d3a;">${f.razaoSocial || 'Sem razão social'}</div>
+                <div style="font-size: 12px; color: #6b7782;">${f.nomeFantasia || 'Sem fantasia'} • ${f.cnpj || 'Sem CNPJ'}</div>
+            </div>
+        `;
+    }).join('');
 
     box.style.display = 'block';
 }
 
-function selecionarFornecedorSugestao(nome) {
-    document.getElementById('mcFornecedor').value = nome;
-    document.getElementById('listaFornecedores').style.display = 'none';
+function iniciarAutocompleteEmpenho() {
+    const fornecedorInput = document.getElementById('empFornecedor');
+    const campoCnpj = document.getElementById('empCnpj');
+    const lista = document.getElementById('listaFornecedoresEmpenho');
+
+    if (!fornecedorInput || !campoCnpj || !lista) return;
+
+    fornecedorInput.addEventListener('input', function() {
+        fornecedorSelecionadoEmpenho = null;
+        campoCnpj.value = '';
+        mostrarSugestoesFornecedorEmpenho(this.value);
+    });
+
+    fornecedorInput.addEventListener('focus', function() {
+        if (this.value.trim()) {
+            mostrarSugestoesFornecedorEmpenho(this.value);
+        }
+    });
+
+    fornecedorInput.addEventListener('blur', function() {
+        setTimeout(function() {
+            lista.style.display = 'none';
+        }, 250);
+    });
+}
+
+function selecionarFornecedorEmpenhoElemento(elemento) {
+    if (!elemento) return;
+
+    const nome = elemento.getAttribute('data-nome') || '';
+    const cnpj = elemento.getAttribute('data-cnpj') || '';
+
+    selecionarFornecedorEmpenho(nome, cnpj);
+}
+
+function selecionarFornecedorEmpenho(nome, cnpj) {
+    const campo = document.getElementById('empFornecedor');
+    const campoCnpj = document.getElementById('empCnpj');
+    const lista = document.getElementById('listaFornecedoresEmpenho');
+
+    if (campo) campo.value = nome || '';
+    if (campoCnpj) campoCnpj.value = cnpj || '';
+
+    fornecedorSelecionadoEmpenho = {
+        nome: nome || '',
+        cnpj: cnpj || ''
+    };
+
+    if (lista) {
+        lista.innerHTML = '';
+        lista.style.display = 'none';
+    }
+}
+
+    const termo = normalizarTextoBusca(termoOriginal);
+    const termoNumerico = termoOriginal.replace(/\D/g, '');
+    const listaFirebase = window.fornecedoresFirebaseMateriais || [];
+
+    const encontrados = listaFirebase
+        .map(f => {
+            const razao = normalizarTextoBusca(f.razaoSocial || '');
+            const fantasia = normalizarTextoBusca(f.nomeFantasia || '');
+            const cnpj = (f.cnpj || '').replace(/\D/g, '');
+
+            let pontuacao = 0;
+
+            if (razao === termo) pontuacao += 100;
+            if (fantasia === termo) pontuacao += 95;
+
+            if (razao.startsWith(termo)) pontuacao += 60;
+            if (fantasia.startsWith(termo)) pontuacao += 55;
+
+            if (razao.includes(termo)) pontuacao += 30;
+            if (fantasia.includes(termo)) pontuacao += 25;
+
+            if (termoNumerico && cnpj.startsWith(termoNumerico)) pontuacao += 80;
+            if (termoNumerico && cnpj.includes(termoNumerico)) pontuacao += 40;
+
+            return { ...f, pontuacao };
+        })
+        .filter(f => f.pontuacao > 0)
+        .sort((a, b) => b.pontuacao - a.pontuacao || (a.razaoSocial || '').localeCompare(b.razaoSocial || ''))
+        .slice(0, 8);
+
+    if (!encontrados.length) {
+        box.innerHTML = `
+            <div style="padding: 10px; border-bottom: 1px solid #eef2f5; color: #6b7782;">
+                Nenhum fornecedor encontrado.
+            </div>
+            <div style="padding: 10px; cursor: pointer; color: #0f3b5e; font-weight: bold;"
+                 onmousedown="abrirCadastroFornecedorPorCNPJ()">
+                + Adicionar fornecedor por CNPJ
+            </div>
+        `;
+        box.style.display = 'block';
+        return;
+    }
+
+    box.innerHTML = encontrados.map(f => `
+        <div class="item-fornecedor"
+     style="padding: 8px 10px; cursor: pointer; border-bottom: 1px solid #eef2f5;"
+     data-nome="${(f.razaoSocial || '').replace(/"/g, '&quot;')}"
+     data-cnpj="${(f.cnpj || '').replace(/"/g, '&quot;')}"
+     onmousedown="selecionarFornecedorElemento(this)">
+    <div style="font-weight: bold; color: #243746;">${f.razaoSocial || ''}</div>
+    <div style="font-size: 12px; color: #66727d;">
+        ${f.nomeFantasia || 'Sem nome fantasia'} ${f.cnpj ? '• CNPJ: ' + f.cnpj : ''}
+    </div>
+</div>
+    `).join('') + `
+        <div style="padding: 10px; cursor: pointer; color: #0f3b5e; font-weight: bold;"
+             onmousedown="abrirCadastroFornecedorPorCNPJ()">
+            + Adicionar fornecedor por CNPJ
+        </div>
+    `;
+
+    box.style.display = 'block';
+}
+
+function selecionarFornecedorElemento(elemento) {
+    const nome = elemento.getAttribute('data-nome') || '';
+    const cnpj = elemento.getAttribute('data-cnpj') || '';
+
+    selecionarFornecedorSugestao(nome, cnpj);
+}
+
+function selecionarFornecedorSugestao(nome, cnpj = '') {
+    const campo = document.getElementById('mcFornecedor');
+    const lista = document.getElementById('listaFornecedores');
+
+    campo.value = nome;
+    campo.setAttribute('data-cnpj-selecionado', cnpj);
+
+    fornecedorSelecionadoMateriais = {
+        nome: nome,
+        cnpj: cnpj
+    };
+
+    lista.innerHTML = '';
+    lista.style.display = 'none';
+}
+
+function abrirCadastroFornecedorPorCNPJ() {
+    const cnpj = prompt('Fornecedor não encontrado. Digite o CNPJ para cadastrar:');
+    if (!cnpj) return;
+
+    const campoConsulta = document.getElementById('cnpjInput');
+    if (!campoConsulta) return;
+
+    campoConsulta.value = cnpj;
+    mostrarTela('consulta');
+
+    setTimeout(() => {
+        consultarCNPJ();
+    }, 200);
 }
 
 function capturarDadosFormularioMateriais() {
@@ -2616,6 +4198,8 @@ function capturarDadosFormularioMateriais() {
         dataEntrada: document.getElementById('mcDataEntrada').value.trim(),
         dataEmissao: document.getElementById('mcDataEmissao').value.trim(),
         fornecedor: document.getElementById('mcFornecedor').value.trim(),
+        tipoNota: document.getElementById('mcTipoNota').value.trim(),
+        secretaria: document.getElementById('mcSecretaria').value.trim(),
         valorNota: document.getElementById('mcValorNota').value.trim(),
         empenho: document.getElementById('mcEmpenho').value.trim(),
         notaFiscal: document.getElementById('mcNotaFiscal').value.trim()
@@ -2627,6 +4211,8 @@ function preencherFormularioMateriais(dados) {
     document.getElementById('mcDataEntrada').value = dados.dataEntrada || '';
     document.getElementById('mcDataEmissao').value = dados.dataEmissao || '';
     document.getElementById('mcFornecedor').value = dados.fornecedor || '';
+    document.getElementById('mcTipoNota').value = dados.tipoNota || '';
+    document.getElementById('mcSecretaria').value = dados.secretaria || '';
     document.getElementById('mcValorNota').value = dados.valorNota || '';
     document.getElementById('mcEmpenho').value = dados.empenho || '';
     document.getElementById('mcNotaFiscal').value = dados.notaFiscal || '';
@@ -2637,6 +4223,8 @@ function limparFormularioMateriais(manterUltimos = false) {
         document.getElementById('mcDataEntrada').value = ultimaNotaMateriais.dataEntrada || '';
         document.getElementById('mcDataEmissao').value = ultimaNotaMateriais.dataEmissao || '';
         document.getElementById('mcFornecedor').value = ultimaNotaMateriais.fornecedor || '';
+        document.getElementById('mcTipoNota').value = ultimaNotaMateriais.tipoNota || '';
+        document.getElementById('mcSecretaria').value = ultimaNotaMateriais.secretaria || '';
         document.getElementById('mcValorNota').value = ultimaNotaMateriais.valorNota || '';
         document.getElementById('mcEmpenho').value = '';
         document.getElementById('mcNotaFiscal').value = '';
@@ -2647,6 +4235,8 @@ function limparFormularioMateriais(manterUltimos = false) {
     document.getElementById('mcDataEntrada').value = '';
     document.getElementById('mcDataEmissao').value = '';
     document.getElementById('mcFornecedor').value = '';
+    document.getElementById('mcTipoNota').value = '';
+    document.getElementById('mcSecretaria').value = '';
     document.getElementById('mcValorNota').value = '';
     document.getElementById('mcEmpenho').value = '';
     document.getElementById('mcNotaFiscal').value = '';
@@ -2655,7 +4245,7 @@ function limparFormularioMateriais(manterUltimos = false) {
 function adicionarLinhaMaterial() {
     const dados = capturarDadosFormularioMateriais();
 
-    if (!dados.dataEntrada || !dados.dataEmissao || !dados.fornecedor || !dados.valorNota || !dados.empenho || !dados.notaFiscal) {
+    if (!dados.dataEntrada || !dados.dataEmissao || !dados.fornecedor || !dados.tipoNota || !dados.secretaria || !dados.valorNota || !dados.empenho || !dados.notaFiscal) {
         alert('Preencha todos os campos antes de adicionar a linha.');
         return;
     }
@@ -2663,59 +4253,83 @@ function adicionarLinhaMaterial() {
     const tbody = document.getElementById('materiaisTabelaBody');
     const tr = document.createElement('tr');
 
-              tr.innerHTML = `
-        <td>${dados.dataEntrada}</td>
-        <td>${dados.dataEmissao}</td>
-        <td class="col-fornecedor">${dados.fornecedor}</td>
-        <td>${dados.valorNota}</td>
-        <td>${dados.empenho}</td>
-        <td>${dados.notaFiscal}</td>
-        <td class="col-acoes" style="white-space: nowrap;">
-            <button type="button" class="btn-repetir-linha" onclick="repetirLinhaMaterial(this)">Repetir</button>
-            <button type="button" class="btn-editar-linha" onclick="editarLinhaMaterial(this)">Editar</button>
-            <button type="button" class="btn-excluir-linha" onclick="prepararExclusaoLinha(this)">Excluir</button>
-        </td>
-    `;
+    tr.innerHTML = `
+    <td>${dados.dataEntrada}</td>
+    <td>${dados.dataEmissao}</td>
+    <td class="col-fornecedor">${dados.fornecedor}</td>
+    <td>${dados.tipoNota}</td>
+    <td>${dados.secretaria}</td>
+    <td>${formatarMoedaBR(limparValorParaNumero(dados.valorNota))}</td>
+    <td class="col-retencao"></td>
+    <td>${dados.empenho}</td>
+    <td>${dados.notaFiscal}</td>
+    <td class="col-acoes" style="white-space: nowrap;">
+        <button type="button" class="btn-repetir-linha" onclick="repetirLinhaMaterial(this)">Repetir</button>
+        <button type="button" class="btn-editar-linha" onclick="editarLinhaMaterial(this)">Editar</button>
+        <button type="button" class="btn-excluir-linha" onclick="prepararExclusaoLinha(this)">Excluir</button>
+    </td>
+`;
 
     tbody.appendChild(tr);
-
     salvarFornecedor(dados.fornecedor);
 
     ultimaNotaMateriais = {
         dataEntrada: dados.dataEntrada,
         dataEmissao: dados.dataEmissao,
         fornecedor: dados.fornecedor,
+        tipoNota: dados.tipoNota,
+        secretaria: dados.secretaria,
         valorNota: dados.valorNota,
         empenho: dados.empenho,
         notaFiscal: dados.notaFiscal
     };
 
     localStorage.setItem('ultimaNotaMateriais', JSON.stringify(ultimaNotaMateriais));
-
     atualizarTotalMateriais();
     limparFormularioMateriais(true);
 }
+
 
 function editarLinhaMaterial(botao) {
     const tr = botao.closest('tr');
     if (!tr) return;
 
     const tds = tr.querySelectorAll('td');
-    if (tds.length < 6) return;
+    if (tds.length < 9) return;
 
-    // Preenche o formulário com os dados da linha selecionada
     preencherFormularioMateriais({
         dataEntrada: tds[0].textContent.trim(),
         dataEmissao: tds[1].textContent.trim(),
         fornecedor: tds[2].textContent.trim(),
-        valorNota: tds[3].textContent.trim(),
-        empenho: tds[4].textContent.trim(),
-        notaFiscal: tds[5].textContent.trim()
+        tipoNota: tds[3].textContent.trim(),
+        secretaria: tds[4].textContent.trim(),
+        valorNota: tds[5].textContent.trim(),
+        empenho: '',
+        notaFiscal: ''
     });
 
-    // Remove a linha atual, pois ela será readicionada após o usuário consertar e clicar em "Adicionar"
     tr.remove();
     atualizarTotalMateriais();
+}
+
+function repetirLinhaMaterial(botao) {
+    const tr = botao.closest('tr');
+    if (!tr) return;
+
+    const tds = tr.querySelectorAll('td');
+    if (tds.length < 8) return;
+
+    preencherFormularioMateriais({
+        dataEntrada: tds[0].textContent.trim(),
+        dataEmissao: tds[1].textContent.trim(),
+        fornecedor: tds[2].textContent.trim(),
+        tipoNota: tds[3].textContent.trim(),
+        valorNota: tds[5].textContent.trim(),
+        empenho: '',
+        notaFiscal: ''
+    });
+
+    document.getElementById('mcEmpenho').focus();
 }
 
 let linhaParaExcluir = null;
@@ -2745,13 +4359,14 @@ function repetirLinhaMaterial(botao) {
     if (!tr) return;
 
     const tds = tr.querySelectorAll('td');
-    if (tds.length < 6) return;
+    if (tds.length < 7) return;
 
     preencherFormularioMateriais({
         dataEntrada: tds[0].textContent.trim(),
         dataEmissao: tds[1].textContent.trim(),
         fornecedor: tds[2].textContent.trim(),
-        valorNota: tds[3].textContent.trim(),
+        tipoNota: tds[3].textContent.trim(),
+        valorNota: tds[4].textContent.trim(),
         empenho: '',
         notaFiscal: ''
     });
@@ -2769,6 +4384,8 @@ function repetirUltimaNota() {
         dataEntrada: ultimaNotaMateriais.dataEntrada,
         dataEmissao: ultimaNotaMateriais.dataEmissao,
         fornecedor: ultimaNotaMateriais.fornecedor,
+        tipoNota: ultimaNotaMateriais.tipoNota,
+        secretaria: ultimaNotaMateriais.secretaria,
         valorNota: ultimaNotaMateriais.valorNota,
         empenho: '',
         notaFiscal: ''
@@ -2789,19 +4406,429 @@ function iniciarMateriais() {
 
     const fornecedorInput = document.getElementById('mcFornecedor');
     fornecedorInput.addEventListener('input', function () {
+        fornecedorSelecionadoMateriais = null;
         mostrarSugestoesFornecedor(this.value);
     });
 
-    fornecedorInput.addEventListener('blur', function () {
-        setTimeout(() => {
-            document.getElementById('listaFornecedores').style.display = 'none';
-        }, 150);
+    fornecedorInput.addEventListener('focus', function () {
+        if (this.value.trim()) {
+            mostrarSugestoesFornecedor(this.value);
+        }
     });
 
+    fornecedorInput.addEventListener('blur', function () {
+    setTimeout(() => {
+        document.getElementById('listaFornecedores').style.display = 'none';
+    }, 250);
+});
+
+    if (window.carregarFornecedoresParaMateriais) {
+        window.carregarFornecedoresParaMateriais();
+    }
+iniciarAutocompleteEmpenho();
     atualizarTotalMateriais();
 }
 
 window.addEventListener('load', iniciarMateriais);
+
+function abrirModalImpressaoMateriais() {
+    const linhas = document.querySelectorAll('#materiaisTabelaBody tr');
+    if (!linhas.length) {
+        mostrarAvisoSistema('Tabela vazia', 'A tabela de materiais está vazia.');
+        return;
+    }
+
+    const chkRetencao = document.getElementById('chkImprimirRetencao');
+    if (chkRetencao) chkRetencao.checked = false;
+
+    const chkSomas = document.getElementById('chkImprimirSomas');
+    if (chkSomas) chkSomas.checked = false;
+
+    const filtroTipo = document.getElementById('filtroTipoImpressao');
+    if (filtroTipo) filtroTipo.value = 'todos';
+
+    const modal = document.getElementById('modalImpressaoMateriais');
+    if (modal) modal.style.display = 'flex';
+}
+
+function fecharModalImpressaoMateriais() {
+    const modal = document.getElementById('modalImpressaoMateriais');
+    if (modal) modal.style.display = 'none';
+}
+
+function confirmarImpressaoMateriais() {
+    const incluirRetencao = !!document.getElementById('chkImprimirRetencao')?.checked;
+    const incluirSomas = !!document.getElementById('chkImprimirSomas')?.checked;
+    const filtroTipo = document.getElementById('filtroTipoImpressao')?.value || 'todos';
+
+    fecharModalImpressaoMateriais();
+    prepararImpressaoMateriais(incluirRetencao, incluirSomas, filtroTipo);
+}
+
+
+function calcularSomasMateriais(incluirRetencao = false) {
+    const linhas = document.querySelectorAll('#materiaisTabelaBody tr');
+    let somaNotas = 0;
+    let somaRetencaoMin = 0;
+    let somaRetencaoMax = 0;
+
+    linhas.forEach(tr => {
+        const colunas = tr.querySelectorAll('td');
+        if (!colunas.length) return;
+
+        const textoValorNota = (colunas[5]?.textContent || '').trim();
+        somaNotas += limparValorParaNumero(textoValorNota);
+
+        if (incluirRetencao) {
+            const textoRetencao = calcularRetencaoTextoLinha(tr).trim();
+
+            if (textoRetencao.includes('-')) {
+                const partes = textoRetencao.split('-').map(parte => limparValorParaNumero(parte.trim()));
+                const valorMin = partes[0] || 0;
+                const valorMax = partes[1] || 0;
+
+                somaRetencaoMin += valorMin;
+                somaRetencaoMax += valorMax;
+            } else {
+                const valorUnico = limparValorParaNumero(textoRetencao);
+                somaRetencaoMin += valorUnico;
+                somaRetencaoMax += valorUnico;
+            }
+        }
+    });
+
+    return {
+        somaNotas,
+        somaRetencaoMin,
+        somaRetencaoMax
+    };
+}
+
+function prepararImpressaoMateriais(incluirRetencao, incluirSomas, filtroTipo = 'todos') {
+    const body = document.body;
+    const todasLinhas = Array.from(document.querySelectorAll('#materiaisTabelaBody tr'));
+    const rodapeOriginal = document.getElementById('materiaisTotal');
+    let rodapeTemporario = null;
+    let textoOriginalRodape = '';
+    const linhasOcultadas = [];
+
+    const linhasFiltradas = todasLinhas.filter(tr => {
+        const colunas = tr.querySelectorAll('td');
+        const tipoNota = normalizarTipoNota(colunas[3]?.textContent || '');
+
+        if (filtroTipo === 'servico') return tipoNota === 'servico';
+        if (filtroTipo === 'mercadoria') return tipoNota === 'mercadoria';
+        return true;
+    });
+
+    if (!linhasFiltradas.length) {
+        mostrarAvisoSistema('Sem registros', 'Não há linhas do tipo selecionado para imprimir.');
+        return;
+    }
+
+    todasLinhas.forEach(tr => {
+        if (!linhasFiltradas.includes(tr)) {
+            linhasOcultadas.push({ elemento: tr, displayOriginal: tr.style.display });
+            tr.style.display = 'none';
+        }
+    });
+
+    linhasFiltradas.forEach(tr => {
+        let tdRetencao = tr.querySelector('.col-retencao');
+
+        if (!tdRetencao) {
+            tdRetencao = document.createElement('td');
+            tdRetencao.className = 'col-retencao';
+            tr.insertBefore(tdRetencao, tr.children[6]);
+        }
+
+        tdRetencao.textContent = incluirRetencao ? calcularRetencaoTextoLinha(tr) : '';
+    });
+
+    if (incluirRetencao) {
+        body.classList.add('print-retencao');
+    } else {
+        body.classList.remove('print-retencao');
+    }
+
+    if (incluirSomas && rodapeOriginal) {
+        let somaNotas = 0;
+        let somaRetencaoMin = 0;
+        let somaRetencaoMax = 0;
+
+        linhasFiltradas.forEach(tr => {
+            const colunas = tr.querySelectorAll('td');
+            const textoValorNota = (colunas[5]?.textContent || '').trim();
+            somaNotas += limparValorParaNumero(textoValorNota);
+
+            if (incluirRetencao) {
+                const textoRetencao = calcularRetencaoTextoLinha(tr).trim();
+
+                if (textoRetencao.includes('-')) {
+                    const partes = textoRetencao.split('-').map(parte => limparValorParaNumero(parte.trim()));
+                    somaRetencaoMin += partes[0] || 0;
+                    somaRetencaoMax += partes[1] || 0;
+                } else {
+                    const valorUnico = limparValorParaNumero(textoRetencao);
+                    somaRetencaoMin += valorUnico;
+                    somaRetencaoMax += valorUnico;
+                }
+            }
+        });
+
+        textoOriginalRodape = rodapeOriginal.textContent;
+        rodapeOriginal.style.display = 'none';
+
+        rodapeTemporario = document.createElement('div');
+        rodapeTemporario.className = 'materiais-totais-print';
+        rodapeTemporario.id = 'materiaisTotalSomasPrint';
+
+        const boxPrincipal = document.createElement('div');
+        boxPrincipal.className = 'materiais-total-box box-principal';
+        boxPrincipal.innerHTML =
+            'TOTAL DE NFs ' + linhasFiltradas.length +
+            '<br>VALOR TOTAL R$ ' + formatarValorBR(somaNotas);
+
+        rodapeTemporario.appendChild(boxPrincipal);
+
+        if (incluirRetencao) {
+            const boxRetencao = document.createElement('div');
+            boxRetencao.className = 'materiais-total-box box-retencao';
+
+            if (Math.abs(somaRetencaoMin - somaRetencaoMax) < 0.01) {
+                boxRetencao.innerHTML =
+                    'RETENÇÃO TOTAL' +
+                    '<br>R$ ' + formatarValorBR(somaRetencaoMin);
+            } else {
+                boxRetencao.innerHTML =
+                    'RETENÇÃO TOTAL' +
+                    '<br>R$ ' + formatarValorBR(somaRetencaoMin) +
+                    ' - R$ ' + formatarValorBR(somaRetencaoMax);
+            }
+
+            rodapeTemporario.appendChild(boxRetencao);
+        }
+
+        rodapeOriginal.insertAdjacentElement('afterend', rodapeTemporario);
+    }
+
+    setTimeout(() => {
+        window.print();
+
+        setTimeout(() => {
+            body.classList.remove('print-retencao');
+
+            linhasOcultadas.forEach(item => {
+                item.elemento.style.display = item.displayOriginal;
+            });
+
+            if (rodapeOriginal) {
+                rodapeOriginal.style.display = '';
+                rodapeOriginal.textContent = textoOriginalRodape || ('TOTAL DE NFs ' + todasLinhas.length);
+            }
+
+            if (rodapeTemporario) {
+                rodapeTemporario.remove();
+            }
+        }, 300);
+    }, 150);
+}
+
+function calcularRetencaoTextoLinha(tr) {
+    const colunas = tr.querySelectorAll('td');
+    if (colunas.length < 9) return '';
+
+    const fornecedor = (colunas[2]?.textContent || '').trim();
+    const tipoNota = normalizarTipoNota(colunas[3]?.textContent || '');
+    const valorNota = limparValorParaNumero((colunas[5]?.textContent || '').trim());
+
+    if (!valorNota || valorNota <= 0) return 'R$ 0,00';
+
+    const fornecedorInfo = localizarFornecedorPorNome(fornecedor);
+
+    const isSimples = !!(
+        fornecedorInfo &&
+        (
+            fornecedorInfo.simplesNacional === true ||
+            fornecedorInfo.mei === true
+        )
+    );
+
+    if (isSimples) {
+        return 'R$ 0,00';
+    }
+
+    const aliquotaManualTexto = (fornecedorInfo?.aliquotaRetencaoManual || '').toString().trim();
+
+    if (aliquotaManualTexto) {
+        const aliquotaManual = limparValorParaNumero(aliquotaManualTexto) / 100;
+
+        if (aliquotaManual > 0) {
+            const valorRetencaoManual = valorNota * aliquotaManual;
+            return formatarMoedaBR(valorRetencaoManual);
+        }
+    }
+
+    if (tipoNota === 'mercadoria') {
+        const valorRetencao = valorNota * 0.012;
+        return formatarMoedaBR(valorRetencao);
+    }
+
+    if (tipoNota === 'servico') {
+        const valorMin = valorNota * 0.012;
+        const valorMax = valorNota * 0.048;
+        return `${formatarMoedaBR(valorMin)} - ${formatarMoedaBR(valorMax)}`;
+    }
+
+    return '-';
+}
+
+function normalizarTipoNota(texto) {
+    return (texto || '')
+        .toString()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .trim();
+}
+
+function formatarMoedaBR(valor) {
+    return Number(valor || 0).toLocaleString('pt-BR', {
+        style: 'currency',
+        currency: 'BRL'
+    });
+}
+
+function localizarFornecedorPorNome(nomeFornecedor) {
+    const nomeOriginal = (nomeFornecedor || '').trim();
+    const nomeBusca = normalizarTextoBusca(nomeOriginal);
+
+    if (!nomeBusca) return null;
+
+    const lista = Array.isArray(window.fornecedoresFirebaseMateriais)
+        ? window.fornecedoresFirebaseMateriais
+        : [];
+
+    const cnpjBusca = nomeOriginal.replace(/\D/g, '');
+
+    if (cnpjBusca.length === 14) {
+        const porCnpj = lista.find(f => String(f.cnpj || '').replace(/\D/g, '') === cnpjBusca);
+        if (porCnpj) return porCnpj;
+    }
+
+    const matchExato = lista.find(f => {
+        const razao = normalizarTextoBusca(f.razaoSocial || '');
+        const fantasia = normalizarTextoBusca(f.nomeFantasia || '');
+        return razao === nomeBusca || fantasia === nomeBusca;
+    });
+
+    if (matchExato) return matchExato;
+
+    return null;
+}
+
+function limparHtmlParaTexto(html) {
+  const div = document.createElement('div');
+  div.innerHTML = html || '';
+  return (div.textContent || div.innerText || '').trim();
+}
+
+function obterNumeroDeMoeda(texto) {
+  if (!texto) return 0;
+  const limpo = String(texto)
+    .replace(/[R$\s]/g, '')
+    .replace(/\./g, '')
+    .replace(',', '.')
+    .replace(/[^\d.-]/g, '');
+  const valor = parseFloat(limpo);
+  return isNaN(valor) ? 0 : valor;
+}
+
+function alternarBottomSheet() {
+  const sheet = document.getElementById('bottomSheet');
+  if (sheet) sheet.classList.toggle('active');
+}
+
+function fecharBottomSheet() {
+  const sheet = document.getElementById('bottomSheet');
+  if (sheet) sheet.classList.remove('active');
+}
+
+function atualizarClassesResumo() {
+  const irf = document.getElementById('bs-irf-valor');
+  const iss = document.getElementById('bs-iss-valor');
+
+  if (irf) {
+    irf.classList.remove('valor-zero', 'valor-positivo');
+    irf.classList.add(obterNumeroDeMoeda(irf.textContent) > 0 ? 'valor-positivo' : 'valor-zero');
+  }
+
+  if (iss) {
+    iss.classList.remove('valor-zero', 'valor-positivo');
+    iss.classList.add(obterNumeroDeMoeda(iss.textContent) > 0 ? 'valor-positivo' : 'valor-zero');
+  }
+}
+
+function atualizarCupomBottomSheet() {
+  const bruto = obterNumeroDeMoeda(document.getElementById('bs-cupom-bruto')?.textContent || 'R$ 0,00');
+  const irf = obterNumeroDeMoeda(document.getElementById('bs-cupom-irf')?.textContent || 'R$ 0,00');
+  const iss = obterNumeroDeMoeda(document.getElementById('bs-cupom-iss')?.textContent || 'R$ 0,00');
+
+  const totalRetencoes = irf + iss;
+  const liquido = bruto - totalRetencoes;
+
+  document.getElementById('bs-cupom-total-retencoes').textContent = formatBRL(totalRetencoes);
+  document.getElementById('bs-cupom-liquido').textContent = formatBRL(liquido < 0 ? 0 : liquido);
+
+  atualizarClassesResumo();
+}
+
+function atualizarBottomSheetIRF() {
+  const valorNota = parseFloat(document.getElementById('valorNota')?.value || '0') || 0;
+  const valorIRF = document.getElementById('valor-ir-tela')?.textContent || 'R$ 0,00';
+  const motivoIRF = document.getElementById('motivo-retencao')?.textContent || 'Nenhum cálculo realizado.';
+  const detalheIRF = document.getElementById('detalhe-retencao')?.innerHTML || '';
+
+  document.getElementById('bs-valor-bruto').textContent = formatBRL(valorNota);
+  document.getElementById('bs-cupom-bruto').textContent = formatBRL(valorNota);
+
+  document.getElementById('bs-irf-status').textContent =
+    obterNumeroDeMoeda(valorIRF) > 0 ? 'Com retenção' : 'Sem retenção';
+
+  document.getElementById('bs-irf-valor').textContent = valorIRF;
+  document.getElementById('bs-irf-motivo').textContent = motivoIRF;
+  document.getElementById('bs-irf-detalhe').innerHTML = detalheIRF;
+  document.getElementById('bs-cupom-irf').textContent = valorIRF;
+
+  atualizarCupomBottomSheet();
+}
+
+function atualizarBottomSheetISS() {
+  const valorNota = parseFloat(document.getElementById('issqn-valor')?.value || '0') || 0;
+  const valorISS = document.getElementById('valor-issqn-tela')?.textContent || 'R$ 0,00';
+  const motivoISS = limparHtmlParaTexto(document.getElementById('motivo-issqn')?.innerHTML || '');
+  const detalheISS = document.getElementById('detalhe-issqn')?.innerHTML || '';
+
+  if (valorNota > 0) {
+    document.getElementById('bs-valor-bruto').textContent = formatBRL(valorNota);
+    document.getElementById('bs-cupom-bruto').textContent = formatBRL(valorNota);
+  }
+
+  document.getElementById('bs-iss-status').textContent =
+    obterNumeroDeMoeda(valorISS) > 0 ? 'Com retenção' : 'Sem retenção';
+
+  document.getElementById('bs-iss-valor').textContent = valorISS;
+  document.getElementById('bs-iss-motivo').textContent = motivoISS;
+  document.getElementById('bs-iss-detalhe').innerHTML = detalheISS;
+  document.getElementById('bs-cupom-iss').textContent = valorISS;
+
+  atualizarCupomBottomSheet();
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+  const handle = document.querySelector('.bottom-sheet-handle');
+  if (handle) handle.addEventListener('click', alternarBottomSheet);
+});
 
     </script>
 
@@ -2817,13 +4844,19 @@ window.addEventListener('load', iniciarMateriais);
         updateProfile
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-    import {
-        getFirestore,
-        doc,
-        setDoc,
-        getDocs,
-        collection
-    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+ import {
+    getFirestore,
+    doc,
+    setDoc,
+    getDoc,
+    getDocs,
+    deleteDoc,
+    collection,
+    query,
+    orderBy,
+    limit,
+    startAfter
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyB09-qIkz483j429m6QsBFzSjmThdO5ST8",
@@ -2836,8 +4869,542 @@ window.addEventListener('load', iniciarMateriais);
     };
 
     const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+window.db = db;
+window.auth = auth;
+window.fsDoc = doc;
+window.fsSetDoc = setDoc;
+window.fsGetDoc = getDoc;
+window.fsDeleteDoc = deleteDoc;
+window.fsCollection = collection;
+window.fsGetDocs = getDocs;
+window.fsQuery = query;
+window.fsOrderBy = orderBy;
+window.fsLimit = limit;
+window.fsStartAfter = startAfter;
+
+
+    window.carregarFornecedoresParaMateriais = async function () {
+    if (!auth.currentUser) {
+        console.warn('Usuário não está logado.');
+        return;
+    }
+
+    try {
+        const snapshot = await getDocs(collection(db, 'Fornecedores'));
+        const lista = [];
+
+        snapshot.forEach(docItem => {
+            const f = docItem.data();
+
+            lista.push({
+    cnpj: f.cnpj || '',
+    razaoSocial: f.razaoSocial || '',
+    nomeFantasia: f.nomeFantasia || '',
+    municipio: f.municipio || '',
+    uf: f.uf || '',
+    simplesNacional: !!f.simplesNacional,
+    mei: !!f.mei,
+    aliquotaRetencaoManual: f.aliquotaRetencaoManual || ''
+});
+        });
+
+        window.fornecedoresFirebaseMateriais = lista;
+    } catch (erro) {
+        console.error('Erro ao carregar fornecedores para materiais:', erro);
+        window.fornecedoresFirebaseMateriais = [];
+    }
+};
+
+
+   window.cadastrarEmpenhosDaTabela = async function(botao) {
+    if (!auth.currentUser) {
+        mostrarAvisoSistema("Acesso negado", "Você precisa estar logado para salvar empenhos.");
+        return;
+    }
+
+    const linhas = document.querySelectorAll('#materiaisTabelaBody tr');
+    if (linhas.length === 0) {
+        mostrarAvisoSistema("Tabela vazia", "A tabela de materiais está vazia.");
+        return;
+    }
+
+    const textoOriginal = botao ? botao.innerText : "Salvar Empenhos da Tabela";
+
+    if (botao) {
+        botao.innerText = "Salvando...";
+        botao.disabled = true;
+    }
+
+    const empenhosExtraidos = {};
+
+    linhas.forEach((linha) => {
+    const colunas = linha.querySelectorAll('td');
+
+    if (colunas.length >= 9) {
+        const dataEntrada = colunas[0].innerText.trim();
+const dataEmissao = colunas[1].innerText.trim();
+const fornecedor = colunas[2].innerText.trim();
+const tipoNota = colunas[3].innerText.trim();
+const secretaria = colunas[4].innerText.trim();
+const valorNota = colunas[5].innerText.trim();
+const retencao = colunas[6].innerText.trim();
+const empenhoNum = colunas[7].innerText.trim();
+const notaFiscal = colunas[8].innerText.trim();
+
+const fornecedorInfo = localizarFornecedorPorNome(fornecedor);
+const cnpjFornecedor = fornecedorInfo?.cnpj || "";
+
+if (empenhoNum) {
+    if (!empenhosExtraidos[empenhoNum]) {
+        empenhosExtraidos[empenhoNum] = {
+            numero: empenhoNum,
+            tipoEmpenho: "",
+            tipoNota: tipoNota,
+            secretaria: secretaria,
+            fornecedor: fornecedor,
+            cnpjFornecedor: cnpjFornecedor,
+            valorEmpenho: valorNota,
+            valorRetencao: retencao,
+            notaFiscal: notaFiscal,
+            dataEmpenho: "",
+            dataEntrada: dataEntrada,
+            dataEmissao: dataEmissao,
+            centroCusto: secretaria,
+            processoReferencia: "",
+            observacao: "Empenho gerado a partir da tabela de materiais.",
+            origem: "tabela-materiais",
+            usuarioEmail: auth.currentUser?.email || "",
+            dataRegistro: new Date().toISOString(),
+            dataAtualizacao: new Date().toISOString()
+        };
+    }
+}
+    }
+});
+
+    const chaves = Object.keys(empenhosExtraidos);
+
+    if (chaves.length === 0) {
+        mostrarAvisoSistema("Nenhum empenho", "Nenhum número de empenho válido foi encontrado nas linhas.");
+        if (botao) {
+            botao.innerText = textoOriginal;
+            botao.disabled = false;
+        }
+        return;
+    }
+
+    let salvosComSucesso = 0;
+
+    try {
+        for (const chave of chaves) {
+            const docIdSeguro = String(empenhosExtraidos[chave].numero || '')
+                .trim()
+                .replace(/\//g, '-')
+                .replace(/[.#$\\[\\]]/g, '_');
+
+            await setDoc(doc(db, "Empenhos", docIdSeguro), empenhosExtraidos[chave], { merge: true });
+            salvosComSucesso++;
+        }
+
+        mostrarAvisoSistema("Empenhos salvos", `${salvosComSucesso} empenho(s) salvo(s) ou atualizado(s) no sistema.`);
+        await window.carregarEmpenhosNuvem();
+    } catch (erro) {
+        console.error("Erro ao salvar empenhos da tabela:", erro);
+        mostrarAvisoSistema("Erro ao salvar", "Ocorreu um erro ao tentar salvar os empenhos.");
+    }
+
+    if (botao) {
+        botao.innerText = textoOriginal;
+        botao.disabled = false;
+    }
+};
+
+window.limparFormularioEmpenho = function() {
+    document.getElementById('empNumero').value = '';
+    document.getElementById('empTipo').value = '';
+    document.getElementById('empData').value = '';
+    document.getElementById('empValor').value = '';
+    document.getElementById('empFornecedor').value = '';
+    document.getElementById('empCnpj').value = '';
+    document.getElementById('empNotaFiscal').value = '';
+    document.getElementById('empDataEntrada').value = '';
+    document.getElementById('empDataEmissao').value = '';
+    document.getElementById('empCentroCusto').value = '';
+    document.getElementById('empProcesso').value = '';
+    document.getElementById('empObservacao').value = '';
+};
+
+window.salvarEmpenhoManualNuvem = async function(botao) {
+    if (!auth.currentUser) {
+        mostrarAvisoSistema("Acesso negado", "Você precisa estar logado para salvar empenhos.");
+        return;
+    }
+
+    const cnpjLimpo = document.getElementById('empCnpj').value.replace(/\D/g, '');
+
+const dados = {
+    numero: document.getElementById('empNumero').value.trim(),
+    tipoEmpenho: document.getElementById('empTipo').value.trim(),
+    dataEmpenho: document.getElementById('empData').value.trim(),
+    valorEmpenho: document.getElementById('empValor').value.trim(),
+    fornecedor: document.getElementById('empFornecedor').value.trim(),
+    cnpjFornecedor: document.getElementById('empCnpj').value.trim(),
+    fornecedorId: cnpjLimpo,
+    notaFiscal: document.getElementById('empNotaFiscal').value.trim(),
+    dataEntrada: document.getElementById('empDataEntrada').value.trim(),
+    dataEmissao: document.getElementById('empDataEmissao').value.trim(),
+    centroCusto: document.getElementById('empCentroCusto').value.trim(),
+    processoReferencia: document.getElementById('empProcesso').value.trim(),
+    observacao: document.getElementById('empObservacao').value.trim(),
+    origem: 'cadastro-manual',
+    usuarioEmail: auth.currentUser?.email || '',
+    dataRegistro: new Date().toISOString(),
+    dataAtualizacao: new Date().toISOString()
+};
+
+    if (!dados.numero) {
+        mostrarAvisoSistema("Campo obrigatório", "Informe o número do empenho.");
+        return;
+    }
+
+    if (!dados.tipoEmpenho) {
+        mostrarAvisoSistema("Campo obrigatório", "Selecione o tipo do empenho.");
+        return;
+    }
+
+    if (!dados.fornecedor) {
+        mostrarAvisoSistema("Campo obrigatório", "Informe ou selecione o fornecedor.");
+        return;
+    }
+
+    if (!dados.valorEmpenho) {
+        mostrarAvisoSistema("Campo obrigatório", "Informe o valor do empenho.");
+        return;
+    }
+
+    const textoOriginal = botao ? botao.innerText : "Salvar Empenho";
+    if (botao) {
+        botao.innerText = "Salvando...";
+        botao.disabled = true;
+    }
+
+    try {
+        const docIdSeguro = String(dados.numero || '')
+            .trim()
+            .replace(/\//g, '-')
+            .replace(/[.#$\\[\\]]/g, '_');
+
+        await setDoc(doc(db, "Empenhos", docIdSeguro), dados, { merge: true });
+
+        mostrarAvisoSistema("Empenho salvo", "Empenho salvo com sucesso na nuvem.");
+        window.limparFormularioEmpenho();
+        await window.carregarEmpenhosNuvem();
+    } catch (erro) {
+        console.error("Erro ao salvar empenho manual:", erro);
+        mostrarAvisoSistema("Erro ao salvar", "Não foi possível salvar o empenho.");
+    }
+
+    if (botao) {
+        botao.innerText = textoOriginal;
+        botao.disabled = false;
+    }
+};
+
+window.buscarFornecedorEmpenhoPorCNPJ = async function() {
+    const cnpj = document.getElementById('empCnpj').value.replace(/\D/g, '');
+    if (cnpj.length !== 14) {
+        mostrarAvisoSistema("CNPJ inválido", "Digite um CNPJ com 14 dígitos.");
+        return;
+    }
+
+    const campoConsulta = document.getElementById('cnpjInput');
+    if (!campoConsulta) {
+        mostrarAvisoSistema("Erro", "Campo principal de consulta CNPJ não foi encontrado.");
+        return;
+    }
+
+    campoConsulta.value = cnpj;
+    mostrarTela('consulta');
+
+    setTimeout(async () => {
+        await consultarCNPJ();
+
+        const razaoSocial = document.querySelector('#tabela-dados tbody tr td')?.innerText?.trim() || '';
+        if (razaoSocial) {
+            document.getElementById('empFornecedor').value = razaoSocial;
+            document.getElementById('empCnpj').value = cnpj.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/, '$1.$2.$3/$4-$5');
+            mostrarTela('empenhos');
+        }
+    }, 300);
+};
+
+
+window.excluirEmpenhoNuvem = async function(idEmpenho) {
+    if (!auth.currentUser) {
+        mostrarAvisoSistema("Acesso negado", "Você precisa estar logado para excluir empenhos.");
+        return;
+    }
+
+    if (!idEmpenho) {
+        mostrarAvisoSistema("Erro", "ID do empenho não encontrado.");
+        return;
+    }
+
+    mostrarConfirmacaoSistema(
+        "Confirmar exclusão",
+        "Deseja realmente excluir este empenho?",
+        async function() {
+            try {
+                await deleteDoc(doc(db, "Empenhos", idEmpenho));
+                mostrarAvisoSistema("Exclusão concluída", "Empenho excluído com sucesso.");
+                await window.carregarEmpenhosNuvem();
+            } catch (erro) {
+                console.error("Erro ao excluir empenho:", erro);
+                mostrarAvisoSistema("Erro ao excluir", "Erro ao excluir empenho: " + (erro.message || erro));
+            }
+        }
+    );
+};
+
+  window.carregarEmpenhosNuvem = async function() {
+    if (!auth.currentUser) return;
+
+    const tbody = document.getElementById('tabela-empenhos-nuvem');
+    const resumo = document.getElementById('empenhosResumo');
+    if (!tbody) return;
+
+    tbody.innerHTML = '<tr><td colspan="6" style="padding: 16px; text-align: center;">Carregando empenhos...</td></tr>';
+
+    try {
+        const snapshot = await getDocs(collection(db, "Empenhos"));
+
+        if (snapshot.empty) {
+            tbody.innerHTML = '<tr><td colspan="6" style="padding: 16px; text-align: center;">Nenhum empenho cadastrado.</td></tr>';
+            resumo.innerHTML = 'Nenhum empenho encontrado.';
+            return;
+        }
+
+        let html = '';
+        let quantidade = 0;
+        const lista = [];
+
+        snapshot.forEach((docItem) => {
+            lista.push({
+                id: docItem.id,
+                ...docItem.data()
+            });
+        });
+
+        lista.sort((a, b) => {
+            const dataA = new Date(a.dataAtualizacao || 0).getTime();
+            const dataB = new Date(b.dataAtualizacao || 0).getTime();
+            return dataB - dataA;
+        });
+
+        lista.slice(0, 50).forEach((emp) => {
+            quantidade++;
+
+            html += `
+                <tr>
+                    <td style="font-weight: bold; color: #0f3b5e;">${emp.numero || ''}</td>
+                    <td>${emp.tipoEmpenho || 'Não informado'}</td>
+                    <td>${emp.fornecedor || 'Não informado'}</td>
+                    <td>${emp.valorEmpenho || 'Não informado'}</td>
+                    <td>${emp.dataEmpenho || 'Não informada'}</td>
+                    <td>
+                        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                            <button type="button" class="btn-primary" style="width: auto; padding: 6px 12px;" onclick="window.visualizarEmpenho('${emp.id}')">
+                                Visualizar
+                            </button>
+
+                            <button type="button" class="btn-primary" style="width: auto; padding: 6px 12px; background-color: #e74c3c; border: none;" onclick="window.excluirEmpenhoNuvem('${emp.id}')">
+                                Excluir
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        });
+
+        tbody.innerHTML = html;
+        resumo.innerHTML = `<strong>${quantidade}</strong> empenhos carregados recentemente.`;
+    } catch (erro) {
+        console.error("Erro ao carregar empenhos:", erro);
+        tbody.innerHTML = '<tr><td colspan="6" style="padding: 16px; text-align: center; color: red;">Erro ao carregar empenhos.</td></tr>';
+        resumo.innerHTML = 'Falha ao consultar a coleção Empenhos.';
+    }
+};
+
+window.visualizarEmpenho = async function(idEmpenho) {
+    if (!auth.currentUser) {
+        mostrarAvisoSistema("Acesso negado", "Você precisa estar logado para visualizar empenhos.");
+        return;
+    }
+
+    try {
+        const snapshot = await getDocs(collection(db, "Empenhos"));
+        let empenho = null;
+
+        snapshot.forEach((docItem) => {
+            if (docItem.id === idEmpenho) {
+                empenho = {
+                    id: docItem.id,
+                    ...docItem.data()
+                };
+            }
+        });
+
+        if (!empenho) {
+            mostrarAvisoSistema("Não encontrado", "Empenho não localizado.");
+            return;
+        }
+
+        const conteudo = document.getElementById('conteudoModalEmpenho');
+        const modal = document.getElementById('modalEmpenho');
+
+        const campo = (label, valor) => `
+            <div style="display: flex; flex-direction: column; gap: 4px; min-width: 0;">
+                <label style="font-size: 12px; color: #5f6b76; font-weight: bold; text-transform: uppercase; letter-spacing: 0.3px;">
+                    ${label}
+                </label>
+                <div style="
+                    min-height: 34px;
+                    padding: 7px 10px;
+                    background: #ffffff;
+                    border: 1px solid #bac5d0;
+                    border-radius: 5px;
+                    color: #243746;
+                    font-size: 13px;
+                    line-height: 1.35;
+                    display: flex;
+                    align-items: center;
+                    box-shadow: inset 0 1px 1px rgba(0,0,0,0.02);
+                ">
+                    ${valor || 'Não informado'}
+                </div>
+            </div>
+        `;
+
+        const badgeTipo = empenho.tipoEmpenho
+            ? `<span style="display:inline-block; padding:6px 10px; background:#eaf2fb; color:#0f3b5e; border:1px solid #c8d8ea; border-radius:999px; font-size:12px; font-weight:bold;">${empenho.tipoEmpenho}</span>`
+            : '<span style="display:inline-block; padding:6px 10px; background:#f1f3f5; color:#5f6b76; border:1px solid #d8dee4; border-radius:999px; font-size:12px; font-weight:bold;">NÃO INFORMADO</span>';
+
+        conteudo.innerHTML = `
+            <div style="display: flex; flex-direction: column; gap: 18px;">
+
+                <div style="
+                    background: #ffffff;
+                    border: 1px solid #bac5d0;
+                    border-radius: 8px;
+                    padding: 18px 20px;
+                ">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; flex-wrap: wrap;">
+                        <div>
+                            <div style="font-size: 12px; color: #6c7a86; text-transform: uppercase; font-weight: bold; margin-bottom: 6px;">
+                                Ficha do empenho
+                            </div>
+                            <div style="font-size: 24px; font-weight: bold; color: #0f3b5e; line-height: 1.2;">
+                                ${empenho.numero || 'Sem número'}
+                            </div>
+                            <div style="font-size: 14px; color: #54606b; margin-top: 6px;">
+                                ${empenho.fornecedor || 'Fornecedor não informado'}
+                            </div>
+                        </div>
+
+                        <div style="display: flex; flex-direction: column; gap: 8px; align-items: flex-end;">
+                            ${badgeTipo}
+                            <div style="font-size: 12px; color: #6c7a86;">
+                                Origem: <strong>${empenho.origem || 'Não informada'}</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="
+                    background: #ffffff;
+                    border: 1px solid #bac5d0;
+                    border-radius: 8px;
+                    padding: 18px 20px;
+                ">
+                    <div style="font-size: 15px; font-weight: bold; color: #0f3b5e; margin-bottom: 14px;">
+                        Dados principais
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px;">
+                        ${campo('Número do Empenho', empenho.numero)}
+                        ${campo('Tipo do Empenho', empenho.tipoEmpenho)}
+                        ${campo('Valor do Empenho', empenho.valorEmpenho)}
+                        ${campo('Fornecedor', empenho.fornecedor)}
+                        ${campo('CNPJ do Fornecedor', empenho.cnpjFornecedor)}
+                        ${campo('Tipo da Nota', empenho.tipoNota)}
+                        ${campo('Secretaria', empenho.secretaria)}
+                        ${campo('Nota Fiscal', empenho.notaFiscal)}
+                        ${campo('Valor da Retenção', empenho.valorRetencao)}
+                        ${campo('Data do Empenho', empenho.dataEmpenho)}
+                        ${campo('Data de Entrada', empenho.dataEntrada)}
+                        ${campo('Data de Emissão', empenho.dataEmissao)}
+                    </div>
+                </div>
+
+                <div style="
+                    background: #ffffff;
+                    border: 1px solid #bac5d0;
+                    border-radius: 8px;
+                    padding: 18px 20px;
+                ">
+                    <div style="font-size: 15px; font-weight: bold; color: #0f3b5e; margin-bottom: 14px;">
+                        Informações complementares
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px;">
+                        ${campo('Centro de Custo / Setor', empenho.centroCusto)}
+                        ${campo('Processo / Referência', empenho.processoReferencia)}
+                        ${campo('Usuário do Registro', empenho.usuarioEmail)}
+                        ${campo('Última Atualização', empenho.dataAtualizacao)}
+                    </div>
+
+                    <div style="margin-top: 14px;">
+                        <label style="font-size: 12px; color: #5f6b76; font-weight: bold; text-transform: uppercase; letter-spacing: 0.3px; display: block; margin-bottom: 4px;">
+                            Observações
+                        </label>
+                        <div style="
+                            min-height: 70px;
+                            padding: 10px 12px;
+                            background: #ffffff;
+                            border: 1px solid #bac5d0;
+                            border-radius: 5px;
+                            color: #243746;
+                            font-size: 13px;
+                            line-height: 1.5;
+                            box-shadow: inset 0 1px 1px rgba(0,0,0,0.02);
+                        ">
+                            ${empenho.observacao || 'Sem observações registradas.'}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        modal.style.display = 'flex';
+    } catch (erro) {
+        console.error("Erro ao visualizar empenho:", erro);
+        mostrarAvisoSistema("Erro", "Não foi possível carregar os detalhes do empenho.");
+    }
+};
+
+window.toggleFormularioEmpenho = function() {
+    const box = document.getElementById('formularioNovoEmpenho');
+    if (!box) return;
+
+    if (box.style.display === 'none' || box.style.display === '') {
+        box.style.display = 'block';
+    } else {
+        box.style.display = 'none';
+    }
+};
 
     const authOverlay = document.getElementById('authOverlay');
     const siteContent = document.getElementById('siteContent');
@@ -2863,67 +5430,170 @@ window.addEventListener('load', iniciarMateriais);
     const userEmail = document.getElementById('userEmail');
     const navSubtitle = document.getElementById('navSubtitle');
 
-        window.salvarFornecedorNuvem = async function(cnpj, razaoSocial, nomeFantasia, municipio, uf) {
-        if (!auth.currentUser) {
-            console.warn("Usuário não está logado.");
+            window.salvarFornecedorNuvem = async function(dadosFornecedor) {
+       if (!auth.currentUser) {
+    alert("Você precisa estar logado para salvar fornecedores na nuvem.");
+    console.warn("Usuário não está logado.");
+    return false;
+}
+
+        if (!dadosFornecedor || !dadosFornecedor.cnpj) {
+            console.warn("Dados do fornecedor inválidos.");
             return;
         }
 
         try {
-            await setDoc(doc(db, "Fornecedores", cnpj), {
-                cnpj: cnpj,
-                razaoSocial: razaoSocial,
-                nomeFantasia: nomeFantasia,
-                municipio: municipio,
-                uf: uf,
+            await setDoc(doc(db, "Fornecedores", dadosFornecedor.cnpj), {
+                ...dadosFornecedor,
                 dataAtualizacao: new Date().toISOString()
             });
+
             console.log("Fornecedor salvo com sucesso no Firebase.");
         } catch (erro) {
             console.error("Erro ao salvar fornecedor:", erro);
         }
     };
 
-    window.carregarFornecedoresNuvem = async function() {
+    let ultimoDocumentoFornecedor = null;
+    let pilhaPaginasFornecedores = [];
+    let paginaAtualFornecedor = 1;
+    let ultimoLoteFornecedores = [];
+    const LIMITE_FORNECEDORES_POR_PAGINA = 20;
+
+    window.carregarFornecedoresNuvem = async function(reiniciar = false) {
         if (!auth.currentUser) {
             console.warn("Usuário não está logado.");
             return;
         }
 
         const tbody = document.getElementById('tabela-fornecedores-nuvem');
+        const resumo = document.getElementById('fornecedoresResumo');
+        const info = document.getElementById('fornecedoresPaginacaoInfo');
+        const btnAnterior = document.getElementById('btnPaginaAnteriorFornecedores');
+        const btnProxima = document.getElementById('btnProximaPaginaFornecedores');
+
         if (!tbody) return;
 
-        tbody.innerHTML = '<tr><td colspan=\"5\" style=\"padding: 16px; text-align: center;\">Carregando fornecedores...</td></tr>';
+        if (reiniciar) {
+            ultimoDocumentoFornecedor = null;
+            pilhaPaginasFornecedores = [];
+            paginaAtualFornecedor = 1;
+        }
+
+        tbody.innerHTML = '<tr><td colspan="7" style="padding: 16px; text-align: center;">Carregando fornecedores...</td></tr>';
 
         try {
-            const snapshot = await getDocs(collection(db, "Fornecedores"));
+            let consulta = query(
+                collection(db, "Fornecedores"),
+                orderBy("razaoSocial"),
+                limit(LIMITE_FORNECEDORES_POR_PAGINA)
+            );
+
+            if (!reiniciar && ultimoDocumentoFornecedor) {
+                consulta = query(
+                    collection(db, "Fornecedores"),
+                    orderBy("razaoSocial"),
+                    startAfter(ultimoDocumentoFornecedor),
+                    limit(LIMITE_FORNECEDORES_POR_PAGINA)
+                );
+            }
+
+            const snapshot = await getDocs(consulta);
 
             if (snapshot.empty) {
-                tbody.innerHTML = '<tr><td colspan=\"5\" style=\"padding: 16px; text-align: center;\">Nenhum fornecedor cadastrado.</td></tr>';
+                if (paginaAtualFornecedor > 1) {
+                    paginaAtualFornecedor--;
+                }
+
+                tbody.innerHTML = '<tr><td colspan="7" style="padding: 16px; text-align: center;">Nenhum fornecedor encontrado.</td></tr>';
+                resumo.innerHTML = 'Nenhum fornecedor encontrado nesta página.';
+                info.textContent = `Página ${paginaAtualFornecedor}`;
+                btnAnterior.disabled = paginaAtualFornecedor <= 1;
+                btnProxima.disabled = true;
                 return;
             }
 
+            ultimoLoteFornecedores = snapshot.docs;
+            ultimoDocumentoFornecedor = snapshot.docs[snapshot.docs.length - 1];
+
             let html = '';
+            let quantidadePagina = 0;
 
             snapshot.forEach((docItem) => {
                 const f = docItem.data();
+                const dadosJson = encodeURIComponent(JSON.stringify(f));
+                quantidadePagina++;
 
                 html += `
                     <tr>
                         <td>${f.cnpj || ''}</td>
                         <td>${f.razaoSocial || ''}</td>
-                        <td>${f.nomeFantasia || ''}</td>
                         <td>${f.municipio || ''}/${f.uf || ''}</td>
-                        <td>${f.dataAtualizacao || ''}</td>
+                        <td>${f.simplesNacional ? 'Optante' : 'Não'}</td>
+                        <td>${f.mei ? 'Optante' : 'Não'}</td>
+                        <td>${f.cnaePrincipalCodigo || ''}</td>
+                        <td>
+                            <button type="button" class="btn-primary" style="width: auto; padding: 6px 12px;" onclick="visualizarFornecedor('${dadosJson}')">
+                                Visualizar
+                            </button>
+                        </td>
                     </tr>
                 `;
             });
 
             tbody.innerHTML = html;
+            resumo.innerHTML = `<strong>${quantidadePagina}</strong> fornecedor(es) carregados nesta página.`;
+            info.textContent = `Página ${paginaAtualFornecedor} • Limite de ${LIMITE_FORNECEDORES_POR_PAGINA} registros por consulta`;
+            btnAnterior.disabled = paginaAtualFornecedor <= 1;
+            btnProxima.disabled = snapshot.docs.length < LIMITE_FORNECEDORES_POR_PAGINA;
         } catch (erro) {
             console.error("Erro ao carregar fornecedores:", erro);
-            tbody.innerHTML = '<tr><td colspan=\"5\" style=\"padding: 16px; text-align: center; color: red;\">Erro ao carregar fornecedores.</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="7" style="padding: 16px; text-align: center; color: red;">Erro ao carregar fornecedores.</td></tr>';
+            resumo.innerHTML = 'Erro ao carregar fornecedores do Firebase.';
+            info.textContent = 'Falha na paginação.';
         }
+    };
+
+    window.proximaPaginaFornecedores = async function() {
+        if (!ultimoDocumentoFornecedor) return;
+        pilhaPaginasFornecedores.push(ultimoDocumentoFornecedor);
+        paginaAtualFornecedor++;
+        await window.carregarFornecedoresNuvem(false);
+    };
+
+    window.voltarPaginaFornecedores = async function() {
+        if (paginaAtualFornecedor <= 1) return;
+
+        paginaAtualFornecedor = 1;
+        ultimoDocumentoFornecedor = null;
+
+        if (pilhaPaginasFornecedores.length > 1) {
+            pilhaPaginasFornecedores.pop();
+            ultimoDocumentoFornecedor = pilhaPaginasFornecedores[pilhaPaginasFornecedores.length - 1];
+            paginaAtualFornecedor = pilhaPaginasFornecedores.length + 1;
+        } else {
+            pilhaPaginasFornecedores = [];
+        }
+
+        await window.carregarFornecedoresNuvem(pilhaPaginasFornecedores.length === 0);
+    };
+
+    window.aplicarFiltroFornecedor = function() {
+        const texto = document.getElementById('filtroFornecedorTexto').value.trim().toLowerCase();
+        const cidade = document.getElementById('filtroFornecedorCidade').value.trim().toLowerCase();
+        const linhas = document.querySelectorAll('#tabela-fornecedores-nuvem tr');
+
+        let visiveis = 0;
+
+        linhas.forEach((linha) => {
+            const textoLinha = linha.textContent.toLowerCase();
+            const mostrar = (!texto || textoLinha.includes(texto)) && (!cidade || textoLinha.includes(cidade));
+            linha.style.display = mostrar ? '' : 'none';
+            if (mostrar) visiveis++;
+        });
+
+        const resumo = document.getElementById('fornecedoresResumo');
+        resumo.innerHTML = `<strong>${visiveis}</strong> fornecedor(es) visíveis após o filtro local.`;
     };
 
     function mostrarMensagem(texto, tipo = 'error') {
@@ -3057,33 +5727,48 @@ window.addEventListener('load', iniciarMateriais);
         await signOut(auth);
     });
 
-    onAuthStateChanged(auth, (usuario) => {
-        if (usuario) {
-            liberarSite(usuario);
-        } else {
-            bloquearSite();
-        }
-    });
+    onAuthStateChanged(auth, async (usuario) => {
+    if (usuario) {
+        liberarSite(usuario);
 
-                   
-    // === CÓDIGO NOVO PARA SALVAR NA NUVEM ===
-    window.salvarFornecedorNuvem = async function(cnpj, razaoSocial, nomeFantasia, municipio, uf) {
-        if (!db) return;
-        try {
-            // Salva os dados no banco usando o CNPJ como documento
-            await setDoc(doc(db, "Fornecedores", cnpj), {
-                cnpj: cnpj,
-                razaoSocial: razaoSocial,
-                nomeFantasia: nomeFantasia,
-                municipio: municipio,
-                uf: uf,
-                dataAtualizacao: new Date().toLocaleDateString('pt-BR')
-            });
-            console.log("Salvo na nuvem com sucesso!");
-        } catch (e) {
-            console.error("Erro ao salvar: ", e);
+        if (window.carregarFornecedoresParaMateriais) {
+            await window.carregarFornecedoresParaMateriais();
         }
-    };
+    } else {
+        bloquearSite();
+        window.fornecedoresFirebaseMateriais = [];
+    }
+});
+
+window.salvarFornecedorNuvem = async function(dadosFornecedor) {
+    if (!auth.currentUser) {
+        console.warn("Usuário não está logado.");
+        return false;
+    }
+
+    if (!dadosFornecedor || !dadosFornecedor.cnpj) {
+        console.warn("Dados do fornecedor inválidos.");
+        return false;
+    }
+
+    try {
+        await setDoc(doc(db, "Fornecedores", dadosFornecedor.cnpj), {
+            ...dadosFornecedor,
+            dataAtualizacao: new Date().toISOString()
+        });
+
+        console.log("Fornecedor salvo com sucesso no Firebase.");
+
+if (window.carregarFornecedoresParaMateriais) {
+    await window.carregarFornecedoresParaMateriais();
+}
+
+return true;
+    } catch (erro) {
+        console.error("Erro ao salvar fornecedor:", erro);
+        return false;
+    }
+};
       
 </script>
 
@@ -3102,6 +5787,106 @@ window.addEventListener('load', iniciarMateriais);
         </div>
     </div>
 </div>
+</div>
+
+<div id="modalFornecedor" style="display: none; position: fixed; inset: 0; background: rgba(15, 59, 94, 0.35); z-index: 9999; align-items: center; justify-content: center; padding: 24px;">
+    <div style="background: #fff; width: 100%; max-width: 1180px; border-radius: 10px; border: 1px solid #bac5d0; box-shadow: 0 12px 34px rgba(0,0,0,0.18); overflow: hidden;">
+        <div style="background: #0f3b5e; color: #fff; padding: 16px 22px; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <h3 style="margin: 0; font-size: 20px;">Dados completos do fornecedor</h3>
+                <div style="font-size: 13px; opacity: 0.9; margin-top: 4px;">Visualização detalhada do cadastro salvo no Firebase</div>
+            </div>
+            <button type="button" onclick="fecharModalFornecedor()" style="background: transparent; border: none; color: #fff; font-size: 26px; cursor: pointer; line-height: 1;">&times;</button>
+        </div>
+
+        <div id="conteudoModalFornecedor" style="padding: 22px; max-height: 78vh; overflow-y: auto; background: #f4f7fa;">
+        </div>
+
+        <div style="padding: 14px 22px; background: #eef3f7; border-top: 1px solid #bac5d0; display: flex; justify-content: flex-end; gap: 10px; align-items: center;">
+    <button
+        type="button"
+        class="btn-primary"
+        onclick="salvarAliquotaManualFornecedor()"
+        style="width: auto; padding: 8px 16px; background-color: #27ae60; border-color: #219653;"
+    >
+        Salvar
+    </button>
+
+    <button
+        type="button"
+        class="btn-primary"
+        onclick="fecharModalFornecedor()"
+        style="width: auto; padding: 8px 16px;"
+    >
+        Fechar
+    </button>
+</div>
+    </div>
+</div>
+</div>
+<div id="modalSistema" class="modal-overlay" style="display: none;">
+    <div class="modal-panel">
+        <div class="modal-header-custom" id="modalTitulo">Aviso</div>
+        <div class="modal-body-custom" id="modalMensagem">Mensagem</div>
+        <div class="modal-footer-custom" id="modalFooter"></div>
+    </div>
+</div>
+
+<div id="modalEmpenho" style="display: none; position: fixed; inset: 0; background: rgba(15, 59, 94, 0.35); z-index: 9999; align-items: center; justify-content: center; padding: 24px;">
+    <div style="background: #fff; width: 100%; max-width: 1180px; border-radius: 10px; border: 1px solid #bac5d0; box-shadow: 0 12px 34px rgba(0,0,0,0.18); overflow: hidden;">
+        <div style="background: #0f3b5e; color: #fff; padding: 16px 22px; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <h3 style="margin: 0; font-size: 20px;">Detalhes do Empenho</h3>
+                <div style="font-size: 13px; opacity: 0.9; margin-top: 4px;">Visualização detalhada do empenho salvo no Firebase</div>
+            </div>
+            <button type="button" onclick="fecharModalEmpenho()" style="background: transparent; border: none; color: #fff; font-size: 26px; cursor: pointer; line-height: 1;">&times;</button>
+        </div>
+
+        <div id="conteudoModalEmpenho" style="padding: 22px; max-height: 78vh; overflow-y: auto; background: #f4f7fa;">
+        </div>
+
+        <div style="padding: 14px 22px; background: #eef3f7; border-top: 1px solid #bac5d0; text-align: right;">
+            <button type="button" class="btn-primary" onclick="fecharModalEmpenho()" style="width: auto; padding: 8px 16px;">Fechar</button>
+        </div>
+    </div>
+</div>
+
+<div id="modalImpressaoMateriais" class="modal-overlay" style="display: none;">
+    <div class="modal-panel" style="width: 430px; max-width: calc(100vw - 30px);">
+        <div class="modal-header-custom">
+            <strong>Impressão da folha</strong>
+        </div>
+        <div class="modal-body-custom">
+    <div style="margin-bottom: 14px; line-height: 1.5;">
+        Deseja adicionar a coluna de <strong>retenção</strong> na impressão?
+    </div>
+
+    <label style="display:flex; align-items:flex-start; gap:10px; cursor:pointer; margin-bottom:10px;">
+        <input type="checkbox" id="chkImprimirRetencao" style="width:auto; margin-top:2px;">
+        <span>Adicionar coluna de retenção na folha impressa</span>
+    </label>
+
+    <label style="display:flex; align-items:center; gap:8px; margin-top:10px; margin-bottom:12px;">
+        <input type="checkbox" id="chkImprimirSomas">
+        Incluir somas na impressão
+    </label>
+
+    <div style="margin-top: 14px;">
+        <label for="filtroTipoImpressao" style="display:block; font-weight:bold; font-size:12px; color:#495057; margin-bottom:6px;">
+            Imprimir por tipo
+        </label>
+        <select id="filtroTipoImpressao" style="width:100%;">
+            <option value="todos">Tudo</option>
+            <option value="servico">Apenas Serviço</option>
+            <option value="mercadoria">Apenas Mercadoria</option>
+        </select>
+    </div>
+</div>
+        <div class="modal-footer-custom">
+            <button type="button" class="btn-cancelar-modal" onclick="fecharModalImpressaoMateriais()">Cancelar</button>
+            <button type="button" class="btn-primary" style="width:auto; padding:8px 15px;" onclick="confirmarImpressaoMateriais()">Imprimir</button>
+        </div>
+    </div>
 </div>
 </body>
 </html>

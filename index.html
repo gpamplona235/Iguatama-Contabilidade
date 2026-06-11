@@ -102,15 +102,7 @@
   .col-acoes {
     display: none !important;
   }
-/* Configuração para impressão na Horizontal (Landscape) */
-  .modo-horizontal {
-    size: landscape;
-  }
 
-  /* Configuração para impressão na Vertical (Portrait) */
-  .modo-vertical {
-    size: portrait;
-  }
   body {
     background: white;
     margin: 0;
@@ -702,16 +694,6 @@
                 display: none !important;
             }
 
-           /* Configuração para impressão na Horizontal (Landscape) */
-  .modo-horizontal {
-    size: landscape;
-  }
-
-  /* Configuração para impressão na Vertical (Portrait) */
-  .modo-vertical {
-    size: portrait;
-  }
-
             /* Oculta elementos que não devem aparecer na impressão */
             .top-navbar,
             .materiais-form,
@@ -971,54 +953,25 @@ body.print-retencao .col-retencao {
 }
 
 .bottom-sheet {
-  width: min(720px, calc(100% - 18px));
-  margin: 0 auto;
-  background: #ffffff;
-  border: 1px solid #bac5d0;
-  border-bottom: none;
-  border-top-left-radius: 4px;
-  border-top-right-radius: 4px;
-  box-shadow: 0 -3px 12px rgba(0, 0, 0, 0.10);
-  transform: translateY(calc(100% - 46px));
-  transition: transform 0.22s ease;
-  overflow: hidden;
-  pointer-events: auto;
+  display: none !important;
+  transform: translateY(0) !important;
 }
 
 .bottom-sheet.active {
-  transform: translateY(0);
+  display: block !important;
 }
 
-.bottom-sheet-handle {
-  height: 46px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #eef3f7;
-  border-bottom: 1px solid #bac5d0;
-  cursor: pointer;
-  user-select: none;
-  position: relative;
-}
-
-.bottom-sheet-handle::before {
-  content: "";
-  width: 42px;
-  height: 4px;
-  background: #8fa1b2;
-  border-radius: 2px;
-  margin-right: 10px;
-}
-
+.bottom-sheet-handle,
+.bottom-sheet-handle::before,
 .bottom-sheet-handle::after {
-  content: "Resumo Fiscal";
-  font-size: 12px;
-  font-weight: bold;
-  color: #0f3b5e;
-  letter-spacing: 0.3px;
-  text-transform: uppercase;
+  display: none !important;
+  content: none !important;
 }
 
+
+.bottom-sheet {
+  transform: translateY(0) !important;
+}
 .bottom-sheet-header {
   display: flex;
   justify-content: space-between;
@@ -1246,7 +1199,6 @@ body.print-retencao .col-retencao {
 
 @media print {
    @page {
-    size: A4 landscape;
     margin: 8mm;
 }
 

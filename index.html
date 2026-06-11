@@ -93,6 +93,8 @@
             .panel { width: 100%; min-width: 100%; }
         }
 
+
+
         /* ========================================================
            NOVO ESTILO DE IMPRESSÃO - IDÊNTICO AO MODELO ENVIADO
            ======================================================== */
@@ -1209,6 +1211,124 @@ body.print-retencao .col-retencao {
   }
 }
 
+#tela-gestao-notas .materiais-form > * {
+    min-width: 0;
+}
+
+#tela-gestao-notas .materiais-form input,
+#tela-gestao-notas .materiais-form select {
+    min-width: 0;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+#gnFolhaImpressao {
+    display: none !important;
+}
+
+@media print {
+   @page {
+    size: A4 landscape;
+    margin: 8mm;
+}
+
+    body.print-gestao-notas {
+        margin: 0 !important;
+        padding: 0 !important;
+        background: #fff !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    body.print-gestao-notas * {
+        visibility: hidden !important;
+    }
+
+    body.print-gestao-notas #gnFolhaImpressao,
+    body.print-gestao-notas #gnFolhaImpressao * {
+        visibility: visible !important;
+    }
+
+    body.print-gestao-notas #gnFolhaImpressao {
+        display: block !important;
+        position: absolute !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 10mm 8mm 8mm 8mm !important;
+        box-sizing: border-box !important;
+        background: #fff !important;
+        overflow: hidden !important;
+    }
+
+    body.print-gestao-notas #gnTabelaImpressao {
+        width: 100% !important;
+        max-width: 100% !important;
+        border-collapse: collapse !important;
+        table-layout: fixed !important;
+        font-size: 11px !important;
+    }
+
+    body.print-gestao-notas #gnTabelaImpressao th,
+    body.print-gestao-notas #gnTabelaImpressao td {
+        border: 1px solid #222 !important;
+        padding: 5px 6px !important;
+        color: #111 !important;
+        background: #fff !important;
+        text-align: center !important;
+        vertical-align: middle !important;
+        word-break: break-word !important;
+        overflow-wrap: anywhere !important;
+        white-space: normal !important;
+        box-sizing: border-box !important;
+    }
+
+    body.print-gestao-notas #gnTabelaImpressao th {
+        font-weight: bold !important;
+        text-transform: uppercase !important;
+        font-size: 10px !important;
+    }
+
+    body.print-gestao-notas #gnTabelaImpressao th:nth-child(1),
+    body.print-gestao-notas #gnTabelaImpressao td:nth-child(1) {
+        width: 10% !important;
+    }
+
+    body.print-gestao-notas #gnTabelaImpressao th:nth-child(2),
+    body.print-gestao-notas #gnTabelaImpressao td:nth-child(2) {
+        width: 34% !important;
+    }
+
+    body.print-gestao-notas #gnTabelaImpressao th:nth-child(3),
+    body.print-gestao-notas #gnTabelaImpressao td:nth-child(3) {
+        width: 10% !important;
+    }
+
+    body.print-gestao-notas #gnTabelaImpressao th:nth-child(4),
+    body.print-gestao-notas #gnTabelaImpressao td:nth-child(4) {
+        width: 10% !important;
+    }
+
+    body.print-gestao-notas #gnTabelaImpressao th:nth-child(5),
+    body.print-gestao-notas #gnTabelaImpressao td:nth-child(5) {
+        width: 15% !important;
+    }
+
+    body.print-gestao-notas #gnTabelaImpressao th:nth-child(6),
+    body.print-gestao-notas #gnTabelaImpressao td:nth-child(6) {
+        width: 11% !important;
+    }
+
+    body.print-gestao-notas #gnRodapeImpressao {
+        margin-top: 8px !important;
+        text-align: right !important;
+        font-size: 11px !important;
+        font-weight: bold !important;
+    }
+}
+
     </style>
 </head>
 <body>
@@ -1283,22 +1403,30 @@ body.print-retencao .col-retencao {
         Consulta Fiscal
     </button>
 
+    <button type="button" class="btn-primary" onclick="mostrarTela('gestao-notas')" style="width: auto; padding: 8px 14px;">
+    Gestão de Notas
+</button>
+
     <button type="button" class="btn-primary" onclick="mostrarTela('materiais')" style="width: auto; padding: 8px 14px;">
         Notas de Consumo
     </button>
 
-    <div class="menu-dropdown-cadastro">
+    <button type="button" class="btn-primary" onclick="mostrarTela('consulta-empenho')" style="width: auto; padding: 8px 14px;">
+    Consulta de Empenhos
+</button>
+
+    <div class="menu-dropdown-cadastro" style="display:none;">
         <button type="button" class="btn-primary btn-dropdown-cadastro" style="width: auto; padding: 8px 14px;">
             Cadastro ▾
         </button>
 
         <div class="submenu-dropdown-cadastro">
-    <button type="button" onclick="mostrarTela('fornecedores'); if(window.carregarFornecedoresNuvem) window.carregarFornecedoresNuvem(true);">
-        Fornecedores
-    </button>
-    <button type="button" onclick="mostrarTela('empenhos'); if(window.carregarEmpenhosNuvem) window.carregarEmpenhosNuvem(true);">
-        Empenhos
-    </button>
+  <button type="button" onclick="mostrarTela('fornecedores')">
+    Fornecedores
+</button>
+    <button type="button" onclick="mostrarTela('empenhos')">
+    Empenhos
+</button>
 </div>
     </div>
 
@@ -1705,6 +1833,177 @@ body.print-retencao .col-retencao {
     </div>
 </div>
 
+<div id="tela-gestao-notas" class="screen-section">
+    <div class="materiais-wrapper">
+        <div class="materiais-panel" style="border-radius: 10px; overflow: hidden;">
+            <div class="materiais-header" style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; background: linear-gradient(180deg, #fbfcfd 0%, #f4f8fb 100%);">
+                <div>
+                    <h2 style="margin:0;">Gestão de Notas</h2>
+                    <div style="font-size:12px; color:#66727d; margin-top:4px;">Lançamento, edição e histórico de tabelas de notas fiscais</div>
+                </div>
+                <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <button type="button" class="btn-primary" onclick="novaTabelaGestaoNotas()" style="width:auto;">Nova Tabela</button>
+
+<button type="button" class="btn-primary" onclick="salvarTabelaGestaoNotas(this)" style="width:auto; background-color:#27ae60; border-color:#219653;">
+    Salvar Histórico
+</button>
+
+<button type="button" class="btn-primary" onclick="carregarHistoricoGestaoNotas()" style="width:auto; background-color:#6c757d; border-color:#5a6268;">
+    Atualizar Histórico
+</button>
+
+<button
+    type="button"
+    class="btn-primary"
+    onclick="abrirModalImpressaoGestaoNotas()"
+    style="width:auto; background-color:#8e44ad; border-color:#7d3c98;"
+>
+    Imprimir Tabela
+</button>
+                </div>
+            </div>
+
+            <div class="materiais-body">
+               <div style="display:grid; grid-template-columns: minmax(0, 2.3fr) minmax(260px, 0.7fr); gap:18px; margin-bottom:18px; align-items:start;">
+                    <div style="background:#f8fafc; border:1px solid #d7e0e8; border-radius:10px; padding:18px;">
+                        <div style="font-size:14px; font-weight:bold; color:#0f3b5e; margin-bottom:14px;">Nova linha</div>
+
+                        <div id="gn-status-empenho" class="alert-box alert-neutro" style="margin-bottom:14px;">
+                            Digite um número de empenho para tentar preencher os dados básicos automaticamente.
+                        </div>
+
+                        <div class="materiais-form" style="grid-template-columns: 95px minmax(320px, 2.5fr) 125px 135px 115px 145px; align-items: end;">
+                            <input type="text" id="gnEmpenho" placeholder="Nº do empenho">
+                           <div style="position: relative;">
+    <input type="text" id="gnFornecedor" placeholder="Nome do fornecedor" autocomplete="off" style="width: 100%;">
+    <div id="listaFornecedoresGestaoNotas" style="display:none; position:absolute; top:100%; left:0; right:0; background:#fff; border:1px solid #bac5d0; border-top:none; z-index:30; max-height:220px; overflow-y:auto;"></div>
+</div>
+                            <select id="gnTipoNota">
+                                <option value="">Tipo da nota</option>
+                                <option value="Mercadoria">Mercadoria</option>
+                                <option value="Serviço">Serviço</option>
+                            </select>
+                            <input type="text" id="gnValorNota" placeholder="Valor da nota">
+                           <input
+    type="text"
+    id="gnDataEmissao"
+    placeholder="Data emissão"
+    maxlength="10"
+    oninput="this.value = formatarDigitacaoData(this.value)"
+    onblur="this.value = formatarDigitacaoData(this.value)"
+>
+                            <input type="text" id="gnNumeroNota" placeholder="Número da nota">
+                        </div>
+
+                        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:14px;">
+                            <button type="button" class="btn-primary" onclick="buscarEmpenhoGestaoNotas()" style="width:auto;">Buscar Empenho</button>
+                            <button type="button" class="btn-primary" onclick="adicionarLinhaGestaoNotas()" style="width:auto;">Adicionar Linha</button>
+                            <button type="button" class="btn-primary" onclick="limparFormularioGestaoNotas()" style="width:auto; background-color:#eef2f6; color:#0f3b5e; border-color:#bac5d0;">Limpar</button>
+                        </div>
+                    </div>
+
+                    <div style="display:grid; grid-template-columns:1fr; gap:12px;">
+                        <div class="bs-total-box" style="border-radius:10px;">
+                            <div class="bs-label">Quantidade de notas</div>
+                            <div class="bs-total" id="gnResumoQuantidade" style="color:#0f3b5e;">0</div>
+                        </div>
+                        <div class="bs-liquido-box" style="border-radius:10px;">
+                            <div class="bs-label">Valor total</div>
+                            <div class="bs-liquido" id="gnResumoValor">R$ 0,00</div>
+                        </div>
+                        <div class="alert-box alert-neutro" id="gnInfoTabela" style="margin:0;">
+                            Nenhuma tabela carregada.
+                        </div>
+                    </div>
+                </div>
+
+                <div style="background:#fff; border:1px solid #dce4ec; border-radius:10px; padding:14px; margin-bottom:18px;">
+                    <div style="display:grid; grid-template-columns: 1.3fr 180px 180px 140px; gap:12px;">
+                        <input type="text" id="gnFiltroTexto" placeholder="Filtrar por fornecedor, empenho ou nº da nota">
+                        <input type="text" id="gnFiltroData" placeholder="Filtrar por data">
+                        <select id="gnFiltroTipo">
+                            <option value="">Todos os tipos</option>
+                            <option value="Mercadoria">Mercadoria</option>
+                            <option value="Serviço">Serviço</option>
+                        </select>
+                        <button type="button" class="btn-primary" onclick="aplicarFiltroGestaoNotas()" style="width:100%;">Filtrar</button>
+                    </div>
+                </div>
+
+                <div style="background:#ffffff; border:1px solid #d7e0e8; border-radius:10px; overflow:hidden;">
+                    <div style="padding:14px 16px; border-bottom:1px solid #e3eaf0; background:#f7fafc; font-size:13px; font-weight:bold; color:#0f3b5e;">
+                        Itens da tabela
+                    </div>
+
+                   <div style="overflow-x:auto;">
+    <table class="data-table" style="margin-bottom:0; min-width:1100px;">
+        <thead>
+            <tr>
+                <th style="width:120px;">Empenho</th>
+                <th style="width:320px;">Fornecedor</th>
+                <th style="width:140px;">Tipo</th>
+                <th style="width:140px;">Valor</th>
+                <th style="width:140px;">Data Emissão</th>
+                <th style="width:140px;">Nº da Nota</th>
+                <th style="width:170px;">Ações</th>
+            </tr>
+        </thead>
+        <tbody id="gnTabelaBody">
+            <tr>
+                <td colspan="7" style="text-align:center; padding:20px;">Nenhuma linha adicionada.</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div id="gnFolhaImpressao" style="display:none; padding:30px 24px; background:#fff;">
+    <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:16px; margin-bottom:24px;">
+        <div>
+            <div style="font-size:24px; font-weight:bold; color:#111; text-transform:uppercase; letter-spacing:0.5px;">
+                Saída de Notas
+            </div>
+            <div style="font-size:13px; color:#666; margin-top:4px;">
+                Relação de notas fiscais lançadas
+            </div>
+        </div>
+        <div id="gnFolhaData" style="font-size:13px; color:#333; text-align:right;"></div>
+    </div>
+
+    <table id="gnTabelaImpressao" class="materiais-tabela" style="width:100%; border-collapse:collapse; font-size:13px; color:#111;">
+        <thead>
+            <tr>
+                <th>Empenho</th>
+                <th>Fornecedor</th>
+                <th>Tipo</th>
+                <th>Valor</th>
+                <th>Data Emissão</th>
+                <th>Nº da Nota</th>
+            </tr>
+        </thead>
+        <tbody id="gnTabelaImpressaoBody">
+            <tr>
+                <td colspan="6" style="text-align:center; padding:18px;">Nenhuma linha adicionada.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div id="gnRodapeImpressao" style="margin-top:14px; font-size:13px; font-weight:bold; color:#111; text-align:right;"></div>
+</div>
+                </div>
+
+                <div style="margin-top:18px; background:#fff; border:1px solid #d7e0e8; border-radius:10px; overflow:hidden;">
+                    <div style="padding:14px 16px; border-bottom:1px solid #e3eaf0; background:#f7fafc; font-size:13px; font-weight:bold; color:#0f3b5e;">
+                        Histórico salvo
+                    </div>
+                    <div id="gnHistoricoLista" style="padding:14px 16px; color:#66727d; font-size:13px;">
+                        Nenhum histórico carregado.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div id="tela-materiais" class="screen-section">
     <div class="materiais-wrapper">
         <div class="materiais-panel">
@@ -1780,6 +2079,91 @@ body.print-retencao .col-retencao {
     </div>
 </div>
 
+<div id="tela-consulta-empenho" class="screen-section">
+    <div class="panels-wrapper">
+        <div class="panel" style="width: 100%; max-width: 1400px;">
+            <div class="panel-header" style="display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;">
+                <h2 style="margin: 0;">Consulta de Empenhos - Transparência</h2>
+            </div>
+            
+            <div class="panel-body">
+                <!-- Filtros de Busca -->
+                <div style="background: #f8fafc; border: 1px solid #d7e0e8; border-radius: 8px; padding: 18px; margin-bottom: 20px;">
+                    <div style="font-size: 14px; font-weight: bold; color: #0f3b5e; margin-bottom: 12px;">Filtros de Busca</div>
+                    <div style="display: grid; grid-template-columns: 100px 100px 1.5fr 1fr 140px; gap: 12px; align-items: end;">
+    <div class="form-group-calc">
+        <label>Empenho</label>
+        <input type="text" id="api-filtro-empenho" placeholder="Nº">
+    </div>
+    <div class="form-group-calc">
+        <label>Ano</label>
+        <input type="number" id="api-filtro-ano">
+    </div>
+    <div class="form-group-calc">
+        <label>Nome do Fornecedor</label>
+        <input type="text" id="api-filtro-nome" placeholder="Digite o nome">
+    </div>
+    <div class="form-group-calc">
+        <label>CPF/CNPJ</label>
+        <input type="text" id="api-filtro-doc" placeholder="Apenas números">
+    </div>
+    <div class="form-group-calc" style="margin-bottom: 15px;">
+        <label style="visibility: hidden;">Buscar</label>
+        <button class="btn-primary" type="button" onclick="buscarDadosTransparencia(1)" style="width: 100%; padding: 10px 12px; height: 38px; margin: 0;">Buscar Dados</button>
+    </div>
+</div>
+
+                <!-- Cards de Totais -->
+                <div class="bs-topbar" style="margin-bottom: 20px; display: flex; gap: 15px; flex-wrap: wrap;">
+                    <div class="bs-total-box" style="flex: 1; min-width: 250px;">
+                        <div class="bs-label">Total Empenhado</div>
+                        <div class="bs-total" id="api-total-empenhado" style="color: #0f3b5e;">R$ 0,00</div>
+                    </div>
+                    <div class="bs-total-box" style="flex: 1; min-width: 250px;">
+                        <div class="bs-label">Total Liquidado</div>
+                        <div class="bs-total" id="api-total-liquidado" style="color: #856404;">R$ 0,00</div>
+                    </div>
+                    <div class="bs-liquido-box" style="flex: 1; min-width: 250px; background: #ffffff; border: 1px solid #cfd7df; border-radius: 3px; padding: 10px 12px;">
+                        <div class="bs-label">Total Pago</div>
+                        <div class="bs-liquido" id="api-total-pago" style="color: #1e4620; font-size: 24px; font-weight: bold;">R$ 0,00</div>
+                    </div>
+                </div>
+
+                <!-- Tabela de Dados -->
+              <div style="overflow-x: auto;">
+    <table class="data-table" style="min-width: 1260px;">
+        <thead>
+            <tr>
+                <th style="width: 100px;">Empenho</th>
+                <th style="width: 320px;">Fornecedor</th>
+                <th style="width: 170px;">CNPJ/CPF</th>
+                <th style="width: 140px;">Data do Movimento</th>
+                <th style="width: 140px;">Empenhado</th>
+                <th style="width: 140px;">Liquidado</th>
+                <th style="width: 140px;">Pago</th>
+                <th style="width: 100px;">Ações</th>
+            </tr>
+        </thead>
+        <tbody id="api-tabela-corpo">
+            <tr>
+                <td colspan="8" style="text-align: center; padding: 18px;">Utilize os filtros e clique em Buscar Dados.</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+                <!-- Paginação -->
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px; padding-top: 15px; border-top: 1px solid #dce4ec;">
+                    <div id="api-paginacao-info" style="font-size: 13px; color: #6c757d;"></div>
+                    <div style="display: flex; gap: 8px;">
+                        <button class="btn-primary" type="button" id="btn-api-pag-ant" style="width: auto; background-color: #6c757d; border-color: #5a6268;" onclick="mudarPaginaTransparencia(-1)" disabled>Anterior</button>
+                        <button class="btn-primary" type="button" id="btn-api-pag-prox" style="width: auto;" onclick="mudarPaginaTransparencia(1)" disabled>Próxima</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <div id="tela-fornecedores" class="screen-section">
     <div class="panels-wrapper">
@@ -1971,7 +2355,22 @@ function fecharModalSistema() {
     }
 }
 
+function abrirModalDetalheApiEmpenho(titulo, html) {
+    const modal = document.getElementById('modalDetalheApiEmpenho');
+    const tituloEl = document.getElementById('tituloModalDetalheApiEmpenho');
+    const conteudoEl = document.getElementById('conteudoModalDetalheApiEmpenho');
 
+    if (!modal || !tituloEl || !conteudoEl) return;
+
+    tituloEl.textContent = titulo || 'Detalhes do Empenho';
+    conteudoEl.innerHTML = html || '<div>Nenhum detalhe disponível.</div>';
+    modal.style.display = 'flex';
+}
+
+function fecharModalDetalheApiEmpenho() {
+    const modal = document.getElementById('modalDetalheApiEmpenho');
+    if (modal) modal.style.display = 'none';
+}
 
 function mostrarAvisoSistema(titulo, mensagem, textoBotao = 'Fechar') {
     const modal = document.getElementById('modalSistema');
@@ -3571,29 +3970,76 @@ Regras obrigatórias:
 
 
 function mostrarTela(tela) {
-    const telaConsulta = document.getElementById('tela-consulta');
-    const telaMateriais = document.getElementById('tela-materiais');
-    const telaFornecedores = document.getElementById('tela-fornecedores');
-    const telaEmpenhos = document.getElementById('tela-empenhos'); // Novo
+    const telas = [
+        document.getElementById('tela-consulta'),
+        document.getElementById('tela-materiais'),
+        document.getElementById('tela-fornecedores'),
+        document.getElementById('tela-empenhos'),
+        document.getElementById('tela-consulta-empenho'),
+        document.getElementById('tela-gestao-notas')
+    ];
 
-    if (!telaConsulta || !telaMateriais || !telaFornecedores || !telaEmpenhos) return;
-
-    telaConsulta.classList.remove('active');
-    telaMateriais.classList.remove('active');
-    telaFornecedores.classList.remove('active');
-    telaEmpenhos.classList.remove('active'); // Novo
+    telas.forEach(t => {
+        if (t) t.classList.remove('active');
+    });
 
     if (tela === 'materiais') {
-        telaMateriais.classList.add('active');
-    } else if (tela === 'fornecedores') {
-        telaFornecedores.classList.add('active');
-        if (window.carregarFornecedoresNuvem) window.carregarFornecedoresNuvem(true);
-    } else if (tela === 'empenhos') {
-        telaEmpenhos.classList.add('active'); // Novo
-        if (window.carregarEmpenhosNuvem) window.carregarEmpenhosNuvem(true);
-    } else {
-        telaConsulta.classList.add('active');
+        document.getElementById('tela-materiais')?.classList.add('active');
+        return;
     }
+
+   if (tela === 'fornecedores') {
+    const el = document.getElementById('tela-fornecedores');
+    if (el) {
+        el.classList.add('active');
+        el.style.display = 'block';
+        el.style.visibility = 'visible';
+        el.style.opacity = '1';
+    }
+
+    const resumo = document.getElementById('fornecedoresResumo');
+    if (resumo) {
+        resumo.innerHTML = 'Tela de fornecedores aberta. Iniciando carregamento...';
+    }
+
+    setTimeout(() => {
+        try {
+            if (window.carregarFornecedoresNuvem) {
+                window.carregarFornecedoresNuvem(true);
+            }
+        } catch (erro) {
+            console.error('Erro ao abrir tela de fornecedores:', erro);
+        }
+    }, 50);
+    return;
+}
+
+    if (tela === 'empenhos') {
+        document.getElementById('tela-empenhos')?.classList.add('active');
+        setTimeout(() => {
+            if (window.carregarEmpenhosNuvem) window.carregarEmpenhosNuvem(true);
+        }, 50);
+        return;
+    }
+
+    if (tela === 'consulta-empenho') {
+        document.getElementById('tela-consulta-empenho')?.classList.add('active');
+        setTimeout(() => {
+            buscarDadosTransparencia(1);
+        }, 150);
+        return;
+    }
+
+    if (tela === 'gestao-notas') {
+        document.getElementById('tela-gestao-notas')?.classList.add('active');
+        setTimeout(() => {
+            inicializarGestaoNotas();
+            carregarHistoricoGestaoNotas();
+        }, 120);
+        return;
+    }
+
+    document.getElementById('tela-consulta')?.classList.add('active');
 }
 
 let fornecedoresMateriais = JSON.parse(localStorage.getItem('fornecedoresMateriais') || '[]');
@@ -3608,16 +4054,43 @@ function atualizarTotalMateriais() {
 }
 
 function aplicarMascaraData(input) {
+    if (!input || input.dataset.mascaraDataAtiva === '1') return;
+
     input.addEventListener('input', function () {
         let v = this.value.replace(/\D/g, '').slice(0, 8);
-        if (v.length > 4) {
-            this.value = v.replace(/(\d{2})(\d{2})(\d{1,4})/, '$1/$2/$3');
-        } else if (v.length > 2) {
-            this.value = v.replace(/(\d{2})(\d{1,2})/, '$1/$2');
+
+        if (v.length >= 5) {
+            this.value = v.replace(/(\d{2})(\d{2})(\d{0,4})/, '$1/$2/$3');
+        } else if (v.length >= 3) {
+            this.value = v.replace(/(\d{2})(\d{0,2})/, '$1/$2');
         } else {
             this.value = v;
         }
     });
+
+    input.addEventListener('blur', function () {
+        let v = this.value.replace(/\D/g, '').slice(0, 8);
+
+        if (v.length === 8) {
+            this.value = v.replace(/(\d{2})(\d{2})(\d{4})/, '$1/$2/$3');
+        }
+    });
+
+    input.dataset.mascaraDataAtiva = '1';
+}
+
+function formatarDigitacaoData(valor) {
+    let v = String(valor || '').replace(/\D/g, '').slice(0, 8);
+
+    if (v.length > 4) {
+        return v.replace(/(\d{2})(\d{2})(\d{1,4})/, '$1/$2/$3');
+    }
+
+    if (v.length > 2) {
+        return v.replace(/(\d{2})(\d{1,2})/, '$1/$2');
+    }
+
+    return v;
 }
 
 function formatarValorBR(valor) {
@@ -4465,6 +4938,130 @@ function confirmarImpressaoMateriais() {
     prepararImpressaoMateriais(incluirRetencao, incluirSomas, filtroTipo);
 }
 
+function abrirModalImpressaoGestaoNotas() {
+    const linhas = Array.from(document.querySelectorAll('#gnTabelaBody tr'))
+        .filter(tr => tr.querySelectorAll('td').length > 1);
+
+    if (!linhas.length) {
+        mostrarAvisoSistema('Tabela vazia', 'Não há linhas na Gestão de Notas para imprimir.');
+        return;
+    }
+
+    const select = document.getElementById('gnFiltroTipoImpressao');
+    if (select) select.value = 'todos';
+
+    const modal = document.getElementById('modalImpressaoGestaoNotas');
+    if (modal) modal.style.display = 'flex';
+}
+
+function fecharModalImpressaoGestaoNotas() {
+    const modal = document.getElementById('modalImpressaoGestaoNotas');
+    if (modal) modal.style.display = 'none';
+}
+
+function normalizarTipoGestaoNotas(texto) {
+    return String(texto || '')
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .trim();
+}
+
+function confirmarImpressaoGestaoNotas() {
+    const select = document.getElementById('gnFiltroTipoImpressao');
+    const filtroTipo = select ? select.value : 'todos';
+    fecharModalImpressaoGestaoNotas();
+    imprimirTabelaGestaoNotas(filtroTipo);
+}
+
+function imprimirTabelaGestaoNotas(filtroTipo = 'todos') {
+    const folha = document.getElementById('gnFolhaImpressao');
+    const dataEl = document.getElementById('gnFolhaData');
+    const tbodyImpressao = document.getElementById('gnTabelaImpressaoBody');
+    const rodape = document.getElementById('gnRodapeImpressao');
+    const linhasTela = Array.from(document.querySelectorAll('#gnTabelaBody tr'));
+
+    if (!folha || !dataEl || !tbodyImpressao || !rodape) {
+        mostrarAvisoSistema('Erro', 'Bloco de impressão da Gestão de Notas não foi encontrado.');
+        return;
+    }
+
+    const linhasValidas = linhasTela.filter(tr => {
+        const colunas = tr.querySelectorAll('td');
+        return colunas.length >= 7;
+    });
+
+    if (!linhasValidas.length) {
+        mostrarAvisoSistema('Tabela vazia', 'Não há linhas para imprimir.');
+        return;
+    }
+
+    const linhasFiltradas = linhasValidas.filter(tr => {
+        const colunas = tr.querySelectorAll('td');
+        const tipo = (colunas[2]?.textContent || '')
+            .trim()
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '');
+
+        if (filtroTipo === 'mercadoria') return tipo === 'mercadoria';
+        if (filtroTipo === 'servico') return tipo === 'servico';
+        return true;
+    });
+
+    if (!linhasFiltradas.length) {
+        mostrarAvisoSistema('Sem registros', 'Não há linhas do tipo selecionado para imprimir.');
+        return;
+    }
+
+    let total = 0;
+
+    tbodyImpressao.innerHTML = linhasFiltradas.map(tr => {
+        const colunas = tr.querySelectorAll('td');
+
+        const empenho = (colunas[0]?.textContent || '').trim();
+        const fornecedor = (colunas[1]?.textContent || '').trim();
+        const tipo = (colunas[2]?.textContent || '').trim();
+        const valorTexto = (colunas[3]?.textContent || '').trim();
+        const data = (colunas[4]?.textContent || '').trim();
+        const nota = (colunas[5]?.textContent || '').trim();
+
+        total += limparValorParaNumero(valorTexto);
+
+        return `
+            <tr>
+                <td>${empenho || '-'}</td>
+                <td>${fornecedor || '-'}</td>
+                <td>${tipo || '-'}</td>
+                <td>${valorTexto || 'R$ 0,00'}</td>
+                <td>${data || '-'}</td>
+                <td>${nota || '-'}</td>
+            </tr>
+        `;
+    }).join('');
+
+    let nomeFiltro = 'Todos';
+    if (filtroTipo === 'mercadoria') nomeFiltro = 'Mercadoria';
+    if (filtroTipo === 'servico') nomeFiltro = 'Serviço';
+
+    const agora = new Date();
+    dataEl.textContent =
+        `Data: ${agora.toLocaleDateString('pt-BR')} ${agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })} | Tipo: ${nomeFiltro}`;
+
+    rodape.textContent =
+        `Total de notas: ${linhasFiltradas.length} | Valor total: R$ ${formatarValorBR(total)}`;
+
+    folha.style.display = 'block';
+    document.body.classList.add('print-gestao-notas');
+
+    setTimeout(() => {
+        window.print();
+        setTimeout(() => {
+            document.body.classList.remove('print-gestao-notas');
+            folha.style.display = 'none';
+        }, 300);
+    }, 150);
+}
 
 function calcularSomasMateriais(incluirRetencao = false) {
     const linhas = document.querySelectorAll('#materiaisTabelaBody tr');
@@ -4826,9 +5423,1001 @@ function atualizarBottomSheetISS() {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-  const handle = document.querySelector('.bottom-sheet-handle');
-  if (handle) handle.addEventListener('click', alternarBottomSheet);
+    const campoAno = document.getElementById('api-filtro-ano');
+    if (campoAno && !campoAno.value) {
+        campoAno.value = new Date().getFullYear();
+    }
 });
+
+
+
+let apiPaginaAtual = 1;
+let apiTotalPaginas = 1;
+let apiCarregando = false;
+
+function limparDocumento(valor) {
+    return String(valor || '').replace(/\D/g, '');
+}
+
+function obterDocumentoItem(item) {
+    return limparDocumento(
+        item?.desDocumentoFornecedorFormatado ||
+        item?.desDocumentoFornecedor ||
+        item?.numCpfCnpj ||
+        item?.cpfCnpj ||
+        item?.cnpjCpf ||
+        item?.documento ||
+        item?.cnpj ||
+        item?.cpf ||
+        ''
+    );
+}
+
+
+function limparDocumento(valor) {
+    return String(valor || '').replace(/\D/g, '');
+}
+
+function obterDocumentoItem(item) {
+    return limparDocumento(
+        item?.desDocumentoFornecedorFormatado ||
+        item?.desDocumentoFornecedor ||
+        item?.numCpfCnpj ||
+        item?.cpfCnpj ||
+        item?.cnpjCpf ||
+        item?.documento ||
+        item?.cnpj ||
+        item?.cpf ||
+        ''
+    );
+}
+
+function formatarDataMovimento(valor) {
+    if (!valor) return '-';
+
+    const texto = String(valor).trim();
+
+    if (/^\d{2}\/\d{2}\/\d{4}$/.test(texto)) {
+        return texto;
+    }
+
+    if (/^\d{4}-\d{2}-\d{2}/.test(texto)) {
+        const partes = texto.slice(0, 10).split('-');
+        return `${partes[2]}/${partes[1]}/${partes[0]}`;
+    }
+
+    const data = new Date(texto);
+    if (!isNaN(data.getTime())) {
+        return data.toLocaleDateString('pt-BR');
+    }
+
+    return texto;
+}
+
+async function buscarDadosTransparencia(pagina = 1) {
+    const tbody = document.getElementById('api-tabela-corpo');
+    const totalEmp = document.getElementById('api-total-empenhado');
+    const totalLiq = document.getElementById('api-total-liquidado');
+    const totalPago = document.getElementById('api-total-pago');
+    const infoPag = document.getElementById('api-paginacao-info');
+    const btnAnt = document.getElementById('btn-api-pag-ant');
+    const btnProx = document.getElementById('btn-api-pag-prox');
+
+    if (!tbody) return;
+    if (apiCarregando) return;
+
+    apiCarregando = true;
+    if (btnAnt) btnAnt.disabled = true;
+    if (btnProx) btnProx.disabled = true;
+
+    const paginaSolicitada = Number(pagina || 1);
+    apiPaginaAtual = paginaSolicitada;
+
+    const filtroEmpenho = document.getElementById('api-filtro-empenho')?.value?.trim() || '';
+    const filtroAno = document.getElementById('api-filtro-ano')?.value?.trim() || '2026';
+    const filtroNome = document.getElementById('api-filtro-nome')?.value?.trim() || '';
+    const filtroDoc = limparDocumento(document.getElementById('api-filtro-doc')?.value || '');
+
+    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:18px;">Carregando dados...</td></tr>`;
+    if (infoPag) infoPag.textContent = `Carregando página ${apiPaginaAtual}...`;
+
+    const termoBase64 = filtroNome ? btoa(unescape(encodeURIComponent(filtroNome))) : '';
+
+    const urlDetalhada = `https://transparencia.iguatama.mg.gov.br/publico/despesaDetalhada?elementosPorPagina=10&pagina=${apiPaginaAtual}&termoBase64=${termoBase64}&indAgrupamento=FOR&datInicio=${filtroAno}-01-01&datFim=${filtroAno}-12-31&desNatureza=&codAdministracao=2&filtrarApenasCovid=false&numEmpenho=${encodeURIComponent(filtroEmpenho)}&cpfCnpj=${encodeURIComponent(filtroDoc)}`;
+
+    const urlValores = `https://transparencia.iguatama.mg.gov.br/publico/despesaDetalhada/buscarValores?a=1&termoBase64=${termoBase64}&indAgrupamento=FOR&datInicio=${filtroAno}-01-01&datFim=${filtroAno}-12-31&desNatureza=&codAdministracao=2&filtrarApenasCovid=false&numEmpenho=${encodeURIComponent(filtroEmpenho)}&cpfCnpj=${encodeURIComponent(filtroDoc)}`;
+
+    try {
+        const [resValores, resDetalhada] = await Promise.all([
+            fetch(urlValores),
+            fetch(urlDetalhada)
+        ]);
+
+        if (!resValores.ok) throw new Error(`Totais HTTP ${resValores.status}`);
+        if (!resDetalhada.ok) throw new Error(`Lista HTTP ${resDetalhada.status}`);
+
+        const dataValores = await resValores.json();
+        const dataDetalhada = await resDetalhada.json();
+
+        const formatarBRL = (valor) =>
+            Number(valor || 0).toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            });
+
+        if (totalEmp) totalEmp.textContent = formatarBRL(dataValores?.left);
+        if (totalLiq) totalLiq.textContent = formatarBRL(dataValores?.middle);
+        if (totalPago) totalPago.textContent = formatarBRL(dataValores?.right);
+
+        tbody.innerHTML = '';
+
+        let lista = Array.isArray(dataDetalhada?.content) ? dataDetalhada.content
+                 : Array.isArray(dataDetalhada?.data) ? dataDetalhada.data
+                 : Array.isArray(dataDetalhada?.items) ? dataDetalhada.items
+                 : Array.isArray(dataDetalhada?.lista) ? dataDetalhada.lista
+                 : [];
+
+        if (filtroDoc) {
+            lista = lista.filter(item => {
+                const docItem = obterDocumentoItem(item);
+                return docItem && (docItem.includes(filtroDoc) || filtroDoc.includes(docItem));
+            });
+        }
+
+        apiTotalPaginas = Number(dataDetalhada?.totalPages || 1);
+        const totalElementos = Number(dataDetalhada?.totalElements || lista.length);
+
+        if (!lista.length) {
+            tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:18px;">Nenhum registro encontrado.</td></tr>`;
+            if (infoPag) infoPag.textContent = 'Sem resultados';
+            if (btnAnt) btnAnt.disabled = true;
+            if (btnProx) btnProx.disabled = true;
+            return;
+        }
+
+        const linhasParaAtualizarData = [];
+
+        lista.forEach((item, index) => {
+            const tr = document.createElement('tr');
+
+            const numEmp = item.numEmpenho || item.empenho || item.numeroEmpenho || item.nrEmpenho || item.codEmpenho || '-';
+            const anoEmp = item.numAnoEmpenho || item.anoEmpenho || (item.empenhoFormatado ? String(item.empenhoFormatado).split('/')[1] : filtroAno) || '-';
+
+            const nomeFornecedor =
+                item.desAgrupamento ||
+                item.fornecedorFormatado ||
+                item.nomFornecedor ||
+                item.nomFavorecido ||
+                item.favorecido ||
+                item.nomeFavorecido ||
+                item.credor ||
+                item.fornecedor ||
+                item.nomCredor ||
+                item.nomeCredor ||
+                item.razaoSocial ||
+                item.desFornecedor ||
+                item.desFavorecido ||
+                item.nome ||
+                'Fornecedor não informado';
+
+            const docFornecedor =
+                item.desDocumentoFornecedorFormatado ||
+                item.desDocumentoFornecedor ||
+                item.numCpfCnpj ||
+                item.cpfCnpj ||
+                item.cnpjCpf ||
+                item.documento ||
+                item.cnpj ||
+                item.cpf ||
+                '-';
+
+            const dataMovimentoLista =
+                item.datMovimento ||
+                item.dataMovimento ||
+                item.dtMovimento ||
+                item.datMovimentacao ||
+                item.dataMovimentacao ||
+                item.dtMovimentacao ||
+                '';
+
+            const valorEmpenhado =
+                item.vlrEmpenhado ?? item.vlEmpenhado ?? item.valorEmpenhado ?? item.empenhado ?? item.vlrTotalEmpenhado ?? item.vlrEmpenho ?? item.valor ?? 0;
+
+            const valorLiquidado =
+                item.vlrLiquidado ?? item.vlLiquidado ?? item.valorLiquidado ?? item.liquidado ?? item.vlrTotalLiquidado ?? 0;
+
+            const valorPago =
+                item.vlrPago ?? item.vlPago ?? item.valorPago ?? item.pago ?? item.vlrTotalPago ?? 0;
+
+            const dataInicial = dataMovimentoLista ? formatarDataMovimento(dataMovimentoLista) : 'Carregando...';
+            const linhaId = `mov-${String(numEmp).replace(/\W/g, '')}-${String(anoEmp).replace(/\W/g, '')}-${index}`;
+
+            tr.innerHTML = `
+                <td style="font-weight:bold; color:#0f3b5e;">
+                    ${numEmp !== '-' ? numEmp : 'Registro ' + (((apiPaginaAtual - 1) * 20) + index + 1)}
+                    ${anoEmp !== '-' ? `<div style="font-size:11px; color:#66727d; font-weight:normal;">${anoEmp}</div>` : ''}
+                </td>
+                <td style="min-width:260px;">
+                    <div style="font-weight:bold; color:#243746;">${nomeFornecedor}</div>
+                </td>
+                <td style="min-width:150px;">
+                    <div style="font-size:12px; color:#66727d;">${docFornecedor}</div>
+                </td>
+                <td style="white-space:nowrap;" id="${linhaId}">
+                    ${dataInicial}
+                </td>
+                <td>${formatarBRL(valorEmpenhado)}</td>
+                <td>${formatarBRL(valorLiquidado)}</td>
+                <td>${formatarBRL(valorPago)}</td>
+                <td>
+                    <button
+                        type="button"
+                        class="btn-primary"
+                        style="padding:6px 10px; width:100%; font-size:11px;"
+                        onclick="verDetalhesAPI('${String(numEmp).replace(/'/g, "\\'")}', '${String(anoEmp).replace(/'/g, "\\'")}')"
+                    >
+                        Detalhes
+                    </button>
+                </td>
+            `;
+
+            tbody.appendChild(tr);
+
+            if (!dataMovimentoLista && numEmp !== '-' && anoEmp !== '-') {
+                linhasParaAtualizarData.push({ numEmp, anoEmp, linhaId });
+            }
+        });
+
+        if (infoPag) {
+            infoPag.textContent = filtroDoc
+                ? `Página ${apiPaginaAtual} de ${apiTotalPaginas} (${lista.length} registros exibidos após filtro por CPF/CNPJ)`
+                : `Página ${apiPaginaAtual} de ${apiTotalPaginas} (${totalElementos} registros)`;
+        }
+
+        if (btnAnt) btnAnt.disabled = apiPaginaAtual <= 1;
+        if (btnProx) btnProx.disabled = apiPaginaAtual >= apiTotalPaginas;
+
+for (const { numEmp, anoEmp, linhaId } of linhasParaAtualizarData) {
+    try {
+        const urlMov = `https://transparencia.iguatama.mg.gov.br/publico/despesaDetalhada/buscarMovimentacao?numEmpenho=${encodeURIComponent(numEmp)}&numAnoEmpenho=${encodeURIComponent(anoEmp)}&codAdministracao=2`;
+
+        const resMov = await fetch(urlMov);
+        if (!resMov.ok) throw new Error(`HTTP ${resMov.status}`);
+
+        const dataMov = await resMov.json();
+        const detalhe = Array.isArray(dataMov) ? dataMov[0] : dataMov;
+
+        const campo = document.getElementById(linhaId);
+        if (campo) {
+            campo.textContent = detalhe?.datMovimento
+                ? formatarDataMovimento(detalhe.datMovimento)
+                : '-';
+        }
+    } catch (e) {
+        const campo = document.getElementById(linhaId);
+        if (campo) campo.textContent = '-';
+    }
+
+    await new Promise(resolve => setTimeout(resolve, 300));
+}
+
+    } catch (error) {
+        console.error('Erro ao buscar API Transparência:', error);
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:18px; color:#a50e0e;">Erro ao buscar dados da API: ${error.message}</td></tr>`;
+        if (infoPag) infoPag.textContent = 'Erro na consulta';
+        if (btnAnt) btnAnt.disabled = true;
+        if (btnProx) btnProx.disabled = true;
+    } finally {
+        apiCarregando = false;
+    }
+}
+
+function mudarPaginaTransparencia(direcao) {
+    const novaPagina = apiPaginaAtual + Number(direcao || 0);
+
+    if (apiCarregando) return;
+    if (novaPagina < 1) return;
+    if (novaPagina > apiTotalPaginas) return;
+
+    buscarDadosTransparencia(novaPagina);
+}
+
+
+function escaparHtml(texto) {
+    return String(texto ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
+
+function verJsonLinha(jsonCodificado) {
+    try {
+        const item = JSON.parse(decodeURIComponent(jsonCodificado));
+        const jsonBonito = escaparHtml(JSON.stringify(item, null, 2));
+
+        mostrarAvisoSistema(
+            'JSON da linha',
+            `<div style="max-height:420px; overflow:auto; text-align:left;">
+                <pre style="white-space:pre-wrap; font-size:12px; line-height:1.4; margin:0;">${jsonBonito}</pre>
+            </div>`,
+            'Fechar'
+        );
+    } catch (erro) {
+        mostrarAvisoSistema(
+            'Erro',
+            'Não foi possível abrir o JSON desta linha.',
+            'Fechar'
+        );
+    }
+}
+
+
+async function verDetalhesAPI(numEmpenho, numAno) {
+    if (!numEmpenho || numEmpenho === 'N/A') {
+        mostrarAvisoSistema('Erro', 'Número do empenho não informado.');
+        return;
+    }
+
+    const anoFinal = String(numAno || '2026').trim();
+
+    abrirModalDetalheApiEmpenho(
+        `Detalhes do Empenho ${numEmpenho}/${anoFinal}`,
+        `<div style="padding:20px; text-align:center; font-size:15px; color:#54606b;">Carregando detalhes do empenho...</div>`
+    );
+
+    try {
+        const urlMovimentacao = `https://transparencia.iguatama.mg.gov.br/publico/despesaDetalhada/buscarMovimentacao?numEmpenho=${encodeURIComponent(numEmpenho)}&numAnoEmpenho=${encodeURIComponent(anoFinal)}&codAdministracao=2`;
+        const urlDescontos = `https://transparencia.iguatama.mg.gov.br/publico/despesaDetalhada/buscarDescontosEmpenho?numEmpenho=${encodeURIComponent(numEmpenho)}&numAnoEmpenho=${encodeURIComponent(anoFinal)}&codAdministracao=2`;
+
+        const [resMov, resDesc] = await Promise.all([
+            fetch(urlMovimentacao),
+            fetch(urlDescontos)
+        ]);
+
+        if (!resMov.ok) throw new Error('Falha ao consultar movimentação.');
+
+        const dataMov = await resMov.json();
+        const dataDesc = resDesc.ok ? await resDesc.json() : [];
+
+        const detalhe = Array.isArray(dataMov) ? dataMov[0] : dataMov;
+
+        if (!detalhe) {
+            abrirModalDetalheApiEmpenho(
+                `Detalhes do Empenho ${numEmpenho}/${anoFinal}`,
+                `<div style="padding:20px; color:#a50e0e;">Nenhum detalhe encontrado para este empenho.</div>`
+            );
+            return;
+        }
+
+        const formatarBRL = (valor) =>
+            Number(valor || 0).toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            });
+
+        const formatarData = (valor) => {
+            if (!valor) return '-';
+            const texto = String(valor).slice(0, 10);
+            if (/^\d{4}-\d{2}-\d{2}$/.test(texto)) {
+                const [ano, mes, dia] = texto.split('-');
+                return `${dia}/${mes}/${ano}`;
+            }
+            return valor;
+        };
+
+        const fornecedor = detalhe.nomFornecedor || detalhe.desFavorecido || detalhe.nomCredor || 'Não informado';
+        const documento = detalhe.desDocumentoFornecedorFormatado || detalhe.desDocumentoFornecedor || '-';
+
+        let descontosHtml = `<div style="font-size:13px; color:#66727d;">Nenhum desconto encontrado.</div>`;
+
+        if (Array.isArray(dataDesc) && dataDesc.length) {
+            descontosHtml = `
+                <ul style="margin:0; padding-left:18px; color:#243746; font-size:13px; line-height:1.5;">
+                    ${dataDesc.map(item => `
+                        <li>
+                            ${(item.nomTipoRetencao || item.desRetencao || 'Desconto')}:
+                            <strong>${formatarBRL(item.vlrRetencao || item.vlrDesconto || 0)}</strong>
+                        </li>
+                    `).join('')}
+                </ul>
+            `;
+        }
+
+        const html = `
+            <div style="display:grid; grid-template-columns:1.2fr 1fr; gap:16px; text-align:left;">
+                <div style="grid-column:1 / -1; background:#ffffff; border:1px solid #dbe3ea; border-radius:12px; padding:18px; box-shadow:0 2px 8px rgba(15,59,94,0.05);">
+                    <div style="font-size:12px; text-transform:uppercase; letter-spacing:0.4px; color:#6b7a88; font-weight:700; margin-bottom:8px;">Resumo do empenho</div>
+                    <div style="font-size:24px; font-weight:800; color:#0f3b5e; margin-bottom:16px;">
+                        ${detalhe.empenhoFormatado || (numEmpenho + '/' + anoFinal)}
+                    </div>
+                    <div style="display:grid; grid-template-columns:repeat(4, minmax(0, 1fr)); gap:14px;">
+                        <div><div style="font-size:12px; color:#6b7a88; font-weight:700;">Fornecedor</div><div style="font-size:15px; color:#243746; margin-top:4px;">${fornecedor}</div></div>
+                        <div><div style="font-size:12px; color:#6b7a88; font-weight:700;">Documento</div><div style="font-size:15px; color:#243746; margin-top:4px;">${documento}</div></div>
+                        <div><div style="font-size:12px; color:#6b7a88; font-weight:700;">Modalidade</div><div style="font-size:15px; color:#243746; margin-top:4px;">${detalhe.desModalidade || '-'}</div></div>
+                        <div><div style="font-size:12px; color:#6b7a88; font-weight:700;">Data do movimento</div><div style="font-size:15px; color:#243746; margin-top:4px;">${formatarData(detalhe.datMovimento)}</div></div>
+                        <div><div style="font-size:12px; color:#6b7a88; font-weight:700;">Licitação</div><div style="font-size:15px; color:#243746; margin-top:4px;">${detalhe.desLicitacaoEmpenhoFormatado || detalhe.desLicitacaoEmpenho || '-'}</div></div>
+                        <div><div style="font-size:12px; color:#6b7a88; font-weight:700;">Processo</div><div style="font-size:15px; color:#243746; margin-top:4px;">${detalhe.desProcessoEmpenho || '-'}</div></div>
+                        <div><div style="font-size:12px; color:#6b7a88; font-weight:700;">Contrato</div><div style="font-size:15px; color:#243746; margin-top:4px;">${detalhe.desContratoEmpenho || '-'}</div></div>
+                        <div><div style="font-size:12px; color:#6b7a88; font-weight:700;">Movimento</div><div style="font-size:15px; color:#243746; margin-top:4px;">${detalhe.desMovimento || '-'}</div></div>
+                    </div>
+                </div>
+
+                <div style="background:#ffffff; border:1px solid #dbe3ea; border-radius:12px; padding:18px; box-shadow:0 2px 8px rgba(15,59,94,0.05);">
+                    <div style="font-size:14px; font-weight:700; color:#0f3b5e; margin-bottom:12px; text-transform:uppercase; letter-spacing:0.3px;">Valores</div>
+                    <div style="display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:12px;">
+                        <div>
+                            <div style="font-size:12px; color:#6b7a88; font-weight:700;">Empenhado</div>
+                            <div style="font-size:22px; font-weight:800; color:#0f3b5e; margin-top:4px;">${detalhe.vlrEmpenhadoFormatado || formatarBRL(detalhe.vlrEmpenhado)}</div>
+                        </div>
+                        <div>
+                            <div style="font-size:12px; color:#6b7a88; font-weight:700;">Liquidado</div>
+                            <div style="font-size:22px; font-weight:800; color:#856404; margin-top:4px;">${detalhe.vlrLiquidadoFormatado || formatarBRL(detalhe.vlrLiquidado)}</div>
+                        </div>
+                        <div>
+                            <div style="font-size:12px; color:#6b7a88; font-weight:700;">Pago</div>
+                            <div style="font-size:22px; font-weight:800; color:#1e6b3b; margin-top:4px;">${detalhe.vlrPagoFormatado || formatarBRL(detalhe.vlrPago)}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="background:#ffffff; border:1px solid #dbe3ea; border-radius:12px; padding:18px; box-shadow:0 2px 8px rgba(15,59,94,0.05);">
+                    <div style="font-size:14px; font-weight:700; color:#0f3b5e; margin-bottom:12px; text-transform:uppercase; letter-spacing:0.3px;">Dados complementares</div>
+                    <div style="display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:12px;">
+                        <div><div style="font-size:12px; color:#6b7a88; font-weight:700;">Liquidação</div><div style="margin-top:4px; color:#243746;">${detalhe.numLiquidacao || '-'}</div></div>
+                        <div><div style="font-size:12px; color:#6b7a88; font-weight:700;">Pagamento</div><div style="margin-top:4px; color:#243746;">${detalhe.numPagamento || '-'}</div></div>
+                        <div><div style="font-size:12px; color:#6b7a88; font-weight:700;">Nota fiscal</div><div style="margin-top:4px; color:#243746;">${detalhe.numNotaFiscal || '-'}</div></div>
+                        <div><div style="font-size:12px; color:#6b7a88; font-weight:700;">Último movimento</div><div style="margin-top:4px; color:#243746;">${formatarData(detalhe.datUltimoMovimento)}</div></div>
+                    </div>
+                </div>
+
+                <div style="background:#ffffff; border:1px solid #dbe3ea; border-radius:12px; padding:18px; box-shadow:0 2px 8px rgba(15,59,94,0.05);">
+                    <div style="font-size:14px; font-weight:700; color:#0f3b5e; margin-bottom:12px; text-transform:uppercase; letter-spacing:0.3px;">Orçamento</div>
+                    <div style="display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:12px;">
+                        <div><div style="font-size:12px; color:#6b7a88; font-weight:700;">Órgão</div><div style="margin-top:4px; color:#243746;">${detalhe.desOrgao || '-'}</div></div>
+                        <div><div style="font-size:12px; color:#6b7a88; font-weight:700;">Unidade</div><div style="margin-top:4px; color:#243746;">${detalhe.desUnidade || '-'}</div></div>
+                        <div><div style="font-size:12px; color:#6b7a88; font-weight:700;">Função</div><div style="margin-top:4px; color:#243746;">${detalhe.desFuncao || '-'}</div></div>
+                        <div><div style="font-size:12px; color:#6b7a88; font-weight:700;">Subfunção</div><div style="margin-top:4px; color:#243746;">${detalhe.desSubFuncao || '-'}</div></div>
+                        <div><div style="font-size:12px; color:#6b7a88; font-weight:700;">Fonte</div><div style="margin-top:4px; color:#243746;">${detalhe.desFonte || '-'}</div></div>
+                        <div><div style="font-size:12px; color:#6b7a88; font-weight:700;">Programa</div><div style="margin-top:4px; color:#243746;">${detalhe.desPrograma || '-'}</div></div>
+                        <div><div style="font-size:12px; color:#6b7a88; font-weight:700;">Ação</div><div style="margin-top:4px; color:#243746;">${detalhe.desAcao || '-'}</div></div>
+                        <div><div style="font-size:12px; color:#6b7a88; font-weight:700;">Despesa</div><div style="margin-top:4px; color:#243746;">${detalhe.desDespesa || detalhe.desDespesaOrcamentaria || '-'}</div></div>
+                    </div>
+                </div>
+
+                <div style="background:#ffffff; border:1px solid #dbe3ea; border-radius:12px; padding:18px; box-shadow:0 2px 8px rgba(15,59,94,0.05);">
+                    <div style="font-size:14px; font-weight:700; color:#0f3b5e; margin-bottom:12px; text-transform:uppercase; letter-spacing:0.3px;">Descontos</div>
+                    ${descontosHtml}
+                </div>
+
+                <div style="grid-column:1 / -1; background:#ffffff; border:1px solid #dbe3ea; border-radius:12px; padding:18px; box-shadow:0 2px 8px rgba(15,59,94,0.05);">
+                    <div style="font-size:14px; font-weight:700; color:#0f3b5e; margin-bottom:12px; text-transform:uppercase; letter-spacing:0.3px;">Histórico</div>
+                    <div style="font-size:14px; color:#243746; line-height:1.6;">
+                        ${detalhe.desEmpenhoHistorico || detalhe.desHistoricoLiquido || detalhe.desHistorico || 'Sem histórico detalhado.'}
+                    </div>
+                </div>
+            </div>
+        `;
+
+        abrirModalDetalheApiEmpenho(
+            `Detalhes do Empenho ${numEmpenho}/${anoFinal}`,
+            html
+        );
+
+    } catch (erro) {
+        console.error('Erro ao buscar detalhes do empenho:', erro);
+        abrirModalDetalheApiEmpenho(
+            `Detalhes do Empenho ${numEmpenho}/${anoFinal}`,
+            `<div style="padding:20px; color:#a50e0e;">Não foi possível carregar os detalhes do empenho.</div>`
+        );
+    }
+}
+
+
+function abrirModalDetalheApiEmpenho(titulo, html) {
+    const modal = document.getElementById('modalDetalheApiEmpenho');
+    const tituloEl = document.getElementById('tituloModalDetalheApiEmpenho');
+    const conteudoEl = document.getElementById('conteudoModalDetalheApiEmpenho');
+
+    if (!modal || !tituloEl || !conteudoEl) return;
+
+    tituloEl.textContent = titulo || 'Detalhes do Empenho';
+    conteudoEl.innerHTML = html || '<div>Nenhum detalhe disponível.</div>';
+    modal.style.display = 'flex';
+}
+
+function fecharModalDetalheApiEmpenho() {
+    const modal = document.getElementById('modalDetalheApiEmpenho');
+    if (modal) modal.style.display = 'none';
+}
+
+
+
+let gestaoNotasItens = [];
+let gestaoNotasFiltrados = [];
+let gestaoNotasTabelaAtualId = null;
+let gestaoNotasInicializada = false;
+
+function inicializarGestaoNotas() {
+    const campoValor = document.getElementById('gnValorNota');
+    if (campoValor) aplicarMascaraValor(campoValor);
+
+    const campoEmpenho = document.getElementById('gnEmpenho');
+    if (campoEmpenho && !campoEmpenho.dataset.eventoBlur) {
+        campoEmpenho.addEventListener('blur', function () {
+            if (this.value.trim()) buscarEmpenhoGestaoNotas();
+        });
+        campoEmpenho.dataset.eventoBlur = '1';
+    }
+
+    const campoFornecedorGN = document.getElementById('gnFornecedor');
+    if (campoFornecedorGN && !campoFornecedorGN.dataset.autocompleteAtivo) {
+        campoFornecedorGN.addEventListener('input', function () {
+            fornecedorSelecionadoGestaoNotas = null;
+            mostrarSugestoesFornecedorGestaoNotas(this.value);
+        });
+
+        campoFornecedorGN.addEventListener('focus', function () {
+            if (this.value.trim().length >= 2) {
+                mostrarSugestoesFornecedorGestaoNotas(this.value);
+            }
+        });
+
+        campoFornecedorGN.addEventListener('blur', function () {
+            setTimeout(() => {
+                esconderListaFornecedoresGestaoNotas();
+            }, 150);
+        });
+
+        campoFornecedorGN.dataset.autocompleteAtivo = '1';
+    }
+}
+
+function limparFormularioGestaoNotas() {
+    document.getElementById('gnEmpenho').value = '';
+    document.getElementById('gnValorNota').value = '';
+    document.getElementById('gnNumeroNota').value = '';
+
+    document.getElementById('gn-status-empenho').className = 'alert-box alert-neutro';
+    document.getElementById('gn-status-empenho').textContent = 'Digite um número de empenho para tentar preencher os dados básicos automaticamente.';
+}
+
+function limparFormularioGestaoNotasCompleto() {
+    document.getElementById('gnEmpenho').value = '';
+    document.getElementById('gnFornecedor').value = '';
+    document.getElementById('gnTipoNota').value = '';
+    document.getElementById('gnValorNota').value = '';
+    document.getElementById('gnDataEmissao').value = '';
+    document.getElementById('gnNumeroNota').value = '';
+
+    document.getElementById('gn-status-empenho').className = 'alert-box alert-neutro';
+    document.getElementById('gn-status-empenho').textContent = 'Digite um número de empenho para tentar preencher os dados básicos automaticamente.';
+}
+
+function novaTabelaGestaoNotas() {
+    gestaoNotasTabelaAtualId = null;
+    gestaoNotasItens = [];
+    gestaoNotasFiltrados = [];
+    renderizarTabelaGestaoNotas();
+    atualizarResumoGestaoNotas();
+    limparFormularioGestaoNotasCompleto();
+    const info = document.getElementById('gnInfoTabela');
+    if (info) info.textContent = 'Nova tabela em branco.';
+}
+
+function obterDadosFormularioGestaoNotas() {
+    return {
+        empenho: document.getElementById('gnEmpenho').value.trim(),
+        fornecedor: document.getElementById('gnFornecedor').value.trim(),
+        tipoNota: document.getElementById('gnTipoNota').value.trim(),
+        valorNota: limparValorParaNumero(document.getElementById('gnValorNota').value),
+        valorNotaTexto: document.getElementById('gnValorNota').value.trim(),
+        dataEmissao: document.getElementById('gnDataEmissao').value.trim(),
+        numeroNota: document.getElementById('gnNumeroNota').value.trim()
+    };
+}
+
+function adicionarLinhaGestaoNotas() {
+    const item = obterDadosFormularioGestaoNotas();
+
+    if (!item.fornecedor) {
+        alert('Informe o nome do fornecedor.');
+        return;
+    }
+
+    if (!item.tipoNota) {
+        alert('Selecione o tipo da nota.');
+        return;
+    }
+
+    if (!item.valorNota || item.valorNota <= 0) {
+        alert('Informe um valor válido para a nota.');
+        return;
+    }
+
+    gestaoNotasItens.push({
+        id: 'gn-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8),
+        ...item
+    });
+
+    gestaoNotasFiltrados = [...gestaoNotasItens];
+    renderizarTabelaGestaoNotas();
+    atualizarResumoGestaoNotas();
+    limparFormularioGestaoNotas();
+}
+
+function renderizarTabelaGestaoNotas(lista = null) {
+    const tbody = document.getElementById('gnTabelaBody');
+    if (!tbody) return;
+
+    const dados = Array.isArray(lista) ? lista : gestaoNotasFiltrados.length ? gestaoNotasFiltrados : gestaoNotasItens;
+
+    if (!dados.length) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:20px;">Nenhuma linha adicionada.</td></tr>`;
+        return;
+    }
+
+    tbody.innerHTML = dados.map(item => `
+        <tr>
+            <td>${item.empenho || '-'}</td>
+            <td>${item.fornecedor || '-'}</td>
+            <td>${item.tipoNota || '-'}</td>
+            <td>R$ ${formatarValorBR(item.valorNota || 0)}</td>
+            <td>${item.dataEmissao || '-'}</td>
+            <td>${item.numeroNota || '-'}</td>
+            <td>
+                <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                    <button type="button" class="btn-primary" style="width:auto; padding:6px 10px; font-size:12px;" onclick="editarLinhaGestaoNotas('${item.id}')">Editar</button>
+                    <button type="button" class="btn-primary" style="width:auto; padding:6px 10px; font-size:12px; background-color:#6c757d; border-color:#5a6268;" onclick="duplicarLinhaGestaoNotas('${item.id}')">Duplicar</button>
+                    <button type="button" class="btn-primary" style="width:auto; padding:6px 10px; font-size:12px; background-color:#d9534f; border-color:#c9302c;" onclick="excluirLinhaGestaoNotas('${item.id}')">Excluir</button>
+                </div>
+            </td>
+        </tr>
+    `).join('');
+}
+
+function atualizarResumoGestaoNotas() {
+    const qtd = gestaoNotasItens.length;
+    const total = gestaoNotasItens.reduce((soma, item) => soma + Number(item.valorNota || 0), 0);
+
+    const qtdEl = document.getElementById('gnResumoQuantidade');
+    const totalEl = document.getElementById('gnResumoValor');
+
+    if (qtdEl) qtdEl.textContent = String(qtd);
+    if (totalEl) totalEl.textContent = `R$ ${formatarValorBR(total)}`;
+}
+
+function editarLinhaGestaoNotas(id) {
+    const item = gestaoNotasItens.find(x => x.id === id);
+    if (!item) return;
+
+    document.getElementById('gnEmpenho').value = item.empenho || '';
+    document.getElementById('gnFornecedor').value = item.fornecedor || '';
+    document.getElementById('gnTipoNota').value = item.tipoNota || '';
+    document.getElementById('gnValorNota').value = formatarValorBR(item.valorNota || 0);
+    document.getElementById('gnDataEmissao').value = item.dataEmissao || '';
+    document.getElementById('gnNumeroNota').value = item.numeroNota || '';
+
+    gestaoNotasItens = gestaoNotasItens.filter(x => x.id !== id);
+    gestaoNotasFiltrados = [...gestaoNotasItens];
+    renderizarTabelaGestaoNotas();
+    atualizarResumoGestaoNotas();
+}
+
+function duplicarLinhaGestaoNotas(id) {
+    const item = gestaoNotasItens.find(x => x.id === id);
+    if (!item) return;
+
+    gestaoNotasItens.push({
+        ...item,
+        id: 'gn-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8)
+    });
+
+    gestaoNotasFiltrados = [...gestaoNotasItens];
+    renderizarTabelaGestaoNotas();
+    atualizarResumoGestaoNotas();
+}
+
+function excluirLinhaGestaoNotas(id) {
+    if (!confirm('Deseja excluir esta linha?')) return;
+
+    gestaoNotasItens = gestaoNotasItens.filter(x => x.id !== id);
+    gestaoNotasFiltrados = [...gestaoNotasItens];
+    renderizarTabelaGestaoNotas();
+    atualizarResumoGestaoNotas();
+}
+
+function aplicarFiltroGestaoNotas() {
+    const texto = (document.getElementById('gnFiltroTexto').value || '').trim().toLowerCase();
+    const data = (document.getElementById('gnFiltroData').value || '').trim();
+    const tipo = (document.getElementById('gnFiltroTipo').value || '').trim();
+
+    gestaoNotasFiltrados = gestaoNotasItens.filter(item => {
+        const bateTexto =
+            !texto ||
+            (item.fornecedor || '').toLowerCase().includes(texto) ||
+            (item.empenho || '').toLowerCase().includes(texto) ||
+            (item.numeroNota || '').toLowerCase().includes(texto);
+
+        const bateData = !data || (item.dataEmissao || '').includes(data);
+        const bateTipo = !tipo || item.tipoNota === tipo;
+
+        return bateTexto && bateData && bateTipo;
+    });
+
+    renderizarTabelaGestaoNotas(gestaoNotasFiltrados);
+}
+
+function obterNomeFornecedorEmpenho(item) {
+    return (
+        item?.desAgrupamento ||
+        item?.fornecedorFormatado ||
+        item?.nomFornecedor ||
+        item?.nomFavorecido ||
+        item?.favorecido ||
+        item?.nomeFavorecido ||
+        item?.credor ||
+        item?.fornecedor ||
+        item?.nomCredor ||
+        item?.nomeCredor ||
+        item?.razaoSocial ||
+        item?.desFornecedor ||
+        item?.desFavorecido ||
+        item?.nome ||
+        ''
+    );
+}
+
+function formatarDataParaInput(valor) {
+    if (!valor) return '';
+
+    const texto = String(valor).trim().slice(0, 10);
+
+    if (/^\d{4}-\d{2}-\d{2}$/.test(texto)) {
+        return texto.split('-').reverse().join('/');
+    }
+
+    if (/^\d{2}\/\d{2}\/\d{4}$/.test(texto)) {
+        return texto;
+    }
+
+    return texto;
+}
+
+function limparCamposAutoEmpenhoGestaoNotas() {
+    const ids = ['gnFornecedor', 'gnValorNota', 'gnDataEmissao', 'gnNumeroNota'];
+    ids.forEach(id => {
+        const campo = document.getElementById(id);
+        if (campo) campo.value = '';
+    });
+}
+
+async function buscarEmpenhoGestaoNotas() {
+    const numero = (document.getElementById('gnEmpenho')?.value || '').trim();
+    const ano = (document.getElementById('api-filtro-ano')?.value || '2026').trim() || '2026';
+    const status = document.getElementById('gn-status-empenho');
+    const campoFornecedor = document.getElementById('gnFornecedor');
+    const campoTipoNota = document.getElementById('gnTipoNota');
+    const campoValorNota = document.getElementById('gnValorNota');
+    const campoDataEmissao = document.getElementById('gnDataEmissao');
+    const campoNumeroNota = document.getElementById('gnNumeroNota');
+
+    if (!status) return;
+
+    if (!numero) {
+        limparCamposAutoEmpenhoGestaoNotas();
+        status.className = 'alert-box alert-neutro';
+        status.textContent = 'Digite um número de empenho para tentar preencher os dados básicos automaticamente.';
+        return;
+    }
+
+    if (numero.length < 3) {
+        limparCamposAutoEmpenhoGestaoNotas();
+        status.className = 'alert-box alert-neutro';
+        status.textContent = 'Digite o número completo do empenho para realizar a busca.';
+        return;
+    }
+
+    limparCamposAutoEmpenhoGestaoNotas();
+
+    status.className = 'alert-box alert-neutro';
+    status.textContent = 'Buscando dados do empenho...';
+
+    try {
+        let encontrou = false;
+
+        // 1) Busca no Firebase
+        if (window.auth?.currentUser && window.db && window.fsCollection && window.fsGetDocs) {
+            const snapshot = await window.fsGetDocs(window.fsCollection(window.db, 'Empenhos'));
+
+            snapshot.forEach(docItem => {
+                if (encontrou) return;
+
+                const emp = docItem.data() || {};
+                const numeroEmp = String(emp.numero || '').trim();
+
+                if (numeroEmp === numero) {
+                    if (campoFornecedor) {
+                        campoFornecedor.value =
+                            emp.fornecedor ||
+                            emp.nomeFornecedor ||
+                            emp.razaoSocial ||
+                            '';
+                    }
+
+                    if (campoTipoNota && !campoTipoNota.value && emp.tipoNota) {
+                        campoTipoNota.value = emp.tipoNota;
+                    }
+
+                    if (campoValorNota) {
+                        campoValorNota.value = emp.valorEmpenho
+                            ? (typeof emp.valorEmpenho === 'string'
+                                ? emp.valorEmpenho
+                                : formatarValorBR(Number(emp.valorEmpenho || 0)))
+                            : '';
+                    }
+
+                    if (campoDataEmissao) {
+                        campoDataEmissao.value = emp.dataEmissao
+                            ? formatarDataParaInput(emp.dataEmissao)
+                            : '';
+                    }
+
+                    if (campoNumeroNota) {
+                        campoNumeroNota.value = emp.notaFiscal || '';
+                    }
+
+                    status.className = 'alert-box alert-simples';
+                    status.textContent = 'Empenho encontrado na base salva e campos básicos preenchidos.';
+                    encontrou = true;
+                }
+            });
+        }
+
+        if (encontrou) return;
+
+        // 2) Busca na API da Transparência
+        const url = `https://transparencia.iguatama.mg.gov.br/publico/despesaDetalhada?elementosPorPagina=10&pagina=1&termoBase64=&indAgrupamento=FOR&datInicio=${ano}-01-01&datFim=${ano}-12-31&desNatureza=&codAdministracao=2&filtrarApenasCovid=false&numEmpenho=${encodeURIComponent(numero)}&cpfCnpj=`;
+
+        const resposta = await fetch(url);
+
+        if (!resposta.ok) {
+            throw new Error(`Falha HTTP ${resposta.status}`);
+        }
+
+        const data = await resposta.json();
+        const lista = Array.isArray(data?.content) ? data.content : [];
+
+        if (lista.length > 0) {
+            const item = lista[0];
+
+            const fornecedor = obterNomeFornecedorEmpenho(item);
+
+            const valorEmpenhado =
+                item?.vlrEmpenhado ??
+                item?.valorEmpenhado ??
+                item?.vlrTotalEmpenhado ??
+                item?.valor ??
+                0;
+
+            const dataMov =
+                item?.datMovimento ||
+                item?.dataMovimento ||
+                item?.datEmissao ||
+                item?.dataEmissao ||
+                item?.datInclusao ||
+                '';
+
+            const numeroNota =
+                item?.numNotaFiscal ||
+                item?.notaFiscal ||
+                item?.numeroNota ||
+                '';
+
+            if (campoFornecedor) {
+                campoFornecedor.value = fornecedor || '';
+            }
+
+            if (campoValorNota) {
+                campoValorNota.value = Number(valorEmpenhado) > 0
+                    ? formatarValorBR(Number(valorEmpenhado || 0))
+                    : '';
+            }
+
+            if (campoDataEmissao) {
+                campoDataEmissao.value = dataMov
+                    ? formatarDataParaInput(dataMov)
+                    : '';
+            }
+
+            if (campoNumeroNota) {
+                campoNumeroNota.value = numeroNota || '';
+            }
+
+            status.className = 'alert-box alert-simples';
+            status.textContent = fornecedor
+                ? 'Empenho encontrado na API da Transparência e dados básicos atualizados.'
+                : 'Empenho encontrado na API da Transparência. Alguns campos vieram incompletos.';
+            return;
+        }
+
+        status.className = 'alert-box alert-neutro';
+        status.textContent = 'Empenho não localizado nem na base salva nem na API. Você pode continuar o preenchimento manualmente.';
+    } catch (erro) {
+        console.error('Erro ao buscar empenho:', erro);
+        status.className = 'alert-box alert-normal';
+        status.textContent = 'Não foi possível consultar o empenho agora. Continue o preenchimento manualmente.';
+    }
+}
+
+let fornecedorSelecionadoGestaoNotas = null;
+
+function esconderListaFornecedoresGestaoNotas() {
+    const lista = document.getElementById('listaFornecedoresGestaoNotas');
+    if (lista) {
+        lista.style.display = 'none';
+        lista.innerHTML = '';
+    }
+}
+
+function mostrarSugestoesFornecedorGestaoNotas(texto) {
+    const lista = document.getElementById('listaFornecedoresGestaoNotas');
+    const input = document.getElementById('gnFornecedor');
+    if (!lista || !input) return;
+
+    const termo = String(texto || '').trim().toLowerCase();
+
+    if (!termo || termo.length < 2) {
+        esconderListaFornecedoresGestaoNotas();
+        return;
+    }
+
+    const fornecedores = Array.isArray(window.fornecedoresFirebaseMateriais)
+        ? window.fornecedoresFirebaseMateriais
+        : [];
+
+    const resultados = fornecedores.filter(f => {
+        const nome = (f.razaoSocial || '').toLowerCase();
+        const fantasia = (f.nomeFantasia || '').toLowerCase();
+        const cnpj = (f.cnpj || '').toLowerCase();
+
+        return nome.includes(termo) || fantasia.includes(termo) || cnpj.includes(termo);
+    }).slice(0, 8);
+
+    if (!resultados.length) {
+        lista.innerHTML = `<div style="padding:10px 12px; font-size:13px; color:#66727d;">Nenhum fornecedor encontrado.</div>`;
+        lista.style.display = 'block';
+        return;
+    }
+
+    lista.innerHTML = resultados.map(f => `
+        <div
+            style="padding:10px 12px; cursor:pointer; border-bottom:1px solid #eef2f6;"
+            onclick="selecionarFornecedorGestaoNotas('${encodeURIComponent(JSON.stringify(f))}')"
+        >
+            <div style="font-weight:bold; color:#243746;">${f.razaoSocial || 'Sem razão social'}</div>
+            <div style="font-size:12px; color:#66727d; margin-top:2px;">
+                ${f.nomeFantasia || ''}${f.cnpj ? ' • ' + f.cnpj : ''}
+            </div>
+        </div>
+    `).join('');
+
+    lista.style.display = 'block';
+}
+
+function selecionarFornecedorGestaoNotas(dadosCodificados) {
+    const fornecedor = JSON.parse(decodeURIComponent(dadosCodificados));
+    const input = document.getElementById('gnFornecedor');
+
+    fornecedorSelecionadoGestaoNotas = fornecedor;
+
+    if (input) {
+        input.value = fornecedor.razaoSocial || fornecedor.nomeFantasia || '';
+    }
+
+    esconderListaFornecedoresGestaoNotas();
+}
 
     </script>
 
@@ -5019,6 +6608,136 @@ if (empenhoNum) {
     if (botao) {
         botao.innerText = textoOriginal;
         botao.disabled = false;
+    }
+};
+
+
+
+window.salvarTabelaGestaoNotas = async function(botao) {
+    if (!window.auth?.currentUser) {
+        alert('Você precisa estar logado para salvar o histórico.');
+        return;
+    }
+
+    if (!gestaoNotasItens.length) {
+        alert('A tabela está vazia.');
+        return;
+    }
+
+    const textoOriginal = botao ? botao.innerText : 'Salvar Histórico';
+
+    try {
+        if (botao) {
+            botao.disabled = true;
+            botao.innerText = 'Salvando...';
+        }
+
+        const idTabela = gestaoNotasTabelaAtualId || ('tabela-' + Date.now());
+        const total = gestaoNotasItens.reduce((soma, item) => soma + Number(item.valorNota || 0), 0);
+
+        await window.fsSetDoc(
+            window.fsDoc(window.db, 'HistoricoNotas', idTabela),
+            {
+                id: idTabela,
+                titulo: `Tabela de Notas ${new Date().toLocaleDateString('pt-BR')} ${new Date().toLocaleTimeString('pt-BR')}`,
+                criadoPor: window.auth.currentUser.email || '',
+                dataCriacao: new Date().toISOString(),
+                dataAtualizacao: new Date().toISOString(),
+                quantidadeLinhas: gestaoNotasItens.length,
+                valorTotal: total,
+                itens: gestaoNotasItens
+            }
+        );
+
+        gestaoNotasTabelaAtualId = idTabela;
+
+        const info = document.getElementById('gnInfoTabela');
+        if (info) info.textContent = `Tabela salva com ${gestaoNotasItens.length} linha(s).`;
+
+        await carregarHistoricoGestaoNotas();
+        alert('Histórico salvo com sucesso.');
+    } catch (erro) {
+        console.error('Erro ao salvar histórico:', erro);
+        alert('Erro ao salvar histórico no Firebase.');
+    } finally {
+        if (botao) {
+            botao.disabled = false;
+            botao.innerText = textoOriginal;
+        }
+    }
+};
+
+window.carregarHistoricoGestaoNotas = async function() {
+    const box = document.getElementById('gnHistoricoLista');
+    if (!box) return;
+
+    if (!window.auth?.currentUser) {
+        box.innerHTML = 'Faça login para visualizar o histórico.';
+        return;
+    }
+
+    try {
+        box.innerHTML = 'Carregando histórico...';
+
+        const snapshot = await window.fsGetDocs(window.fsCollection(window.db, 'HistoricoNotas'));
+        const lista = [];
+
+        snapshot.forEach(docItem => {
+            const d = docItem.data() || {};
+            lista.push(d);
+        });
+
+        lista.sort((a, b) => String(b.dataAtualizacao || '').localeCompare(String(a.dataAtualizacao || '')));
+
+        if (!lista.length) {
+            box.innerHTML = 'Nenhum histórico salvo.';
+            return;
+        }
+
+        box.innerHTML = lista.map(item => `
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; padding:12px 0; border-bottom:1px solid #e7edf2; flex-wrap:wrap;">
+                <div>
+                    <div style="font-weight:bold; color:#243746;">${item.titulo || 'Tabela sem título'}</div>
+                    <div style="font-size:12px; color:#66727d; margin-top:4px;">
+                        ${item.quantidadeLinhas || 0} linha(s) · R$ ${formatarValorBR(item.valorTotal || 0)}
+                    </div>
+                </div>
+                <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                    <button type="button" class="btn-primary" style="width:auto; padding:8px 12px;" onclick="abrirHistoricoGestaoNotas('${item.id}')">Abrir</button>
+                </div>
+            </div>
+        `).join('');
+    } catch (erro) {
+        console.error('Erro ao carregar histórico:', erro);
+        box.innerHTML = 'Erro ao carregar histórico.';
+    }
+};
+
+window.abrirHistoricoGestaoNotas = async function(idTabela) {
+    if (!window.db || !window.fsDoc || !window.fsGetDoc) return;
+
+    try {
+        const ref = window.fsDoc(window.db, 'HistoricoNotas', idTabela);
+        const snap = await window.fsGetDoc(ref);
+
+        if (!snap.exists()) {
+            alert('Histórico não encontrado.');
+            return;
+        }
+
+        const dados = snap.data() || {};
+        gestaoNotasTabelaAtualId = dados.id || idTabela;
+        gestaoNotasItens = Array.isArray(dados.itens) ? dados.itens : [];
+        gestaoNotasFiltrados = [...gestaoNotasItens];
+
+        renderizarTabelaGestaoNotas();
+        atualizarResumoGestaoNotas();
+
+        const info = document.getElementById('gnInfoTabela');
+        if (info) info.textContent = `Tabela carregada: ${dados.titulo || idTabela}`;
+    } catch (erro) {
+        console.error('Erro ao abrir histórico:', erro);
+        alert('Não foi possível abrir o histórico.');
     }
 };
 
@@ -5460,99 +7179,131 @@ window.toggleFormularioEmpenho = function() {
     let ultimoLoteFornecedores = [];
     const LIMITE_FORNECEDORES_POR_PAGINA = 20;
 
-    window.carregarFornecedoresNuvem = async function(reiniciar = false) {
-        if (!auth.currentUser) {
-            console.warn("Usuário não está logado.");
+window.carregarFornecedoresNuvem = async function(reiniciar = false) {
+    const tbody = document.getElementById('tabela-fornecedores-nuvem');
+    const resumo = document.getElementById('fornecedoresResumo');
+    const info = document.getElementById('fornecedoresPaginacaoInfo');
+    const btnAnterior = document.getElementById('btnPaginaAnteriorFornecedores');
+    const btnProxima = document.getElementById('btnProximaPaginaFornecedores');
+
+    if (!tbody || !resumo || !info || !btnAnterior || !btnProxima) return;
+
+    if (!auth.currentUser) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="7" style="padding:16px; text-align:center;">
+                    Faça login para visualizar os fornecedores.
+                </td>
+            </tr>
+        `;
+        resumo.innerHTML = 'Usuário não autenticado.';
+        info.textContent = 'Aguardando login.';
+        btnAnterior.disabled = true;
+        btnProxima.disabled = true;
+        return;
+    }
+
+    if (reiniciar) {
+        ultimoDocumentoFornecedor = null;
+        pilhaPaginasFornecedores = [];
+        paginaAtualFornecedor = 1;
+    }
+
+    tbody.innerHTML = `
+        <tr>
+            <td colspan="7" style="padding:16px; text-align:center;">
+                Carregando fornecedores...
+            </td>
+        </tr>
+    `;
+    resumo.innerHTML = 'Consultando fornecedores salvos na nuvem...';
+    info.textContent = `Página ${paginaAtualFornecedor}`;
+    btnAnterior.disabled = true;
+    btnProxima.disabled = true;
+
+    try {
+        let consulta = query(
+            collection(db, "Fornecedores"),
+            orderBy("razaoSocial"),
+            limit(LIMITE_FORNECEDORES_POR_PAGINA)
+        );
+
+        if (!reiniciar && ultimoDocumentoFornecedor) {
+            consulta = query(
+                collection(db, "Fornecedores"),
+                orderBy("razaoSocial"),
+                startAfter(ultimoDocumentoFornecedor),
+                limit(LIMITE_FORNECEDORES_POR_PAGINA)
+            );
+        }
+
+        const snapshot = await getDocs(consulta);
+
+        if (snapshot.empty) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="7" style="padding:16px; text-align:center;">
+                        Nenhum fornecedor encontrado.
+                    </td>
+                </tr>
+            `;
+            resumo.innerHTML = 'Nenhum fornecedor encontrado.';
+            info.textContent = `Página ${paginaAtualFornecedor}`;
+            btnAnterior.disabled = paginaAtualFornecedor <= 1;
+            btnProxima.disabled = true;
             return;
         }
 
-        const tbody = document.getElementById('tabela-fornecedores-nuvem');
-        const resumo = document.getElementById('fornecedoresResumo');
-        const info = document.getElementById('fornecedoresPaginacaoInfo');
-        const btnAnterior = document.getElementById('btnPaginaAnteriorFornecedores');
-        const btnProxima = document.getElementById('btnProximaPaginaFornecedores');
+        ultimoLoteFornecedores = snapshot.docs;
+        ultimoDocumentoFornecedor = snapshot.docs[snapshot.docs.length - 1];
 
-        if (!tbody) return;
+        let html = '';
+        let quantidadePagina = 0;
 
-        if (reiniciar) {
-            ultimoDocumentoFornecedor = null;
-            pilhaPaginasFornecedores = [];
-            paginaAtualFornecedor = 1;
-        }
+        snapshot.forEach((docItem) => {
+            const f = docItem.data() || {};
+            const dadosJson = encodeURIComponent(JSON.stringify(f));
+            quantidadePagina++;
 
-        tbody.innerHTML = '<tr><td colspan="7" style="padding: 16px; text-align: center;">Carregando fornecedores...</td></tr>';
+            html += `
+                <tr>
+                    <td>${f.cnpj || ''}</td>
+                    <td>${f.razaoSocial || ''}</td>
+                    <td>${(f.municipio || '')}${f.uf ? '/' + f.uf : ''}</td>
+                    <td>${f.simplesNacional ? 'Optante' : 'Não'}</td>
+                    <td>${f.mei ? 'Optante' : 'Não'}</td>
+                    <td>${f.cnaePrincipalCodigo || ''}</td>
+                    <td>
+                        <button type="button" class="btn-primary" style="width:auto; padding:6px 12px;" onclick="visualizarFornecedor('${dadosJson}')">
+                            Visualizar
+                        </button>
+                    </td>
+                </tr>
+            `;
+        });
 
-        try {
-            let consulta = query(
-                collection(db, "Fornecedores"),
-                orderBy("razaoSocial"),
-                limit(LIMITE_FORNECEDORES_POR_PAGINA)
-            );
+        tbody.innerHTML = html;
+        resumo.innerHTML = `<strong>${quantidadePagina}</strong> fornecedor(es) carregados nesta página.`;
+        info.textContent = `Página ${paginaAtualFornecedor} • Limite de ${LIMITE_FORNECEDORES_POR_PAGINA} registros por consulta`;
+        btnAnterior.disabled = paginaAtualFornecedor <= 1;
+        btnProxima.disabled = snapshot.docs.length < LIMITE_FORNECEDORES_POR_PAGINA;
+    } catch (erro) {
+        console.error("Erro ao carregar fornecedores:", erro);
 
-            if (!reiniciar && ultimoDocumentoFornecedor) {
-                consulta = query(
-                    collection(db, "Fornecedores"),
-                    orderBy("razaoSocial"),
-                    startAfter(ultimoDocumentoFornecedor),
-                    limit(LIMITE_FORNECEDORES_POR_PAGINA)
-                );
-            }
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="7" style="padding:16px; text-align:center; color:#a50e0e;">
+                    Erro ao carregar fornecedores.
+                </td>
+            </tr>
+        `;
 
-            const snapshot = await getDocs(consulta);
-
-            if (snapshot.empty) {
-                if (paginaAtualFornecedor > 1) {
-                    paginaAtualFornecedor--;
-                }
-
-                tbody.innerHTML = '<tr><td colspan="7" style="padding: 16px; text-align: center;">Nenhum fornecedor encontrado.</td></tr>';
-                resumo.innerHTML = 'Nenhum fornecedor encontrado nesta página.';
-                info.textContent = `Página ${paginaAtualFornecedor}`;
-                btnAnterior.disabled = paginaAtualFornecedor <= 1;
-                btnProxima.disabled = true;
-                return;
-            }
-
-            ultimoLoteFornecedores = snapshot.docs;
-            ultimoDocumentoFornecedor = snapshot.docs[snapshot.docs.length - 1];
-
-            let html = '';
-            let quantidadePagina = 0;
-
-            snapshot.forEach((docItem) => {
-                const f = docItem.data();
-                const dadosJson = encodeURIComponent(JSON.stringify(f));
-                quantidadePagina++;
-
-                html += `
-                    <tr>
-                        <td>${f.cnpj || ''}</td>
-                        <td>${f.razaoSocial || ''}</td>
-                        <td>${f.municipio || ''}/${f.uf || ''}</td>
-                        <td>${f.simplesNacional ? 'Optante' : 'Não'}</td>
-                        <td>${f.mei ? 'Optante' : 'Não'}</td>
-                        <td>${f.cnaePrincipalCodigo || ''}</td>
-                        <td>
-                            <button type="button" class="btn-primary" style="width: auto; padding: 6px 12px;" onclick="visualizarFornecedor('${dadosJson}')">
-                                Visualizar
-                            </button>
-                        </td>
-                    </tr>
-                `;
-            });
-
-            tbody.innerHTML = html;
-            resumo.innerHTML = `<strong>${quantidadePagina}</strong> fornecedor(es) carregados nesta página.`;
-            info.textContent = `Página ${paginaAtualFornecedor} • Limite de ${LIMITE_FORNECEDORES_POR_PAGINA} registros por consulta`;
-            btnAnterior.disabled = paginaAtualFornecedor <= 1;
-            btnProxima.disabled = snapshot.docs.length < LIMITE_FORNECEDORES_POR_PAGINA;
-        } catch (erro) {
-            console.error("Erro ao carregar fornecedores:", erro);
-            tbody.innerHTML = '<tr><td colspan="7" style="padding: 16px; text-align: center; color: red;">Erro ao carregar fornecedores.</td></tr>';
-            resumo.innerHTML = 'Erro ao carregar fornecedores do Firebase.';
-            info.textContent = 'Falha na paginação.';
-        }
-    };
+        resumo.innerHTML = 'Erro ao carregar fornecedores do Firebase.';
+        info.textContent = erro?.message || 'Falha na consulta.';
+        btnAnterior.disabled = true;
+        btnProxima.disabled = true;
+    }
+};
 
     window.proximaPaginaFornecedores = async function() {
         if (!ultimoDocumentoFornecedor) return;
@@ -5726,13 +7477,17 @@ window.toggleFormularioEmpenho = function() {
     logoutBtn.addEventListener('click', async () => {
         await signOut(auth);
     });
-
-    onAuthStateChanged(auth, async (usuario) => {
+onAuthStateChanged(auth, async (usuario) => {
     if (usuario) {
         liberarSite(usuario);
 
         if (window.carregarFornecedoresParaMateriais) {
             await window.carregarFornecedoresParaMateriais();
+        }
+
+        const telaFornecedores = document.getElementById('tela-fornecedores');
+        if (telaFornecedores && telaFornecedores.classList.contains('active') && window.carregarFornecedoresNuvem) {
+            await window.carregarFornecedoresNuvem(true);
         }
     } else {
         bloquearSite();
@@ -5888,5 +7643,70 @@ return true;
         </div>
     </div>
 </div>
+
+<div id="modalDetalheApiEmpenho" style="display:none; position:fixed; inset:0; background:rgba(15, 59, 94, 0.35); z-index:9999; align-items:center; justify-content:center; padding:24px;">
+    <div style="background:#fff; width:100%; max-width:1180px; border-radius:10px; border:1px solid #bac5d0; box-shadow:0 12px 34px rgba(0,0,0,0.18); overflow:hidden;">
+        <div style="background:#0f3b5e; color:#fff; padding:16px 22px; display:flex; justify-content:space-between; align-items:center; gap:16px;">
+            <div>
+                <h3 id="tituloModalDetalheApiEmpenho" style="margin:0; font-size:20px;">Detalhes do Empenho</h3>
+                <div style="font-size:13px; opacity:0.9; margin-top:4px;">Visualização detalhada da API de Transparência</div>
+            </div>
+            <button type="button" onclick="fecharModalDetalheApiEmpenho()" style="background:transparent; border:none; color:#fff; font-size:26px; cursor:pointer; line-height:1;">&times;</button>
+        </div>
+
+        <div id="conteudoModalDetalheApiEmpenho" style="padding:22px; max-height:78vh; overflow-y:auto; background:#f4f7fa;"></div>
+
+        <div style="padding:14px 22px; background:#eef3f7; border-top:1px solid #bac5d0; text-align:right;">
+            <button type="button" class="btn-primary" onclick="fecharModalDetalheApiEmpenho()" style="width:auto; padding:8px 16px;">Fechar</button>
+        </div>
+    </div>
+</div>
+
+<div id="modalDetalheApiEmpenho" style="display:none; position:fixed; inset:0; background:rgba(15, 59, 94, 0.35); z-index:9999; align-items:center; justify-content:center; padding:24px;">
+    <div style="background:#fff; width:100%; max-width:1180px; border-radius:10px; border:1px solid #bac5d0; box-shadow:0 12px 34px rgba(0,0,0,0.18); overflow:hidden;">
+        <div style="background:#0f3b5e; color:#fff; padding:16px 22px; display:flex; justify-content:space-between; align-items:center; gap:16px;">
+            <div>
+                <h3 id="tituloModalDetalheApiEmpenho" style="margin:0; font-size:20px;">Detalhes do Empenho</h3>
+                <div style="font-size:13px; opacity:0.9; margin-top:4px;">Visualização detalhada da API de Transparência</div>
+            </div>
+            <button type="button" onclick="fecharModalDetalheApiEmpenho()" style="background:transparent; border:none; color:#fff; font-size:26px; cursor:pointer; line-height:1;">&times;</button>
+        </div>
+
+        <div id="conteudoModalDetalheApiEmpenho" style="padding:22px; max-height:78vh; overflow-y:auto; background:#f4f7fa;"></div>
+
+        <div style="padding:14px 22px; background:#eef3f7; border-top:1px solid #bac5d0; text-align:right;">
+            <button type="button" class="btn-primary" onclick="fecharModalDetalheApiEmpenho()" style="width:auto; padding:8px 16px;">Fechar</button>
+        </div>
+    </div>
+</div>
+
+<div id="modalImpressaoGestaoNotas" class="modal-overlay" style="display: none;">
+    <div class="modal-panel" style="width: 430px; max-width: calc(100vw - 30px);">
+        <div class="modal-header-custom">
+            <strong>Impressão da tabela</strong>
+        </div>
+
+        <div class="modal-body-custom">
+            <div style="margin-bottom: 14px; line-height: 1.5;">
+                Escolha quais notas deseja enviar para impressão.
+            </div>
+
+            <div class="form-group-calc" style="margin-bottom: 0;">
+                <label for="gnFiltroTipoImpressao" style="font-weight: bold;">Tipo para impressão</label>
+                <select id="gnFiltroTipoImpressao">
+                    <option value="todos">Todos</option>
+                    <option value="mercadoria">Mercadoria</option>
+                    <option value="servico">Serviço</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="modal-footer-custom">
+            <button type="button" class="btn-cancelar-modal" onclick="fecharModalImpressaoGestaoNotas()">Cancelar</button>
+            <button type="button" class="btn-primary" style="width:auto; padding:8px 15px;" onclick="confirmarImpressaoGestaoNotas()">Imprimir</button>
+        </div>
+    </div>
+</div>
+
 </body>
 </html>

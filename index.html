@@ -1299,7 +1299,240 @@ body.print-retencao .col-retencao {
     }
 }
 
+
+/* =========================
+   TELA DE LEMBRETES
+========================= */
+.lembretes-tabs {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+}
+
+.lembretes-tab-btn {
+    border: 1px solid #bac5d0;
+    background: #f5f7fa;
+    color: #0f3b5e;
+    border-radius: 4px;
+    padding: 10px 14px;
+    font-size: 13px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.lembretes-tab-btn.active {
+    background: #0f3b5e;
+    color: #ffffff;
+    border-color: #0f3b5e;
+}
+
+.lembretes-aba {
+    display: none;
+}
+
+.lembretes-aba.active {
+    display: block;
+}
+
+.lembretes-toolbar {
+    display: grid;
+    grid-template-columns: minmax(280px, 1.5fr) 180px 180px 180px auto;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 18px;
+}
+
+.lembretes-kpis {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+    margin-bottom: 18px;
+}
+
+.lembrete-kpi {
+    background: #fbfcfd;
+    border: 1px solid #cfd7df;
+    border-radius: 4px;
+    padding: 14px;
+}
+
+.lembrete-kpi .titulo {
+    font-size: 11px;
+    font-weight: bold;
+    color: #5a6774;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+}
+
+.lembrete-kpi .valor {
+    font-size: 24px;
+    font-weight: bold;
+    color: #0f3b5e;
+    line-height: 1.1;
+}
+
+.lembretes-table td,
+.lembretes-table th {
+    font-size: 12px;
+}
+
+.lembrete-resumo-lista {
+    margin-top: 4px;
+    color: #66727d;
+    line-height: 1.4;
+    font-size: 12px;
+}
+
+.prioridade-badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: bold;
+    border: 1px solid transparent;
+}
+
+.prioridade-1 {
+    background: #e6f4ea;
+    color: #1e4620;
+    border-color: #c8e6c9;
+}
+
+.prioridade-2 {
+    background: #eef3f7;
+    color: #0f3b5e;
+    border-color: #cbd6df;
+}
+
+.prioridade-3 {
+    background: #fff3cd;
+    color: #856404;
+    border-color: #ffeeba;
+}
+
+.prioridade-4 {
+    background: #fce8e6;
+    color: #a50e0e;
+    border-color: #f4c7c3;
+}
+
+.lembretes-editor-grid {
+    display: grid;
+    grid-template-columns: 360px 1fr;
+    gap: 18px;
+    align-items: start;
+}
+
+.lembretes-editor-card {
+    background: #ffffff;
+    border: 1px solid #cfd7df;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.lembretes-editor-card-header {
+    padding: 14px 16px;
+    border-bottom: 1px solid #dce4ec;
+    background: #fbfcfd;
+}
+
+.lembretes-editor-card-header h3 {
+    margin: 0;
+    font-size: 13px;
+    color: #2c3e50;
+    text-transform: uppercase;
+}
+
+.lembretes-editor-card-body {
+    padding: 16px;
+}
+
+.lembretes-acoes {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 16px;
+}
+
+.lembretes-info-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+}
+
+#lembreteEditor {
+    min-height: 360px;
+    background: #ffffff;
+}
+
+#lembreteEditor .ql-editor {
+    min-height: 320px;
+    font-size: 14px;
+    color: #243746;
+}
+
+.ql-toolbar.ql-snow,
+.ql-container.ql-snow {
+    border-color: #bac5d0 !important;
+}
+
+.lembretes-vazio {
+    text-align: center;
+    padding: 20px;
+    color: #6c757d;
+}
+
+@media (max-width: 1100px) {
+    .lembretes-editor-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .lembretes-toolbar {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .lembretes-kpis {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 640px) {
+    .lembretes-toolbar,
+    .lembretes-kpis {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Ajuste do botão Novo lembrete na toolbar */
+.lembretes-toolbar .btn-primary {
+    width: auto !important;
+    min-width: 140px;
+    padding: 10px 16px;
+    justify-self: start;
+}
+
+@media (max-width: 1100px) {
+    .lembretes-toolbar .btn-primary {
+        min-width: 0;
+    }
+}
+
+.lembretes-toolbar .btn-primary {
+    width: auto !important;
+    min-width: 140px;
+    padding: 10px 16px;
+}
+
+.lembretes-toolbar {
+    display: grid;
+    grid-template-columns: minmax(280px, 1.5fr) 180px 180px 180px auto;
+    gap: 10px;
+    align-items: center;
+}
+
     </style>
+    <link href="https://cdn.jsdelivr.net/npm/quill@2/dist/quill.snow.css" rel="stylesheet">
 </head>
 <body>
 
@@ -1373,6 +1606,10 @@ body.print-retencao .col-retencao {
         Consulta Fiscal
     </button>
 
+    <button type="button" class="btn-primary" onclick="mostrarTela('lembretes')" style="width: auto; padding: 8px 14px;">
+  Lembretes
+</button>
+
     <button type="button" class="btn-primary" onclick="mostrarTela('gestao-notas')" style="width: auto; padding: 8px 14px;">
     Gestão de Notas
 </button>
@@ -1405,6 +1642,194 @@ body.print-retencao .col-retencao {
         <button type="button" class="logout-btn" id="logoutBtn">Sair</button>
     </div>
 </div>
+</div>
+
+
+<div id="tela-lembretes" class="screen-section">
+    <div class="materiais-wrapper">
+        <div class="materiais-panel">
+            <div class="materiais-header">
+                <h2>Lembretes Compartilhados</h2>
+            </div>
+
+            <div class="materiais-body">
+                <div class="lembretes-tabs">
+                    <button type="button" id="btnAbaListaLembretes" class="lembretes-tab-btn active" onclick="abrirAbaLembretes('lista')">
+                        Todos os lembretes
+                    </button>
+                    <button type="button" id="btnAbaEditorLembretes" class="lembretes-tab-btn" onclick="abrirAbaLembretes('editor')">
+                        Editor do lembrete
+                    </button>
+                </div>
+
+                <div id="abaListaLembretes" class="lembretes-aba active">
+                    <div class="lembretes-toolbar">
+                        <input type="text" id="lembretesBusca" placeholder="Buscar por título, texto ou criador" oninput="reiniciarPaginacaoLembretes()">
+
+                        <select id="lembretesFiltroStatus" onchange="reiniciarPaginacaoLembretes()">
+                            <option value="todos">Todos os status</option>
+                            <option value="pendentes">Somente pendentes</option>
+                            <option value="concluidos">Somente concluídos</option>
+                        </select>
+
+                        <select id="lembretesFiltroCategoria" onchange="reiniciarPaginacaoLembretes()">
+                            <option value="todas">Todas as categorias</option>
+                        </select>
+
+                        <select id="lembretesFiltroPrioridade" onchange="reiniciarPaginacaoLembretes()">
+                            <option value="todas">Todas as prioridades</option>
+                            <option value="1">1 - Baixa</option>
+                            <option value="2">2 - Normal</option>
+                            <option value="3">3 - Alta</option>
+                            <option value="4">4 - Urgente</option>
+                        </select>
+
+                        <button type="button" class="btn-primary" onclick="novoLembrete()" style="width:auto;">
+                            Novo lembrete
+                        </button>
+                    </div>
+
+                    <div class="lembretes-kpis">
+                        <div class="lembrete-kpi">
+                            <div class="titulo">Total</div>
+                            <div class="valor" id="lembretesQtdTotal">0</div>
+                        </div>
+                        <div class="lembrete-kpi">
+                            <div class="titulo">Pendentes</div>
+                            <div class="valor" id="lembretesQtdPendentes">0</div>
+                        </div>
+                        <div class="lembrete-kpi">
+                            <div class="titulo">Concluídos</div>
+                            <div class="valor" id="lembretesQtdConcluidos">0</div>
+                        </div>
+                        <div class="lembrete-kpi">
+                            <div class="titulo">Urgentes</div>
+                            <div class="valor" id="lembretesQtdUrgentes">0</div>
+                        </div>
+                    </div>
+
+                    <div style="overflow-x:auto;">
+                        <table class="data-table lembretes-table">
+                            <thead>
+                                <tr>
+                                    <th style="width:90px;">Completo</th>
+                                    <th style="min-width:320px;">Título e resumo</th>
+                                    <th style="width:130px;">Categoria</th>
+                                    <th style="width:120px;">Prioridade</th>
+                                    <th style="width:220px;">Criado por</th>
+                                    <th style="width:160px;">Criação</th>
+                                    <th style="width:160px;">Atualização</th>
+                                    <th style="width:100px;">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="lembretesTabelaBody">
+                                <tr>
+                                    <td colspan="8" class="lembretes-vazio">Nenhum lembrete carregado.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div id="lembretesPaginacao" style="display:flex; justify-content:space-between; align-items:center; gap:12px; margin-top:16px; flex-wrap:wrap;">
+                        <div id="lembretesPaginacaoInfo" style="font-size:13px; color:#54606b;">
+                            Página 1
+                        </div>
+
+                        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                            <button type="button" class="btn-primary" id="btnLembretesPaginaAnterior" style="width:auto;" onclick="mudarPaginaLembretes(-1)" disabled>
+                                Página anterior
+                            </button>
+                            <button type="button" class="btn-primary" id="btnLembretesPaginaProxima" style="width:auto;" onclick="mudarPaginaLembretes(1)" disabled>
+                                Próxima página
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="abaEditorLembretes" class="lembretes-aba">
+                    <div class="lembretes-editor-grid">
+                        <div class="lembretes-editor-card">
+                            <div class="lembretes-editor-card-header">
+                                <h3>Dados do lembrete</h3>
+                            </div>
+                            <div class="lembretes-editor-card-body">
+                                <div class="lembretes-info-grid">
+                                    <div class="form-group-calc">
+                                        <label for="lembreteIdExibicao">ID</label>
+                                        <input type="text" id="lembreteIdExibicao" readonly placeholder="Será gerado ao salvar">
+                                    </div>
+
+                                    <div class="form-group-calc">
+                                        <label for="lembreteTitulo">Título</label>
+                                        <input type="text" id="lembreteTitulo" placeholder="Ex.: Encaminhar ofício, lembrar pagamento, reunião...">
+                                    </div>
+
+                                    <div class="form-group-calc">
+                                        <label for="lembreteCategoria">Categoria</label>
+                                        <input type="text" id="lembreteCategoria" list="listaCategoriasLembrete" placeholder="Ex.: Lembrete, Mandar mensagem para...">
+                                        <datalist id="listaCategoriasLembrete"></datalist>
+                                    </div>
+
+                                    <div class="form-group-calc">
+                                        <label for="lembretePrioridade">Ranking de prioridade</label>
+                                        <select id="lembretePrioridade">
+                                            <option value="1">1 - Baixa</option>
+                                            <option value="2" selected>2 - Normal</option>
+                                            <option value="3">3 - Alta</option>
+                                            <option value="4">4 - Urgente</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="checkbox-group" style="margin-top:4px;">
+                                        <input type="checkbox" id="lembreteConcluido">
+                                        <label for="lembreteConcluido">Marcar este lembrete como completo</label>
+                                    </div>
+
+                                    <div class="form-group-calc">
+                                        <label for="lembreteCriadoPor">Criado por</label>
+                                        <input type="text" id="lembreteCriadoPor" readonly>
+                                    </div>
+
+                                    <div class="form-group-calc">
+                                        <label for="lembreteDataCriacao">Data de criação</label>
+                                        <input type="text" id="lembreteDataCriacao" readonly>
+                                    </div>
+
+                                    <div class="form-group-calc">
+                                        <label for="lembreteDataAtualizacao">Data de atualização</label>
+                                        <input type="text" id="lembreteDataAtualizacao" readonly>
+                                    </div>
+                                </div>
+
+                                <div class="lembretes-acoes">
+                                    <button type="button" class="btn-primary" onclick="salvarLembreteAtual()" style="width:auto;">
+                                        Salvar lembrete
+                                    </button>
+
+                                    <button type="button" class="btn-primary" onclick="novoLembrete()" style="width:auto; background:#6c757d; border-color:#5a6268;">
+                                        Novo
+                                    </button>
+
+                                    <button type="button" class="btn-primary" onclick="excluirLembreteAtual()" style="width:auto; background:#d9534f; border-color:#c9302c;">
+                                        Excluir
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="lembretes-editor-card">
+                            <div class="lembretes-editor-card-header">
+                                <h3>Texto do lembrete</h3>
+                            </div>
+                            <div class="lembretes-editor-card-body">
+                                <div id="lembreteEditor"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
     <div id="tela-consulta" class="screen-section active">
@@ -3939,6 +4364,590 @@ Regras obrigatórias:
 }
 
 
+let lembretesQuill = null;
+let lembretesLista = [];
+let lembreteAtualId = null;
+let lembretesPaginaAtual = 1;
+const lembretesItensPorPagina = 10;
+
+function escaparHtmlLembretes(texto) {
+    return String(texto ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
+
+function extrairTextoHtmlLembrete(html) {
+    const div = document.createElement('div');
+    div.innerHTML = html || '';
+    return (div.textContent || div.innerText || '').replace(/\s+/g, ' ').trim();
+}
+
+function formatarDataHoraLembrete(valor) {
+    if (!valor) return '-';
+    const data = new Date(valor);
+    if (isNaN(data.getTime())) return valor;
+    return data.toLocaleString('pt-BR');
+}
+
+function prioridadeTextoLembrete(valor) {
+    const v = String(valor || '2');
+    if (v === '1') return '1 - Baixa';
+    if (v === '2') return '2 - Normal';
+    if (v === '3') return '3 - Alta';
+    if (v === '4') return '4 - Urgente';
+    return '2 - Normal';
+}
+
+function prioridadeClasseLembrete(valor) {
+    const v = String(valor || '2');
+    if (v === '1') return 'prioridade-1';
+    if (v === '2') return 'prioridade-2';
+    if (v === '3') return 'prioridade-3';
+    if (v === '4') return 'prioridade-4';
+    return 'prioridade-2';
+}
+
+function obterResumoLembrete(item) {
+    const texto = item.conteudoTexto || extrairTextoHtmlLembrete(item.conteudoHtml || '');
+    return texto.length > 140 ? texto.slice(0, 140) + '...' : texto;
+}
+
+function inicializarQuillLembretes() {
+    if (lembretesQuill) return;
+
+    if (typeof Quill === 'undefined') {
+        alert('Quill.js não foi carregado. Verifique se o script CDN foi adicionado.');
+        return;
+    }
+
+    lembretesQuill = new Quill('#lembreteEditor', {
+        theme: 'snow',
+        placeholder: 'Digite aqui o lembrete compartilhado...',
+        modules: {
+            toolbar: [
+                [{ header: [1, 2, 3, false] }],
+                ['bold', 'italic', 'underline', 'strike'],
+                [{ list: 'ordered' }, { list: 'bullet' }],
+                [{ align: [] }],
+                ['blockquote', 'code-block', 'link'],
+                ['clean']
+            ]
+        }
+    });
+}
+
+window.abrirAbaLembretes = function(aba) {
+    document.getElementById('abaListaLembretes')?.classList.remove('active');
+    document.getElementById('abaEditorLembretes')?.classList.remove('active');
+    document.getElementById('btnAbaListaLembretes')?.classList.remove('active');
+    document.getElementById('btnAbaEditorLembretes')?.classList.remove('active');
+
+    if (aba === 'editor') {
+        document.getElementById('abaEditorLembretes')?.classList.add('active');
+        document.getElementById('btnAbaEditorLembretes')?.classList.add('active');
+    } else {
+        document.getElementById('abaListaLembretes')?.classList.add('active');
+        document.getElementById('btnAbaListaLembretes')?.classList.add('active');
+    }
+};
+
+function preencherMetadadosLembrete(item = null) {
+    document.getElementById('lembreteIdExibicao').value = item?.id || '';
+    document.getElementById('lembreteCriadoPor').value = item?.criadoPorNome || item?.criadoPorEmail || '';
+    document.getElementById('lembreteDataCriacao').value = item?.dataCriacao ? formatarDataHoraLembrete(item.dataCriacao) : '';
+    document.getElementById('lembreteDataAtualizacao').value = item?.dataAtualizacao ? formatarDataHoraLembrete(item.dataAtualizacao) : '';
+}
+
+window.novoLembrete = function() {
+    lembreteAtualId = null;
+    inicializarQuillLembretes();
+
+    document.getElementById('lembreteTitulo').value = '';
+    document.getElementById('lembreteCategoria').value = '';
+    document.getElementById('lembretePrioridade').value = '2';
+    document.getElementById('lembreteConcluido').checked = false;
+
+    if (lembretesQuill) lembretesQuill.root.innerHTML = '';
+
+    preencherMetadadosLembrete(null);
+    abrirAbaLembretes('editor');
+};
+
+window.editarLembrete = function(id) {
+    const item = lembretesLista.find(function(x) { return x.id === id; });
+    if (!item) return;
+
+    lembreteAtualId = item.id;
+    inicializarQuillLembretes();
+
+    document.getElementById('lembreteTitulo').value = item.titulo || '';
+    document.getElementById('lembreteCategoria').value = item.categoria || '';
+    document.getElementById('lembretePrioridade').value = String(item.prioridade || '2');
+    document.getElementById('lembreteConcluido').checked = !!item.concluido;
+
+    if (lembretesQuill) lembretesQuill.root.innerHTML = item.conteudoHtml || '';
+
+    preencherMetadadosLembrete(item);
+    abrirAbaLembretes('editor');
+};
+
+window.editarLembrete = function(id) {
+    const item = lembretesLista.find(function(x) { return x.id === id; });
+    if (!item) return;
+
+    lembreteAtualId = item.id;
+    inicializarQuillLembretes();
+
+    document.getElementById('lembreteTitulo').value = item.titulo || '';
+    document.getElementById('lembretePrioridade').value = String(item.prioridade || '2');
+    document.getElementById('lembreteConcluido').checked = !!item.concluido;
+
+    if (lembretesQuill) lembretesQuill.root.innerHTML = item.conteudoHtml || '';
+
+    preencherMetadadosLembrete(item);
+    abrirAbaLembretes('editor');
+};
+
+function obterLembretesFiltrados() {
+    const busca = String(document.getElementById('lembretesBusca')?.value || '').trim().toLowerCase();
+    const status = String(document.getElementById('lembretesFiltroStatus')?.value || 'todos');
+    const prioridade = String(document.getElementById('lembretesFiltroPrioridade')?.value || 'todas');
+    const filtroCategoria = String(document.getElementById('lembretesFiltroCategoria')?.value || 'todas');
+
+    return lembretesLista.filter(function(item) {
+        const titulo = String(item.titulo || '').toLowerCase();
+        const conteudo = String(item.conteudoTexto || '').toLowerCase();
+        const criador = String(item.criadoPorNome || item.criadoPorEmail || '').toLowerCase();
+        const categoriaItem = String(item.categoria || 'Geral').toLowerCase();
+
+        const bateBusca = !busca || titulo.includes(busca) || conteudo.includes(busca) || criador.includes(busca);
+        const bateStatus =
+            status === 'todos' ||
+            (status === 'pendentes' && !item.concluido) ||
+            (status === 'concluidos' && !!item.concluido);
+
+        const batePrioridade = prioridade === 'todas' || String(item.prioridade || '2') === prioridade;
+        const bateCategoria = filtroCategoria === 'todas' || String(item.categoria || 'Geral') === filtroCategoria;
+
+        return bateBusca && bateStatus && batePrioridade && bateCategoria;
+    });
+}
+
+function atualizarResumoLembretes() {
+    const total = lembretesLista.length;
+    const pendentes = lembretesLista.filter(function(x) { return !x.concluido; }).length;
+    const concluidos = lembretesLista.filter(function(x) { return !!x.concluido; }).length;
+    const urgentes = lembretesLista.filter(function(x) { return String(x.prioridade) === '4'; }).length;
+
+    document.getElementById('lembretesQtdTotal').textContent = String(total);
+    document.getElementById('lembretesQtdPendentes').textContent = String(pendentes);
+    document.getElementById('lembretesQtdConcluidos').textContent = String(concluidos);
+    document.getElementById('lembretesQtdUrgentes').textContent = String(urgentes);
+}
+
+
+function pesoPrioridadeLembrete(prioridade) {
+  const p = String(prioridade || '').trim().toLowerCase();
+
+  if (p.includes('1') || p.includes('urgente')) return 1;
+  if (p.includes('2') || p.includes('normal')) return 2;
+  if (p.includes('3') || p.includes('baixa')) return 3;
+
+  return 99;
+}
+
+function ordenarLembretes(lista) {
+  return [...lista].sort((a, b) => {
+    const concluidoA = !!a.concluido;
+    const concluidoB = !!b.concluido;
+
+    if (concluidoA !== concluidoB) {
+      return concluidoA - concluidoB;
+    }
+
+    const prioridadeA = pesoPrioridadeLembrete(a.prioridade);
+    const prioridadeB = pesoPrioridadeLembrete(b.prioridade);
+
+    if (prioridadeA !== prioridadeB) {
+      return prioridadeA - prioridadeB;
+    }
+
+    const dataA = new Date(a.dataCriacao || a.dataAtualizacao || 0).getTime();
+    const dataB = new Date(b.dataCriacao || b.dataAtualizacao || 0).getTime();
+
+    return dataB - dataA;
+  });
+}
+
+function pesoOrdenacaoPrioridadeLembrete(valor) {
+    const v = String(valor || '2');
+
+    if (v === '4') return 1; // Urgente
+    if (v === '3') return 2; // Alta
+    if (v === '2') return 3; // Normal
+    if (v === '1') return 4; // Baixa
+
+    return 99;
+}
+
+function ordenarLembretes(lista) {
+    return [...lista].sort(function(a, b) {
+        const concluidoA = !!a.concluido;
+        const concluidoB = !!b.concluido;
+
+        if (concluidoA !== concluidoB) {
+            return concluidoA - concluidoB;
+        }
+
+        const prioridadeA = pesoOrdenacaoPrioridadeLembrete(a.prioridade);
+        const prioridadeB = pesoOrdenacaoPrioridadeLembrete(b.prioridade);
+
+        if (prioridadeA !== prioridadeB) {
+            return prioridadeA - prioridadeB;
+        }
+
+        const dataA = new Date(a.dataAtualizacao || a.dataCriacao || 0).getTime();
+        const dataB = new Date(b.dataAtualizacao || b.dataCriacao || 0).getTime();
+
+        return dataB - dataA;
+    });
+}
+
+function pesoOrdenacaoPrioridadeLembrete(valor) {
+    const v = String(valor || '2');
+
+    if (v === '4') return 1; // Urgente
+    if (v === '3') return 2; // Alta
+    if (v === '2') return 3; // Normal
+    if (v === '1') return 4; // Baixa
+
+    return 99;
+}
+
+function ordenarLembretes(lista) {
+    return [...lista].sort(function(a, b) {
+        const concluidoA = !!a.concluido;
+        const concluidoB = !!b.concluido;
+
+        if (concluidoA !== concluidoB) {
+            return concluidoA - concluidoB;
+        }
+
+        const prioridadeA = pesoOrdenacaoPrioridadeLembrete(a.prioridade);
+        const prioridadeB = pesoOrdenacaoPrioridadeLembrete(b.prioridade);
+
+        if (prioridadeA !== prioridadeB) {
+            return prioridadeA - prioridadeB;
+        }
+
+        const dataA = new Date(a.dataAtualizacao || a.dataCriacao || 0).getTime();
+        const dataB = new Date(b.dataAtualizacao || b.dataCriacao || 0).getTime();
+
+        return dataB - dataA;
+    });
+}
+
+function atualizarPaginacaoLembretes(totalItens, totalPaginas) {
+    const info = document.getElementById('lembretesPaginacaoInfo');
+    const btnAnterior = document.getElementById('btnLembretesPaginaAnterior');
+    const btnProxima = document.getElementById('btnLembretesPaginaProxima');
+
+    if (info) {
+        if (!totalItens) {
+            info.textContent = 'Nenhum lembrete encontrado.';
+        } else {
+            const inicio = ((lembretesPaginaAtual - 1) * lembretesItensPorPagina) + 1;
+            const fim = Math.min(lembretesPaginaAtual * lembretesItensPorPagina, totalItens);
+            info.textContent = 'Página ' + lembretesPaginaAtual + ' de ' + totalPaginas + ' • exibindo ' + inicio + ' até ' + fim + ' de ' + totalItens;
+        }
+    }
+
+    if (btnAnterior) btnAnterior.disabled = lembretesPaginaAtual <= 1;
+    if (btnProxima) btnProxima.disabled = lembretesPaginaAtual >= totalPaginas;
+}
+
+window.mudarPaginaLembretes = function(direcao) {
+    const lista = ordenarLembretes(obterLembretesFiltrados());
+    const totalPaginas = Math.max(1, Math.ceil(lista.length / lembretesItensPorPagina));
+
+    lembretesPaginaAtual += direcao;
+
+    if (lembretesPaginaAtual < 1) lembretesPaginaAtual = 1;
+    if (lembretesPaginaAtual > totalPaginas) lembretesPaginaAtual = totalPaginas;
+
+    renderizarTabelaLembretes();
+};
+
+window.reiniciarPaginacaoLembretes = function() {
+    lembretesPaginaAtual = 1;
+    renderizarTabelaLembretes();
+};
+
+
+window.renderizarTabelaLembretes = function() {
+    const tbody = document.getElementById('lembretesTabelaBody');
+    if (!tbody) return;
+
+    atualizarResumoLembretes();
+
+    const listaCompleta = ordenarLembretes(obterLembretesFiltrados());
+    const totalItens = listaCompleta.length;
+    const totalPaginas = Math.max(1, Math.ceil(totalItens / lembretesItensPorPagina));
+
+    if (lembretesPaginaAtual > totalPaginas) {
+        lembretesPaginaAtual = totalPaginas;
+    }
+
+    if (lembretesPaginaAtual < 1) {
+        lembretesPaginaAtual = 1;
+    }
+
+    const inicio = (lembretesPaginaAtual - 1) * lembretesItensPorPagina;
+    const fim = inicio + lembretesItensPorPagina;
+    const lista = listaCompleta.slice(inicio, fim);
+
+    atualizarPaginacaoLembretes(totalItens, totalPaginas);
+
+    if (!lista.length) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="7" class="lembretes-vazio">Nenhum lembrete encontrado.</td>
+            </tr>
+        `;
+        return;
+    }
+
+tbody.innerHTML = lista.map(function(item) {
+    const nomeCriador = item.criadoPorNome || 'Usuário';
+    const emailCriador = item.criadoPorEmail || '';
+    const resumo = obterResumoLembrete(item);
+    const categoria = item.categoria || '-';
+
+    return `
+        <tr>
+            <td style="text-align:center; white-space:nowrap;">
+                <input type="checkbox" ${item.concluido ? 'checked' : ''} onchange="alternarConclusaoLembrete('${item.id}', this.checked)">
+            </td>
+            <td>
+                <div style="font-weight:bold; color:#243746;">${escaparHtmlLembretes(item.titulo || 'Sem título')}</div>
+                <div class="lembrete-resumo-lista">${escaparHtmlLembretes(resumo || 'Sem conteúdo')}</div>
+            </td>
+            <td>
+                ${escaparHtmlLembretes(categoria)}
+            </td>
+            <td>
+                <span class="prioridade-badge ${prioridadeClasseLembrete(item.prioridade)}">
+                    ${prioridadeTextoLembrete(item.prioridade)}
+                </span>
+            </td>
+            <td>
+                <div style="font-weight:bold; color:#243746;">${escaparHtmlLembretes(nomeCriador)}</div>
+                <div style="font-size:11px; color:#66727d; margin-top:4px;">${escaparHtmlLembretes(emailCriador)}</div>
+            </td>
+            <td>${escaparHtmlLembretes(formatarDataHoraLembrete(item.dataCriacao))}</td>
+            <td>${escaparHtmlLembretes(formatarDataHoraLembrete(item.dataAtualizacao))}</td>
+            <td style="white-space:nowrap;">
+                <button type="button" class="btn-primary" style="width:auto; padding:6px 10px; font-size:12px;" onclick="editarLembrete('${item.id}')">
+                    Abrir
+                </button>
+            </td>
+        </tr>
+    `;
+}).join('');
+};
+
+window.carregarLembretesNuvem = async function() {
+    const tbody = document.getElementById('lembretesTabelaBody');
+    if (!tbody) return;
+
+    if (!window.auth?.currentUser) {
+        lembretesLista = [];
+        atualizarResumoLembretes();
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="7" class="lembretes-vazio">Faça login para visualizar os lembretes.</td>
+            </tr>
+        `;
+        return;
+    }
+
+    tbody.innerHTML = `
+        <tr>
+            <td colspan="7" class="lembretes-vazio">Carregando lembretes...</td>
+        </tr>
+    `;
+
+    try {
+        if (!window.db || !window.fsCollection || !window.fsGetDocs) {
+            throw new Error('Firestore não está disponível no escopo global.');
+        }
+
+        const snapshot = await window.fsGetDocs(window.fsCollection(window.db, 'Lembretes'));
+        const lista = [];
+
+        snapshot.forEach(function(docItem) {
+            const dados = docItem.data() || {};
+            lista.push({
+                id: docItem.id,
+                ...dados,
+                conteudoTexto: dados.conteudoTexto || extrairTextoHtmlLembrete(dados.conteudoHtml || '')
+            });
+        });
+
+        lista.sort(function(a, b) {
+            const dataA = new Date(a.dataAtualizacao || a.dataCriacao || 0).getTime();
+            const dataB = new Date(b.dataAtualizacao || b.dataCriacao || 0).getTime();
+            return dataB - dataA;
+        });
+
+        lembretesLista = lista;
+        renderizarTabelaLembretes();
+
+        if (lembreteAtualId) {
+            const atual = lembretesLista.find(function(x) { return x.id === lembreteAtualId; });
+            if (atual) preencherMetadadosLembrete(atual);
+        }
+    } catch (erro) {
+        console.error('Erro ao carregar lembretes', erro);
+        lembretesLista = [];
+        atualizarResumoLembretes();
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="7" class="lembretes-vazio" style="color:#a50e0e;">
+                    Erro ao carregar lembretes: ${escaparHtmlLembretes(erro?.message || 'falha desconhecida')}
+                </td>
+            </tr>
+        `;
+    }
+};
+
+window.salvarLembreteAtual = async function() {
+    if (!window.auth?.currentUser) {
+        alert('Você precisa estar logado para salvar lembretes.');
+        return;
+    }
+
+    inicializarQuillLembretes();
+
+    const titulo = document.getElementById('lembreteTitulo').value.trim();
+    const categoria = document.getElementById('lembreteCategoria').value.trim() || 'Geral';
+    const prioridade = document.getElementById('lembretePrioridade').value;
+    const concluido = document.getElementById('lembreteConcluido').checked;
+    const conteudoHtml = (lembretesQuill?.root?.innerHTML || '').trim();
+    const conteudoTexto = extrairTextoHtmlLembrete(conteudoHtml);
+
+    if (!titulo) {
+        alert('Informe o título do lembrete.');
+        document.getElementById('lembreteTitulo').focus();
+        return;
+    }
+
+    if (!conteudoTexto) {
+        alert('Digite o texto do lembrete.');
+        return;
+    }
+
+    try {
+        if (!window.db || !window.fsDoc || !window.fsSetDoc) {
+            throw new Error('Firestore não está disponível.');
+        }
+
+        const agora = new Date().toISOString();
+        const id = lembreteAtualId || ('lembrete-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8));
+        const existente = lembretesLista.find(function(x) { return x.id === id; });
+
+        const payload = {
+            titulo: titulo,
+            categoria: categoria,
+            prioridade: prioridade,
+            concluido: concluido,
+            conteudoHtml: conteudoHtml,
+            conteudoTexto: conteudoTexto,
+            criadoPorEmail: existente?.criadoPorEmail || window.auth.currentUser.email || '',
+            criadoPorNome: existente?.criadoPorNome || window.auth.currentUser.displayName || window.auth.currentUser.email || 'Usuário',
+            criadoPorUid: existente?.criadoPorUid || window.auth.currentUser.uid || '',
+            dataCriacao: existente?.dataCriacao || agora,
+            dataAtualizacao: agora
+        };
+
+        await window.fsSetDoc(window.fsDoc(window.db, 'Lembretes', id), payload, { merge: true });
+
+        lembreteAtualId = id;
+        await carregarLembretesNuvem();
+        editarLembrete(id);
+        abrirAbaLembretes('lista');
+        alert('Lembrete salvo com sucesso.');
+    } catch (erro) {
+        console.error('Erro ao salvar lembrete', erro);
+        alert('Erro ao salvar lembrete: ' + (erro?.message || 'falha desconhecida'));
+    }
+};
+
+window.alternarConclusaoLembrete = async function(id, estado) {
+    const item = lembretesLista.find(function(x) { return x.id === id; });
+    if (!item) return;
+
+    try {
+        await window.fsSetDoc(
+            window.fsDoc(window.db, 'Lembretes', id),
+            {
+                concluido: !!estado,
+                dataAtualizacao: new Date().toISOString()
+            },
+            { merge: true }
+        );
+
+        if (lembreteAtualId === id) {
+            document.getElementById('lembreteConcluido').checked = !!estado;
+            document.getElementById('lembreteDataAtualizacao').value = formatarDataHoraLembrete(new Date().toISOString());
+        }
+
+        await carregarLembretesNuvem();
+    } catch (erro) {
+        console.error('Erro ao atualizar status do lembrete', erro);
+        alert('Não foi possível atualizar o status do lembrete.');
+    }
+};
+
+window.excluirLembreteAtual = async function() {
+    if (!lembreteAtualId) {
+        alert('Abra um lembrete antes de excluir.');
+        return;
+    }
+
+    if (!confirm('Deseja realmente excluir este lembrete?')) return;
+
+    try {
+        if (!window.db || !window.fsDoc || !window.fsDeleteDoc) {
+            throw new Error('Firestore não está disponível no escopo global.');
+        }
+
+        await window.fsDeleteDoc(window.fsDoc(window.db, 'Lembretes', lembreteAtualId));
+
+        lembreteAtualId = null;
+        document.getElementById('lembreteTitulo').value = '';
+        document.getElementById('lembretePrioridade').value = '2';
+        document.getElementById('lembreteConcluido').checked = false;
+        if (lembretesQuill) lembretesQuill.root.innerHTML = '';
+        preencherMetadadosLembrete(null);
+
+        await carregarLembretesNuvem();
+        abrirAbaLembretes('lista');
+        alert('Lembrete excluído com sucesso.');
+    } catch (erro) {
+        console.error('Erro ao excluir lembrete', erro);
+        alert('Erro ao excluir lembrete: ' + (erro?.message || 'falha desconhecida'));
+    }
+};
+
+window.inicializarTelaLembretes = async function() {
+    inicializarQuillLembretes();
+    await carregarLembretesNuvem();
+};
+
 function mostrarTela(tela) {
     const telas = [
         document.getElementById('tela-consulta'),
@@ -3946,10 +4955,11 @@ function mostrarTela(tela) {
         document.getElementById('tela-fornecedores'),
         document.getElementById('tela-empenhos'),
         document.getElementById('tela-consulta-empenho'),
-        document.getElementById('tela-gestao-notas')
+        document.getElementById('tela-gestao-notas'),
+        document.getElementById('tela-lembretes')
     ];
 
-    telas.forEach(t => {
+    telas.forEach(function(t) {
         if (t) t.classList.remove('active');
     });
 
@@ -3958,35 +4968,31 @@ function mostrarTela(tela) {
         return;
     }
 
-   if (tela === 'fornecedores') {
-    const el = document.getElementById('tela-fornecedores');
-    if (el) {
-        el.classList.add('active');
-        el.style.display = 'block';
-        el.style.visibility = 'visible';
-        el.style.opacity = '1';
-    }
-
-    const resumo = document.getElementById('fornecedoresResumo');
-    if (resumo) {
-        resumo.innerHTML = 'Tela de fornecedores aberta. Iniciando carregamento...';
-    }
-
-    setTimeout(() => {
-        try {
-            if (window.carregarFornecedoresNuvem) {
-                window.carregarFornecedoresNuvem(true);
-            }
-        } catch (erro) {
-            console.error('Erro ao abrir tela de fornecedores:', erro);
+    if (tela === 'fornecedores') {
+        const el = document.getElementById('tela-fornecedores');
+        if (el) {
+            el.classList.add('active');
+            el.style.display = 'block';
+            el.style.visibility = 'visible';
+            el.style.opacity = '1';
         }
-    }, 50);
-    return;
-}
+
+        const resumo = document.getElementById('fornecedoresResumo');
+        if (resumo) resumo.innerHTML = 'Tela de fornecedores aberta. Iniciando carregamento...';
+
+        setTimeout(function() {
+            try {
+                if (window.carregarFornecedoresNuvem) window.carregarFornecedoresNuvem(true);
+            } catch (erro) {
+                console.error('Erro ao abrir tela de fornecedores', erro);
+            }
+        }, 50);
+        return;
+    }
 
     if (tela === 'empenhos') {
         document.getElementById('tela-empenhos')?.classList.add('active');
-        setTimeout(() => {
+        setTimeout(function() {
             if (window.carregarEmpenhosNuvem) window.carregarEmpenhosNuvem(true);
         }, 50);
         return;
@@ -3994,17 +5000,25 @@ function mostrarTela(tela) {
 
     if (tela === 'consulta-empenho') {
         document.getElementById('tela-consulta-empenho')?.classList.add('active');
-        setTimeout(() => {
-            buscarDadosTransparencia(1);
+        setTimeout(function() {
+            if (typeof buscarDadosTransparencia === 'function') buscarDadosTransparencia(1);
         }, 150);
         return;
     }
 
     if (tela === 'gestao-notas') {
         document.getElementById('tela-gestao-notas')?.classList.add('active');
-        setTimeout(() => {
-            inicializarGestaoNotas();
-            carregarHistoricoGestaoNotas();
+        setTimeout(function() {
+            if (typeof inicializarGestaoNotas === 'function') inicializarGestaoNotas();
+            if (typeof carregarHistoricoGestaoNotas === 'function') carregarHistoricoGestaoNotas();
+        }, 120);
+        return;
+    }
+
+    if (tela === 'lembretes') {
+        document.getElementById('tela-lembretes')?.classList.add('active');
+        setTimeout(function() {
+            if (window.inicializarTelaLembretes) window.inicializarTelaLembretes();
         }, 120);
         return;
     }
@@ -6197,55 +7211,30 @@ async function buscarEmpenhoGestaoNotas() {
     try {
         let encontrou = false;
 
-        // 1) Busca no Firebase
-        if (window.auth?.currentUser && window.db && window.fsCollection && window.fsGetDocs) {
-            const snapshot = await window.fsGetDocs(window.fsCollection(window.db, 'Empenhos'));
+     // 1) Busca no Firebase pelo ID do documento
+if (window.auth?.currentUser && window.db && window.fsDoc && window.fsGetDoc) {
+  const docIdSeguro = String(numero).trim().replace(/\//g, '-').replace(/\./g, '');
+  const ref = window.fsDoc(window.db, "Empenhos", docIdSeguro);
+  const snap = await window.fsGetDoc(ref);
 
-            snapshot.forEach(docItem => {
-                if (encontrou) return;
+  if (snap.exists()) {
+    const emp = snap.data();
 
-                const emp = docItem.data() || {};
-                const numeroEmp = String(emp.numero || '').trim();
+    if (campoFornecedor) campoFornecedor.value = emp.fornecedor || emp.nomeFornecedor || emp.razaoSocial || '';
+    if (campoTipoNota && !campoTipoNota.value && emp.tipoNota) campoTipoNota.value = emp.tipoNota;
+    if (campoValorNota) campoValorNota.value = emp.valorEmpenho
+      ? (typeof emp.valorEmpenho === 'string'
+          ? emp.valorEmpenho
+          : formatarValorBR(Number(emp.valorEmpenho || 0)))
+      : '';
+    if (campoDataEmissao && emp.dataEmissao) campoDataEmissao.value = formatarDataParaInput(emp.dataEmissao);
+    if (campoNumeroNota) campoNumeroNota.value = emp.notaFiscal || '';
 
-                if (numeroEmp === numero) {
-                    if (campoFornecedor) {
-                        campoFornecedor.value =
-                            emp.fornecedor ||
-                            emp.nomeFornecedor ||
-                            emp.razaoSocial ||
-                            '';
-                    }
-
-                    if (campoTipoNota && !campoTipoNota.value && emp.tipoNota) {
-                        campoTipoNota.value = emp.tipoNota;
-                    }
-
-                    if (campoValorNota) {
-                        campoValorNota.value = emp.valorEmpenho
-                            ? (typeof emp.valorEmpenho === 'string'
-                                ? emp.valorEmpenho
-                                : formatarValorBR(Number(emp.valorEmpenho || 0)))
-                            : '';
-                    }
-
-                    if (campoDataEmissao) {
-                        campoDataEmissao.value = emp.dataEmissao
-                            ? formatarDataParaInput(emp.dataEmissao)
-                            : '';
-                    }
-
-                    if (campoNumeroNota) {
-                        campoNumeroNota.value = emp.notaFiscal || '';
-                    }
-
-                    status.className = 'alert-box alert-simples';
-                    status.textContent = 'Empenho encontrado na base salva e campos básicos preenchidos.';
-                    encontrou = true;
-                }
-            });
-        }
-
-        if (encontrou) return;
+    status.className = 'alert-box alert-simples';
+    status.textContent = 'Empenho encontrado na base salva e campos básicos preenchidos.';
+    return;
+  }
+}
 
         // 2) Busca na API da Transparência
         const url = `https://transparencia.iguatama.mg.gov.br/publico/despesaDetalhada?elementosPorPagina=10&pagina=1&termoBase64=&indAgrupamento=FOR&datInicio=${ano}-01-01&datFim=${ano}-12-31&desNatureza=&codAdministracao=2&filtrarApenasCovid=false&numEmpenho=${encodeURIComponent(numero)}&cpfCnpj=`;
@@ -6390,7 +7379,7 @@ function selecionarFornecedorGestaoNotas(dadosCodificados) {
 }
 
     </script>
-
+<script src="https://cdn.jsdelivr.net/npm/quill@2/dist/quill.js"></script>
  <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import {
@@ -6649,7 +7638,13 @@ window.carregarHistoricoGestaoNotas = async function() {
     try {
         box.innerHTML = 'Carregando histórico...';
 
-        const snapshot = await window.fsGetDocs(window.fsCollection(window.db, 'HistoricoNotas'));
+       const q = window.fsQuery(
+  window.fsCollection(window.db, "HistoricoNotas"),
+  window.fsOrderBy("dataAtualizacao", "desc"),
+  window.fsLimit(20)
+);
+
+const snapshot = await window.fsGetDocs(q);
         const lista = [];
 
         snapshot.forEach(docItem => {

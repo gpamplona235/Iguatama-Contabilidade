@@ -11,6 +11,53 @@
         .top-navbar h1 { margin: 0; font-size: 18px; font-weight: normal; letter-spacing: 0.5px; }
         .top-navbar span { font-size: 14px; color: #aebfd0; }
 
+.brand-topo {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.brand-link {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 2px;
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+}
+
+.brand-link:hover {
+    opacity: 0.92;
+}
+
+.brand-link h1 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: normal;
+    letter-spacing: 0.5px;
+    line-height: 1.2;
+    color: #ffffff;
+}
+
+.brand-versao {
+    font-size: 11px;
+    color: rgba(255,255,255,0.32);
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    font-weight: bold;
+    user-select: none;
+}
+
+.brand-link:focus {
+    outline: none;
+}
+
+.brand-link:focus-visible {
+    outline: 2px solid rgba(255,255,255,0.55);
+    outline-offset: 4px;
+    border-radius: 4px;
+}
+
         .panels-wrapper { display: flex; gap: 20px; max-width: 1500px; width: 98%; margin: 30px auto; align-items: flex-start; }
         .panel { flex: 1; min-width: 320px; background: #ffffff; border: 1px solid #cfd7df; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
         
@@ -1531,6 +1578,323 @@ body.print-retencao .col-retencao {
     align-items: center;
 }
 
+/* ===== AJUSTE DO MODAL DE LANÇAMENTO DE FATURA, NO PADRÃO DO SITE ===== */
+
+#modalLancamentoFatura .modal-panel {
+  width: 620px !important;
+  max-width: calc(100vw - 30px) !important;
+}
+
+#modalLancamentoFatura .modal-header-custom h3 {
+  margin: 0;
+  font-size: 16px !important;
+}
+
+#modalLancamentoFatura .modal-body-custom {
+  padding: 18px 20px;
+  font-size: 14px;
+}
+
+#fatLancResumo {
+  margin-bottom: 14px !important;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+#modalLancamentoFatura .materiais-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px 14px;
+  margin-bottom: 12px;
+}
+
+#modalLancamentoFatura .form-group-calc {
+  margin-bottom: 0;
+}
+
+#modalLancamentoFatura .form-group-calc label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 12px;
+  font-weight: bold;
+  color: #495057;
+}
+
+#modalLancamentoFatura input[type="text"],
+#modalLancamentoFatura input[type="number"],
+#modalLancamentoFatura input[type="date"],
+#modalLancamentoFatura select,
+#modalLancamentoFatura textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  border: 1px solid #bac5d0;
+  border-radius: 3px;
+  font-size: 13px;
+  color: #333;
+  background: #fff;
+  font-family: Arial, Helvetica, sans-serif !important;
+  line-height: 1.2;
+  min-height: 40px;
+}
+
+#modalLancamentoFatura textarea {
+  min-height: 72px;
+  resize: vertical;
+  line-height: 1.4;
+}
+
+/* Corrige o visual estranho do campo de data */
+#modalLancamentoFatura input[type="date"] {
+  appearance: none;
+  -webkit-appearance: none;
+  font-family: Arial, Helvetica, sans-serif !important;
+  font-size: 13px !important;
+  letter-spacing: normal !important;
+  padding-right: 10px;
+}
+
+#modalLancamentoFatura input[type="date"]::-webkit-datetime-edit,
+#modalLancamentoFatura input[type="date"]::-webkit-datetime-edit-text,
+#modalLancamentoFatura input[type="date"]::-webkit-datetime-edit-day-field,
+#modalLancamentoFatura input[type="date"]::-webkit-datetime-edit-month-field,
+#modalLancamentoFatura input[type="date"]::-webkit-datetime-edit-year-field {
+  font-family: Arial, Helvetica, sans-serif !important;
+  font-size: 13px !important;
+  color: #333 !important;
+  padding: 0;
+}
+
+#modalLancamentoFatura input:focus,
+#modalLancamentoFatura select:focus,
+#modalLancamentoFatura textarea:focus {
+  outline: none;
+  border-color: #0f3b5e;
+  box-shadow: 0 0 0 2px rgba(15, 59, 94, 0.15);
+}
+
+#modalLancamentoFatura .fat-linha-inteira {
+  grid-column: 1 / -1;
+}
+
+#modalLancamentoFatura .modal-footer-custom {
+  gap: 10px;
+}
+
+#modalLancamentoFatura .btn-cancelar-modal,
+#modalLancamentoFatura .btn-primary {
+  width: auto !important;
+}
+
+@media (max-width: 640px) {
+  #modalLancamentoFatura .materiais-form {
+    grid-template-columns: 1fr;
+  }
+
+  #modalLancamentoFatura .modal-panel {
+    width: calc(100vw - 20px) !important;
+  }
+}
+
+
+.mural-clean-panel {
+    background: #ffffff;
+    border: 1px solid #cfd7df;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    overflow: hidden;
+}
+
+.mural-clean-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    padding: 18px 20px;
+    border-bottom: 1px solid #dce4ec;
+    background: #fbfcfd;
+}
+
+.mural-clean-header h2 {
+    margin: 0;
+    font-size: 16px;
+    color: #2c3e50;
+    font-weight: bold;
+}
+
+.mural-clean-subtitle {
+    margin-top: 4px;
+    font-size: 12px;
+    color: #66727d;
+}
+
+.mural-clean-link {
+    border: 1px solid #bac5d0;
+    background: #ffffff;
+    color: #0f3b5e;
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 8px 12px;
+    border-radius: 4px;
+}
+
+.mural-clean-link:hover {
+    background: #eef3f7;
+}
+
+.mural-clean-lista {
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background: #fafbfc;
+}
+
+.mural-clean-item {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 14px;
+    align-items: center;
+    padding: 14px 16px;
+    border: 1px solid #d7e0e8;
+    border-radius: 8px;
+    background: #ffffff;
+    transition: background-color 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.mural-clean-item:hover {
+    background: #f4f8fb;
+    border-color: #bacbd8;
+    box-shadow: 0 2px 8px rgba(15, 59, 94, 0.06);
+}
+
+.mural-clean-main {
+    min-width: 0;
+}
+
+.mural-clean-linha1 {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+}
+
+.mural-clean-titulo {
+    font-size: 15px;
+    font-weight: bold;
+    color: #0f3b5e;
+    line-height: 1.4;
+}
+
+.mural-clean-resumo {
+    font-size: 13px;
+    color: #495057;
+    line-height: 1.5;
+    margin-bottom: 10px;
+}
+
+.mural-clean-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    font-size: 12px;
+    color: #66727d;
+    line-height: 1.45;
+}
+
+.mural-meta-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 8px;
+    border-radius: 999px;
+    background: #eef3f7;
+    border: 1px solid #d7e0e8;
+    color: #425466;
+    font-size: 11px;
+    font-weight: bold;
+}
+
+.mural-meta-chip.criador {
+    background: #eef6fb;
+    border-color: #cfe0ec;
+    color: #0f3b5e;
+}
+
+.mural-clean-acoes {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.mural-clean-btn {
+    border: 1px solid #0a2942;
+    background: #0f3b5e;
+    color: #ffffff;
+    border-radius: 4px;
+    padding: 8px 12px;
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.mural-clean-btn:hover {
+    background: #0a2942;
+}
+
+.mural-clean-empty {
+    text-align: center;
+    padding: 20px 14px;
+    color: #6c757d;
+    font-size: 13px;
+    border: 1px dashed #dce4ec;
+    border-radius: 8px;
+    background: #fbfcfd;
+}
+
+.mural-clean-lista .prioridade-badge {
+    padding: 4px 9px;
+    font-size: 11px;
+    border-radius: 999px;
+    line-height: 1.4;
+}
+
+@media (max-width: 720px) {
+    .mural-clean-item {
+        grid-template-columns: 1fr;
+    }
+
+    .mural-clean-acoes {
+        justify-content: flex-start;
+    }
+}
+
+#fatLancResumo.fat-lanc-resumo-simples {
+  margin-bottom: 14px !important;
+  padding: 12px 14px;
+  background: #f8fafc;
+  border: 1px solid #d7e0e8;
+  border-left: 4px solid #0f3b5e;
+  border-radius: 4px;
+}
+
+.fat-lanc-resumo-endereco {
+  font-size: 14px;
+  font-weight: bold;
+  color: #0f3b5e;
+  line-height: 1.35;
+  margin-bottom: 4px;
+}
+
+.fat-lanc-resumo-detalhes {
+  font-size: 12px;
+  color: #5f6b76;
+  line-height: 1.45;
+}
+
     </style>
     <link href="https://cdn.jsdelivr.net/npm/quill@2/dist/quill.snow.css" rel="stylesheet">
 </head>
@@ -1595,32 +1959,30 @@ body.print-retencao .col-retencao {
 
     <div id="siteContent" class="site-content locked">
     <div class="top-navbar">
-    <div style="display: flex; flex-direction: column; gap: 4px;">
-        <h1>SISTEMA DE CONSULTA FISCAL E RETENÇÕES - IGUATAMA</h1>
-    </div>
+ <div class="brand-topo">
+  <a href="#" class="brand-link" onclick="mostrarTela('home'); return false;">
+    <h1>SISTEMA INTEGRADO DE CONTABILIDADE - IGUATAMA</h1>
+    <div class="brand-versao">Versão Beta v0.56</div>
+  </a>
+</div>
 
-    <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-    <span id="navSubtitle">Prefeitura Municipal de Iguatama - MG</span>
-
-    <button type="button" class="btn-primary" onclick="mostrarTela('consulta')" style="width: auto; padding: 8px 14px;">
-        Consulta Fiscal
-    </button>
-
-    <button type="button" class="btn-primary" onclick="mostrarTela('lembretes')" style="width: auto; padding: 8px 14px;">
-  Lembretes
-</button>
-
-    <button type="button" class="btn-primary" onclick="mostrarTela('gestao-notas')" style="width: auto; padding: 8px 14px;">
-    Gestão de Notas
-</button>
-
-    <button type="button" class="btn-primary" onclick="mostrarTela('materiais')" style="width: auto; padding: 8px 14px;">
-        Notas de Consumo
-    </button>
-
-    <button type="button" class="btn-primary" onclick="mostrarTela('consulta-empenho')" style="width: auto; padding: 8px 14px;">
-    Consulta de Empenhos
-</button>
+<div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+  <span id="navSubtitle">Prefeitura Municipal de Iguatama - MG</span>
+  <button type="button" class="btn-primary" onclick="mostrarTela('consulta')" style="width: auto; padding: 8px 14px;">
+    FISCAL
+  </button>
+  <button type="button" class="btn-primary" onclick="mostrarTela('faturas')" style="width: auto; padding: 8px 14px;">
+    FATURAS
+  </button>
+  <button type="button" class="btn-primary" onclick="mostrarTela('lembretes')" style="width: auto; padding: 8px 14px;">
+    LEMBRETES
+  </button>
+  <button type="button" class="btn-primary" onclick="mostrarTela('gestao-notas')" style="width: auto; padding: 8px 14px;">
+    GESTAO DE NOTAS
+  </button>
+  <button type="button" class="btn-primary" onclick="mostrarTela('consulta-empenho')" style="width: auto; padding: 8px 14px;">
+    EMPENHOS
+  </button>
 
     <div class="menu-dropdown-cadastro" style="display:none;">
         <button type="button" class="btn-primary btn-dropdown-cadastro" style="width: auto; padding: 8px 14px;">
@@ -1645,12 +2007,218 @@ body.print-retencao .col-retencao {
 </div>
 
 
+<div id="tela-faturas" class="screen-section">
+  <div class="materiais-wrapper">
+    <div class="materiais-panel">
+      <div class="materiais-header" style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;">
+        <div>
+          <h2 style="margin:0;">Controle de Faturas</h2>
+          <div style="font-size:12px; color:#66727d; margin-top:4px;">
+            Cadastro de endereços, controle mensal e acompanhamento por fornecedor.
+          </div>
+        </div>
+
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+<button type="button" class="btn-primary" onclick="abrirModalCadastroFatura()" style="width:auto;">
+  Novo Endereço
+</button>
+        </div>
+      </div>
+
+      <div class="materiais-body">
+        <div class="materiais-form" style="grid-template-columns: 180px 180px minmax(260px, 1fr) auto; align-items:end;">
+          <div class="form-group-calc">
+            <label for="fatFiltroFornecedor">Fornecedor</label>
+            <select id="fatFiltroFornecedor" onchange="aplicarFiltrosFaturas()">
+              <option value="">Todos</option>
+              <option value="CEMIG">CEMIG</option>
+              <option value="SAAE">SAAE</option>
+              <option value="ALGAR">ALGAR</option>
+            </select>
+          </div>
+
+          <div class="form-group-calc">
+            <label for="fatFiltroAno">Ano</label>
+            <input type="number" id="fatFiltroAno" value="2026" oninput="aplicarFiltrosFaturas()" />
+          </div>
+
+          <div class="form-group-calc">
+            <label for="fatFiltroBusca">Buscar</label>
+            <input type="text" id="fatFiltroBusca" placeholder="Endereço, instalação, secretaria ou empenho" oninput="aplicarFiltrosFaturas()" />
+          </div>
+
+          <div class="form-group-calc">
+            <label>&nbsp;</label>
+            <button type="button" class="btn-primary" onclick="carregarFaturasTela()" style="width:auto;">
+              Atualizar
+            </button>
+          </div>
+        </div>
+
+        <div id="fatResumo" class="alert-box alert-neutro" style="margin-bottom:16px;">
+          Abra a tela para carregar os dados das faturas.
+        </div>
+
+        <div id="fatListaEnderecos"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="modalCadastroFatura" class="modal-overlay" style="display:none;">
+  <div class="modal-panel" style="width: 560px; max-width: calc(100vw - 30px);">
+    <div class="modal-header-custom">
+      <h3 style="margin:0; font-size:16px;">Cadastro de Endereço da Fatura</h3>
+    </div>
+
+    <div class="modal-body-custom">
+      <div class="form-group-calc">
+        <label for="fatCadFornecedor">Fornecedor</label>
+        <select id="fatCadFornecedor" onchange="verificarEmpenhoCompartilhadoFatura()">
+          <option value="">Selecione</option>
+          <option value="CEMIG">CEMIG</option>
+          <option value="ALGAR">ALGAR</option>
+          <option value="SAAE">SAAE</option>
+        </select>
+      </div>
+
+      <div class="form-group-calc">
+        <label for="fatCadEndereco">Endereço</label>
+        <input type="text" id="fatCadEndereco" placeholder="Ex.: Rua X, nº 100 - Escola Municipal" />
+      </div>
+
+      <div class="form-group-calc">
+        <label for="fatCadInstalacao">Número de Instalação / Contrato</label>
+        <input type="text" id="fatCadInstalacao" placeholder="Informe o número de instalação" />
+      </div>
+
+    <div class="form-group-calc">
+  <label for="fatCadSecretaria">Secretaria responsável</label>
+  <select id="fatCadSecretaria" onchange="verificarEmpenhoCompartilhadoFatura()">
+    <option value="">SELECIONE</option>
+    <option value="SECRETARIA MUNICIPAL DE ADMINISTRAÇÃO E FINANÇAS">SECRETARIA MUNICIPAL DE ADMINISTRAÇÃO E FINANÇAS</option>
+    <option value="SECRETARIA MUNICIPAL DE GOVERNO">SECRETARIA MUNICIPAL DE GOVERNO</option>
+    <option value="SECRETARIA MUNICIPAL DE EDUCAÇÃO E ESPORTE">SECRETARIA MUNICIPAL DE EDUCAÇÃO E ESPORTE</option>
+    <option value="SECRETARIA MUNICIPAL DE ASSISTÊNCIA SOCIAL">SECRETARIA MUNICIPAL DE ASSISTÊNCIA SOCIAL</option>
+    <option value="SECRETARIA MUNICIPAL DE SAÚDE">SECRETARIA MUNICIPAL DE SAÚDE</option>
+    <option value="SECRETARIA MUNICIPAL DE OBRAS E TRANSPORTE">SECRETARIA MUNICIPAL DE OBRAS E TRANSPORTE</option>
+    <option value="SECRETARIA MUNICIPAL DE INDÚSTRIA E MEIO AMBIENTE">SECRETARIA MUNICIPAL DE INDÚSTRIA E MEIO AMBIENTE</option>
+    <option value="SECRETARIA MUNICIPAL DE CULTURA E TURISMO">SECRETARIA MUNICIPAL DE CULTURA E TURISMO</option>
+    <option value="SECRETARIA MUNICIPAL DE LIMPEZA E SANEAMENTO">SECRETARIA MUNICIPAL DE LIMPEZA E SANEAMENTO</option>
+  </select>
+</div>
+
+      <div class="form-group-calc">
+        <label for="fatCadEmpenho">Número do Empenho</label>
+        <input type="text" id="fatCadEmpenho" placeholder="Será reutilizado quando fornecedor + secretaria já existirem" />
+      </div>
+
+      <div id="fatCadInfoEmpenho" class="alert-box alert-neutro" style="margin-bottom:0;">
+        O sistema verificará se já existe empenho para este fornecedor e esta secretaria.
+      </div>
+    </div>
+
+    <div class="modal-footer-custom">
+      <button type="button" class="btn-cancelar-modal" onclick="fecharModalCadastroFatura()">Cancelar</button>
+      <button type="button" class="btn-primary" onclick="salvarCadastroFatura()" style="width:auto;">Salvar Endereço</button>
+    </div>
+  </div>
+</div>
+
+<div id="modalLancamentoFatura" class="modal-overlay" style="display:none;">
+  <div class="modal-panel" style="width: 620px; max-width: calc(100vw - 30px);">
+    <div class="modal-header-custom">
+      <h3 style="margin:0; font-size:16px;">Lançamento Mensal da Fatura</h3>
+    </div>
+
+    <div class="modal-body-custom">
+<div id="fatLancResumo" class="fat-lanc-resumo-simples">
+  <div id="fatLancResumoEndereco" class="fat-lanc-resumo-endereco">
+    Nenhum endereço selecionado
+  </div>
+  <div id="fatLancResumoDetalhes" class="fat-lanc-resumo-detalhes">
+    Fornecedor: - | Instalação: - | Empenho: -
+  </div>
+</div>
+
+  <div class="materiais-form">
+    <div class="form-group-calc">
+      <label for="fatLancMes">Mês</label>
+      <select id="fatLancMes">
+        <option value="1">Janeiro</option>
+        <option value="2">Fevereiro</option>
+        <option value="3">Março</option>
+        <option value="4">Abril</option>
+        <option value="5">Maio</option>
+        <option value="6">Junho</option>
+        <option value="7">Julho</option>
+        <option value="8">Agosto</option>
+        <option value="9">Setembro</option>
+        <option value="10">Outubro</option>
+        <option value="11">Novembro</option>
+        <option value="12">Dezembro</option>
+      </select>
+    </div>
+
+    <div class="form-group-calc">
+      <label for="fatLancAno">Ano</label>
+      <input type="number" id="fatLancAno" value="2026" />
+    </div>
+
+    <div class="form-group-calc">
+      <label for="fatLancValor">Valor da Fatura</label>
+      <input type="number" id="fatLancValor" step="0.01" placeholder="0,00" />
+    </div>
+
+    <div class="form-group-calc">
+      <label for="fatLancStatus">Status</label>
+      <select id="fatLancStatus">
+        <option value="pendente">Pendente</option>
+        <option value="pago">Pago</option>
+      </select>
+    </div>
+
+    <div class="form-group-calc">
+      <label for="fatLancVencimento">Data de Vencimento</label>
+      <input type="date" id="fatLancVencimento" />
+    </div>
+
+    <div class="form-group-calc">
+      <label for="fatLancDataRegistro">Data do Registro</label>
+      <input type="date" id="fatLancDataRegistro" />
+    </div>
+
+    <div class="form-group-calc fat-linha-inteira">
+  <label for="fatLancObservacao">Observação</label>
+  <textarea id="fatLancObservacao" placeholder="Digite alguma observação sobre esta fatura..."></textarea>
+</div>
+  </div>
+</div>
+
+    <div class="modal-footer-custom">
+      <button type="button" class="btn-cancelar-modal" onclick="fecharModalLancamentoFatura()">Cancelar</button>
+      <button type="button" class="btn-primary" onclick="salvarLancamentoFatura()" style="width:auto;">Salvar Lançamento</button>
+    </div>
+  </div>
+</div>
+
 <div id="tela-lembretes" class="screen-section">
     <div class="materiais-wrapper">
         <div class="materiais-panel">
-            <div class="materiais-header">
-                <h2>Lembretes Compartilhados</h2>
-            </div>
+            <div class="materiais-header" style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;">
+  <div>
+    <h2 style="margin:0;">Lembretes Compartilhados</h2>
+  </div>
+
+  <div class="checkbox-group" style="margin:0; white-space:nowrap;">
+    <input
+      type="checkbox"
+      id="chkMeusLembretes"
+      onchange="alternarFiltroMeusLembretes(this.checked)"
+    />
+    <label for="chkMeusLembretes">Mostrar apenas os meus lembretes</label>
+  </div>
+</div>
 
             <div class="materiais-body">
                 <div class="lembretes-tabs">
@@ -1684,9 +2252,11 @@ body.print-retencao .col-retencao {
                             <option value="4">4 - Urgente</option>
                         </select>
 
-                        <button type="button" class="btn-primary" onclick="novoLembrete()" style="width:auto;">
-                            Novo lembrete
-                        </button>
+
+<button type="button" class="btn-primary" onclick="novoLembrete()" style="width:auto;">
+  Novo lembrete
+</button>
+
                     </div>
 
                     <div class="lembretes-kpis">
@@ -1832,7 +2402,170 @@ body.print-retencao .col-retencao {
     </div>
 </div>
 
-    <div id="tela-consulta" class="screen-section active">
+
+
+<!-- HOMEPAGE -->
+<div id="tela-home" class="screen-section active">
+  <style>
+    .home-grid { display: grid; grid-template-columns: 1.5fr 1fr; gap: 24px; max-width: 1500px; margin: 30px auto; width: 98%; align-items: start; }
+    .home-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+    .home-card { background: #fff; border: 1px solid #cfd7df; border-radius: 8px; padding: 20px; transition: 0.2s; cursor: pointer; display: flex; flex-direction: column; gap: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); text-align: left; }
+    .home-card:hover { border-color: #0f3b5e; box-shadow: 0 4px 12px rgba(0,0,0,0.08); transform: translateY(-2px); }
+    .home-card.disabled { opacity: 0.6; cursor: not-allowed; border-style: dashed; }
+    .home-card.disabled:hover { transform: none; border-color: #cfd7df; box-shadow: none; }
+    .card-title { font-size: 16px; font-weight: bold; color: #0f3b5e; margin: 0; }
+    .card-desc { font-size: 12px; color: #66727d; margin: 0; line-height: 1.4; }
+    .badge-manutencao { font-size: 10px; background: #fff3cd; color: #856404; padding: 3px 8px; border-radius: 4px; border: 1px solid #ffeeba; align-self: flex-start; margin-bottom: 6px; font-weight: bold; }
+    
+    .badge-descontinuado {
+    font-size: 10px;
+    background: #fce8e6;
+    color: #a50e0e;
+    padding: 3px 8px;
+    border-radius: 4px;
+    border: 1px solid #f4c7c3;
+    align-self: flex-start;
+    margin-bottom: 6px;
+    font-weight: bold;
+}
+
+.badge-construcao {
+    font-size: 10px;
+    background: #e8f0fe;
+    color: #0f3b5e;
+    padding: 3px 8px;
+    border-radius: 4px;
+    border: 1px solid #c6dafc;
+    align-self: flex-start;
+    margin-bottom: 6px;
+    font-weight: bold;
+}
+
+.badge-novo {
+    font-size: 10px;
+    background: #e6f4ea;
+    color: #1e4620;
+    padding: 3px 8px;
+    border-radius: 4px;
+    border: 1px solid #c8e6c9;
+    align-self: flex-start;
+    margin-bottom: 6px;
+    font-weight: bold;
+}
+
+.btn-menu-novo {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.menu-tag-novo {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: bold;
+    letter-spacing: 0.6px;
+    padding: 2px 7px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.16);
+    border: 1px solid rgba(255,255,255,0.28);
+    color: #ffffff;
+    line-height: 1.2;
+}
+    .mural-panel { background: #fff; border: 1px solid #cfd7df; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    .mural-header { background: #fbfcfd; padding: 18px 20px; border-bottom: 1px solid #cfd7df; display: flex; justify-content: space-between; align-items: center; }
+    .mural-header h2 { margin: 0; font-size: 16px; color: #2c3e50; }
+    .mural-body { padding: 0; max-height: 600px; overflow-y: auto; background: #fafbfc; }
+    .mural-item { padding: 16px 20px; border-bottom: 1px solid #eef2f5; display: flex; flex-direction: column; gap: 6px; background: #fff; transition: background 0.2s; }
+    .mural-item:hover { background: #f4f8fb; }
+    .mural-item:last-child { border-bottom: none; }
+    .mural-item-title { font-size: 14px; font-weight: bold; color: #0f3b5e; }
+    .mural-item-meta { font-size: 11px; color: #6c757d; display: flex; justify-content: space-between; border-top: 1px dashed #eef2f5; padding-top: 8px; margin-top: 4px; }
+    
+    @media (max-width: 900px) { .home-grid { grid-template-columns: 1fr; } }
+  </style>
+
+  <div class="home-grid">
+    <!-- COLUNA 1: BOTÕES DE ACESSO RÁPIDO -->
+    <div>
+      <h2 style="font-size: 18px; color: #2c3e50; margin-bottom: 20px;">Acesso Rápido</h2>
+      
+     <div class="home-cards">
+  <button type="button" class="home-card" onclick="mostrarTela('consulta')">
+    <div class="card-title">Consulta Fiscal</div>
+    <div class="card-desc">Análise de IRF, ISSQN, retenções e impressão de comprovantes do Simples Nacional.</div>
+  </button>
+
+  <button type="button" class="home-card" onclick="mostrarTela('consulta-empenho')">
+    <div class="card-title">Consulta de Empenhos</div>
+    <div class="card-desc">Busque empenhos no Portal da Transparência por CNPJ e Nome.</div>
+  </button>
+
+  <button type="button" class="home-card" onclick="mostrarTela('faturas')">
+    <div class="badge-novo">NOVO</div>
+    <div class="card-title">Controle de Faturas</div>
+    <div class="card-desc">Cadastre endereços, lance faturas mensais e acompanhe vencimentos.</div>
+  </button>
+
+  <button type="button" class="home-card" onclick="mostrarTela('lembretes')">
+    <div class="badge-novo">NOVO</div>
+    <div class="card-title">Lembretes</div>
+    <div class="card-desc">Crie lembretes compartilhados, acompanhe prioridades e visualize itens pendentes da equipe.</div>
+  </button>
+
+  <button type="button" class="home-card disabled" onclick="alert('Módulo em manutenção.')">
+    <div class="badge-manutencao">EM MANUTENÇÃO</div>
+    <div class="card-title" style="color:#6c757d;">Fornecedores</div>
+    <div class="card-desc">Banco de dados de fornecedores e prestadores de serviço cadastrados.</div>
+  </button>
+
+  <button type="button" class="home-card disabled" onclick="alert('Módulo descontinuado.')">
+    <div class="badge-descontinuado">DESCONTINUADO</div>
+    <div class="card-title" style="color:#6c757d;">Notas de Consumo</div>
+    <div class="card-desc">Módulo antigo de lançamento de notas de consumo, mantido apenas como referência.</div>
+  </button>
+
+  <button type="button" class="home-card disabled" onclick="alert('Módulo em construção.')">
+    <div class="badge-construcao">EM CONSTRUÇÃO</div>
+    <div class="card-title" style="color:#6c757d;">Diárias / Adiantamentos</div>
+    <div class="card-desc">Controle futuro de diárias, adiantamentos, prestação de contas e acompanhamento por servidor.</div>
+  </button>
+
+  <button type="button" class="home-card disabled" onclick="alert('Módulo em construção.')">
+    <div class="badge-construcao">EM CONSTRUÇÃO</div>
+    <div class="card-title" style="color:#6c757d;">Estatísticas</div>
+    <div class="card-desc">Painel futuro com indicadores, totais, comparativos e visualizações gerenciais do sistema.</div>
+  </button>
+
+  <button type="button" class="home-card" onclick="mostrarTela('gestao-notas')">
+    <div class="card-title">Gestão de Notas</div>
+    <div class="card-desc">Crie novas tabelas e gerencie o histórico de remessas e notas lançadas.</div>
+  </button>
+</div>
+    </div>
+
+    <!-- COLUNA 2: MURAL DE LEMBRETES -->
+    <div>
+<div class="mural-clean-panel">
+  <div class="mural-clean-header">
+    <div>
+      <h2>MURAL DE LEMBRETE</h2>
+      <div class="mural-clean-subtitle">Itens mais recentes e classificado por prioritários</div>
+    </div>
+
+    <button type="button" class="mural-clean-link" onclick="mostrarTela('lembretes')">
+      Abrir lista completa
+    </button>
+  </div>
+
+  <div id="home-mural-lista" class="mural-clean-lista">
+    <div class="mural-clean-empty">Carregando lembretes...</div>
+  </div>
+</div>
+    </div>
+  </div>
+</div>
+
+    <div id="tela-consulta" class="screen-section">
         <div class="panels-wrapper">
 
             <!-- COLUNA 1: DADOS DO CNPJ -->
@@ -4369,6 +5102,30 @@ let lembretesLista = [];
 let lembreteAtualId = null;
 let lembretesPaginaAtual = 1;
 const lembretesItensPorPagina = 10;
+let mostrarApenasMeusLembretes = false;
+
+function atualizarBotaoFiltroMeusLembretes() {
+  const botao = document.getElementById('btnFiltroMeusLembretes');
+  if (!botao) return;
+
+  if (mostrarApenasMeusLembretes) {
+    botao.textContent = 'Mostrar só os meus: SIM';
+    botao.style.background = '#0f3b5e';
+    botao.style.color = '#ffffff';
+    botao.style.borderColor = '#0a2942';
+  } else {
+    botao.textContent = 'Mostrar só os meus: NÃO';
+    botao.style.background = '#f5f7fa';
+    botao.style.color = '#0f3b5e';
+    botao.style.borderColor = '#bac5d0';
+  }
+}
+
+window.alternarFiltroMeusLembretes = function (estado) {
+  mostrarApenasMeusLembretes = !!estado;
+  lembretesPaginaAtual = 1;
+  renderizarTabelaLembretes();
+};
 
 function escaparHtmlLembretes(texto) {
     return String(texto ?? '')
@@ -4512,28 +5269,42 @@ window.editarLembrete = function(id) {
 };
 
 function obterLembretesFiltrados() {
-    const busca = String(document.getElementById('lembretesBusca')?.value || '').trim().toLowerCase();
-    const status = String(document.getElementById('lembretesFiltroStatus')?.value || 'todos');
-    const prioridade = String(document.getElementById('lembretesFiltroPrioridade')?.value || 'todas');
-    const filtroCategoria = String(document.getElementById('lembretesFiltroCategoria')?.value || 'todas');
+  const busca = String(document.getElementById('lembretesBusca')?.value || '').trim().toLowerCase();
+  const status = String(document.getElementById('lembretesFiltroStatus')?.value || 'todos');
+  const prioridade = String(document.getElementById('lembretesFiltroPrioridade')?.value || 'todas');
+  const filtroCategoria = String(document.getElementById('lembretesFiltroCategoria')?.value || 'todas');
 
-    return lembretesLista.filter(function(item) {
-        const titulo = String(item.titulo || '').toLowerCase();
-        const conteudo = String(item.conteudoTexto || '').toLowerCase();
-        const criador = String(item.criadoPorNome || item.criadoPorEmail || '').toLowerCase();
-        const categoriaItem = String(item.categoria || 'Geral').toLowerCase();
+  const usuarioAtual = window.auth?.currentUser || null;
+  const uidAtual = String(usuarioAtual?.uid || '').trim();
+  const emailAtual = String(usuarioAtual?.email || '').trim().toLowerCase();
 
-        const bateBusca = !busca || titulo.includes(busca) || conteudo.includes(busca) || criador.includes(busca);
-        const bateStatus =
-            status === 'todos' ||
-            (status === 'pendentes' && !item.concluido) ||
-            (status === 'concluidos' && !!item.concluido);
+  return lembretesLista.filter(function (item) {
+    const titulo = String(item.titulo || '').toLowerCase();
+    const conteudo = String(item.conteudoTexto || '').toLowerCase();
+    const criador = String(item.criadoPorNome || item.criadoPorEmail || '').toLowerCase();
+    const categoriaItem = String(item.categoria || 'Geral').toLowerCase();
 
-        const batePrioridade = prioridade === 'todas' || String(item.prioridade || '2') === prioridade;
-        const bateCategoria = filtroCategoria === 'todas' || String(item.categoria || 'Geral') === filtroCategoria;
+    const bateBusca = !busca || titulo.includes(busca) || conteudo.includes(busca) || criador.includes(busca);
+    const bateStatus =
+      status === 'todos' ||
+      (status === 'pendentes' && !item.concluido) ||
+      (status === 'concluidos' && !!item.concluido);
 
-        return bateBusca && bateStatus && batePrioridade && bateCategoria;
-    });
+    const batePrioridade = prioridade === 'todas' || String(item.prioridade || '2') === prioridade;
+    const bateCategoria = filtroCategoria === 'todas' || String(item.categoria || 'Geral') === filtroCategoria;
+
+    let bateUsuario = true;
+    if (mostrarApenasMeusLembretes) {
+      const uidItem = String(item.criadoPorUid || '').trim();
+      const emailItem = String(item.criadoPorEmail || '').trim().toLowerCase();
+
+      bateUsuario =
+        (uidAtual && uidItem && uidAtual === uidItem) ||
+        (emailAtual && emailItem && emailAtual === emailItem);
+    }
+
+    return bateBusca && bateStatus && batePrioridade && bateCategoria && bateUsuario;
+  });
 }
 
 function atualizarResumoLembretes() {
@@ -4761,24 +5532,35 @@ tbody.innerHTML = lista.map(function(item) {
 
 window.carregarLembretesNuvem = async function() {
     const tbody = document.getElementById('lembretesTabelaBody');
-    if (!tbody) return;
 
     if (!window.auth?.currentUser) {
         lembretesLista = [];
-        atualizarResumoLembretes();
-        tbody.innerHTML = `
-            <tr>
-                <td colspan="7" class="lembretes-vazio">Faça login para visualizar os lembretes.</td>
-            </tr>
-        `;
+        if (typeof atualizarResumoLembretes === 'function') {
+            atualizarResumoLembretes();
+        }
+
+        if (tbody) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="8" class="lembretes-vazio">Faça login para visualizar os lembretes.</td>
+                </tr>
+            `;
+        }
+
+        if (typeof renderizarMuralHome === 'function') {
+            renderizarMuralHome();
+        }
+
         return;
     }
 
-    tbody.innerHTML = `
-        <tr>
-            <td colspan="7" class="lembretes-vazio">Carregando lembretes...</td>
-        </tr>
-    `;
+    if (tbody) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="8" class="lembretes-vazio">Carregando lembretes...</td>
+            </tr>
+        `;
+    }
 
     try {
         if (!window.db || !window.fsCollection || !window.fsGetDocs) {
@@ -4804,23 +5586,49 @@ window.carregarLembretesNuvem = async function() {
         });
 
         lembretesLista = lista;
-        renderizarTabelaLembretes();
+
+        if (typeof atualizarResumoLembretes === 'function') {
+            atualizarResumoLembretes();
+        }
+
+        if (tbody && typeof renderizarTabelaLembretes === 'function') {
+            renderizarTabelaLembretes();
+        }
 
         if (lembreteAtualId) {
-            const atual = lembretesLista.find(function(x) { return x.id === lembreteAtualId; });
-            if (atual) preencherMetadadosLembrete(atual);
+            const atual = lembretesLista.find(function(x) {
+                return x.id === lembreteAtualId;
+            });
+
+            if (atual && typeof preencherMetadadosLembrete === 'function') {
+                preencherMetadadosLembrete(atual);
+            }
+        }
+
+        if (typeof renderizarMuralHome === 'function') {
+            renderizarMuralHome();
         }
     } catch (erro) {
         console.error('Erro ao carregar lembretes', erro);
         lembretesLista = [];
-        atualizarResumoLembretes();
-        tbody.innerHTML = `
-            <tr>
-                <td colspan="7" class="lembretes-vazio" style="color:#a50e0e;">
-                    Erro ao carregar lembretes: ${escaparHtmlLembretes(erro?.message || 'falha desconhecida')}
-                </td>
-            </tr>
-        `;
+
+        if (typeof atualizarResumoLembretes === 'function') {
+            atualizarResumoLembretes();
+        }
+
+        if (tbody) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="8" class="lembretes-vazio" style="color:#a50e0e;">
+                        Erro ao carregar lembretes: ${escaparHtmlLembretes(erro?.message || 'falha desconhecida')}
+                    </td>
+                </tr>
+            `;
+        }
+
+        if (typeof renderizarMuralHome === 'function') {
+            renderizarMuralHome();
+        }
     }
 };
 
@@ -4943,88 +5751,165 @@ window.excluirLembreteAtual = async function() {
     }
 };
 
-window.inicializarTelaLembretes = async function() {
-    inicializarQuillLembretes();
-    await carregarLembretesNuvem();
+window.inicializarTelaLembretes = async function () {
+  inicializarQuillLembretes();
+
+  const chk = document.getElementById('chkMeusLembretes');
+  if (chk) {
+    chk.checked = !!mostrarApenasMeusLembretes;
+  }
+
+  await carregarLembretesNuvem();
+  renderizarMuralHome();
 };
 
-function mostrarTela(tela) {
-    const telas = [
-        document.getElementById('tela-consulta'),
-        document.getElementById('tela-materiais'),
-        document.getElementById('tela-fornecedores'),
-        document.getElementById('tela-empenhos'),
-        document.getElementById('tela-consulta-empenho'),
-        document.getElementById('tela-gestao-notas'),
-        document.getElementById('tela-lembretes')
-    ];
+function mostrarTela(tela, atualizarHash = true) {
+  const telas = [
+    document.getElementById('tela-home'),
+    document.getElementById('tela-consulta'),
+    document.getElementById('tela-faturas'),
+    document.getElementById('tela-materiais'),
+    document.getElementById('tela-fornecedores'),
+    document.getElementById('tela-empenhos'),
+    document.getElementById('tela-consulta-empenho'),
+    document.getElementById('tela-gestao-notas'),
+    document.getElementById('tela-lembretes')
+  ];
 
-    telas.forEach(function(t) {
-        if (t) t.classList.remove('active');
-    });
+  telas.forEach(function(t) {
+    if (t) t.classList.remove('active');
+  });
 
-    if (tela === 'materiais') {
-        document.getElementById('tela-materiais')?.classList.add('active');
-        return;
-    }
+  if (atualizarHash) {
+    window.location.hash = tela;
+  }
 
-    if (tela === 'fornecedores') {
-        const el = document.getElementById('tela-fornecedores');
-        if (el) {
-            el.classList.add('active');
-            el.style.display = 'block';
-            el.style.visibility = 'visible';
-            el.style.opacity = '1';
-        }
+  if (tela === 'home') {
+    document.getElementById('tela-home')?.classList.add('active');
+    setTimeout(function () {
+      if (typeof window.carregarLembretesNuvem === 'function') {
+        window.carregarLembretesNuvem();
+      }
+    }, 80);
+    return;
+  }
 
-        const resumo = document.getElementById('fornecedoresResumo');
-        if (resumo) resumo.innerHTML = 'Tela de fornecedores aberta. Iniciando carregamento...';
-
-        setTimeout(function() {
-            try {
-                if (window.carregarFornecedoresNuvem) window.carregarFornecedoresNuvem(true);
-            } catch (erro) {
-                console.error('Erro ao abrir tela de fornecedores', erro);
-            }
-        }, 50);
-        return;
-    }
-
-    if (tela === 'empenhos') {
-        document.getElementById('tela-empenhos')?.classList.add('active');
-        setTimeout(function() {
-            if (window.carregarEmpenhosNuvem) window.carregarEmpenhosNuvem(true);
-        }, 50);
-        return;
-    }
-
-    if (tela === 'consulta-empenho') {
-        document.getElementById('tela-consulta-empenho')?.classList.add('active');
-        setTimeout(function() {
-            if (typeof buscarDadosTransparencia === 'function') buscarDadosTransparencia(1);
-        }, 150);
-        return;
-    }
-
-    if (tela === 'gestao-notas') {
-        document.getElementById('tela-gestao-notas')?.classList.add('active');
-        setTimeout(function() {
-            if (typeof inicializarGestaoNotas === 'function') inicializarGestaoNotas();
-            if (typeof carregarHistoricoGestaoNotas === 'function') carregarHistoricoGestaoNotas();
-        }, 120);
-        return;
-    }
-
-    if (tela === 'lembretes') {
-        document.getElementById('tela-lembretes')?.classList.add('active');
-        setTimeout(function() {
-            if (window.inicializarTelaLembretes) window.inicializarTelaLembretes();
-        }, 120);
-        return;
-    }
-
+  if (tela === 'consulta') {
     document.getElementById('tela-consulta')?.classList.add('active');
+    return;
+  }
+
+  if (tela === 'materiais') {
+    document.getElementById('tela-materiais')?.classList.add('active');
+    return;
+  }
+
+  if (tela === 'faturas') {
+    document.getElementById('tela-faturas')?.classList.add('active');
+    setTimeout(function () {
+      if (typeof carregarFaturasTela === 'function') {
+        carregarFaturasTela();
+      }
+    }, 120);
+    return;
+  }
+
+  if (tela === 'fornecedores') {
+    const el = document.getElementById('tela-fornecedores');
+    if (el) {
+      el.classList.add('active');
+      el.style.display = 'block';
+      el.style.visibility = 'visible';
+      el.style.opacity = '1';
+    }
+
+    const resumo = document.getElementById('fornecedoresResumo');
+    if (resumo) {
+      resumo.innerHTML = 'Tela de fornecedores aberta. Iniciando carregamento...';
+    }
+
+    setTimeout(function () {
+      try {
+        if (window.carregarFornecedoresNuvem) {
+          window.carregarFornecedoresNuvem(true);
+        }
+      } catch (erro) {
+        console.error('Erro ao abrir tela de fornecedores:', erro);
+      }
+    }, 50);
+    return;
+  }
+
+  if (tela === 'empenhos') {
+    document.getElementById('tela-empenhos')?.classList.add('active');
+    setTimeout(function () {
+      if (window.carregarEmpenhosNuvem) {
+        window.carregarEmpenhosNuvem(true);
+      }
+    }, 50);
+    return;
+  }
+
+  if (tela === 'consulta-empenho') {
+    document.getElementById('tela-consulta-empenho')?.classList.add('active');
+    setTimeout(function () {
+      if (typeof buscarDadosTransparencia === 'function') {
+        buscarDadosTransparencia(1);
+      }
+    }, 150);
+    return;
+  }
+
+  if (tela === 'gestao-notas') {
+    document.getElementById('tela-gestao-notas')?.classList.add('active');
+    setTimeout(function () {
+      if (typeof inicializarGestaoNotas === 'function') inicializarGestaoNotas();
+      if (typeof carregarHistoricoGestaoNotas === 'function') carregarHistoricoGestaoNotas();
+    }, 120);
+    return;
+  }
+
+  if (tela === 'lembretes') {
+    document.getElementById('tela-lembretes')?.classList.add('active');
+    setTimeout(function () {
+      if (window.inicializarTelaLembretes) {
+        window.inicializarTelaLembretes();
+      }
+    }, 120);
+    return;
+  }
+
+  document.getElementById('tela-home')?.classList.add('active');
+  if (atualizarHash) {
+    window.location.hash = 'home';
+  }
 }
+
+function abrirTelaPeloHash() {
+  const hash = window.location.hash.replace('#', '').trim();
+
+  const telasValidas = [
+    'home',
+    'consulta',
+    'faturas',
+    'materiais',
+    'fornecedores',
+    'empenhos',
+    'consulta-empenho',
+    'gestao-notas',
+    'lembretes'
+  ];
+
+  if (telasValidas.includes(hash)) {
+    mostrarTela(hash, false);
+  } else {
+    mostrarTela('home', false);
+  }
+}
+
+window.addEventListener('hashchange', function () {
+  abrirTelaPeloHash();
+});
 
 let fornecedoresMateriais = JSON.parse(localStorage.getItem('fornecedoresMateriais') || '[]');
 let ultimaNotaMateriais = JSON.parse(localStorage.getItem('ultimaNotaMateriais') || 'null');
@@ -7378,6 +8263,812 @@ function selecionarFornecedorGestaoNotas(dadosCodificados) {
     esconderListaFornecedoresGestaoNotas();
 }
 
+// Exemplo de como renderizar os blocos mensais dentro de um Endereço:
+function renderizarMeses(enderecoId, mesesDados) {
+  const meses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+  let html = `<div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; margin-top: 10px;">`;
+  
+  meses.forEach((nomeMes, index) => {
+    // Busca se existe registro para esse mês
+    let dado = mesesDados.find(m => m.mes === index + 1);
+    if(dado) {
+       html += `<div class="box-destaque" style="border-left: 3px solid #1e4620;">
+                  <strong>${nomeMes}</strong><br/>
+                  <span style="font-size:11px; color:#666;">Pago em: ${dado.dataRegistro}</span><br/>
+                  <span style="color:#0f3b5e; font-weight:bold;">R$ ${dado.valor}</span>
+                </div>`;
+    } else {
+       html += `<div class="box-destaque" style="background:#f4f6f8; cursor:pointer;" onclick="lancarMes('${enderecoId}', ${index+1})">
+                  <strong>${nomeMes}</strong><br/>
+                  <span style="font-size:11px; color:#a50e0e;">Pendente</span><br/>
+                  <button class="btn-primary" style="padding: 2px 5px; font-size:10px; margin-top:4px;">Lançar</button>
+                </div>`;
+    }
+  });
+  html += `</div>`;
+  return html;
+}
+
+
+let faturasCache = [];
+let faturamentoEnderecoAtual = null;
+let faturaEnderecoEditandoId = null;
+let faturasDetalhesAbertos = new Set();
+
+
+function toggleFaturaDetalhes(detalheId, botao) {
+  const linha = document.getElementById(detalheId);
+  if (!linha) return;
+
+  const aberta = linha.style.display === 'table-row';
+
+  if (aberta) {
+    linha.style.display = 'none';
+    if (botao) botao.textContent = '+';
+    faturasDetalhesAbertos.delete(detalheId);
+  } else {
+    linha.style.display = 'table-row';
+    if (botao) botao.textContent = '−';
+    faturasDetalhesAbertos.add(detalheId);
+  }
+}
+
+function expandirFaturaEndereco(enderecoId) {
+  const detalhe = document.getElementById(`fat-detalhe-${enderecoId}`);
+  const icone = document.getElementById(`fat-icone-${enderecoId}`);
+  if (!detalhe) return;
+
+  detalhe.style.display = 'block';
+  if (icone) icone.textContent = '−';
+  faturasEnderecosExpandidos.add(enderecoId);
+}
+
+function recolherFaturaEndereco(enderecoId) {
+  const detalhe = document.getElementById(`fat-detalhe-${enderecoId}`);
+  const icone = document.getElementById(`fat-icone-${enderecoId}`);
+  if (!detalhe) return;
+
+  detalhe.style.display = 'none';
+  if (icone) icone.textContent = '+';
+  faturasEnderecosExpandidos.delete(enderecoId);
+}
+
+function abrirModalCadastroFatura() {
+  faturaEnderecoEditandoId = null;
+
+  document.getElementById('modalCadastroFatura').style.display = 'flex';
+  document.getElementById('fatCadFornecedor').value = '';
+  document.getElementById('fatCadEndereco').value = '';
+  document.getElementById('fatCadInstalacao').value = '';
+  document.getElementById('fatCadSecretaria').value = '';
+  document.getElementById('fatCadEmpenho').value = '';
+  document.getElementById('fatCadEmpenho').readOnly = false;
+
+  const info = document.getElementById('fatCadInfoEmpenho');
+  info.className = 'alert-box alert-neutro';
+  info.textContent = 'O sistema verificará se já existe empenho para este fornecedor e esta secretaria.';
+
+  const titulo = document.querySelector('#modalCadastroFatura .modal-header-custom h3');
+  if (titulo) titulo.textContent = 'Cadastro de Endereço da Fatura';
+
+  const botaoSalvar = document.querySelector('#modalCadastroFatura .modal-footer-custom .btn-primary');
+  if (botaoSalvar) botaoSalvar.textContent = 'Salvar Endereço';
+}
+
+function editarCadastroFatura(id) {
+  const item = faturasCache.find(f => f.id === id);
+  if (!item) {
+    mostrarAvisoSistema('Registro não encontrado', 'Não foi possível localizar o endereço para edição.');
+    return;
+  }
+
+faturaEnderecoEditandoId = id;
+
+document.getElementById('modalCadastroFatura').style.display = 'flex';
+document.getElementById('fatCadFornecedor').value = item.fornecedor || '';
+document.getElementById('fatCadEndereco').value = item.endereco || '';
+document.getElementById('fatCadInstalacao').value = item.numeroInstalacao || '';
+document.getElementById('fatCadSecretaria').value = item.secretaria || '';
+document.getElementById('fatCadEmpenho').value = item.numeroEmpenho || '';
+document.getElementById('fatCadEmpenho').readOnly = false;
+
+verificarEmpenhoCompartilhadoFatura();
+
+  const info = document.getElementById('fatCadInfoEmpenho');
+  info.className = 'alert-box alert-simples';
+  info.textContent = 'Você está editando um endereço já cadastrado. Altere os campos e clique em salvar.';
+
+  const titulo = document.querySelector('#modalCadastroFatura .modal-header-custom h3');
+  if (titulo) titulo.textContent = 'Editar Endereço da Fatura';
+
+  const botaoSalvar = document.querySelector('#modalCadastroFatura .modal-footer-custom .btn-primary');
+  if (botaoSalvar) botaoSalvar.textContent = 'Salvar Alterações';
+}
+
+function fecharModalCadastroFatura() {
+  document.getElementById('modalCadastroFatura').style.display = 'none';
+  faturaEnderecoEditandoId = null;
+}
+
+function abrirModalLancamentoFatura(enderecoId, mes) {
+  faturamentoEnderecoAtual = enderecoId;
+  document.getElementById('modalLancamentoFatura').style.display = 'flex';
+  document.getElementById('fatLancMes').value = String(mes || 1);
+  document.getElementById('fatLancAno').value =
+    document.getElementById('fatFiltroAno')?.value || new Date().getFullYear();
+  document.getElementById('fatLancValor').value = '';
+  document.getElementById('fatLancVencimento').value = '';
+  document.getElementById('fatLancDataRegistro').value = new Date().toISOString().slice(0, 10);
+  document.getElementById('fatLancStatus').value = 'pago';
+  document.getElementById('fatLancObservacao').value = '';
+
+  const item = faturasCache.find(f => f.id === enderecoId);
+
+  document.getElementById('fatLancResumoEndereco').textContent =
+    item?.endereco || 'Endereço não encontrado';
+
+  document.getElementById('fatLancResumoDetalhes').textContent =
+    `Fornecedor: ${item?.fornecedor || '-'} | Instalação: ${item?.numeroInstalacao || '-'} | Empenho: ${item?.numeroEmpenho || '-'}`;
+}
+
+function fecharModalLancamentoFatura() {
+  document.getElementById('modalLancamentoFatura').style.display = 'none';
+  faturamentoEnderecoAtual = null;
+}
+
+async function verificarEmpenhoCompartilhadoFatura() {
+  const fornecedor = document.getElementById('fatCadFornecedor').value.trim();
+  const secretaria = document.getElementById('fatCadSecretaria').value.trim();
+  const campoEmpenho = document.getElementById('fatCadEmpenho');
+  const info = document.getElementById('fatCadInfoEmpenho');
+
+  if (!fornecedor || !secretaria || !window.db) {
+    campoEmpenho.readOnly = false;
+    info.className = 'alert-box alert-neutro';
+    info.textContent = 'Preencha fornecedor e secretaria para verificar o empenho compartilhado.';
+    return;
+  }
+
+  try {
+    const chave = `${fornecedor}__${secretaria}`.toUpperCase();
+    const ref = window.fsDoc(window.db, 'FaturasEmpenhosCompartilhados', chave);
+const snap = await window.fsGetDoc(ref);
+
+    if (snap.exists()) {
+      const dados = snap.data();
+      campoEmpenho.value = dados.numeroEmpenho || '';
+      campoEmpenho.readOnly = true;
+      info.className = 'alert-box alert-simples';
+      info.textContent = `Empenho compartilhado encontrado: ${dados.numeroEmpenho || 'Sem número'}. Este número será usado para este fornecedor e secretaria.`;
+    } else {
+      campoEmpenho.value = '';
+      campoEmpenho.readOnly = false;
+      info.className = 'alert-box alert-normal';
+      info.textContent = 'Nenhum empenho compartilhado encontrado. Você pode informar um novo número de empenho.';
+    }
+  } catch (erro) {
+    console.error('Erro ao verificar empenho compartilhado:', erro);
+    campoEmpenho.readOnly = false;
+    info.className = 'alert-box alert-normal';
+    info.textContent = 'Não foi possível verificar o empenho automaticamente.';
+  }
+}
+
+async function salvarCadastroFatura() {
+  if (!window.auth?.currentUser) {
+    mostrarAvisoSistema('Acesso negado', 'Você precisa estar logado para salvar.');
+    return;
+  }
+
+  const fornecedor = document.getElementById('fatCadFornecedor').value.trim();
+  const endereco = document.getElementById('fatCadEndereco').value.trim();
+  const numeroInstalacao = document.getElementById('fatCadInstalacao').value.trim();
+  const secretaria = document.getElementById('fatCadSecretaria').value.trim();
+  const numeroEmpenho = document.getElementById('fatCadEmpenho').value.trim();
+
+  if (!fornecedor || !endereco || !numeroInstalacao || !secretaria || !numeroEmpenho) {
+    mostrarAvisoSistema('Campos obrigatórios', 'Preencha todos os campos do cadastro da fatura.');
+    return;
+  }
+
+  const botaoSalvar = document.querySelector('#modalCadastroFatura .modal-footer-custom .btn-primary');
+  const textoOriginal = botaoSalvar ? botaoSalvar.textContent : 'Salvar Endereço';
+  const estaEditando = !!faturaEnderecoEditandoId;
+
+  try {
+    if (!window.db) {
+      throw new Error('Firestore não foi inicializado.');
+    }
+
+    if (!window.fsDoc || !window.fsSetDoc || !window.fsCollection) {
+      throw new Error('As funções globais do Firestore não estão disponíveis.');
+    }
+
+    if (botaoSalvar) {
+      botaoSalvar.disabled = true;
+      botaoSalvar.textContent = 'Salvando...';
+    }
+
+    const agora = new Date().toISOString();
+    const chaveEmpenho = `${fornecedor}__${secretaria}`.toUpperCase();
+
+    await window.fsSetDoc(
+      window.fsDoc(window.db, 'FaturasEmpenhosCompartilhados', chaveEmpenho),
+      {
+        fornecedor,
+        secretaria,
+        numeroEmpenho,
+        dataAtualizacao: agora,
+        usuarioEmail: window.auth.currentUser.email || ''
+      },
+      { merge: true }
+    );
+
+    const dadosEndereco = {
+      fornecedor,
+      endereco,
+      numeroInstalacao,
+      secretaria,
+      numeroEmpenho,
+      ativo: true,
+      dataAtualizacao: agora,
+      usuarioEmail: window.auth.currentUser.email || ''
+    };
+
+    if (estaEditando) {
+      await window.fsSetDoc(
+        window.fsDoc(window.db, 'FaturasEnderecos', faturaEnderecoEditandoId),
+        dadosEndereco,
+        { merge: true }
+      );
+    } else {
+      const novoRef = window.fsDoc(window.fsCollection(window.db, 'FaturasEnderecos'));
+
+      await window.fsSetDoc(novoRef, {
+        ...dadosEndereco,
+        dataCriacao: agora
+      });
+    }
+
+    await carregarFaturasTela();
+    fecharModalCadastroFatura();
+
+    mostrarAvisoSistema(
+      estaEditando ? 'Endereço atualizado' : 'Endereço salvo',
+      estaEditando
+        ? 'As alterações do endereço foram salvas com sucesso.'
+        : 'O endereço da fatura foi salvo com sucesso.'
+    );
+  } catch (erro) {
+    console.error('Erro ao salvar cadastro de fatura:', erro);
+
+    let mensagem = 'Não foi possível salvar o cadastro da fatura.';
+
+    if (erro?.code === 'permission-denied') {
+      mensagem = 'O Firebase negou a gravação. Verifique as regras de segurança do Firestore.';
+    } else if (erro?.code === 'unavailable') {
+      mensagem = 'O Firestore está indisponível no momento. Tente novamente.';
+    } else if (erro?.message) {
+      mensagem = `Não foi possível salvar o cadastro da fatura. ${erro.message}`;
+    }
+
+    mostrarAvisoSistema('Erro ao salvar', mensagem);
+  } finally {
+    if (botaoSalvar) {
+      botaoSalvar.disabled = false;
+      botaoSalvar.textContent = textoOriginal;
+    }
+  }
+}
+
+async function salvarLancamentoFatura() {
+  if (!window.auth?.currentUser) {
+    mostrarAvisoSistema('Acesso negado', 'Você precisa estar logado para salvar.');
+    return;
+  }
+
+  if (!faturamentoEnderecoAtual) {
+    mostrarAvisoSistema('Endereço não selecionado', 'Nenhum endereço foi selecionado para o lançamento.');
+    return;
+  }
+
+  const mes = Number(document.getElementById('fatLancMes').value);
+  const ano = Number(document.getElementById('fatLancAno').value);
+  const valor = Number(document.getElementById('fatLancValor').value || 0);
+  const dataVencimento = document.getElementById('fatLancVencimento').value;
+  const dataRegistro = document.getElementById('fatLancDataRegistro').value;
+  const status = document.getElementById('fatLancStatus').value;
+  const observacao = document.getElementById('fatLancObservacao').value.trim();
+
+  if (!mes || !ano || !valor || !dataRegistro) {
+    mostrarAvisoSistema('Campos obrigatórios', 'Preencha mês, ano, valor e data do registro.');
+    return;
+  }
+
+  const botaoSalvar = document.querySelector('#modalLancamentoFatura .modal-footer-custom .btn-primary');
+  const textoOriginal = botaoSalvar ? botaoSalvar.textContent : 'Salvar Lançamento';
+
+  try {
+    if (!window.db) {
+      throw new Error('Firestore não foi inicializado.');
+    }
+
+    if (!window.fsDoc || !window.fsSetDoc) {
+      throw new Error('As funções globais do Firestore não estão disponíveis.');
+    }
+
+    if (botaoSalvar) {
+      botaoSalvar.disabled = true;
+      botaoSalvar.textContent = 'Salvando...';
+    }
+
+    const lancamentoId = `${ano}_${String(mes).padStart(2, '0')}`;
+    const ref = window.fsDoc(
+      window.db,
+      'FaturasEnderecos',
+      faturamentoEnderecoAtual,
+      'lancamentos',
+      lancamentoId
+    );
+
+    await window.fsSetDoc(ref, {
+      mes,
+      ano,
+      valor,
+      dataVencimento,
+      dataRegistro,
+      status,
+      observacao,
+      dataAtualizacao: new Date().toISOString(),
+      usuarioEmail: window.auth.currentUser.email || ''
+    }, { merge: true });
+
+    await carregarFaturasTela();
+    fecharModalLancamentoFatura();
+
+    mostrarAvisoSistema('Lançamento salvo', 'O lançamento mensal da fatura foi salvo com sucesso.');
+  } catch (erro) {
+    console.error('Erro ao salvar lançamento da fatura:', erro);
+
+    let mensagem = 'Não foi possível salvar o lançamento da fatura.';
+
+    if (erro?.code === 'permission-denied') {
+      mensagem = 'O Firebase negou a gravação. Verifique as regras de segurança do Firestore.';
+    } else if (erro?.code === 'unavailable') {
+      mensagem = 'O Firestore está indisponível no momento. Tente novamente.';
+    } else if (erro?.message) {
+      mensagem = `Não foi possível salvar o lançamento da fatura. ${erro.message}`;
+    }
+
+    mostrarAvisoSistema('Erro ao salvar', mensagem);
+  } finally {
+    if (botaoSalvar) {
+      botaoSalvar.disabled = false;
+      botaoSalvar.textContent = textoOriginal;
+    }
+  }
+}
+
+async function carregarFaturasTela() {
+  const resumo = document.getElementById('fatResumo');
+  const lista = document.getElementById('fatListaEnderecos');
+  if (!resumo || !lista || !window.db) return;
+
+  resumo.className = 'alert-box alert-neutro';
+  resumo.textContent = 'Carregando endereços e lançamentos de faturas...';
+  lista.innerHTML = '';
+
+  try {
+   const snapshot = await window.fsGetDocs(window.fsCollection(window.db, 'FaturasEnderecos'));
+    const registros = [];
+
+    for (const item of snapshot.docs) {
+      const dados = item.data();
+      const sub = await window.fsGetDocs(
+  window.fsCollection(window.db, 'FaturasEnderecos', item.id, 'lancamentos')
+);
+      const lancamentos = [];
+      sub.forEach(docItem => lancamentos.push({ id: docItem.id, ...docItem.data() }));
+      registros.push({ id: item.id, ...dados, lancamentos });
+    }
+
+    faturasCache = registros;
+    aplicarFiltrosFaturas();
+  } catch (erro) {
+    console.error('Erro ao carregar faturas:', erro);
+    resumo.className = 'alert-box alert-normal';
+    resumo.textContent = 'Erro ao carregar dados da tela de faturas.';
+  }
+}
+
+function aplicarFiltrosFaturas() {
+  const fornecedor = (document.getElementById('fatFiltroFornecedor')?.value || '').trim().toUpperCase();
+  const ano = Number(document.getElementById('fatFiltroAno')?.value || new Date().getFullYear());
+  const busca = (document.getElementById('fatFiltroBusca')?.value || '').trim().toLowerCase();
+
+  const filtrados = faturasCache.filter(item => {
+    const matchFornecedor = !fornecedor || (item.fornecedor || '').toUpperCase() === fornecedor;
+    const textoBase = `${item.fornecedor || ''} ${item.endereco || ''} ${item.numeroInstalacao || ''} ${item.secretaria || ''} ${item.numeroEmpenho || ''}`.toLowerCase();
+    const matchBusca = !busca || textoBase.includes(busca);
+    return matchFornecedor && matchBusca;
+  });
+
+  renderizarFaturasLista(filtrados, ano);
+}
+function renderizarFaturasLista(listaDados, ano) {
+  const resumo = document.getElementById('fatResumo');
+  const lista = document.getElementById('fatListaEnderecos');
+
+  if (!lista || !resumo) return;
+
+  if (!listaDados.length) {
+    resumo.className = 'alert-box alert-normal';
+    resumo.textContent = 'Nenhum endereço encontrado para os filtros informados.';
+    lista.innerHTML = '';
+    return;
+  }
+
+  resumo.className = 'alert-box alert-simples';
+  resumo.textContent = `${listaDados.length} endereço(s) encontrado(s) para visualização das faturas.`;
+
+  const meses = [
+    'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+    'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+  ];
+
+  let html = `
+    <div style="overflow-x:auto;">
+      <table class="data-table" style="min-width: 1100px;">
+        <thead>
+          <tr>
+            <th style="width: 60px;">Ver</th>
+            <th style="min-width: 320px;">Endereço</th>
+            <th style="width: 180px;">Fornecedor</th>
+            <th style="width: 180px;">Instalação</th>
+            <th style="width: 160px;">Secretaria</th>
+            <th style="width: 140px;">Empenho</th>
+            <th style="width: 170px;">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+  `;
+
+  listaDados.forEach((item, index) => {
+    const lancamentosAno = (item.lancamentos || []).filter(l => Number(l.ano) === Number(ano));
+    const detalheId = `fat-detalhes-${index}`;
+    const estaAberto = faturasDetalhesAbertos.has(detalheId);
+    const qtdPagos = lancamentosAno.filter(l => String(l.status || '').toLowerCase() === 'pago').length;
+    const qtdPendentes = lancamentosAno.filter(l => String(l.status || '').toLowerCase() !== 'pago').length;
+    const totalAno = lancamentosAno.reduce((soma, l) => soma + Number(l.valor || 0), 0);
+
+    html += `
+      <tr>
+        <td style="text-align:center;">
+          <button
+            type="button"
+            class="btn-primary"
+            onclick="toggleFaturaDetalhes('${detalheId}', this)"
+            style="width:auto; padding:6px 10px; font-size:12px; background-color:#6c757d; border-color:#5a6268;"
+          >
+            ${estaAberto ? '−' : '+'}
+          </button>
+        </td>
+
+        <td>
+          <div style="font-weight:800; color:#0f3b5e; font-size:15px; line-height:1.35;">
+            ${item.endereco || 'Sem endereço'}
+          </div>
+          <div style="font-size:11px; color:#66727d; margin-top:4px;">
+            ${lancamentosAno.length} lançamento(s) em ${ano}
+          </div>
+        </td>
+
+        <td>
+          <div style="font-weight:600; color:#243746;">
+            ${item.fornecedor || '-'}
+          </div>
+        </td>
+
+        <td>${item.numeroInstalacao || '-'}</td>
+        <td>${item.secretaria || '-'}</td>
+        <td>${item.numeroEmpenho || '-'}</td>
+
+  <td style="white-space:nowrap;">
+  <div style="display:flex; align-items:center; gap:4px; flex-wrap:nowrap;">
+    <button
+      type="button"
+      class="btn-primary"
+      onclick="editarCadastroFatura('${item.id}')"
+      style="width:auto; padding:5px 8px; font-size:11px; background-color:#6c757d; border-color:#5a6268;"
+      title="Editar endereço"
+    >
+      Editar
+    </button>
+
+    <button
+      type="button"
+      class="btn-primary"
+      onclick="abrirModalLancamentoFatura('${item.id}', 1)"
+      style="width:auto; padding:5px 8px; font-size:11px;"
+      title="Lançar fatura"
+    >
+      Lançar
+    </button>
+  </div>
+</td>
+      </tr>
+
+      <tr id="${detalheId}" style="display:${estaAberto ? 'table-row' : 'none'}; background:#f8fafc;">
+        <td colspan="7" style="padding:16px;">
+          <div style="display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-bottom:12px;">
+            <div style="font-size:13px; color:#243746;">
+              <strong>Resumo do ano ${ano}:</strong>
+              ${lancamentosAno.length} lançamento(s),
+              ${qtdPagos} pago(s),
+              ${qtdPendentes} pendente(s),
+              total ${totalAno.toLocaleString('pt-BR', { style:'currency', currency:'BRL' })}
+            </div>
+          </div>
+
+          <div style="overflow-x:auto;">
+            <table class="data-table" style="min-width: 920px; background:#fff;">
+              <thead>
+                <tr>
+                  <th style="width: 120px;">Mês</th>
+                  <th style="width: 150px;">Valor</th>
+                  <th style="width: 140px;">Status</th>
+                  <th style="width: 150px;">Vencimento</th>
+                  <th style="width: 150px;">Registro</th>
+                  <th>Observação</th>
+                  <th style="width: 110px;">Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+    `;
+
+    meses.forEach((nomeMes, idxMes) => {
+      const numeroMes = idxMes + 1;
+      const dadoMes = lancamentosAno.find(l => Number(l.mes) === numeroMes);
+
+      if (dadoMes) {
+        const statusTexto = String(dadoMes.status || 'pendente').toLowerCase() === 'pago' ? 'Pago' : 'Pendente';
+        const statusCor = statusTexto === 'Pago' ? '#1e4620' : '#856404';
+        const statusBg = statusTexto === 'Pago' ? '#e6f4ea' : '#fff3cd';
+
+        html += `
+          <tr>
+            <td style="font-weight:bold; color:#0f3b5e;">${nomeMes}</td>
+            <td>${Number(dadoMes.valor || 0).toLocaleString('pt-BR', { style:'currency', currency:'BRL' })}</td>
+            <td>
+              <span style="display:inline-block; padding:4px 8px; border-radius:999px; font-size:11px; font-weight:bold; color:${statusCor}; background:${statusBg};">
+                ${statusTexto}
+              </span>
+            </td>
+            <td>${dadoMes.dataVencimento || '-'}</td>
+            <td>${dadoMes.dataRegistro || '-'}</td>
+            <td>${dadoMes.observacao || '-'}</td>
+            <td>
+              <button
+                type="button"
+                class="btn-primary"
+                onclick="abrirModalLancamentoFatura('${item.id}', ${numeroMes})"
+                style="width:auto; padding:6px 10px; font-size:12px;"
+              >
+                Editar
+              </button>
+            </td>
+          </tr>
+        `;
+      } else {
+        html += `
+          <tr>
+            <td style="font-weight:bold; color:#0f3b5e;">${nomeMes}</td>
+            <td>-</td>
+            <td>
+              <span style="display:inline-block; padding:4px 8px; border-radius:999px; font-size:11px; font-weight:bold; color:#6c757d; background:#eef2f5;">
+                Sem lançamento
+              </span>
+            </td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+            <td>
+              <button
+                type="button"
+                class="btn-primary"
+                onclick="abrirModalLancamentoFatura('${item.id}', ${numeroMes})"
+                style="width:auto; padding:6px 10px; font-size:12px;"
+              >
+                Lançar
+              </button>
+            </td>
+          </tr>
+        `;
+      }
+    });
+
+    html += `
+              </tbody>
+            </table>
+          </div>
+        </td>
+      </tr>
+    `;
+  });
+
+  html += `
+        </tbody>
+      </table>
+    </div>
+  `;
+
+  lista.innerHTML = html;
+}
+
+function toggleFaturaDetalhes(id, botao) {
+  const linha = document.getElementById(id);
+  if (!linha) return;
+
+  const estaAberto = linha.style.display !== 'none';
+
+  if (estaAberto) {
+    linha.style.display = 'none';
+    if (botao) botao.textContent = '+';
+  } else {
+    linha.style.display = 'table-row';
+    if (botao) botao.textContent = '−';
+  }
+}
+
+let muralHomeCarregando = false;
+
+function formatarDataCurtaMural(valor) {
+  if (!valor) return '';
+  const data = new Date(valor);
+  if (isNaN(data.getTime())) return '';
+  return data.toLocaleDateString('pt-BR', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric'
+  });
+}
+
+async function carregarMuralHomeSilencioso() {
+  const mural = document.getElementById('home-mural-lista');
+  if (!mural) return;
+
+  if (!window.auth?.currentUser) {
+    mural.innerHTML = '<div class="mural-clean-empty">Faça login para visualizar os lembretes.</div>';
+    return;
+  }
+
+  if (muralHomeCarregando) return;
+  muralHomeCarregando = true;
+
+  try {
+    if (!window.db || !window.fsCollection || !window.fsGetDocs) {
+      throw new Error('Firestore não está disponível no escopo global.');
+    }
+
+    const snapshot = await window.fsGetDocs(window.fsCollection(window.db, 'Lembretes'));
+    const lista = [];
+
+    snapshot.forEach(function(docItem) {
+      const dados = docItem.data();
+      lista.push({
+        id: docItem.id,
+        ...dados,
+        conteudoTexto: dados.conteudoTexto || extrairTextoHtmlLembrete(dados.conteudoHtml || '')
+      });
+    });
+
+    lista.sort(function(a, b) {
+      const dataA = new Date(a.dataAtualizacao || a.dataCriacao || 0).getTime();
+      const dataB = new Date(b.dataAtualizacao || b.dataCriacao || 0).getTime();
+      return dataB - dataA;
+    });
+
+    lembretesLista = lista;
+    renderizarMuralHome();
+  } catch (erro) {
+    console.error('Erro ao carregar mural da home:', erro);
+    mural.innerHTML = '<div class="mural-clean-empty" style="color:#a50e0e;">Erro ao carregar lembretes.</div>';
+  } finally {
+    muralHomeCarregando = false;
+  }
+}
+
+function abrirLembretePelaHome(id) {
+  const item = Array.isArray(lembretesLista)
+    ? lembretesLista.find(function(x) { return x.id === id; })
+    : null;
+
+  if (!item) return;
+
+  if (typeof editarLembrete === 'function') {
+    editarLembrete(id);
+  }
+
+  if (typeof abrirAbaLembretes === 'function') {
+    abrirAbaLembretes('editor');
+  }
+
+  mostrarTela('lembretes');
+}
+
+function renderizarMuralHome() {
+    const mural = document.getElementById('home-mural-lista');
+    if (!mural) return;
+
+    if (!window.auth?.currentUser) {
+        mural.innerHTML = `<div class="mural-clean-empty">Faça login para visualizar os lembretes.</div>`;
+        return;
+    }
+
+    if (!Array.isArray(lembretesLista) || !lembretesLista.length) {
+        mural.innerHTML = `<div class="mural-clean-empty">Nenhum lembrete disponível.</div>`;
+        return;
+    }
+
+    const lista = [...lembretesLista]
+        .filter(function(item) {
+            return !item.concluido;
+        })
+        .sort(function(a, b) {
+            const prioridadeA = pesoOrdenacaoPrioridadeLembrete(a.prioridade);
+            const prioridadeB = pesoOrdenacaoPrioridadeLembrete(b.prioridade);
+
+            if (prioridadeA !== prioridadeB) {
+                return prioridadeA - prioridadeB;
+            }
+
+            const dataA = new Date(a.dataAtualizacao || a.dataCriacao || 0).getTime();
+            const dataB = new Date(b.dataAtualizacao || b.dataCriacao || 0).getTime();
+            return dataB - dataA;
+        })
+        .slice(0, 4);
+
+    if (!lista.length) {
+        mural.innerHTML = `<div class="mural-clean-empty">Nenhum lembrete pendente.</div>`;
+        return;
+    }
+
+    mural.innerHTML = lista.map(function(item) {
+        const titulo = escaparHtmlLembretes(item.titulo || 'Sem título');
+        const categoria = escaparHtmlLembretes(item.categoria || 'Geral');
+        const prioridadeTexto = prioridadeTextoLembrete(item.prioridade);
+        const prioridadeClasse = prioridadeClasseLembrete(item.prioridade);
+        const dataTexto = formatarDataCurtaMural(item.dataAtualizacao || item.dataCriacao);
+        const resumo = escaparHtmlLembretes(obterResumoLembrete(item) || 'Sem conteúdo');
+        const criador = escaparHtmlLembretes(item.criadoPorNome || item.criadoPorEmail || 'Usuário não identificado');
+
+        return `
+            <div class="mural-clean-item">
+                <div class="mural-clean-main">
+                    <div class="mural-clean-linha1">
+                        <div class="mural-clean-titulo">${titulo}</div>
+                        <span class="prioridade-badge ${prioridadeClasse}">${prioridadeTexto}</span>
+                    </div>
+
+                    <div class="mural-clean-resumo">${resumo}</div>
+
+                    <div class="mural-clean-meta">
+                        <span class="mural-meta-chip">${categoria}</span>
+                        <span class="mural-meta-chip criador">Criado por: ${criador}</span>
+                        ${dataTexto ? `<span class="mural-meta-chip">Atualizado em: ${dataTexto}</span>` : ''}
+                    </div>
+                </div>
+
+                <div class="mural-clean-acoes">
+                    <button type="button" class="mural-clean-btn" onclick="abrirLembretePelaHome('${item.id}')">
+                        Abrir
+                    </button>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
     </script>
 <script src="https://cdn.jsdelivr.net/npm/quill@2/dist/quill.js"></script>
  <script type="module">
@@ -8446,6 +10137,33 @@ onAuthStateChanged(auth, async (usuario) => {
     if (usuario) {
         liberarSite(usuario);
 
+        try {
+            if (typeof abrirTelaPeloHash === 'function') {
+    abrirTelaPeloHash();
+} else if (typeof mostrarTela === 'function') {
+    mostrarTela('home', false);
+} else {
+    document.getElementById('tela-home')?.classList.add('active');
+}
+
+            await new Promise(resolve => setTimeout(resolve, 120));
+
+            if (typeof window.carregarLembretesNuvem === 'function') {
+                await window.carregarLembretesNuvem();
+            } else if (typeof carregarMuralHomeSilencioso === 'function') {
+                await carregarMuralHomeSilencioso();
+            } else if (typeof renderizarMuralHome === 'function') {
+                renderizarMuralHome();
+            }
+        } catch (erro) {
+            console.error('Erro ao inicializar mural da Home após login:', erro);
+
+            const mural = document.getElementById('home-mural-lista');
+            if (mural) {
+                mural.innerHTML = `<div class="mural-clean-empty" style="color:#a50e0e;">Erro ao carregar lembretes.</div>`;
+            }
+        }
+
         if (window.carregarFornecedoresParaMateriais) {
             await window.carregarFornecedoresParaMateriais();
         }
@@ -8456,7 +10174,11 @@ onAuthStateChanged(auth, async (usuario) => {
         }
     } else {
         bloquearSite();
-        window.fornecedoresFirebaseMateriais = [];
+        lembretesLista = [];
+
+        if (typeof renderizarMuralHome === 'function') {
+            renderizarMuralHome();
+        }
     }
 });
 
@@ -8671,6 +10393,51 @@ return true;
             <button type="button" class="btn-primary" style="width:auto; padding:8px 15px;" onclick="confirmarImpressaoGestaoNotas()">Imprimir</button>
         </div>
     </div>
+</div>
+
+
+<!-- MODAL DE CADASTRO DE NOVO ENDEREÇO / FATURA -->
+<div id="modal-fatura" class="modal-overlay" style="display: none;">
+  <div class="modal-panel" style="width: 500px;">
+    <div class="modal-header-custom">
+      <h3>Cadastrar Instalação de Fatura</h3>
+    </div>
+    <div class="modal-body-custom">
+      <div class="form-group-calc">
+        <label>Fornecedor</label>
+        <select id="novo-fat-fornecedor" onchange="verificarEmpenhoFatura()">
+          <option value="">Selecione...</option>
+          <option value="CEMIG">CEMIG</option>
+          <option value="ALGAR">ALGAR</option>
+          <option value="SAAE">SAAE</option>
+        </select>
+      </div>
+      <div class="form-group-calc">
+        <label>Secretaria Responsável</label>
+        <select id="novo-fat-secretaria" onchange="verificarEmpenhoFatura()">
+          <option value="Saúde">Saúde</option>
+          <option value="Educação">Educação</option>
+          <option value="Obras">Obras</option>
+        </select>
+      </div>
+      <div class="form-group-calc">
+        <label>Número do Empenho (Anual)</label>
+        <input type="text" id="novo-fat-empenho" placeholder="Automático ou Novo Empenho" />
+      </div>
+      <div class="form-group-calc">
+        <label>Número de Instalação/Contrato</label>
+        <input type="text" id="novo-fat-instalacao" />
+      </div>
+      <div class="form-group-calc">
+        <label>Endereço / Prédio</label>
+        <input type="text" id="novo-fat-endereco" placeholder="Ex: UBS Centro" />
+      </div>
+    </div>
+    <div class="modal-footer-custom">
+      <button class="btn-cancelar-modal" onclick="fecharModalFatura()">Cancelar</button>
+      <button class="btn-primary" onclick="salvarEnderecoFaturaFirebase()" style="width: auto;">Salvar Endereço</button>
+    </div>
+  </div>
 </div>
 
 </body>

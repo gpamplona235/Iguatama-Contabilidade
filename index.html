@@ -1706,42 +1706,39 @@ body.print-retencao .col-retencao {
 }
 
 .mural-clean-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 12px;
-    flex-wrap: wrap;
-    padding: 18px 20px;
-    border-bottom: 1px solid #dce4ec;
-    background: #fbfcfd;
+  background: #0f3b5e;
+  padding: 18px 20px;
+  border-bottom: 1px solid #0a2942;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
-
 .mural-clean-header h2 {
-    margin: 0;
-    font-size: 16px;
-    color: #2c3e50;
-    font-weight: bold;
+  margin: 0;
+  font-size: 16px;
+  color: #ffffff;
+  font-weight: bold;
 }
 
 .mural-clean-subtitle {
-    margin-top: 4px;
-    font-size: 12px;
-    color: #66727d;
+  margin-top: 4px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.85);
 }
 
 .mural-clean-link {
-    border: 1px solid #bac5d0;
-    background: #ffffff;
-    color: #0f3b5e;
-    font-size: 12px;
-    font-weight: bold;
-    cursor: pointer;
-    padding: 8px 12px;
-    border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 4px;
 }
 
 .mural-clean-link:hover {
-    background: #eef3f7;
+  background: rgba(255, 255, 255, 0.22);
 }
 
 .mural-clean-lista {
@@ -1895,6 +1892,34 @@ body.print-retencao .col-retencao {
   line-height: 1.45;
 }
 
+#tela-consulta .panel-header {
+    background-color: #0f3b5e;
+    border-bottom: 1px solid #0a2942;
+    padding: 18px 20px;
+}
+
+#tela-consulta .panel-header h2 {
+    margin: 0;
+    color: #ffffff;
+}
+
+#tela-consulta .panel-header label {
+    color: rgba(255, 255, 255, 0.92) !important;
+}
+
+#tela-consulta .panel-header input[type="checkbox"] {
+    accent-color: #ffffff;
+}
+
+#tela-consulta #panel-issqn .panel-header {
+    background-color: #0f3b5e !important;
+    border-bottom: 1px solid #0a2942 !important;
+}
+
+#tela-consulta #panel-issqn .panel-header h2 {
+    color: #ffffff !important;
+}
+
     </style>
     <link href="https://cdn.jsdelivr.net/npm/quill@2/dist/quill.snow.css" rel="stylesheet">
 </head>
@@ -2010,16 +2035,16 @@ body.print-retencao .col-retencao {
 <div id="tela-faturas" class="screen-section">
   <div class="materiais-wrapper">
     <div class="materiais-panel">
-      <div class="materiais-header" style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;">
+      <div class="materiais-header" style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; background:#0f3b5e; border-bottom:1px solid #0a2942;">
         <div>
-          <h2 style="margin:0;">Controle de Faturas</h2>
-          <div style="font-size:12px; color:#66727d; margin-top:4px;">
-            Cadastro de endereços, controle mensal e acompanhamento por fornecedor.
-          </div>
+          <h2 style="margin:0; color:#ffffff;">CONTROLE DE FATURAS</h2>
+          <div style="font-size:12px; color:rgba(255,255,255,0.85); margin-top:4px;">
+  Cadastro de endereços, controle mensal e acompanhamento por fornecedor.
+</div>
         </div>
 
         <div style="display:flex; gap:8px; flex-wrap:wrap;">
-<button type="button" class="btn-primary" onclick="abrirModalCadastroFatura()" style="width:auto;">
+<button type="button" class="btn-primary" onclick="abrirModalCadastroFatura()" style="width:auto; background:rgba(255,255,255,0.12); color:#ffffff; border:1px solid rgba(255,255,255,0.35);">
   Novo Endereço
 </button>
         </div>
@@ -2205,18 +2230,21 @@ body.print-retencao .col-retencao {
 <div id="tela-lembretes" class="screen-section">
     <div class="materiais-wrapper">
         <div class="materiais-panel">
-            <div class="materiais-header" style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;">
+            <div class="materiais-header" style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; background:#0f3b5e; border-bottom:1px solid #0a2942; padding:18px 20px;">
   <div>
-    <h2 style="margin:0;">Lembretes Compartilhados</h2>
+    <h2 style="margin:0; color:#ffffff;">LEMBRETES COMPARTILHADOS</h2>
+    <div style="font-size:12px; color:rgba(255,255,255,0.85); margin-top:4px;">
+      Organização de lembretes da equipe, com prioridades, filtros e acompanhamento.
+    </div>
   </div>
 
-  <div class="checkbox-group" style="margin:0; white-space:nowrap;">
+  <div class="checkbox-group" style="margin:0; white-space:nowrap; color:#ffffff;">
     <input
       type="checkbox"
       id="chkMeusLembretes"
       onchange="alternarFiltroMeusLembretes(this.checked)"
     />
-    <label for="chkMeusLembretes">Mostrar apenas os meus lembretes</label>
+    <label for="chkMeusLembretes" style="color:#ffffff;">Mostrar apenas os meus lembretes</label>
   </div>
 </div>
 
@@ -2524,11 +2552,11 @@ body.print-retencao .col-retencao {
     <div class="card-desc">Módulo antigo de lançamento de notas de consumo, mantido apenas como referência.</div>
   </button>
 
-  <button type="button" class="home-card disabled" onclick="alert('Módulo em construção.')">
-    <div class="badge-construcao">EM CONSTRUÇÃO</div>
-    <div class="card-title" style="color:#6c757d;">Diárias / Adiantamentos</div>
-    <div class="card-desc">Controle futuro de diárias, adiantamentos, prestação de contas e acompanhamento por servidor.</div>
-  </button>
+<button type="button" class="home-card disabled" onclick="alert('Módulo em construção.')">
+  <div class="badge-construcao">EM CONSTRUÇÃO</div>
+  <div class="card-title" style="color:#6c757d;">Consulta de Empenhos Globais e Estimativos</div>
+  <div class="card-desc">Consulta futura de empenhos globais e estimativos, com acompanhamento.</div>
+</button>
 
   <button type="button" class="home-card disabled" onclick="alert('Módulo em construção.')">
     <div class="badge-construcao">EM CONSTRUÇÃO</div>
@@ -2540,6 +2568,12 @@ body.print-retencao .col-retencao {
     <div class="card-title">Gestão de Notas</div>
     <div class="card-desc">Crie novas tabelas e gerencie o histórico de remessas e notas lançadas.</div>
   </button>
+
+  <button type="button" class="home-card" onclick="fazerBackupFirebase()">
+  <div class="badge-novo">NOVO</div>
+  <div class="card-title">Backup dos Dados</div>
+  <div class="card-desc">Baixe um arquivo JSON com as coleções principais salvas no Firestore.</div>
+</button>
 </div>
     </div>
 
@@ -3208,13 +3242,18 @@ body.print-retencao .col-retencao {
 </div>
 
 <div id="tela-consulta-empenho" class="screen-section">
-    <div class="panels-wrapper">
-        <div class="panel" style="width: 100%; max-width: 1400px;">
-            <div class="panel-header" style="display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;">
-                <h2 style="margin: 0;">Consulta de Empenhos - Transparência</h2>
-            </div>
-            
-            <div class="panel-body">
+  <div class="panels-wrapper">
+    <div class="panel" style="width: 100%; max-width: 1400px;">
+      <div class="panel-header" style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; background:#0f3b5e; border-bottom:1px solid #0a2942; padding:18px 20px;">
+        <div>
+          <h2 style="margin:0; color:#ffffff;">CONSULTA DE EMPENHOS</h2>
+          <div style="font-size:12px; color:rgba(255,255,255,0.85); margin-top:4px;">
+            Pesquisa de empenhos por número, ano, fornecedor e CPF/CNPJ, com totais e paginação.
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-body">
                 <!-- Filtros de Busca -->
                 <div style="background: #f8fafc; border: 1px solid #d7e0e8; border-radius: 8px; padding: 18px; margin-bottom: 20px;">
                     <div style="font-size: 14px; font-weight: bold; color: #0f3b5e; margin-bottom: 12px;">Filtros de Busca</div>
@@ -9068,6 +9107,160 @@ function renderizarMuralHome() {
         `;
     }).join('');
 }
+
+
+window.fazerBackupFirebase = function () {
+  if (!window.auth?.currentUser) {
+    if (typeof mostrarAvisoSistema === 'function') {
+      mostrarAvisoSistema('Acesso negado', 'Faça login para gerar o backup.');
+    } else {
+      alert('Faça login para gerar o backup.');
+    }
+    return;
+  }
+
+  if (!window.db || !window.fsCollection || !window.fsGetDocs) {
+    if (typeof mostrarAvisoSistema === 'function') {
+      mostrarAvisoSistema('Erro', 'Firestore não está disponível no escopo global.');
+    } else {
+      alert('Firestore não está disponível no escopo global.');
+    }
+    return;
+  }
+
+  const executarBackup = async () => {
+    const colecoes = [
+      'ContasPagasEnderecos',
+      'Empenhos',
+      'FaturasEmpenhosCompartilhados',
+      'FaturasEnderecos',
+      'Fornecedores',
+      'HistoricoNotas',
+      'Lembretes'
+    ];
+
+    const backup = {
+      projeto: 'iguatama-4f8d3',
+      geradoEm: new Date().toISOString(),
+      usuario: window.auth.currentUser.email || '',
+      colecoes: {},
+      erros: {}
+    };
+
+    const serializarValor = (valor) => {
+      if (valor === null || valor === undefined) return valor;
+      if (Array.isArray(valor)) return valor.map(serializarValor);
+
+      if (typeof valor === 'object') {
+        if (typeof valor.toDate === 'function') {
+          try {
+            return valor.toDate().toISOString();
+          } catch (_) {}
+        }
+
+        const saida = {};
+        Object.keys(valor).forEach((chave) => {
+          saida[chave] = serializarValor(valor[chave]);
+        });
+        return saida;
+      }
+
+      return valor;
+    };
+
+    try {
+      for (const nomeColecao of colecoes) {
+        try {
+          const ref = window.fsCollection(window.db, nomeColecao);
+          const snapshot = await window.fsGetDocs(ref);
+          const itens = [];
+
+          snapshot.forEach((docItem) => {
+            const dados = serializarValor(docItem.data());
+            itens.push({
+              id: docItem.id,
+              ...dados
+            });
+          });
+
+          backup.colecoes[nomeColecao] = itens;
+        } catch (erroColecao) {
+          console.error('Erro na coleção:', nomeColecao, erroColecao);
+          backup.erros[nomeColecao] = erroColecao?.message || 'Falha desconhecida';
+          backup.colecoes[nomeColecao] = [];
+        }
+      }
+
+      const blob = new Blob(
+        [JSON.stringify(backup, null, 2)],
+        { type: 'application/json;charset=utf-8' }
+      );
+
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      const agora = new Date();
+
+      const nomeArquivo =
+        'backup-firestore-' +
+        agora.getFullYear() + '-' +
+        String(agora.getMonth() + 1).padStart(2, '0') + '-' +
+        String(agora.getDate()).padStart(2, '0') + '_' +
+        String(agora.getHours()).padStart(2, '0') + '-' +
+        String(agora.getMinutes()).padStart(2, '0') + '.json';
+
+      link.href = url;
+      link.download = nomeArquivo;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      const houveErros = Object.keys(backup.erros).length > 0;
+
+      if (typeof mostrarAvisoSistema === 'function') {
+        if (houveErros) {
+          mostrarAvisoSistema(
+            'Backup gerado com avisos',
+            'O arquivo foi gerado, mas algumas coleções apresentaram falha. Verifique o console para mais detalhes.'
+          );
+        } else {
+          mostrarAvisoSistema(
+            'Backup gerado com sucesso',
+            'O arquivo de backup do Firestore foi gerado e baixado com sucesso.'
+          );
+        }
+      } else {
+        alert(
+          houveErros
+            ? 'Backup gerado com avisos. Verifique o console para mais detalhes.'
+            : 'Backup gerado com sucesso.'
+        );
+      }
+    } catch (erro) {
+      console.error('Erro ao gerar backup do Firestore:', erro);
+
+      if (typeof mostrarAvisoSistema === 'function') {
+        mostrarAvisoSistema(
+          'Erro ao gerar backup',
+          erro?.message || 'Falha desconhecida ao gerar o backup do Firestore.'
+        );
+      } else {
+        alert('Erro ao gerar backup do Firestore: ' + (erro?.message || 'falha desconhecida'));
+      }
+    }
+  };
+
+  if (typeof mostrarConfirmacaoSistema === 'function') {
+    mostrarConfirmacaoSistema(
+      'Gerar backup',
+      'Deseja realmente gerar o backup do Firestore agora? Será feito o download de um arquivo JSON com os dados disponíveis.',
+      executarBackup
+    );
+  } else {
+    const confirmar = confirm('Deseja realmente gerar o backup do Firestore agora?');
+    if (confirmar) executarBackup();
+  }
+};
 
     </script>
 <script src="https://cdn.jsdelivr.net/npm/quill@2/dist/quill.js"></script>

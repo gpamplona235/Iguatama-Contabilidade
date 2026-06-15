@@ -1697,176 +1697,158 @@ body.print-retencao .col-retencao {
 }
 
 
+/* ========================================================
+   NOVO ESTILO MURAL DE LEMBRETES - MAIS FORMAL E ALINHADO
+   ======================================================== */
+
+/* Painel Geral - Menos arredondado para casar com os outros painéis */
 .mural-clean-panel {
     background: #ffffff;
     border: 1px solid #cfd7df;
-    border-radius: 8px;
+    border-radius: 4px; /* Reduzido de 8px para 4px */
     box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     overflow: hidden;
 }
 
+/* Cabeçalho - Agora usando o azul escuro padrão do sistema */
 .mural-clean-header {
-  background: #0f3b5e;
-  padding: 18px 20px;
-  border-bottom: 1px solid #0a2942;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+    background-color: #0f3b5e;
+    border-bottom: 1px solid #0a2942;
+    padding: 16px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
 }
+
 .mural-clean-header h2 {
-  margin: 0;
-  font-size: 16px;
-  color: #ffffff;
-  font-weight: bold;
+    margin: 0;
+    font-size: 16px;
+    color: #ffffff;
+    font-weight: normal; /* Mais formal que bold */
+    letter-spacing: 0.5px;
 }
 
 .mural-clean-subtitle {
-  margin-top: 4px;
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.85);
+    margin-top: 4px;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.75); /* Texto suavizado no fundo escuro */
 }
 
+/* Botão "Abrir lista completa" do topo */
 .mural-clean-link {
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  background: rgba(255, 255, 255, 0.12);
-  color: #ffffff;
-  font-size: 12px;
-  font-weight: bold;
-  cursor: pointer;
-  padding: 8px 12px;
-  border-radius: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    background: transparent;
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 6px 12px;
+    border-radius: 3px;
+    transition: background 0.2s;
 }
 
 .mural-clean-link:hover {
-  background: rgba(255, 255, 255, 0.22);
+    background: rgba(255, 255, 255, 0.1);
+    border-color: #ffffff;
 }
 
+/* Fundo da Lista - Sem espaçamento entre itens (Formal inbox) */
 .mural-clean-lista {
-    padding: 14px;
+    padding: 0;
+    background: #ffffff;
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    background: #fafbfc;
+    gap: 0; /* Remove os buracos entre os itens */
 }
 
+/* Linha do Lembrete */
 .mural-clean-item {
     display: grid;
     grid-template-columns: 1fr auto;
     gap: 14px;
     align-items: center;
-    padding: 14px 16px;
-    border: 1px solid #d7e0e8;
-    border-radius: 8px;
+    padding: 16px 20px;
+    border: none;
+    border-bottom: 1px solid #eef2f5;
+    border-radius: 0; /* Tira as curvas internas */
     background: #ffffff;
-    transition: background-color 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+    transition: background-color 0.15s ease;
 }
 
+.mural-clean-item:last-child {
+    border-bottom: none;
+}
+
+/* Efeito de marcação elegante no hover */
 .mural-clean-item:hover {
-    background: #f4f8fb;
-    border-color: #bacbd8;
-    box-shadow: 0 2px 8px rgba(15, 59, 94, 0.06);
+    background: #f8fafc;
+    box-shadow: inset 3px 0 0 #0f3b5e; /* Faixa azul lateral */
 }
 
-.mural-clean-main {
-    min-width: 0;
-}
-
-.mural-clean-linha1 {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    flex-wrap: wrap;
-    margin-bottom: 8px;
-}
-
+/* Textos */
 .mural-clean-titulo {
-    font-size: 15px;
+    font-size: 14px; /* Levemente menor para caber mais informação */
     font-weight: bold;
-    color: #0f3b5e;
+    color: #2c3e50;
     line-height: 1.4;
 }
 
 .mural-clean-resumo {
     font-size: 13px;
-    color: #495057;
+    color: #5a6774;
     line-height: 1.5;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
 }
 
-.mural-clean-meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    font-size: 12px;
-    color: #66727d;
-    line-height: 1.45;
-}
-
-.mural-meta-chip {
-    display: inline-flex;
-    align-items: center;
-    padding: 4px 8px;
-    border-radius: 999px;
-    background: #eef3f7;
-    border: 1px solid #d7e0e8;
-    color: #425466;
-    font-size: 11px;
-    font-weight: bold;
-}
-
-.mural-meta-chip.criador {
-    background: #eef6fb;
-    border-color: #cfe0ec;
-    color: #0f3b5e;
-}
-
-.mural-clean-acoes {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-}
-
+/* Botão de Ação do Item (Ex: "Resolver", "Visualizar") */
 .mural-clean-btn {
-    border: 1px solid #0a2942;
-    background: #0f3b5e;
-    color: #ffffff;
-    border-radius: 4px;
-    padding: 8px 12px;
+    border: 1px solid #bac5d0;
+    background: #fbfcfd;
+    color: #0f3b5e;
+    border-radius: 3px;
+    padding: 6px 14px;
     font-size: 12px;
     font-weight: bold;
     cursor: pointer;
+    transition: 0.2s;
     white-space: nowrap;
 }
 
 .mural-clean-btn:hover {
-    background: #0a2942;
+    background: #eef3f7;
+    border-color: #0f3b5e;
 }
 
-.mural-clean-empty {
-    text-align: center;
-    padding: 20px 14px;
-    color: #6c757d;
-    font-size: 13px;
-    border: 1px dashed #dce4ec;
-    border-radius: 8px;
-    background: #fbfcfd;
-}
-
+/* Badges / Chips mais retangulares e profissionais */
 .mural-clean-lista .prioridade-badge {
-    padding: 4px 9px;
-    font-size: 11px;
-    border-radius: 999px;
-    line-height: 1.4;
+    border-radius: 3px; /* Sai formato pílula, entra formato etiqueta */
+    padding: 3px 8px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
-@media (max-width: 720px) {
-    .mural-clean-item {
-        grid-template-columns: 1fr;
-    }
+.mural-meta-chip {
+    border-radius: 3px;
+    background: #f4f6f8;
+    border: 1px solid #dce4ec;
+    color: #495057;
+    font-size: 11px;
+    font-weight: bold;
+    padding: 3px 8px;
+    display: inline-flex;
+    align-items: center;
+}
 
-    .mural-clean-acoes {
-        justify-content: flex-start;
-    }
+/* Chip de quem criou o lembrete, fundido com o fundo sem borda */
+.mural-meta-chip.criador {
+    background: transparent;
+    border: none;
+    color: #66727d;
+    padding: 0;
 }
 
 #fatLancResumo.fat-lanc-resumo-simples {
@@ -1918,6 +1900,22 @@ body.print-retencao .col-retencao {
 
 #tela-consulta #panel-issqn .panel-header h2 {
     color: #ffffff !important;
+}
+
+
+.panel,
+.materiais-panel,
+.lembretes-editor-card,
+.mural-clean-panel,
+.bs-card,
+.bs-total-box,
+.bs-liquido-box,
+.home-card,
+.lembrete-kpi,
+.resultado-caixa,
+.box-destaque {
+    border: 2px solid #b9c8d6;
+    border-radius: 4px;
 }
 
     </style>
@@ -2435,15 +2433,86 @@ body.print-retencao .col-retencao {
 <!-- HOMEPAGE -->
 <div id="tela-home" class="screen-section active">
   <style>
-    .home-grid { display: grid; grid-template-columns: 1.5fr 1fr; gap: 24px; max-width: 1500px; margin: 30px auto; width: 98%; align-items: start; }
-    .home-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
-    .home-card { background: #fff; border: 1px solid #cfd7df; border-radius: 8px; padding: 20px; transition: 0.2s; cursor: pointer; display: flex; flex-direction: column; gap: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); text-align: left; }
-    .home-card:hover { border-color: #0f3b5e; box-shadow: 0 4px 12px rgba(0,0,0,0.08); transform: translateY(-2px); }
-    .home-card.disabled { opacity: 0.6; cursor: not-allowed; border-style: dashed; }
-    .home-card.disabled:hover { transform: none; border-color: #cfd7df; box-shadow: none; }
-    .card-title { font-size: 16px; font-weight: bold; color: #0f3b5e; margin: 0; }
-    .card-desc { font-size: 12px; color: #66727d; margin: 0; line-height: 1.4; }
-    .badge-manutencao { font-size: 10px; background: #fff3cd; color: #856404; padding: 3px 8px; border-radius: 4px; border: 1px solid #ffeeba; align-self: flex-start; margin-bottom: 6px; font-weight: bold; }
+.home-grid {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 24px;
+    max-width: 1500px;
+    margin: 30px auto;
+    width: 98%;
+    align-items: start;
+}
+
+.home-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 16px;
+}
+
+.home-card {
+    background: #ffffff;
+    border: 2px solid #0f3b5e;
+    border-radius: 4px;
+    padding: 20px;
+    transition: background-color 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    text-align: left;
+}
+
+.home-card:hover {
+    border-color: #0a2942;
+    background: #f8fafc;
+    box-shadow: 0 4px 12px rgba(15, 59, 94, 0.10);
+    transform: translateY(-2px);
+}
+
+.home-card.disabled {
+    opacity: 0.72;
+    cursor: not-allowed;
+    border: 2px solid #b8c7d6;
+    border-radius: 4px;
+    border-style: solid;
+    background: #f8fafc;
+}
+
+.home-card.disabled:hover {
+    transform: none;
+    border-color: #b8c7d6;
+    box-shadow: none;
+    background: #f8fafc;
+}
+
+.card-title {
+    font-size: 16px;
+    font-weight: bold;
+    color: #0f3b5e;
+    margin: 0;
+}
+
+.card-desc {
+    font-size: 12px;
+    color: #66727d;
+    margin: 0;
+    line-height: 1.4;
+}
+
+.badge-manutencao {
+    font-size: 10px;
+    background: #fff3cd;
+    color: #856404;
+    padding: 3px 8px;
+    border-radius: 3px;
+    border: 1px solid #ffe08a;
+    align-self: flex-start;
+    margin-bottom: 6px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
     
     .badge-descontinuado {
     font-size: 10px;
@@ -2515,7 +2584,7 @@ body.print-retencao .col-retencao {
   <div class="home-grid">
     <!-- COLUNA 1: BOTÕES DE ACESSO RÁPIDO -->
     <div>
-      <h2 style="font-size: 18px; color: #2c3e50; margin-bottom: 20px;">Acesso Rápido</h2>
+      <h2 style="font-size: 18px; color: #2c3e50; margin-bottom: 20px;">ACESSO RÁPIDO</h2>
       
      <div class="home-cards">
   <button type="button" class="home-card" onclick="mostrarTela('consulta')">
@@ -2572,7 +2641,7 @@ body.print-retencao .col-retencao {
   <button type="button" class="home-card" onclick="fazerBackupFirebase()">
   <div class="badge-novo">NOVO</div>
   <div class="card-title">Backup dos Dados</div>
-  <div class="card-desc">Baixe um arquivo JSON com as coleções principais salvas no Firestore.</div>
+  <div class="card-desc">Baixe um arquivo JSON com as coleções principais salvas no servidor.</div>
 </button>
 </div>
     </div>
@@ -5272,40 +5341,52 @@ window.novoLembrete = function() {
     abrirAbaLembretes('editor');
 };
 
+
 window.editarLembrete = function(id) {
     const item = lembretesLista.find(function(x) { return x.id === id; });
     if (!item) return;
 
     lembreteAtualId = item.id;
     inicializarQuillLembretes();
-
     document.getElementById('lembreteTitulo').value = item.titulo || '';
     document.getElementById('lembreteCategoria').value = item.categoria || '';
-    document.getElementById('lembretePrioridade').value = String(item.prioridade || '2');
+    document.getElementById('lembretePrioridade').value = String(item.prioridade || 2);
     document.getElementById('lembreteConcluido').checked = !!item.concluido;
 
-    if (lembretesQuill) lembretesQuill.root.innerHTML = item.conteudoHtml || '';
+    if (lembretesQuill) {
+        lembretesQuill.root.innerHTML = item.conteudoHtml || '';
+    }
 
     preencherMetadadosLembrete(item);
     abrirAbaLembretes('editor');
 };
 
-window.editarLembrete = function(id) {
-    const item = lembretesLista.find(function(x) { return x.id === id; });
-    if (!item) return;
+function atualizarCategoriasLembretes() {
+    const selectFiltro = document.getElementById('lembretesFiltroCategoria');
+    const datalist = document.getElementById('listaCategoriasLembrete');
 
-    lembreteAtualId = item.id;
-    inicializarQuillLembretes();
+    if (!selectFiltro || !datalist) return;
 
-    document.getElementById('lembreteTitulo').value = item.titulo || '';
-    document.getElementById('lembretePrioridade').value = String(item.prioridade || '2');
-    document.getElementById('lembreteConcluido').checked = !!item.concluido;
+    const valorAtual = selectFiltro.value || 'todas';
 
-    if (lembretesQuill) lembretesQuill.root.innerHTML = item.conteudoHtml || '';
+    const categorias = [...new Set(
+        (Array.isArray(lembretesLista) ? lembretesLista : [])
+            .map(item => String(item.categoria || '').trim())
+            .filter(Boolean)
+    )].sort((a, b) => a.localeCompare(b, 'pt-BR', { sensitivity: 'base' }));
 
-    preencherMetadadosLembrete(item);
-    abrirAbaLembretes('editor');
-};
+    selectFiltro.innerHTML =
+        '<option value="todas">Todas as categorias</option>' +
+        categorias.map(cat =>
+            `<option value="${escaparHtmlLembretes(cat)}">${escaparHtmlLembretes(cat)}</option>`
+        ).join('');
+
+    datalist.innerHTML = categorias.map(cat =>
+        `<option value="${escaparHtmlLembretes(cat)}"></option>`
+    ).join('');
+
+    selectFiltro.value = categorias.includes(valorAtual) ? valorAtual : 'todas';
+}
 
 function obterLembretesFiltrados() {
   const busca = String(document.getElementById('lembretesBusca')?.value || '').trim().toLowerCase();
@@ -5574,6 +5655,11 @@ window.carregarLembretesNuvem = async function() {
 
     if (!window.auth?.currentUser) {
         lembretesLista = [];
+
+        if (typeof atualizarCategoriasLembretes === 'function') {
+            atualizarCategoriasLembretes();
+        }
+
         if (typeof atualizarResumoLembretes === 'function') {
             atualizarResumoLembretes();
         }
@@ -5606,14 +5692,20 @@ window.carregarLembretesNuvem = async function() {
             throw new Error('Firestore não está disponível no escopo global.');
         }
 
-        const snapshot = await window.fsGetDocs(window.fsCollection(window.db, 'Lembretes'));
+        const snapshot = await window.fsGetDocs(
+            window.fsCollection(window.db, 'Lembretes')
+        );
+
         const lista = [];
 
         snapshot.forEach(function(docItem) {
             const dados = docItem.data() || {};
+
             lista.push({
                 id: docItem.id,
                 ...dados,
+                categoria: String(dados.categoria || '').trim() || 'Geral',
+                prioridade: String(dados.prioridade || '2').trim(),
                 conteudoTexto: dados.conteudoTexto || extrairTextoHtmlLembrete(dados.conteudoHtml || '')
             });
         });
@@ -5625,6 +5717,10 @@ window.carregarLembretesNuvem = async function() {
         });
 
         lembretesLista = lista;
+
+        if (typeof atualizarCategoriasLembretes === 'function') {
+            atualizarCategoriasLembretes();
+        }
 
         if (typeof atualizarResumoLembretes === 'function') {
             atualizarResumoLembretes();
@@ -5639,8 +5735,15 @@ window.carregarLembretesNuvem = async function() {
                 return x.id === lembreteAtualId;
             });
 
-            if (atual && typeof preencherMetadadosLembrete === 'function') {
-                preencherMetadadosLembrete(atual);
+            if (atual) {
+                const campoCategoria = document.getElementById('lembreteCategoria');
+                if (campoCategoria) {
+                    campoCategoria.value = atual.categoria || 'Geral';
+                }
+
+                if (typeof preencherMetadadosLembrete === 'function') {
+                    preencherMetadadosLembrete(atual);
+                }
             }
         }
 
@@ -5650,6 +5753,10 @@ window.carregarLembretesNuvem = async function() {
     } catch (erro) {
         console.error('Erro ao carregar lembretes', erro);
         lembretesLista = [];
+
+        if (typeof atualizarCategoriasLembretes === 'function') {
+            atualizarCategoriasLembretes();
+        }
 
         if (typeof atualizarResumoLembretes === 'function') {
             atualizarResumoLembretes();
@@ -9253,14 +9360,141 @@ window.fazerBackupFirebase = function () {
   if (typeof mostrarConfirmacaoSistema === 'function') {
     mostrarConfirmacaoSistema(
       'Gerar backup',
-      'Deseja realmente gerar o backup do Firestore agora? Será feito o download de um arquivo JSON com os dados disponíveis.',
+      'Deseja realmente gerar o backup do servidor agora? Será feito o download de um arquivo JSON com os dados disponíveis.',
       executarBackup
     );
   } else {
-    const confirmar = confirm('Deseja realmente gerar o backup do Firestore agora?');
+    const confirmar = confirm('Deseja realmente gerar o backup do servidor agora?');
     if (confirmar) executarBackup();
   }
 };
+
+
+(function() {
+    const alertNativo = window.alert;
+    const confirmNativo = window.confirm;
+    const promptNativo = window.prompt;
+
+    function fecharModalSistemaGlobal() {
+        const modal = document.getElementById('modalSistema');
+        if (modal) modal.style.display = 'none';
+    }
+
+    function garantirModalSistema() {
+        const modal = document.getElementById('modalSistema');
+        const tituloEl = document.getElementById('modalTitulo');
+        const mensagemEl = document.getElementById('modalMensagem');
+        const footerEl = document.getElementById('modalFooter');
+        return { modal, tituloEl, mensagemEl, footerEl };
+    }
+
+    window.alert = function(mensagem) {
+        const { modal, tituloEl, mensagemEl, footerEl } = garantirModalSistema();
+        if (!modal || !tituloEl || !mensagemEl || !footerEl) {
+            return alertNativo(mensagem);
+        }
+
+        tituloEl.textContent = 'Aviso';
+        mensagemEl.innerHTML = `<div style="line-height:1.55;">${String(mensagem || '')}</div>`;
+        footerEl.innerHTML = `
+            <button type="button" class="btn-primary" style="width:auto;padding:8px 16px;" id="btnAlertaOk">OK</button>
+        `;
+        modal.style.display = 'flex';
+
+        const btn = document.getElementById('btnAlertaOk');
+        if (btn) {
+            btn.focus();
+            btn.onclick = fecharModalSistemaGlobal;
+        }
+    };
+
+    window.confirm = function(mensagem) {
+        const { modal, tituloEl, mensagemEl, footerEl } = garantirModalSistema();
+        if (!modal || !tituloEl || !mensagemEl || !footerEl) {
+            return confirmNativo(mensagem);
+        }
+
+        return new Promise(function(resolve) {
+            tituloEl.textContent = 'Confirmação';
+            mensagemEl.innerHTML = `<div style="line-height:1.55;">${String(mensagem || '')}</div>`;
+            footerEl.innerHTML = `
+                <button type="button" class="btn-cancelar-modal" id="btnConfirmNao">Cancelar</button>
+                <button type="button" class="btn-primary" style="width:auto;padding:8px 16px;" id="btnConfirmSim">Confirmar</button>
+            `;
+            modal.style.display = 'flex';
+
+            const btnNao = document.getElementById('btnConfirmNao');
+            const btnSim = document.getElementById('btnConfirmSim');
+
+            function fechar(resultado) {
+                fecharModalSistemaGlobal();
+                resolve(resultado);
+            }
+
+            if (btnNao) btnNao.onclick = function() { fechar(false); };
+            if (btnSim) {
+                btnSim.focus();
+                btnSim.onclick = function() { fechar(true); };
+            }
+        });
+    };
+
+    window.prompt = function(mensagem, valorPadrao = '') {
+        const { modal, tituloEl, mensagemEl, footerEl } = garantirModalSistema();
+        if (!modal || !tituloEl || !mensagemEl || !footerEl) {
+            return promptNativo(mensagem, valorPadrao);
+        }
+
+        return new Promise(function(resolve) {
+            tituloEl.textContent = 'Digite uma informação';
+            mensagemEl.innerHTML = `
+                <div style="line-height:1.55; margin-bottom:12px;">${String(mensagem || '')}</div>
+                <input type="text" id="modalPromptInput" value="${String(valorPadrao || '').replace(/"/g, '&quot;')}"
+                       style="width:100%; box-sizing:border-box; padding:10px 12px; border:1px solid #bac5d0; border-radius:4px; font-size:14px;">
+            `;
+            footerEl.innerHTML = `
+                <button type="button" class="btn-cancelar-modal" id="btnPromptCancelar">Cancelar</button>
+                <button type="button" class="btn-primary" style="width:auto;padding:8px 16px;" id="btnPromptOk">OK</button>
+            `;
+            modal.style.display = 'flex';
+
+            const input = document.getElementById('modalPromptInput');
+            const btnCancelar = document.getElementById('btnPromptCancelar');
+            const btnOk = document.getElementById('btnPromptOk');
+
+            function fechar(valor) {
+                fecharModalSistemaGlobal();
+                resolve(valor);
+            }
+
+            if (input) {
+                input.focus();
+                input.select();
+                input.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') fechar(input.value);
+                    if (e.key === 'Escape') fechar(null);
+                });
+            }
+
+            if (btnCancelar) btnCancelar.onclick = function() { fechar(null); };
+            if (btnOk) btnOk.onclick = function() { fechar(input ? input.value : ''); };
+        });
+    };
+
+    const modal = document.getElementById('modalSistema');
+    if (modal) {
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) fecharModalSistemaGlobal();
+        });
+    }
+
+    document.addEventListener('keydown', function(e) {
+        const modal = document.getElementById('modalSistema');
+        if (e.key === 'Escape' && modal && modal.style.display === 'flex') {
+            fecharModalSistemaGlobal();
+        }
+    });
+})();
 
     </script>
 <script src="https://cdn.jsdelivr.net/npm/quill@2/dist/quill.js"></script>

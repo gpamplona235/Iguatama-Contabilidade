@@ -1918,6 +1918,502 @@ body.print-retencao .col-retencao {
     border-radius: 4px;
 }
 
+.rel-fat-capa,
+.rel-fat-bloco,
+.rel-fat-tabela-wrap {
+    page-break-inside: avoid;
+}
+
+.rel-fat-print {
+    display: none;
+}
+
+@media print {
+    body.print-relatorio-faturas * {
+        visibility: hidden !important;
+    }
+
+    body.print-relatorio-faturas #fatRelatorioImpressao,
+    body.print-relatorio-faturas #fatRelatorioImpressao * {
+        visibility: visible !important;
+    }
+
+    body.print-relatorio-faturas #fatRelatorioImpressao {
+        display: block !important;
+        position: absolute !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 100% !important;
+        padding: 12mm 10mm !important;
+        box-sizing: border-box !important;
+        background: #ffffff !important;
+        color: #1f2d3d !important;
+        font-family: Arial, Helvetica, sans-serif !important;
+    }
+
+    .rel-fat-print {
+        display: block !important;
+        position: relative;
+        min-height: 100%;
+    }
+
+    .rel-fat-marca-dagua {
+        position: fixed;
+        top: 42%;
+        left: 50%;
+        transform: translate(-50%, -50%) rotate(-32deg);
+        font-size: 42px;
+        color: rgba(15, 59, 94, 0.08);
+        font-weight: bold;
+        white-space: nowrap;
+        z-index: 0;
+        pointer-events: none;
+    }
+
+    .rel-fat-conteudo {
+        position: relative;
+        z-index: 2;
+    }
+
+    .rel-fat-capa {
+        border: 2px solid #0f3b5e;
+        padding: 22px 24px;
+        margin-bottom: 18px;
+        border-radius: 6px;
+    }
+
+    .rel-fat-topo {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 16px;
+        border-bottom: 2px solid #d9e2ea;
+        padding-bottom: 14px;
+        margin-bottom: 18px;
+    }
+
+    .rel-fat-orgao {
+        font-size: 13px;
+        color: #5b6b79;
+        line-height: 1.45;
+    }
+
+    .rel-fat-titulo {
+        font-size: 24px;
+        color: #0f3b5e;
+        font-weight: bold;
+        margin: 0 0 8px 0;
+        line-height: 1.2;
+    }
+
+    .rel-fat-subtitulo {
+        font-size: 13px;
+        color: #4d5c69;
+        margin: 0;
+        line-height: 1.5;
+    }
+
+    .rel-fat-meta {
+        width: 290px;
+        border: 1px solid #d7e0e8;
+        border-radius: 6px;
+        padding: 12px 14px;
+        background: #f8fafc !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .rel-fat-meta-linha {
+        font-size: 12px;
+        color: #33424f;
+        margin-bottom: 6px;
+        line-height: 1.45;
+    }
+
+    .rel-fat-kpis {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+        margin-bottom: 18px;
+    }
+
+    .rel-fat-kpi {
+        border: 1px solid #cfd8e1;
+        border-radius: 6px;
+        padding: 12px;
+        background: #fbfcfd !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .rel-fat-kpi .rotulo {
+        font-size: 11px;
+        text-transform: uppercase;
+        color: #667685;
+        font-weight: bold;
+        margin-bottom: 6px;
+    }
+
+    .rel-fat-kpi .valor {
+        font-size: 20px;
+        color: #0f3b5e;
+        font-weight: bold;
+        line-height: 1.1;
+    }
+
+    .rel-fat-bloco {
+        margin-top: 16px;
+        margin-bottom: 18px;
+    }
+
+    .rel-fat-bloco-titulo {
+        font-size: 15px;
+        font-weight: bold;
+        color: #0f3b5e;
+        border-left: 5px solid #0f3b5e;
+        padding-left: 10px;
+        margin-bottom: 10px;
+    }
+
+    .rel-fat-tabela {
+        width: 100%;
+        border-collapse: collapse;
+        table-layout: fixed;
+        font-size: 11px;
+    }
+
+    .rel-fat-tabela th,
+    .rel-fat-tabela td {
+        border: 1px solid #c9d4dd;
+        padding: 7px 8px;
+        vertical-align: top;
+        word-break: break-word;
+        overflow-wrap: anywhere;
+    }
+
+    .rel-fat-tabela th {
+        background: #eef3f7 !important;
+        color: #0f3b5e;
+        font-weight: bold;
+        text-transform: uppercase;
+        font-size: 10px;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .rel-fat-status {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 999px;
+        font-size: 10px;
+        font-weight: bold;
+        text-transform: uppercase;
+        border: 1px solid transparent;
+    }
+
+    .rel-fat-status.pago {
+        background: #e6f4ea !important;
+        color: #1e4620 !important;
+        border-color: #c8e6c9 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .rel-fat-status.pendente {
+        background: #fff3cd !important;
+        color: #856404 !important;
+        border-color: #ffeeba !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .rel-fat-rodape {
+        margin-top: 18px;
+        border-top: 1px solid #d7e0e8;
+        padding-top: 10px;
+        font-size: 11px;
+        color: #5f6d79;
+        line-height: 1.5;
+    }
+}
+
+.rel-fat-print {
+    display: none;
+}
+
+@media print {
+    @page {
+        margin: 7mm;
+    }
+
+    body.print-relatorio-faturas * {
+        visibility: hidden !important;
+    }
+
+    body.print-relatorio-faturas #fatRelatorioImpressao,
+    body.print-relatorio-faturas #fatRelatorioImpressao * {
+        visibility: visible !important;
+    }
+
+    body.print-relatorio-faturas #fatRelatorioImpressao {
+        display: block !important;
+        position: absolute !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        box-sizing: border-box !important;
+        background: #ffffff !important;
+        color: #1c2733 !important;
+        font-family: Arial, Helvetica, sans-serif !important;
+    }
+
+    .rel-fat-print {
+        display: block !important;
+        width: 100%;
+    }
+
+    .rel-fat-marca-dagua {
+        position: fixed;
+        top: 49%;
+        left: 50%;
+        transform: translate(-50%, -50%) rotate(-32deg);
+        font-size: 36px;
+        color: rgba(15, 59, 94, 0.06);
+        font-weight: bold;
+        white-space: nowrap;
+        z-index: 0;
+        pointer-events: none;
+    }
+
+    .rel-fat-conteudo {
+        position: relative;
+        z-index: 2;
+        width: 100%;
+    }
+
+    .rel-fat-capa {
+        border: 1px solid #23384d;
+        border-radius: 0;
+        padding: 10px 12px;
+        margin-bottom: 8px;
+    }
+
+    .rel-fat-topo {
+        display: grid;
+        grid-template-columns: 1.6fr 0.9fr;
+        gap: 10px;
+        align-items: start;
+        border-bottom: 1px solid #b8c6d2;
+        padding-bottom: 8px;
+        margin-bottom: 8px;
+    }
+
+    .rel-fat-orgao {
+        font-size: 11px;
+        color: #4c5a67;
+        line-height: 1.35;
+        margin-bottom: 4px;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+    }
+
+    .rel-fat-titulo {
+        font-size: 20px;
+        color: #0f3b5e;
+        font-weight: bold;
+        margin: 0 0 4px 0;
+        line-height: 1.15;
+        text-transform: uppercase;
+    }
+
+    .rel-fat-subtitulo {
+        font-size: 11px;
+        color: #566471;
+        margin: 0;
+        line-height: 1.4;
+    }
+
+    .rel-fat-meta {
+        border: 1px solid #c8d2db;
+        border-radius: 0;
+        padding: 8px 10px;
+        background: #f8fafc !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .rel-fat-meta-linha {
+        font-size: 10.5px;
+        color: #33424f;
+        margin-bottom: 4px;
+        line-height: 1.35;
+    }
+
+    .rel-fat-kpis {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 6px;
+        margin-bottom: 0;
+    }
+
+    .rel-fat-kpi {
+        border: 1px solid #c8d2db;
+        border-radius: 0;
+        padding: 7px 8px;
+        background: #fbfcfd !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+        min-height: 44px;
+    }
+
+    .rel-fat-kpi .rotulo {
+        font-size: 9px;
+        text-transform: uppercase;
+        color: #687684;
+        font-weight: bold;
+        margin-bottom: 3px;
+        letter-spacing: 0.2px;
+    }
+
+    .rel-fat-kpi .valor {
+        font-size: 15px;
+        color: #0f3b5e;
+        font-weight: bold;
+        line-height: 1.05;
+    }
+
+    .rel-fat-endereco-bloco {
+        margin-bottom: 7px;
+        border: 1px solid #c3ced8;
+        border-radius: 0;
+        page-break-inside: avoid;
+    }
+
+    .rel-fat-endereco-topo {
+        display: grid;
+        grid-template-columns: 1.6fr 0.8fr;
+        gap: 10px;
+        align-items: start;
+        padding: 6px 8px;
+        border-bottom: 1px solid #d4dde5;
+        background: #f7f9fb !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .rel-fat-endereco-titulo {
+        font-size: 12px;
+        font-weight: bold;
+        color: #0f3b5e;
+        margin-bottom: 2px;
+        line-height: 1.25;
+        text-transform: uppercase;
+    }
+
+    .rel-fat-endereco-sub {
+        font-size: 10px;
+        color: #4f5e6b;
+        line-height: 1.35;
+    }
+
+    .rel-fat-endereco-total {
+        text-align: right;
+        min-width: 140px;
+    }
+
+    .rel-fat-endereco-total .rotulo {
+        font-size: 9px;
+        text-transform: uppercase;
+        color: #65727e;
+        font-weight: bold;
+        margin-bottom: 2px;
+    }
+
+    .rel-fat-endereco-total .valor {
+        font-size: 14px;
+        color: #0f3b5e;
+        font-weight: bold;
+        line-height: 1.1;
+    }
+
+    .rel-fat-tabela {
+        width: 100%;
+        border-collapse: collapse;
+        table-layout: fixed;
+        font-size: 9.6px;
+    }
+
+    .rel-fat-tabela th,
+    .rel-fat-tabela td {
+        border: 1px solid #c7d1da;
+        padding: 4px 5px;
+        vertical-align: middle;
+        word-break: break-word;
+        overflow-wrap: anywhere;
+        line-height: 1.2;
+    }
+
+    .rel-fat-tabela th {
+        background: #eaf0f5 !important;
+        color: #0f3b5e;
+        font-weight: bold;
+        text-transform: uppercase;
+        font-size: 9px;
+        letter-spacing: 0.15px;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .rel-fat-tabela td {
+        background: #ffffff !important;
+        color: #1f2d3a;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .rel-fat-status {
+        display: inline-block;
+        padding: 2px 5px;
+        border-radius: 0;
+        font-size: 8.5px;
+        font-weight: bold;
+        text-transform: uppercase;
+        border: 1px solid transparent;
+        line-height: 1.1;
+    }
+
+    .rel-fat-status.pago {
+        background: #e6f4ea !important;
+        color: #1e4620 !important;
+        border-color: #c8e6c9 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .rel-fat-status.pendente {
+        background: #fff3cd !important;
+        color: #856404 !important;
+        border-color: #ffeeba !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .rel-fat-rodape {
+        margin-top: 8px;
+        border-top: 1px solid #c9d4dd;
+        padding-top: 6px;
+        font-size: 9.5px;
+        color: #5b6873;
+        line-height: 1.35;
+    }
+
+    .rel-fat-rodape div {
+        margin-bottom: 2px;
+    }
+}
+
     </style>
     <link href="https://cdn.jsdelivr.net/npm/quill@2/dist/quill.snow.css" rel="stylesheet">
 </head>
@@ -2041,11 +2537,31 @@ body.print-retencao .col-retencao {
 </div>
         </div>
 
-        <div style="display:flex; gap:8px; flex-wrap:wrap;">
-<button type="button" class="btn-primary" onclick="abrirModalCadastroFatura()" style="width:auto; background:rgba(255,255,255,0.12); color:#ffffff; border:1px solid rgba(255,255,255,0.35);">
-  Novo Endereço
-</button>
-        </div>
+<div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+    <button
+        type="button"
+        class="btn-primary"
+        onclick="abrirModalRelatorioFaturas()"
+        style="width:auto; background:rgba(255,255,255,0.12); color:#ffffff; border:1px solid rgba(255,255,255,0.35); display:inline-flex; align-items:center; gap:8px;"
+        title="Gerar relatório de faturas"
+    >
+        <span style="display:inline-flex; align-items:center;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true">
+                <path d="M5 1a2 2 0 0 0-2 2v3H2.5A1.5 1.5 0 0 0 1 7.5v3A1.5 1.5 0 0 0 2.5 12H3v1a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-1h.5a1.5 1.5 0 0 0 1.5-1.5v-3A1.5 1.5 0 0 0 13.5 6H13V3a2 2 0 0 0-2-2H5zm6 5V3a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v3h7zM4 11h8v2a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-2zm9-3.5a.5.5 0 1 1 0 1 .5.5 0 0 1 0-1z"/>
+            </svg>
+        </span>
+        <span>Imprimir Relatório</span>
+    </button>
+
+    <button
+        type="button"
+        class="btn-primary"
+        onclick="abrirModalCadastroFatura()"
+        style="width:auto; background:rgba(255,255,255,0.12); color:#ffffff; border:1px solid rgba(255,255,255,0.35);"
+    >
+        Novo Endereço
+    </button>
+</div>
       </div>
 
       <div class="materiais-body">
@@ -2229,11 +2745,88 @@ body.print-retencao .col-retencao {
   </div>
 </div>
 
+
+
+
     <div class="modal-footer-custom">
       <button type="button" class="btn-cancelar-modal" onclick="fecharModalLancamentoFatura()">Cancelar</button>
       <button type="button" class="btn-primary" onclick="salvarLancamentoFatura()" style="width:auto;">Salvar Lançamento</button>
     </div>
   </div>
+</div>
+
+
+
+
+<div id="modalRelatorioFaturas" class="modal-overlay" style="display:none;">
+    <div class="modal-panel">
+        <div class="modal-header-custom">
+            <h3 style="margin:0; font-size:16px;">Gerar Relatório de Faturas</h3>
+        </div>
+
+        <div class="modal-body-custom">
+            <div class="alert-box alert-neutro" style="margin-bottom:14px;">
+                Escolha como deseja montar o relatório gerencial completo.
+            </div>
+
+            <div class="rel-fat-form">
+                <div class="form-group-calc rel-fat-full">
+                    <label for="relFatModo">Tipo de relatório</label>
+                    <select id="relFatModo" onchange="alternarCamposRelatorioFaturas()">
+                        <option value="todos">Tudo</option>
+                        <option value="secretaria">Por secretaria</option>
+                        <option value="ano">Por ano</option>
+                        <option value="fornecedor">Por fornecedor</option>
+                    </select>
+                </div>
+
+                <div class="form-group-calc" id="grupoRelFatSecretaria" style="display:none;">
+                    <label for="relFatSecretaria">Secretaria</label>
+                    <select id="relFatSecretaria">
+                        <option value="">Selecione</option>
+                    </select>
+                </div>
+
+                <div class="form-group-calc" id="grupoRelFatAno" style="display:none;">
+                    <label for="relFatAno">Ano</label>
+                    <input type="number" id="relFatAno" value="2026">
+                </div>
+
+                <div class="form-group-calc" id="grupoRelFatFornecedor" style="display:none;">
+                    <label for="relFatFornecedor">Fornecedor</label>
+                    <select id="relFatFornecedor">
+                        <option value="">Selecione</option>
+                        <option value="CEMIG">CEMIG</option>
+                        <option value="SAAE">SAAE</option>
+                        <option value="ALGAR">ALGAR</option>
+                    </select>
+                </div>
+
+                <div class="form-group-calc">
+                    <label for="relFatOrientacao">Orientação da folha</label>
+                    <select id="relFatOrientacao">
+                        <option value="landscape" selected>Paisagem</option>
+                        <option value="portrait">Retrato</option>
+                    </select>
+                </div>
+
+                <div class="form-group-calc rel-fat-full">
+                    <label for="relFatTitulo">Título do relatório</label>
+                    <input type="text" id="relFatTitulo" value="Relatório Gerencial de Controle de Faturas">
+                </div>
+
+                <div class="form-group-calc rel-fat-full">
+                    <label for="relFatObs">Observação no rodapé</label>
+                    <textarea id="relFatObs" placeholder="Ex.: Documento emitido para acompanhamento gerencial da chefia."></textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-footer-custom">
+            <button type="button" class="btn-cancelar-modal" onclick="fecharModalRelatorioFaturas()">Cancelar</button>
+            <button type="button" class="btn-primary" onclick="gerarRelatorioFaturas()" style="width:auto;">Gerar e imprimir</button>
+        </div>
+    </div>
 </div>
 
 <div id="tela-lembretes" class="screen-section">
@@ -9636,6 +10229,569 @@ window.fazerBackupFirebase = function () {
     });
 })();
 
+
+async function abrirModalRelatorioFaturas() {
+    var modal = document.getElementById('modalRelatorioFaturas');
+    var campoAnoTela = document.getElementById('fatFiltroAno');
+    var campoAnoRel = document.getElementById('relFatAno');
+
+    if (!window.auth || !window.auth.currentUser) {
+        mostrarAvisoSistema('Acesso negado', 'Faça login para gerar o relatório.');
+        return;
+    }
+
+    if (!window.db || !window.fsCollection || !window.fsGetDocs) {
+        mostrarAvisoSistema('Erro', 'Firestore não está disponível no escopo global.');
+        return;
+    }
+
+    if (!modal) {
+        mostrarAvisoSistema('Erro', 'O modal do relatório não foi encontrado no HTML.');
+        return;
+    }
+
+    if (!Array.isArray(faturasCache) || !faturasCache.length) {
+        await carregarFaturasTela(true);
+    }
+
+    if (!Array.isArray(faturasCache) || !faturasCache.length) {
+        mostrarAvisoSistema('Sem dados', 'Nenhuma fatura foi carregada para gerar o relatório.');
+        return;
+    }
+
+    preencherSecretariasRelatorioFaturas();
+
+    if (campoAnoRel) {
+        campoAnoRel.value = (campoAnoTela && campoAnoTela.value) ? campoAnoTela.value : new Date().getFullYear();
+    }
+
+    alternarCamposRelatorioFaturas();
+    modal.style.display = 'flex';
+}
+
+function fecharModalRelatorioFaturas() {
+    const modal = document.getElementById('modalRelatorioFaturas');
+    if (modal) modal.style.display = 'none';
+}
+
+function alternarCamposRelatorioFaturas() {
+    const modo = document.getElementById('relFatModo')?.value || 'todos';
+
+    const grupoSecretaria = document.getElementById('grupoRelFatSecretaria');
+    const grupoAno = document.getElementById('grupoRelFatAno');
+    const grupoFornecedor = document.getElementById('grupoRelFatFornecedor');
+
+    if (grupoSecretaria) grupoSecretaria.style.display = modo === 'secretaria' ? 'block' : 'none';
+    if (grupoAno) grupoAno.style.display = modo === 'ano' ? 'block' : 'none';
+    if (grupoFornecedor) grupoFornecedor.style.display = modo === 'fornecedor' ? 'block' : 'none';
+}
+
+function preencherSecretariasRelatorioFaturas() {
+    const select = document.getElementById('relFatSecretaria');
+    if (!select) return;
+
+    const secretarias = [...new Set((faturasCache || [])
+        .map(item => String(item.secretaria || '').trim())
+        .filter(Boolean))]
+        .sort((a, b) => a.localeCompare(b, 'pt-BR'));
+
+    select.innerHTML = '<option value="">Selecione</option>' +
+        secretarias.map(sec => `<option value="${escapeHtmlRelFat(sec)}">${escapeHtmlRelFat(sec)}</option>`).join('');
+}
+
+function escapeHtmlRelFat(valor) {
+    return String(valor ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
+
+function formatarDataHoraRelatorio(data = new Date()) {
+    return data.toLocaleString('pt-BR');
+}
+
+function formatarMoedaRelatorio(valor) {
+    return Number(valor || 0).toLocaleString('pt-BR', {
+        style: 'currency',
+        currency: 'BRL'
+    });
+}
+
+function obterStatusEnderecoNoAno(item, ano) {
+    const lancamentosAno = Array.isArray(item.lancamentos)
+        ? item.lancamentos.filter(l => Number(l.ano) === Number(ano))
+        : [];
+
+    if (!lancamentosAno.length) {
+        return { texto: 'Sem lançamento', classe: 'pendente' };
+    }
+
+    const temPendente = lancamentosAno.some(l => String(l.status || '').toLowerCase() !== 'pago');
+    if (temPendente) return { texto: 'Pendente', classe: 'pendente' };
+
+    return { texto: 'Pago', classe: 'pago' };
+}
+
+function gerarRelatorioFaturas() {
+    var modoEl = document.getElementById('relFatModo');
+    var tituloEl = document.getElementById('relFatTitulo');
+    var obsEl = document.getElementById('relFatObs');
+    var anoEl = document.getElementById('relFatAno');
+    var secretariaEl = document.getElementById('relFatSecretaria');
+    var fornecedorEl = document.getElementById('relFatFornecedor');
+    var area = document.getElementById('fatRelatorioImpressao');
+
+    var modo = modoEl ? modoEl.value : 'todos';
+    var titulo = tituloEl && tituloEl.value.trim() ? tituloEl.value.trim() : 'Relatório Gerencial de Controle de Faturas';
+    var observacao = obsEl ? obsEl.value.trim() : '';
+    var anoSelecionado = Number(anoEl && anoEl.value ? anoEl.value : new Date().getFullYear());
+    var secretariaSelecionada = secretariaEl ? secretariaEl.value.trim() : '';
+    var fornecedorSelecionado = fornecedorEl ? fornecedorEl.value.trim().toUpperCase() : '';
+
+    var dados = Array.isArray(faturasCache) ? faturasCache.slice() : [];
+
+    if (!area) {
+        mostrarAvisoSistema('Erro', 'A área de impressão do relatório não foi encontrada.');
+        return;
+    }
+
+    if (!dados.length) {
+        mostrarAvisoSistema('Sem dados', 'Não existem registros carregados para montar o relatório.');
+        return;
+    }
+
+    if (modo === 'secretaria') {
+        if (!secretariaSelecionada) {
+            mostrarAvisoSistema('Filtro obrigatório', 'Selecione a secretaria para gerar o relatório.');
+            return;
+        }
+        dados = dados.filter(function(item) {
+            return String(item.secretaria || '').trim() === secretariaSelecionada;
+        });
+    }
+
+    if (modo === 'fornecedor') {
+        if (!fornecedorSelecionado) {
+            mostrarAvisoSistema('Filtro obrigatório', 'Selecione o fornecedor para gerar o relatório.');
+            return;
+        }
+        dados = dados.filter(function(item) {
+            return String(item.fornecedor || '').trim().toUpperCase() === fornecedorSelecionado;
+        });
+    }
+
+    if (modo === 'ano') {
+        dados = dados.filter(function(item) {
+            return Array.isArray(item.lancamentos) && item.lancamentos.some(function(l) {
+                return Number(l.ano) === Number(anoSelecionado);
+            });
+        });
+    }
+
+    dados.sort(function(a, b) {
+        return String(a.endereco || '').localeCompare(String(b.endereco || ''), 'pt-BR');
+    });
+
+    if (!dados.length) {
+        mostrarAvisoSistema('Sem dados', 'Nenhum registro foi encontrado para os filtros escolhidos.');
+        return;
+    }
+
+    var totalEnderecos = dados.length;
+    var totalPago = 0;
+    var totalPend = 0;
+    var somaValor = 0;
+
+    function statusAno(item) {
+        var lancamentosAno = Array.isArray(item.lancamentos)
+            ? item.lancamentos.filter(function(l) { return Number(l.ano) === Number(anoSelecionado); })
+            : [];
+
+        if (!lancamentosAno.length) return { texto: 'Sem lançamento', classe: 'pendente' };
+
+        var temPendente = lancamentosAno.some(function(l) {
+            return String(l.status || '').toLowerCase() !== 'pago';
+        });
+
+        return temPendente
+            ? { texto: 'Pendente', classe: 'pendente' }
+            : { texto: 'Pago', classe: 'pago' };
+    }
+
+    var linhasTabela = dados.map(function(item) {
+        var lancamentosAno = Array.isArray(item.lancamentos)
+            ? item.lancamentos.filter(function(l) { return Number(l.ano) === Number(anoSelecionado); })
+            : [];
+
+        var valorAno = lancamentosAno.reduce(function(acc, l) {
+            return acc + Number(l.valor || 0);
+        }, 0);
+
+        var status = statusAno(item);
+
+        if (status.texto === 'Pago') totalPago++;
+        else totalPend++;
+
+        somaValor += valorAno;
+
+        return ''
+            + '<tr>'
+            + '<td>' + escapeHtmlRelFat(item.endereco || '-') + '</td>'
+            + '<td>' + escapeHtmlRelFat(item.fornecedor || '-') + '</td>'
+            + '<td>' + escapeHtmlRelFat(item.numeroInstalacao || '-') + '</td>'
+            + '<td>' + escapeHtmlRelFat(item.secretaria || '-') + '</td>'
+            + '<td>' + escapeHtmlRelFat(item.numeroEmpenho || '-') + '</td>'
+            + '<td>' + formatarMoedaRelatorio(valorAno) + '</td>'
+            + '<td><span class="rel-fat-status ' + status.classe + '">' + escapeHtmlRelFat(status.texto) + '</span></td>'
+            + '</tr>';
+    }).join('');
+
+    var agora = new Date();
+    var geradoEm = agora.toLocaleString('pt-BR');
+
+    var descricaoFiltro = 'Todos os registros cadastrados';
+    if (modo === 'secretaria') descricaoFiltro = 'Secretaria: ' + secretariaSelecionada;
+    if (modo === 'fornecedor') descricaoFiltro = 'Fornecedor: ' + fornecedorSelecionado;
+    if (modo === 'ano') descricaoFiltro = 'Ano: ' + anoSelecionado;
+
+    area.innerHTML = ''
+        + '<div class="rel-fat-print">'
+        + '  <div class="rel-fat-marca-dagua">Gerado em ' + escapeHtmlRelFat(geradoEm) + ' - Contabilidade Municipal de Iguatama</div>'
+        + '  <div class="rel-fat-conteudo">'
+        + '    <div class="rel-fat-capa">'
+        + '      <div class="rel-fat-topo">'
+        + '        <div>'
+        + '          <div class="rel-fat-orgao">PREFEITURA MUNICIPAL DE IGUATAMA<br>CONTABILIDADE MUNICIPAL<br>CONTROLE GERENCIAL DE FATURAS</div>'
+        + '          <h1 class="rel-fat-titulo">' + escapeHtmlRelFat(titulo) + '</h1>'
+        + '          <p class="rel-fat-subtitulo">Relatório profissional para acompanhamento administrativo e apresentação gerencial.</p>'
+        + '        </div>'
+        + '        <div class="rel-fat-meta">'
+        + '          <div class="rel-fat-meta-linha"><strong>Gerado em:</strong> ' + escapeHtmlRelFat(geradoEm) + '</div>'
+        + '          <div class="rel-fat-meta-linha"><strong>Filtro:</strong> ' + escapeHtmlRelFat(descricaoFiltro) + '</div>'
+        + '          <div class="rel-fat-meta-linha"><strong>Ano-base:</strong> ' + escapeHtmlRelFat(String(anoSelecionado)) + '</div>'
+        + '          <div class="rel-fat-meta-linha"><strong>Emitente:</strong> Contabilidade Municipal de Iguatama</div>'
+        + '        </div>'
+        + '      </div>'
+        + '      <div class="rel-fat-kpis">'
+        + '        <div class="rel-fat-kpi"><div class="rotulo">Endereços</div><div class="valor">' + totalEnderecos + '</div></div>'
+        + '        <div class="rel-fat-kpi"><div class="rotulo">Pagos</div><div class="valor">' + totalPago + '</div></div>'
+        + '        <div class="rel-fat-kpi"><div class="rotulo">Pendentes</div><div class="valor">' + totalPend + '</div></div>'
+        + '        <div class="rel-fat-kpi"><div class="rotulo">Total do ano</div><div class="valor" style="font-size:16px;">' + formatarMoedaRelatorio(somaValor) + '</div></div>'
+        + '      </div>'
+        + '    </div>'
+        + '    <div class="rel-fat-bloco">'
+        + '      <div class="rel-fat-bloco-titulo">Relação consolidada das faturas</div>'
+        + '      <div class="rel-fat-tabela-wrap">'
+        + '        <table class="rel-fat-tabela">'
+        + '          <thead><tr>'
+        + '            <th style="width:26%;">Endereço</th>'
+        + '            <th style="width:13%;">Fornecedor</th>'
+        + '            <th style="width:13%;">Instalação</th>'
+        + '            <th style="width:20%;">Secretaria</th>'
+        + '            <th style="width:10%;">Empenho</th>'
+        + '            <th style="width:10%;">Valor no ano</th>'
+        + '            <th style="width:8%;">Situação</th>'
+        + '          </tr></thead>'
+        + '          <tbody>' + linhasTabela + '</tbody>'
+        + '        </table>'
+        + '      </div>'
+        + '    </div>'
+        + '    <div class="rel-fat-rodape">'
+        + '      <div><strong>Observação:</strong> ' + escapeHtmlRelFat(observacao || 'Relatório emitido para fins de acompanhamento interno e controle gerencial das faturas cadastradas no sistema.') + '</div>'
+        + '      <div><strong>Responsável pela emissão:</strong> Contabilidade Municipal de Iguatama.</div>'
+        + '      <div><strong>Documento gerado automaticamente pelo sistema integrado.</strong></div>'
+        + '    </div>'
+        + '  </div>'
+        + '</div>';
+
+    fecharModalRelatorioFaturas();
+    document.body.classList.add('print-relatorio-faturas');
+
+    setTimeout(function() {
+        window.print();
+        setTimeout(function() {
+            document.body.classList.remove('print-relatorio-faturas');
+        }, 400);
+    }, 150);
+}
+
+
+
+async function buscarTodasFaturasParaRelatorio() {
+    if (!window.db || !window.fsCollection || !window.fsGetDocs) {
+        throw new Error('Firestore não está disponível no escopo global.');
+    }
+
+    const snapshot = await window.fsGetDocs(
+        window.fsCollection(window.db, 'FaturasEnderecos')
+    );
+
+    const lista = [];
+
+    for (const docItem of snapshot.docs) {
+        const dados = docItem.data();
+
+        const sub = await window.fsGetDocs(
+            window.fsCollection(window.db, 'FaturasEnderecos', docItem.id, 'lancamentos')
+        );
+
+        const lancamentos = [];
+        sub.forEach(function(lancDoc) {
+            lancamentos.push({ id: lancDoc.id, ...lancDoc.data() });
+        });
+
+        lista.push({
+            id: docItem.id,
+            ...dados,
+            lancamentos: lancamentos
+        });
+    }
+
+    return lista.sort(function(a, b) {
+        return String(a.endereco || '').localeCompare(String(b.endereco || ''), 'pt-BR');
+    });
+}
+
+async function gerarRelatorioFaturas() {
+    const modo = document.getElementById('relFatModo')?.value || 'todos';
+    const titulo = document.getElementById('relFatTitulo')?.value?.trim() || 'Relatório Gerencial de Controle de Faturas';
+    const observacao = document.getElementById('relFatObs')?.value?.trim() || '';
+    const anoSelecionado = Number(document.getElementById('relFatAno')?.value || new Date().getFullYear());
+    const secretariaSelecionada = document.getElementById('relFatSecretaria')?.value?.trim() || '';
+    const fornecedorSelecionado = document.getElementById('relFatFornecedor')?.value?.trim().toUpperCase() || '';
+    const orientacao = document.getElementById('relFatOrientacao')?.value || 'landscape';
+    const area = document.getElementById('fatRelatorioImpressao');
+
+    if (!area) {
+        mostrarAvisoSistema('Erro', 'A área de impressão do relatório não foi encontrada.');
+        return;
+    }
+
+    try {
+        mostrarAvisoSistema('Aguarde', 'Buscando todos os registros de faturas no Firebase...');
+
+        let dados = await buscarTodasFaturasParaRelatorio();
+
+        if (modo === 'secretaria') {
+            if (!secretariaSelecionada) {
+                mostrarAvisoSistema('Filtro obrigatório', 'Selecione a secretaria para gerar o relatório.');
+                return;
+            }
+            dados = dados.filter(item => String(item.secretaria || '').trim() === secretariaSelecionada);
+        }
+
+        if (modo === 'fornecedor') {
+            if (!fornecedorSelecionado) {
+                mostrarAvisoSistema('Filtro obrigatório', 'Selecione o fornecedor para gerar o relatório.');
+                return;
+            }
+            dados = dados.filter(item => String(item.fornecedor || '').trim().toUpperCase() === fornecedorSelecionado);
+        }
+
+        if (modo === 'ano') {
+            dados = dados.filter(item =>
+                Array.isArray(item.lancamentos) &&
+                item.lancamentos.some(l => Number(l.ano) === Number(anoSelecionado))
+            );
+        }
+
+        if (!dados.length) {
+            mostrarAvisoSistema('Sem dados', 'Nenhum registro foi encontrado para os filtros escolhidos.');
+            return;
+        }
+
+        const meses = [
+            'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun',
+            'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'
+        ];
+
+        let totalGeral = 0;
+        let totalPago = 0;
+        let totalPendente = 0;
+
+        const blocos = dados.map(item => {
+            const lancamentosAno = Array.isArray(item.lancamentos)
+                ? item.lancamentos.filter(l => Number(l.ano) === Number(anoSelecionado))
+                : [];
+
+            let totalEndereco = 0;
+
+            const mapaMes = {};
+            lancamentosAno.forEach(l => {
+                mapaMes[Number(l.mes)] = l;
+                totalEndereco += Number(l.valor || 0);
+            });
+
+            const existePendente = lancamentosAno.some(l => String(l.status || '').toLowerCase() !== 'pago');
+            const statusEndereco = lancamentosAno.length
+                ? (existePendente ? 'Pendente' : 'Pago')
+                : 'Sem lançamento';
+
+            if (statusEndereco === 'Pago') totalPago++;
+            else totalPendente++;
+
+            totalGeral += totalEndereco;
+
+            const linhasMeses = meses.map((nomeMes, idx) => {
+                const numeroMes = idx + 1;
+                const dado = mapaMes[numeroMes];
+
+                if (!dado) {
+                    return `
+                        <tr>
+                            <td>${nomeMes}</td>
+                            <td>-</td>
+                            <td><span class="rel-fat-status pendente">Sem lançamento</span></td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                        </tr>
+                    `;
+                }
+
+                const status = String(dado.status || '').toLowerCase() === 'pago'
+                    ? { texto: 'Pago', classe: 'pago' }
+                    : { texto: 'Pendente', classe: 'pendente' };
+
+                return `
+                    <tr>
+                        <td>${nomeMes}</td>
+                        <td>${formatarMoedaRelatorio(dado.valor || 0)}</td>
+                        <td><span class="rel-fat-status ${status.classe}">${status.texto}</span></td>
+                        <td>${escapeHtmlRelFat(dado.dataVencimento || '-')}</td>
+                        <td>${escapeHtmlRelFat(dado.dataRegistro || '-')}</td>
+                        <td>${escapeHtmlRelFat(dado.observacao || '-')}</td>
+                    </tr>
+                `;
+            }).join('');
+
+            return `
+    <div class="rel-fat-endereco-bloco">
+        <div class="rel-fat-endereco-topo">
+            <div>
+                <div class="rel-fat-endereco-titulo">${escapeHtmlRelFat(item.endereco || '-')}</div>
+                <div class="rel-fat-endereco-sub">
+                    Fornecedor: ${escapeHtmlRelFat(item.fornecedor || '-')} | 
+                    Instalação: ${escapeHtmlRelFat(item.numeroInstalacao || '-')} | 
+                    Secretaria: ${escapeHtmlRelFat(item.secretaria || '-')} | 
+                    Empenho: ${escapeHtmlRelFat(item.numeroEmpenho || '-')}
+                </div>
+            </div>
+            <div class="rel-fat-endereco-total">
+                <div class="rotulo">Total anual</div>
+                <div class="valor">${formatarMoedaRelatorio(totalEndereco)}</div>
+                <div style="margin-top:4px;">
+                    <span class="rel-fat-status ${statusEndereco === 'Pago' ? 'pago' : 'pendente'}">${escapeHtmlRelFat(statusEndereco)}</span>
+                </div>
+            </div>
+        </div>
+
+        <table class="rel-fat-tabela">
+            <thead>
+                <tr>
+                    <th style="width:6%;">Mês</th>
+                    <th style="width:11%;">Valor</th>
+                    <th style="width:10%;">Status</th>
+                    <th style="width:12%;">Venc.</th>
+                    <th style="width:12%;">Registro</th>
+                    <th style="width:49%;">Observação</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${linhasMeses}
+            </tbody>
+        </table>
+    </div>
+`;
+        }).join('');
+
+        const geradoEm = new Date().toLocaleString('pt-BR');
+
+        const descricaoFiltro = (() => {
+            if (modo === 'secretaria') return `Secretaria: ${secretariaSelecionada}`;
+            if (modo === 'fornecedor') return `Fornecedor: ${fornecedorSelecionado}`;
+            if (modo === 'ano') return `Ano: ${anoSelecionado}`;
+            return 'Todos os registros cadastrados';
+        })();
+
+        area.innerHTML = `
+            <div class="rel-fat-print ${orientacao === 'landscape' ? 'rel-fat-landscape' : 'rel-fat-portrait'}">
+                <div class="rel-fat-marca-dagua">
+                    Gerado em ${escapeHtmlRelFat(geradoEm)} • Contabilidade Municipal de Iguatama
+                </div>
+
+                <div class="rel-fat-conteudo">
+                    <div class="rel-fat-capa">
+                        <div class="rel-fat-topo">
+                            <div>
+                                <div class="rel-fat-orgao">
+                                    PREFEITURA MUNICIPAL DE IGUATAMA<br>
+                                    CONTABILIDADE MUNICIPAL<br>
+                                    CONTROLE GERENCIAL DE FATURAS
+                                </div>
+                                <h1 class="rel-fat-titulo">${escapeHtmlRelFat(titulo)}</h1>
+                                <p class="rel-fat-subtitulo">
+                                    Relatório consolidado com detalhamento mensal por endereço.
+                                </p>
+                            </div>
+
+                            <div class="rel-fat-meta">
+                                <div class="rel-fat-meta-linha"><strong>Gerado em:</strong> ${escapeHtmlRelFat(geradoEm)}</div>
+                                <div class="rel-fat-meta-linha"><strong>Filtro:</strong> ${escapeHtmlRelFat(descricaoFiltro)}</div>
+                                <div class="rel-fat-meta-linha"><strong>Ano-base:</strong> ${escapeHtmlRelFat(String(anoSelecionado))}</div>
+                                <div class="rel-fat-meta-linha"><strong>Emitente:</strong> Contabilidade Municipal de Iguatama</div>
+                                <div class="rel-fat-meta-linha"><strong>Registros:</strong> ${dados.length}</div>
+                            </div>
+                        </div>
+
+                        <div class="rel-fat-kpis">
+                            <div class="rel-fat-kpi">
+                                <div class="rotulo">Endereços</div>
+                                <div class="valor">${dados.length}</div>
+                            </div>
+                            <div class="rel-fat-kpi">
+                                <div class="rotulo">Pagos</div>
+                                <div class="valor">${totalPago}</div>
+                            </div>
+                            <div class="rel-fat-kpi">
+                                <div class="rotulo">Pendentes</div>
+                                <div class="valor">${totalPendente}</div>
+                            </div>
+                            <div class="rel-fat-kpi">
+                                <div class="rotulo">Total do ano</div>
+                                <div class="valor" style="font-size:16px;">${formatarMoedaRelatorio(totalGeral)}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    ${blocos}
+
+                    <div class="rel-fat-rodape">
+                        <div><strong>Observação:</strong> ${escapeHtmlRelFat(observacao || 'Relatório emitido para fins de acompanhamento interno e controle gerencial das faturas cadastradas no sistema.')}</div>
+                        <div><strong>Responsável pela emissão:</strong> Contabilidade Municipal de Iguatama.</div>
+                        <div><strong>Documento gerado automaticamente pelo sistema integrado.</strong></div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        fecharModalRelatorioFaturas();
+        document.body.classList.add('print-relatorio-faturas');
+
+        setTimeout(() => {
+            window.print();
+            setTimeout(() => {
+                document.body.classList.remove('print-relatorio-faturas');
+            }, 500);
+        }, 200);
+
+    } catch (erro) {
+        console.error('Erro ao gerar relatório de faturas:', erro);
+        mostrarAvisoSistema('Erro', 'Não foi possível gerar o relatório completo das faturas.');
+    }
+}
     </script>
 <script src="https://cdn.jsdelivr.net/npm/quill@2/dist/quill.js"></script>
  <script type="module">
@@ -11006,6 +12162,8 @@ return true;
     </div>
   </div>
 </div>
+
+<div id="fatRelatorioImpressao" style="display:none;"></div>
 
 </body>
 </html>

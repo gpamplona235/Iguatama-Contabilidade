@@ -2502,9 +2502,6 @@ body.print-retencao .col-retencao {
   <button type="button" class="btn-primary" onclick="mostrarTela('consulta-empenho')" style="width: auto; padding: 8px 14px;">
     EMPENHOS
   </button>
-  <button type="button" class="btn-primary" onclick="mostrarTela('estatisticas')" style="width: auto; padding: 8px 14px; background-color:#1e6b3b; border-color:#19532f;">
-    ESTATÍSTICAS
-  </button>
 
     <div class="menu-dropdown-cadastro" style="display:none;">
         <button type="button" class="btn-primary btn-dropdown-cadastro" style="width: auto; padding: 8px 14px;">
@@ -3234,9 +3231,9 @@ body.print-retencao .col-retencao {
   <div class="card-desc">Consulta futura de empenhos globais e estimativos, com acompanhamento.</div>
 </button>
 
-  <button type="button" class="home-card" onclick="mostrarTela('estatisticas')">
-    <div class="badge-novo">NOVO</div>
-    <div class="card-title">Estatísticas</div>
+  <button type="button" class="home-card disabled" onclick="alert('Módulo em construção.')">
+    <div class="badge-construcao">EM CONSTRUÇÃO</div>
+    <div class="card-title" style="color:#6c757d;">Estatísticas</div>
     <div class="card-desc">Painel gerencial com indicadores, gasto por secretaria, função, evolução mensal, ranking de fornecedores e relatórios.</div>
   </button>
 
@@ -4231,7 +4228,6 @@ body.print-retencao .col-retencao {
       position:relative; background:#ffffff; border:1px solid #dbe3ea; border-radius:10px;
       padding:16px 16px 16px 18px; overflow:hidden; box-shadow:0 1px 4px rgba(15,59,94,0.05);
     }
-    .est-kpi::before { content:""; position:absolute; left:0; top:0; bottom:0; width:5px; background:var(--kpi-cor,#0f3b5e); }
     .est-kpi-label { font-size:11px; font-weight:800; color:#6b7a88; text-transform:uppercase; letter-spacing:0.6px; }
     .est-kpi-valor { font-size:23px; font-weight:800; color:var(--kpi-cor,#0f3b5e); margin-top:6px; line-height:1.1; word-break:break-word; }
     .est-kpi-sub { font-size:12px; color:#7a8895; margin-top:6px; }
@@ -4372,6 +4368,22 @@ body.print-retencao .col-retencao {
             <button class="est-btn-mini" type="button" onclick="estExportarCSV('secretarias')">Exportar CSV</button>
           </div>
           <div id="est-secretarias"><div class="est-loading">Carregando…</div></div>
+        </div>
+
+        <!-- Natureza de despesa (sob demanda) -->
+        <div class="est-card">
+          <div class="est-card-head">
+            <div>
+              <h3 class="est-card-title">Natureza de Despesa</h3>
+              <div class="est-card-sub">Material de consumo, serviços de terceiros, obras e demais elementos — consulta detalhada, pode levar alguns segundos</div>
+            </div>
+            <button class="est-btn-mini" type="button" id="est-btn-nat" onclick="estCarregarNatureza()">Carregar</button>
+          </div>
+          <div id="est-natureza">
+            <div style="text-align:center; color:#8694a1; font-size:13px; padding:18px;">
+              Clique em <strong>Carregar</strong> para listar os gastos agrupados por natureza/elemento de despesa.
+            </div>
+          </div>
         </div>
 
         <!-- Fornecedores (sob demanda) -->
@@ -11563,7 +11575,124 @@ async function estCarregarFornecedores(){
   }
 }
 
-/* ---------- exportação CSV ---------- */
+/* ---------- natureza de despesa (sob demanda) ----------
+   Observação: a API só preenche desDespesa/desDespesaOrcamentaria quando a
+   listagem NÃO é agrupada (indAgrupamento vazio). Por isso aqui buscamos os
+   empenhos individuais do exercício e agregamos por natureza no navegador. */
+let estNatCarregando = false;
+let estNatDados = null;
+
+async function estCarregarNatureza(){
+  if (estNatCarregando) return;
+  const ano = estAnoSel();
+  const cont = document.getElementById('est-natureza');
+  const btn = document.getElementById('est-btn-nat');
+  estNatCarregando = true;
+  if (btn){ btn.disabled = true; btn.textContent = 'Carregando…'; }
+  cont.innerHTML = '<div class="est-loading">Consultando todos os empenhos do exercício ' + ano + ' para classificar por natureza de despesa… isso pode levar alguns segundos.</div>';
+  try {
+    const url = `${EST_API}?elementosPorPagina=6000&pagina=1&termoBase64=&indAgrupamento=&datInicio=${ano}-01-01&datFim=${ano}-12-31&desNatureza=&codAdministracao=${EST_ADM}&filtrarApenasCovid=false&numEmpenho=&cpfCnpj=`;
+    const r = await fetch(url);
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const dd = await r.json();
+    const lista = Array.isArray(dd.content) ? dd.content : [];
+
+    if (!lista.length) {
+      cont.innerHTML = `
+        <div class="alert-box alert-normal" style="display:block;">
+          O Portal da Transparência não retornou registros para este filtro (exercício ${ano} sem agrupamento).
+          Esta seção ainda está em ajuste — a fonte de dados usada aqui está sendo revisada.
+        </div>`;
+      if (btn){ btn.disabled = false; btn.textContent = 'Tentar novamente'; }
+      estNatCarregando = false;
+      return;
+    }
+
+    const mapNat = new Map();
+    let semClassificacao = 0;
+
+    lista.forEach(x => {
+      const codigo = String(x.desDespesa || '').replace(/\D/g, '');
+      const descricaoNat = x.desDespesaOrcamentaria || (codigo ? ('Despesa ' + codigo) : 'Não classificado');
+      const chave = codigo || '—';
+      const emp = Number(x.vlrEmpenhado||0), liq = Number(x.vlrLiquidado||0), pago = Number(x.vlrPago||0);
+
+      if (!codigo) semClassificacao++;
+
+      const n = mapNat.get(chave) || {
+        codigo: chave,
+        nome: descricaoNat,
+        grupo: classificarNaturezaDespesa({ desDespesa: codigo }),
+        empenhado: 0, liquidado: 0, pago: 0
+      };
+      n.empenhado += emp; n.liquidado += liq; n.pago += pago;
+      mapNat.set(chave, n);
+    });
+
+    const naturezas = [...mapNat.values()].sort((a,b) => b.empenhado - a.empenhado);
+    estNatDados = { ano, naturezas };
+
+    const totalEmp = naturezas.reduce((s,n) => s + n.empenhado, 0);
+
+    // Donut por grande grupo (Serviços / Materiais / Outros)
+    const totaisGrupo = { servico: 0, material: 0, outros: 0 };
+    naturezas.forEach(n => {
+      if (n.grupo === 'servico') totaisGrupo.servico += n.empenhado;
+      else if (n.grupo === 'material') totaisGrupo.material += n.empenhado;
+      else totaisGrupo.outros += n.empenhado;
+    });
+    const fatiasGrupo = estPrepFatias([
+      { nome: 'Serviços (PF/PJ, TIC, locação)', valor: totaisGrupo.servico },
+      { nome: 'Material/Obras/Equipamentos', valor: totaisGrupo.material },
+      { nome: 'Outros elementos (pessoal, diárias, etc.)', valor: totaisGrupo.outros }
+    ], 3);
+    const totalGrupo = fatiasGrupo.reduce((s,i) => s + i.valor, 0);
+    const donutGrupo = estDonut(fatiasGrupo, estFmtY(totalGrupo), 'empenhado');
+    const legGrupo = fatiasGrupo.map(f =>
+      `<div class="est-legend-item"><span class="est-legend-dot" style="background:${f.cor};"></span><span class="est-legend-nome">${estEsc(f.nome)}</span><span class="est-legend-val">${estFmtBRL(f.valor)}</span><span class="est-legend-pct">${totalGrupo ? (f.valor/totalGrupo*100).toFixed(1) : 0}%</span></div>`
+    ).join('');
+
+    const top = naturezas.slice(0, 20);
+    const linhasNat = top.map((n,i) => {
+      const exec = n.empenhado ? n.pago/n.empenhado*100 : 0;
+      const rotuloGrupo = n.grupo === 'servico' ? 'Serviço' : n.grupo === 'material' ? 'Material' : '—';
+      const corGrupo = n.grupo === 'servico' ? '#1d6a9c' : n.grupo === 'material' ? '#c98a16' : '#8694a1';
+      return `<tr>
+        <td><span class="est-rank-pos">${i+1}</span></td>
+        <td>${estEsc(estTitulo(n.nome))}<br><span style="font-size:11px; color:#8694a1;">${estEsc(n.codigo)}</span></td>
+        <td><span style="font-size:11px; font-weight:700; color:${corGrupo};">${rotuloGrupo}</span></td>
+        <td class="num">${estFmtBRL(n.empenhado)}</td>
+        <td class="num">${estFmtBRL(n.pago)}</td>
+        <td class="num" style="color:${exec>=80?'#1e6b3b':exec>=50?'#c98a16':'#a50e0e'}; font-weight:700;">${exec.toFixed(0)}%</td>
+      </tr>`;
+    }).join('');
+
+    const avisoSemClassificacao = semClassificacao
+      ? `<div style="font-size:11.5px; color:#8694a1; margin-top:8px;">${semClassificacao.toLocaleString('pt-BR')} registro(s) sem código de natureza informado pela API.</div>`
+      : '';
+
+    cont.innerHTML = `
+      <div style="font-size:12px; color:#7a8895; margin-bottom:14px;">${naturezas.length.toLocaleString('pt-BR')} naturezas de despesa distintas no exercício ${ano}. Exibindo as 20 maiores por valor empenhado.</div>
+      <div class="est-row-2">
+        <div>
+          <div class="est-card-title" style="margin-bottom:12px;">Top 20 Naturezas de Despesa</div>
+          <div style="overflow-x:auto;"><table class="est-tabela"><thead><tr><th style="width:30px;">#</th><th>Natureza / Elemento</th><th>Grupo</th><th class="num">Empenhado</th><th class="num">Pago</th><th class="num">%</th></tr></thead><tbody>${linhasNat}</tbody></table></div>
+          ${avisoSemClassificacao}
+        </div>
+        <div>
+          <div class="est-card-title" style="margin-bottom:12px;">Serviços x Materiais x Outros</div>
+          <div class="est-donut-wrap">${donutGrupo}<div class="est-legend">${legGrupo}</div></div>
+        </div>
+      </div>`;
+  } catch (e){
+    console.error('Erro natureza de despesa:', e);
+    cont.innerHTML = '<div class="alert-box alert-normal" style="display:block;">Não foi possível carregar a natureza de despesa: ' + estEsc(e.message||'') + '</div>';
+  } finally {
+    estNatCarregando = false;
+    if (btn){ btn.disabled = false; btn.textContent = 'Recarregar'; }
+  }
+}
+
 function estNum(v){ return Number(v||0).toFixed(2).replace('.', ','); }
 function estCSVDownload(nome, linhas){
   const csv = linhas.map(r => r.map(c => {

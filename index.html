@@ -2502,6 +2502,9 @@ body.print-retencao .col-retencao {
   <button type="button" class="btn-primary" onclick="mostrarTela('consulta-empenho')" style="width: auto; padding: 8px 14px;">
     EMPENHOS
   </button>
+  <button type="button" class="btn-primary" onclick="mostrarTela('estatisticas')" style="width: auto; padding: 8px 14px; background-color:#1e6b3b; border-color:#19532f;">
+    ESTATÍSTICAS
+  </button>
 
     <div class="menu-dropdown-cadastro" style="display:none;">
         <button type="button" class="btn-primary btn-dropdown-cadastro" style="width: auto; padding: 8px 14px;">
@@ -3231,10 +3234,10 @@ body.print-retencao .col-retencao {
   <div class="card-desc">Consulta futura de empenhos globais e estimativos, com acompanhamento.</div>
 </button>
 
-  <button type="button" class="home-card disabled" onclick="alert('Módulo em construção.')">
-    <div class="badge-construcao">EM CONSTRUÇÃO</div>
-    <div class="card-title" style="color:#6c757d;">Estatísticas</div>
-    <div class="card-desc">Painel futuro com indicadores, totais, comparativos e visualizações gerenciais do sistema.</div>
+  <button type="button" class="home-card" onclick="mostrarTela('estatisticas')">
+    <div class="badge-novo">NOVO</div>
+    <div class="card-title">Estatísticas</div>
+    <div class="card-desc">Painel gerencial com indicadores, gasto por secretaria, função, evolução mensal, ranking de fornecedores e relatórios.</div>
   </button>
 
   <button type="button" class="home-card" onclick="mostrarTela('gestao-notas')">
@@ -3952,6 +3955,7 @@ body.print-retencao .col-retencao {
         <button class="btn-primary" type="button" onclick="buscarDadosTransparencia(1)" style="width: 100%; padding: 10px 12px; height: 38px; margin: 0;">Buscar Dados</button>
     </div>
 </div>
+                </div>
 
                 <!-- Cards de Totais -->
                 <div class="bs-topbar" style="margin-bottom: 20px; display: flex; gap: 15px; flex-wrap: wrap;">
@@ -4178,11 +4182,200 @@ body.print-retencao .col-retencao {
 </div>
 
 
+<!-- ============================================================
+     TELA DE ESTATÍSTICAS / DASHBOARD
+     Dados: Portal da Transparência de Iguatama (mesma API dos Empenhos)
+     ============================================================ -->
+<div id="tela-estatisticas" class="screen-section">
+  <style>
+    .est-toolbar-sel { width:auto !important; padding:8px 10px; height:38px; font-size:13px; border-radius:4px; }
+    .est-card {
+      background:#ffffff; border:1px solid #dbe3ea; border-radius:10px;
+      padding:18px 20px; margin-bottom:18px; box-shadow:0 1px 4px rgba(15,59,94,0.05);
+    }
+    .est-card-head { display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:16px; }
+    .est-card-title { font-size:13px; font-weight:800; color:#0f3b5e; text-transform:uppercase; letter-spacing:0.5px; margin:0; }
+    .est-card-sub { font-size:12px; color:#7a8895; margin-top:3px; font-weight:normal; text-transform:none; letter-spacing:0; }
+    .est-btn-mini {
+      width:auto; padding:6px 12px; font-size:12px; background:#eef3f7; color:#0f3b5e;
+      border:1px solid #cdd9e2; border-radius:5px; cursor:pointer; transition:background .15s;
+    }
+    .est-btn-mini:hover { background:#e1ebf2; }
+
+    /* KPIs */
+    .est-kpis { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:18px; }
+    .est-kpi {
+      position:relative; background:#ffffff; border:1px solid #dbe3ea; border-radius:10px;
+      padding:16px 16px 16px 18px; overflow:hidden; box-shadow:0 1px 4px rgba(15,59,94,0.05);
+    }
+    .est-kpi::before { content:""; position:absolute; left:0; top:0; bottom:0; width:5px; background:var(--kpi-cor,#0f3b5e); }
+    .est-kpi-label { font-size:11px; font-weight:800; color:#6b7a88; text-transform:uppercase; letter-spacing:0.6px; }
+    .est-kpi-valor { font-size:23px; font-weight:800; color:var(--kpi-cor,#0f3b5e); margin-top:6px; line-height:1.1; word-break:break-word; }
+    .est-kpi-sub { font-size:12px; color:#7a8895; margin-top:6px; }
+    .est-kpi-sub strong { color:#3a4a57; }
+
+    .est-row-2 { display:grid; grid-template-columns:1.05fr 1fr; gap:18px; align-items:stretch; }
+    .est-row-2 .est-card { margin-bottom:0; }
+    .est-row-2-wrap { margin-bottom:18px; }
+
+    /* Barras de execução (funil) */
+    .est-fluxo-item { margin-bottom:14px; }
+    .est-fluxo-top { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:5px; }
+    .est-fluxo-nome { font-size:12px; font-weight:700; color:#3a4a57; }
+    .est-fluxo-val { font-size:13px; font-weight:800; }
+    .est-fluxo-track { height:14px; background:#eef2f5; border-radius:8px; overflow:hidden; }
+    .est-fluxo-fill { height:100%; border-radius:8px; transition:width .6s ease; }
+    .est-taxas { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:18px; padding-top:16px; border-top:1px dashed #e2e8ee; }
+    .est-taxa-box { text-align:center; background:#f8fafc; border:1px solid #e6edf2; border-radius:8px; padding:12px; }
+    .est-taxa-val { font-size:26px; font-weight:800; line-height:1; }
+    .est-taxa-lbl { font-size:11px; color:#6b7a88; text-transform:uppercase; letter-spacing:0.5px; margin-top:6px; font-weight:700; }
+
+    /* Barras horizontais (secretarias) */
+    .est-bar-row { display:grid; grid-template-columns:minmax(150px,230px) 1fr auto; gap:12px; align-items:center; padding:7px 0; border-bottom:1px solid #f0f4f7; }
+    .est-bar-row:last-child { border-bottom:none; }
+    .est-bar-nome { font-size:12.5px; color:#3a4a57; font-weight:600; line-height:1.25; }
+    .est-bar-track { height:20px; background:#f1f5f8; border-radius:5px; overflow:hidden; position:relative; min-width:60px; }
+    .est-bar-fill { height:100%; border-radius:5px; transition:width .6s ease; }
+    .est-bar-val { font-size:12.5px; font-weight:800; color:#0f3b5e; white-space:nowrap; text-align:right; min-width:110px; }
+
+    /* Donut */
+    .est-donut-wrap { display:flex; gap:20px; align-items:center; flex-wrap:wrap; }
+    .est-donut-svg { width:170px; height:170px; flex-shrink:0; }
+    .est-legend { flex:1; min-width:200px; }
+    .est-legend-item { display:flex; align-items:center; gap:9px; padding:5px 0; font-size:12.5px; border-bottom:1px solid #f3f6f8; }
+    .est-legend-item:last-child { border-bottom:none; }
+    .est-legend-dot { width:11px; height:11px; border-radius:3px; flex-shrink:0; }
+    .est-legend-nome { flex:1; color:#3a4a57; }
+    .est-legend-val { font-weight:700; color:#0f3b5e; white-space:nowrap; }
+    .est-legend-pct { color:#8694a1; font-size:11px; min-width:42px; text-align:right; }
+
+    /* Tabela classificação */
+    .est-tabela { width:100%; border-collapse:collapse; font-size:12.5px; }
+    .est-tabela th { background:#f2f6f9; color:#0f3b5e; text-align:left; padding:9px 10px; font-weight:700; border-bottom:2px solid #dce4ec; white-space:nowrap; }
+    .est-tabela td { padding:8px 10px; border-bottom:1px solid #eef2f5; color:#3a4a57; vertical-align:middle; }
+    .est-tabela tr:hover td { background:#f9fbfc; }
+    .est-tabela .num { text-align:right; white-space:nowrap; font-variant-numeric:tabular-nums; }
+    .est-rank-pos { display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px; border-radius:50%; background:#0f3b5e; color:#fff; font-size:11px; font-weight:800; }
+    .est-mini-track { height:7px; background:#eef2f5; border-radius:4px; overflow:hidden; margin-top:4px; }
+    .est-mini-fill { height:100%; border-radius:4px; }
+
+    /* Skeleton / estados */
+    .est-loading { padding:26px; text-align:center; color:#7a8895; font-size:13px; }
+    .est-skel { background:linear-gradient(90deg,#eef2f5 25%,#e4eaef 37%,#eef2f5 63%); background-size:400% 100%; animation:est-shimmer 1.3s infinite; border-radius:6px; }
+    @keyframes est-shimmer { 0%{background-position:100% 0;} 100%{background-position:0 0;} }
+
+    /* Line chart eixos */
+    .est-chart-svg { width:100%; height:auto; display:block; }
+    .est-chart-legend { display:flex; gap:18px; flex-wrap:wrap; margin-top:10px; justify-content:center; }
+    .est-chart-legend span { display:inline-flex; align-items:center; gap:6px; font-size:12px; color:#54606b; font-weight:600; }
+    .est-chart-legend i { width:13px; height:4px; border-radius:2px; display:inline-block; }
+
+    @media (max-width: 980px) {
+      .est-kpis { grid-template-columns:repeat(2,1fr); }
+      .est-row-2 { grid-template-columns:1fr; }
+      .est-row-2 .est-card { margin-bottom:18px; }
+    }
+    @media (max-width: 560px) {
+      .est-kpis { grid-template-columns:1fr; }
+      .est-bar-row { grid-template-columns:1fr; gap:5px; }
+      .est-bar-val { text-align:left; }
+    }
+  </style>
+
+  <div class="panels-wrapper">
+    <div class="panel" style="width:100%; max-width:1400px;">
+      <div class="panel-header" style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; background:#0f3b5e; border-bottom:1px solid #0a2942; padding:18px 20px;">
+        <div>
+          <h2 style="margin:0; color:#ffffff;">PAINEL DE ESTATÍSTICAS</h2>
+          <div style="font-size:12px; color:rgba(255,255,255,0.85); margin-top:4px;">
+            Execução orçamentária da Prefeitura de Iguatama — empenhado, liquidado e pago, por secretaria, função e fornecedor.
+          </div>
+        </div>
+        <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+          <label style="color:#fff; font-size:12px; font-weight:700;">Exercício</label>
+          <select id="est-ano" class="est-toolbar-sel" onchange="estCarregarTudo(true)"></select>
+          <button class="btn-primary" type="button" onclick="estCarregarTudo(true)" style="width:auto; padding:8px 14px;">Atualizar</button>
+          <button class="btn-primary" type="button" onclick="estGerarRelatorio()" style="width:auto; padding:8px 14px; background-color:#1e6b3b; border-color:#19532f;">Gerar Relatório</button>
+        </div>
+      </div>
+
+      <div class="panel-body">
+        <div id="est-erro" class="alert-box alert-normal" style="display:none;"></div>
+
+        <!-- KPIs -->
+        <div class="est-kpis" id="est-kpis"></div>
+
+        <!-- Execução + Função -->
+        <div class="est-row-2 est-row-2-wrap">
+          <div class="est-card">
+            <div class="est-card-head">
+              <div>
+                <h3 class="est-card-title">Execução Orçamentária</h3>
+                <div class="est-card-sub">Do empenho ao pagamento</div>
+              </div>
+            </div>
+            <div id="est-execucao"><div class="est-loading">Carregando…</div></div>
+          </div>
+          <div class="est-card">
+            <div class="est-card-head">
+              <div>
+                <h3 class="est-card-title">Distribuição por elemento de despesa (teste)</h3>
+                <div class="est-card-sub">Áreas de governo (empenhado)</div>
+              </div>
+              <button class="est-btn-mini" type="button" onclick="estExportarCSV('funcoes')">CSV</button>
+            </div>
+            <div id="est-funcoes"><div class="est-loading">Carregando…</div></div>
+          </div>
+        </div>
+
+        <!-- Evolução mensal -->
+        <div class="est-card">
+          <div class="est-card-head">
+            <div>
+              <h3 class="est-card-title">Evolução Mensal</h3>
+              <div class="est-card-sub">Valores movimentados mês a mês</div>
+            </div>
+          </div>
+          <div id="est-mensal"><div class="est-loading">Carregando…</div></div>
+        </div>
+
+        <!-- Gasto por secretaria -->
+        <div class="est-card">
+          <div class="est-card-head">
+            <div>
+              <h3 class="est-card-title">Gasto por Secretaria</h3>
+              <div class="est-card-sub">Ranking por valor empenhado e taxa de execução</div>
+            </div>
+            <button class="est-btn-mini" type="button" onclick="estExportarCSV('secretarias')">Exportar CSV</button>
+          </div>
+          <div id="est-secretarias"><div class="est-loading">Carregando…</div></div>
+        </div>
+
+        <!-- Fornecedores (sob demanda) -->
+        <div class="est-card">
+          <div class="est-card-head">
+            <div>
+              <h3 class="est-card-title">Maiores Fornecedores &amp; Modalidades</h3>
+              <div class="est-card-sub">Consulta detalhada — pode levar alguns segundos</div>
+            </div>
+            <button class="est-btn-mini" type="button" id="est-btn-forn" onclick="estCarregarFornecedores()">Carregar ranking</button>
+          </div>
+          <div id="est-fornecedores">
+            <div style="text-align:center; color:#8694a1; font-size:13px; padding:18px;">
+              Clique em <strong>Carregar ranking</strong> para listar os maiores fornecedores e a distribuição por modalidade de contratação.
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
 
 
     <script>
 
-        
+
 
 function fecharModalEmpenho() {
     document.getElementById('modalEmpenho').style.display = 'none';
@@ -6523,7 +6716,8 @@ function mostrarTela(tela, atualizarHash = true) {
     document.getElementById('tela-empenhos'),
     document.getElementById('tela-consulta-empenho'),
     document.getElementById('tela-gestao-notas'),
-    document.getElementById('tela-lembretes')
+    document.getElementById('tela-lembretes'),
+    document.getElementById('tela-estatisticas')
   ];
 
   telas.forEach(function(t) {
@@ -6629,6 +6823,14 @@ function mostrarTela(tela, atualizarHash = true) {
     return;
   }
 
+  if (tela === 'estatisticas') {
+    document.getElementById('tela-estatisticas')?.classList.add('active');
+    setTimeout(function () {
+      if (typeof estInicializar === 'function') estInicializar();
+    }, 120);
+    return;
+  }
+
   document.getElementById('tela-home')?.classList.add('active');
   if (atualizarHash) {
     window.location.hash = 'home';
@@ -6647,7 +6849,8 @@ function abrirTelaPeloHash() {
     'empenhos',
     'consulta-empenho',
     'gestao-notas',
-    'lembretes'
+    'lembretes',
+    'estatisticas'
   ];
 
   if (telasValidas.includes(hash)) {
@@ -10791,6 +10994,497 @@ async function gerarRelatorioFaturas() {
         console.error('Erro ao gerar relatório de faturas:', erro);
         mostrarAvisoSistema('Erro', 'Não foi possível gerar o relatório completo das faturas.');
     }
+}
+
+
+/* ============================================================
+   PAINEL DE ESTATÍSTICAS
+   Fonte de dados: Portal da Transparência de Iguatama
+   (mesma API usada na Consulta de Empenhos e nos Detalhes do Empenho)
+   ============================================================ */
+const EST_API = 'https://transparencia.iguatama.mg.gov.br/publico/despesaDetalhada';
+const EST_ADM = 2;
+const EST_CORES = ['#0f3b5e','#1d6a9c','#2e8bc0','#49a9c9','#5bb3a8','#7bbf6a','#b0c04a','#e0a92e','#cf7d2c','#b8542e','#8a4f8c','#5b6ba8','#3f7d7a','#9c6b3f'];
+const EST_MESES = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+
+let estDados = null;
+let estCarregando = false;
+let estCarregado = false;
+let estFornCarregando = false;
+
+/* ---------- utilitários ---------- */
+function estFmtBRL(v){ return Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'}); }
+function estFmtEixo(v){
+  v = Number(v||0); const a = Math.abs(v);
+  if (a >= 1e6) return 'R$ ' + (v/1e6).toLocaleString('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1}) + ' mi';
+  if (a >= 1e3) return 'R$ ' + (v/1e3).toLocaleString('pt-BR',{maximumFractionDigits:0}) + ' mil';
+  return 'R$ ' + v.toLocaleString('pt-BR',{maximumFractionDigits:0});
+}
+function estFmtY(v){
+  v = Number(v||0); const a = Math.abs(v);
+  if (a >= 1e6) return (v/1e6).toLocaleString('pt-BR',{maximumFractionDigits:1}) + 'M';
+  if (a >= 1e3) return (v/1e3).toLocaleString('pt-BR',{maximumFractionDigits:0}) + 'k';
+  return String(Math.round(v));
+}
+function estEsc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function estTitulo(s){ s = String(s||''); return s.length > 42 ? s.slice(0,40)+'…' : s; }
+function estNomeForn(s){ s = String(s||''); const i = s.indexOf(' - '); return i >= 0 ? s.slice(i+3) : s; }
+function estAnoSel(){ const s = document.getElementById('est-ano'); return s ? (Number(s.value)||new Date().getFullYear()) : new Date().getFullYear(); }
+function estNiceMax(v){
+  if (v <= 0) return 1;
+  const pow = Math.pow(10, Math.floor(Math.log10(v)));
+  const n = v / pow;
+  let nice = n <= 1 ? 1 : n <= 2 ? 2 : n <= 2.5 ? 2.5 : n <= 5 ? 5 : 10;
+  return nice * pow;
+}
+function estPrepFatias(items, max){
+  const arr = items.filter(i => (Number(i.valor)||0) > 0).sort((a,b) => b.valor - a.valor);
+  const principais = arr.slice(0, max);
+  const resto = arr.slice(max);
+  if (resto.length) principais.push({ nome: 'Outras (' + resto.length + ')', valor: resto.reduce((s,i)=>s+(Number(i.valor)||0),0) });
+  return principais.map((it,i) => ({ nome: it.nome, valor: Number(it.valor)||0, cor: EST_CORES[i % EST_CORES.length] }));
+}
+
+/* ---------- camada de dados (API Transparência) ---------- */
+async function estValores(ano, mes){
+  let ini, fim;
+  if (mes){
+    const mm = String(mes).padStart(2,'0');
+    const ult = new Date(ano, mes, 0).getDate();
+    ini = `${ano}-${mm}-01`; fim = `${ano}-${mm}-${String(ult).padStart(2,'0')}`;
+  } else { ini = `${ano}-01-01`; fim = `${ano}-12-31`; }
+  const url = `${EST_API}/buscarValores?a=1&termoBase64=&indAgrupamento=FOR&datInicio=${ini}&datFim=${fim}&desNatureza=&codAdministracao=${EST_ADM}&filtrarApenasCovid=false&numEmpenho=&cpfCnpj=`;
+  const r = await fetch(url);
+  if (!r.ok) throw new Error('Totais HTTP ' + r.status);
+  const d = await r.json();
+  return { empenhado: Number(d.left||0), liquidado: Number(d.middle||0), pago: Number(d.right||0) };
+}
+async function estAgrup(ano, ind){
+  const url = `${EST_API}?elementosPorPagina=2000&pagina=1&termoBase64=&indAgrupamento=${ind}&datInicio=${ano}-01-01&datFim=${ano}-12-31&desNatureza=&codAdministracao=${EST_ADM}&filtrarApenasCovid=false&numEmpenho=&cpfCnpj=`;
+  const r = await fetch(url);
+  if (!r.ok) throw new Error('Agrupamento HTTP ' + r.status);
+  const d = await r.json();
+  const lista = Array.isArray(d.content) ? d.content : [];
+  return lista.map(x => ({
+    nome: x.desAgrupamento || 'Não informado',
+    empenhado: Number(x.vlrEmpenhado||0),
+    liquidado: Number(x.vlrLiquidado||0),
+    pago: Number(x.vlrPago||0)
+  }));
+}
+
+/* ---------- inicialização e carregamento ---------- */
+function estInicializar(){
+  const sel = document.getElementById('est-ano');
+  if (sel && !sel.options.length){
+    const atual = new Date().getFullYear();
+    for (let a = atual; a >= atual - 5; a--){
+      const o = document.createElement('option');
+      o.value = a; o.textContent = a;
+      sel.appendChild(o);
+    }
+    sel.value = atual;
+  }
+  if (!estCarregado && !estCarregando) estCarregarTudo(false);
+}
+
+function estErro(msg){
+  const el = document.getElementById('est-erro');
+  if (!el) return;
+  if (msg){ el.textContent = msg; el.style.display = 'block'; }
+  else { el.style.display = 'none'; el.textContent = ''; }
+}
+function estSkelKpis(){
+  const html = '<div class="est-kpi"><div class="est-skel" style="height:11px;width:55%;"></div><div class="est-skel" style="height:23px;width:80%;margin-top:11px;"></div><div class="est-skel" style="height:11px;width:45%;margin-top:11px;"></div></div>';
+  document.getElementById('est-kpis').innerHTML = html.repeat(4);
+}
+
+async function estCarregarTudo(forcar){
+  if (estCarregando) return;
+  const ano = estAnoSel();
+  estCarregando = true;
+  estErro('');
+  estSkelKpis();
+  ['est-execucao','est-funcoes','est-mensal','est-secretarias'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = '<div class="est-loading">Carregando…</div>';
+  });
+  try {
+    const [totais, secretarias, funcoes] = await Promise.all([
+      estValores(ano),
+      estAgrup(ano, 'UNI'),
+      estAgrup(ano, 'FUN')
+    ]);
+
+    const anoAtual = new Date().getFullYear();
+    const mesAtual = new Date().getMonth() + 1;
+    const ultimoMes = ano < anoAtual ? 12 : (ano > anoAtual ? 0 : mesAtual);
+    const proms = [];
+    for (let m = 1; m <= ultimoMes; m++) proms.push(estValores(ano, m).then(v => ({ mes: m, ...v })));
+    const mensal = (await Promise.all(proms)).sort((a,b) => a.mes - b.mes);
+
+    estDados = { ano, totais, secretarias, funcoes, mensal };
+    estCarregado = true;
+
+    estRenderKPIs();
+    estRenderExecucao();
+    estRenderFuncoes();
+    estRenderMensal();
+    estRenderSecretarias();
+
+    if (forcar){
+      const fc = document.getElementById('est-fornecedores');
+      if (fc) fc.innerHTML = '<div style="text-align:center; color:#8694a1; font-size:13px; padding:18px;">Clique em <strong>Carregar ranking</strong> para listar os maiores fornecedores e a distribuição por modalidade.</div>';
+      const b = document.getElementById('est-btn-forn');
+      if (b){ b.textContent = 'Carregar ranking'; b.disabled = false; }
+    }
+  } catch (e){
+    console.error('Erro estatísticas:', e);
+    estErro('Não foi possível carregar os dados do Portal da Transparência. ' + (e.message || ''));
+    document.getElementById('est-kpis').innerHTML = '';
+    ['est-execucao','est-funcoes','est-mensal','est-secretarias'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.innerHTML = '<div class="est-loading" style="color:#a50e0e;">Falha ao carregar este bloco.</div>';
+    });
+  } finally {
+    estCarregando = false;
+  }
+}
+
+/* ---------- gráficos (SVG) ---------- */
+function estDonut(items, centroTopo, centroBase){
+  const total = items.reduce((s,i) => s + (Number(i.valor)||0), 0) || 1;
+  const r = 15.915494309;
+  let cum = 0, segs = '';
+  items.forEach(it => {
+    const val = Number(it.valor) || 0;
+    if (val <= 0) return;
+    const pct = val / total * 100;
+    const off = 100 - cum + 25;
+    segs += `<circle cx="21" cy="21" r="${r}" fill="transparent" stroke="${it.cor}" stroke-width="5.6" stroke-dasharray="${pct.toFixed(3)} ${(100-pct).toFixed(3)}" stroke-dashoffset="${off.toFixed(3)}"><title>${estEsc(it.nome)}: ${estFmtBRL(val)} (${pct.toFixed(1)}%)</title></circle>`;
+    cum += pct;
+  });
+  return `<svg viewBox="0 0 42 42" class="est-donut-svg" role="img" aria-label="Gráfico de distribuição">
+    <circle cx="21" cy="21" r="${r}" fill="transparent" stroke="#eef2f5" stroke-width="5.6"></circle>
+    ${segs}
+    ${centroTopo ? `<text x="21" y="20.6" text-anchor="middle" style="font-size:3.4px; font-weight:800; fill:#0f3b5e;">${estEsc(centroTopo)}</text>` : ''}
+    ${centroBase ? `<text x="21" y="24.3" text-anchor="middle" style="font-size:2.4px; fill:#8694a1; text-transform:uppercase;">${estEsc(centroBase)}</text>` : ''}
+  </svg>`;
+}
+
+function estLineChart(meses){
+  const W = 780, H = 280, pl = 58, pr = 18, pt = 18, pb = 34;
+  const innerW = W - pl - pr, innerH = H - pt - pb;
+  const n = meses.length;
+  const maxData = Math.max(1, ...meses.map(m => Math.max(m.empenhado, m.liquidado, m.pago)));
+  const maxY = estNiceMax(maxData);
+  const X = i => n <= 1 ? pl + innerW/2 : pl + (i/(n-1))*innerW;
+  const Y = v => pt + innerH - (v/maxY)*innerH;
+
+  let grid = '', ylab = '';
+  const steps = 4;
+  for (let s = 0; s <= steps; s++){
+    const val = maxY * s / steps, yy = Y(val);
+    grid += `<line x1="${pl}" y1="${yy.toFixed(1)}" x2="${W-pr}" y2="${yy.toFixed(1)}" stroke="#edf1f4" stroke-width="1"/>`;
+    ylab += `<text x="${pl-8}" y="${(yy+3).toFixed(1)}" text-anchor="end" style="font-size:10px; fill:#9aa7b2;">${estFmtY(val)}</text>`;
+  }
+  let xlab = '';
+  meses.forEach((m,i) => { xlab += `<text x="${X(i).toFixed(1)}" y="${H-12}" text-anchor="middle" style="font-size:10px; fill:#9aa7b2;">${EST_MESES[m.mes-1]}</text>`; });
+
+  function serie(key, cor, area){
+    const pts = meses.map((m,i) => `${X(i).toFixed(1)},${Y(m[key]).toFixed(1)}`).join(' ');
+    let a = '';
+    if (area && n > 1) a = `<polygon points="${X(0).toFixed(1)},${Y(0).toFixed(1)} ${pts} ${X(n-1).toFixed(1)},${Y(0).toFixed(1)}" fill="${cor}" opacity="0.09"/>`;
+    const line = n > 1 ? `<polyline points="${pts}" fill="none" stroke="${cor}" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>` : '';
+    const dots = meses.map((m,i) => `<circle cx="${X(i).toFixed(1)}" cy="${Y(m[key]).toFixed(1)}" r="${n>1?2.6:4}" fill="#fff" stroke="${cor}" stroke-width="2"><title>${EST_MESES[m.mes-1]} — ${key}: ${estFmtBRL(m[key])}</title></circle>`).join('');
+    return a + line + dots;
+  }
+
+  return `<svg viewBox="0 0 ${W} ${H}" class="est-chart-svg" preserveAspectRatio="xMidYMid meet">
+    ${grid}
+    ${serie('empenhado','#0f3b5e',true)}
+    ${serie('liquidado','#c98a16',false)}
+    ${serie('pago','#1e6b3b',false)}
+    ${ylab}${xlab}
+  </svg>
+  <div class="est-chart-legend">
+    <span><i style="background:#0f3b5e"></i>Empenhado</span>
+    <span><i style="background:#c98a16"></i>Liquidado</span>
+    <span><i style="background:#1e6b3b"></i>Pago</span>
+  </div>`;
+}
+
+/* ---------- renderização das seções ---------- */
+function estRenderKPIs(){
+  const t = estDados.totais;
+  const saldo = t.empenhado - t.pago;
+  const pctLiq = t.empenhado ? t.liquidado/t.empenhado*100 : 0;
+  const pctPago = t.empenhado ? t.pago/t.empenhado*100 : 0;
+  const pctSaldo = t.empenhado ? saldo/t.empenhado*100 : 0;
+  const card = (cor,label,valor,sub) =>
+    `<div class="est-kpi" style="--kpi-cor:${cor};"><div class="est-kpi-label">${label}</div><div class="est-kpi-valor">${valor}</div><div class="est-kpi-sub">${sub}</div></div>`;
+  document.getElementById('est-kpis').innerHTML =
+    card('#0f3b5e','Empenhado', estFmtBRL(t.empenhado), 'Exercício ' + estDados.ano) +
+    card('#c98a16','Liquidado', estFmtBRL(t.liquidado), '<strong>'+pctLiq.toFixed(1)+'%</strong> do empenhado') +
+    card('#1e6b3b','Pago', estFmtBRL(t.pago), '<strong>'+pctPago.toFixed(1)+'%</strong> do empenhado') +
+    card('#a50e0e','Saldo a Pagar', estFmtBRL(saldo), '<strong>'+pctSaldo.toFixed(1)+'%</strong> ainda a pagar');
+}
+
+function estRenderExecucao(){
+  const t = estDados.totais;
+  const pLiq = t.empenhado ? t.liquidado/t.empenhado*100 : 0;
+  const pPago = t.empenhado ? t.pago/t.empenhado*100 : 0;
+  const pPagoLiq = t.liquidado ? t.pago/t.liquidado*100 : 0;
+  const fluxo = (nome,val,cor,w) =>
+    `<div class="est-fluxo-item"><div class="est-fluxo-top"><span class="est-fluxo-nome">${nome}</span><span class="est-fluxo-val" style="color:${cor};">${estFmtBRL(val)}</span></div><div class="est-fluxo-track"><div class="est-fluxo-fill" style="width:${Math.max(1,w).toFixed(1)}%; background:${cor};"></div></div></div>`;
+  document.getElementById('est-execucao').innerHTML =
+    fluxo('Empenhado', t.empenhado, '#0f3b5e', 100) +
+    fluxo('Liquidado', t.liquidado, '#c98a16', pLiq) +
+    fluxo('Pago', t.pago, '#1e6b3b', pPago) +
+    `<div class="est-taxas">
+      <div class="est-taxa-box"><div class="est-taxa-val" style="color:#c98a16;">${pLiq.toFixed(1)}%</div><div class="est-taxa-lbl">Liquidado / Empenhado</div></div>
+      <div class="est-taxa-box"><div class="est-taxa-val" style="color:#1e6b3b;">${pPagoLiq.toFixed(1)}%</div><div class="est-taxa-lbl">Pago / Liquidado</div></div>
+    </div>`;
+}
+
+function estRenderFuncoes(){
+  const cont = document.getElementById('est-funcoes');
+  const fatias = estPrepFatias(estDados.funcoes.map(f => ({ nome: f.nome, valor: f.empenhado })), 9);
+  if (!fatias.length){ cont.innerHTML = '<div class="est-loading">Sem dados por função.</div>'; return; }
+  const total = fatias.reduce((s,i) => s + i.valor, 0);
+  const donut = estDonut(fatias, estFmtY(total), 'empenhado');
+  const legenda = fatias.map(f =>
+    `<div class="est-legend-item"><span class="est-legend-dot" style="background:${f.cor};"></span><span class="est-legend-nome">${estEsc(f.nome)}</span><span class="est-legend-val">${estFmtBRL(f.valor)}</span><span class="est-legend-pct">${total ? (f.valor/total*100).toFixed(1) : 0}%</span></div>`
+  ).join('');
+  cont.innerHTML = `<div class="est-donut-wrap">${donut}<div class="est-legend">${legenda}</div></div>`;
+}
+
+function estRenderMensal(){
+  const cont = document.getElementById('est-mensal');
+  if (!estDados.mensal || !estDados.mensal.length){
+    cont.innerHTML = '<div class="est-loading">Ainda não há movimentação registrada para este exercício.</div>';
+    return;
+  }
+  cont.innerHTML = estLineChart(estDados.mensal);
+}
+
+function estRenderSecretarias(){
+  const cont = document.getElementById('est-secretarias');
+  const secs = [...estDados.secretarias].sort((a,b) => b.empenhado - a.empenhado);
+  if (!secs.length){ cont.innerHTML = '<div class="est-loading">Sem dados por secretaria.</div>'; return; }
+  const maxEmp = Math.max(...secs.map(s => s.empenhado), 1);
+
+  const bars = secs.map(s => {
+    const empPct = s.empenhado/maxEmp*100;
+    const pagoPct = s.pago/maxEmp*100;
+    const exec = s.empenhado ? s.pago/s.empenhado*100 : 0;
+    return `<div class="est-bar-row">
+      <div class="est-bar-nome" title="${estEsc(s.nome)}">${estEsc(estTitulo(s.nome))}</div>
+      <div class="est-bar-track" title="Empenhado ${estFmtBRL(s.empenhado)} • Pago ${estFmtBRL(s.pago)} (${exec.toFixed(1)}%)">
+        <div class="est-bar-fill" style="width:${empPct.toFixed(1)}%; background:#a2c0d6;"></div>
+        <div class="est-bar-fill" style="width:${pagoPct.toFixed(1)}%; background:#0f3b5e; position:absolute; top:0; left:0;"></div>
+      </div>
+      <div class="est-bar-val">${estFmtBRL(s.empenhado)}</div>
+    </div>`;
+  }).join('');
+
+  const linhas = secs.map((s,i) => {
+    const exec = s.empenhado ? s.pago/s.empenhado*100 : 0;
+    const cor = exec >= 80 ? '#1e6b3b' : exec >= 50 ? '#c98a16' : '#a50e0e';
+    return `<tr>
+      <td><span class="est-rank-pos">${i+1}</span></td>
+      <td>${estEsc(s.nome)}</td>
+      <td class="num">${estFmtBRL(s.empenhado)}</td>
+      <td class="num">${estFmtBRL(s.liquidado)}</td>
+      <td class="num">${estFmtBRL(s.pago)}</td>
+      <td class="num" style="min-width:118px;">
+        <div style="font-weight:800; color:${cor};">${exec.toFixed(1)}%</div>
+        <div class="est-mini-track"><div class="est-mini-fill" style="width:${Math.min(exec,100).toFixed(1)}%; background:${cor};"></div></div>
+      </td>
+    </tr>`;
+  }).join('');
+
+  cont.innerHTML = `
+    <div style="display:flex; gap:16px; align-items:center; margin-bottom:10px; font-size:11.5px; color:#7a8895; font-weight:600;">
+      <span style="display:inline-flex; align-items:center; gap:6px;"><i style="width:12px;height:12px;border-radius:3px;background:#a2c0d6;display:inline-block;"></i>Empenhado</span>
+      <span style="display:inline-flex; align-items:center; gap:6px;"><i style="width:12px;height:12px;border-radius:3px;background:#0f3b5e;display:inline-block;"></i>Pago</span>
+    </div>
+    ${bars}
+    <div style="overflow-x:auto; margin-top:18px;">
+      <table class="est-tabela">
+        <thead><tr><th style="width:34px;">#</th><th>Secretaria / Unidade</th><th class="num">Empenhado</th><th class="num">Liquidado</th><th class="num">Pago</th><th class="num">% Pago</th></tr></thead>
+        <tbody>${linhas}</tbody>
+      </table>
+    </div>`;
+}
+
+/* ---------- maiores fornecedores e modalidades (sob demanda) ---------- */
+async function estCarregarFornecedores(){
+  if (estFornCarregando) return;
+  const ano = estAnoSel();
+  const cont = document.getElementById('est-fornecedores');
+  const btn = document.getElementById('est-btn-forn');
+  estFornCarregando = true;
+  if (btn){ btn.disabled = true; btn.textContent = 'Carregando…'; }
+  cont.innerHTML = '<div class="est-loading">Consultando todos os fornecedores do exercício ' + ano + '… isso pode levar alguns segundos.</div>';
+  try {
+    const url = `${EST_API}?elementosPorPagina=6000&pagina=1&termoBase64=&indAgrupamento=FOR&datInicio=${ano}-01-01&datFim=${ano}-12-31&desNatureza=&codAdministracao=${EST_ADM}&filtrarApenasCovid=false&numEmpenho=&cpfCnpj=`;
+    const r = await fetch(url);
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const dd = await r.json();
+    const lista = Array.isArray(dd.content) ? dd.content : [];
+
+    const mapF = new Map(), mapM = new Map();
+    lista.forEach(x => {
+      const nome = x.desAgrupamento || 'Não informado';
+      const emp = Number(x.vlrEmpenhado||0), liq = Number(x.vlrLiquidado||0), pago = Number(x.vlrPago||0);
+      const f = mapF.get(nome) || { nome, doc: x.desDocumentoFornecedorFormatado || x.desDocumentoFornecedor || '-', empenhado:0, liquidado:0, pago:0 };
+      f.empenhado += emp; f.liquidado += liq; f.pago += pago;
+      mapF.set(nome, f);
+      const mod = x.desModalidade || 'Não informada';
+      mapM.set(mod, (mapM.get(mod)||0) + emp);
+    });
+    const forn = [...mapF.values()].sort((a,b) => b.empenhado - a.empenhado);
+    const top = forn.slice(0, 15);
+    const mods = [...mapM.entries()].map(([nome,valor]) => ({ nome, valor }));
+    const modFatias = estPrepFatias(mods, 8);
+    const totalMod = modFatias.reduce((s,i) => s + i.valor, 0);
+    const donutMod = estDonut(modFatias, estFmtY(totalMod), 'empenhado');
+    const legMod = modFatias.map(f =>
+      `<div class="est-legend-item"><span class="est-legend-dot" style="background:${f.cor};"></span><span class="est-legend-nome">${estEsc(f.nome)}</span><span class="est-legend-val">${estFmtBRL(f.valor)}</span><span class="est-legend-pct">${totalMod ? (f.valor/totalMod*100).toFixed(1) : 0}%</span></div>`
+    ).join('');
+    const linhasForn = top.map((f,i) => {
+      const exec = f.empenhado ? f.pago/f.empenhado*100 : 0;
+      return `<tr><td><span class="est-rank-pos">${i+1}</span></td><td>${estEsc(estNomeForn(f.nome))}</td><td style="white-space:nowrap; color:#7a8895; font-size:11.5px;">${estEsc(f.doc)}</td><td class="num">${estFmtBRL(f.empenhado)}</td><td class="num">${estFmtBRL(f.pago)}</td><td class="num" style="color:${exec>=80?'#1e6b3b':exec>=50?'#c98a16':'#a50e0e'}; font-weight:700;">${exec.toFixed(0)}%</td></tr>`;
+    }).join('');
+
+    cont.innerHTML = `
+      <div style="font-size:12px; color:#7a8895; margin-bottom:14px;">${forn.length.toLocaleString('pt-BR')} fornecedores no exercício ${ano}. Exibindo os 15 maiores por valor empenhado.</div>
+      <div class="est-row-2">
+        <div>
+          <div class="est-card-title" style="margin-bottom:12px;">Top 15 Fornecedores</div>
+          <div style="overflow-x:auto;"><table class="est-tabela"><thead><tr><th style="width:30px;">#</th><th>Fornecedor</th><th>Documento</th><th class="num">Empenhado</th><th class="num">Pago</th><th class="num">%</th></tr></thead><tbody>${linhasForn}</tbody></table></div>
+        </div>
+        <div>
+          <div class="est-card-title" style="margin-bottom:12px;">Por Modalidade de Contratação</div>
+          <div class="est-donut-wrap">${donutMod}<div class="est-legend">${legMod}</div></div>
+        </div>
+      </div>`;
+  } catch (e){
+    console.error('Erro fornecedores:', e);
+    cont.innerHTML = '<div class="alert-box alert-normal" style="display:block;">Não foi possível carregar os fornecedores: ' + estEsc(e.message||'') + '</div>';
+  } finally {
+    estFornCarregando = false;
+    if (btn){ btn.disabled = false; btn.textContent = 'Recarregar'; }
+  }
+}
+
+/* ---------- exportação CSV ---------- */
+function estNum(v){ return Number(v||0).toFixed(2).replace('.', ','); }
+function estCSVDownload(nome, linhas){
+  const csv = linhas.map(r => r.map(c => {
+    c = String(c==null?'':c);
+    return /[",;\n]/.test(c) ? '"' + c.replace(/"/g,'""') + '"' : c;
+  }).join(';')).join('\r\n');
+  const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = nome;
+  document.body.appendChild(a); a.click(); a.remove();
+  URL.revokeObjectURL(url);
+}
+function estExportarCSV(tipo){
+  if (!estDados){ mostrarAvisoSistema('Estatísticas', 'Carregue os dados antes de exportar.'); return; }
+  if (tipo === 'secretarias'){
+    const linhas = [['Secretaria/Unidade','Empenhado','Liquidado','Pago','% Pago']];
+    [...estDados.secretarias].sort((a,b)=>b.empenhado-a.empenhado).forEach(s =>
+      linhas.push([s.nome, estNum(s.empenhado), estNum(s.liquidado), estNum(s.pago), (s.empenhado?s.pago/s.empenhado*100:0).toFixed(1).replace('.',',')]));
+    estCSVDownload(`estatisticas_secretarias_${estDados.ano}.csv`, linhas);
+  } else if (tipo === 'funcoes'){
+    const linhas = [['Funcao','Empenhado','Liquidado','Pago']];
+    [...estDados.funcoes].sort((a,b)=>b.empenhado-a.empenhado).forEach(s =>
+      linhas.push([s.nome, estNum(s.empenhado), estNum(s.liquidado), estNum(s.pago)]));
+    estCSVDownload(`estatisticas_funcoes_${estDados.ano}.csv`, linhas);
+  }
+}
+
+/* ---------- relatório imprimível ---------- */
+function estGerarRelatorio(){
+  if (!estCarregado || !estDados){ mostrarAvisoSistema('Estatísticas', 'Carregue os dados antes de gerar o relatório.'); return; }
+  const d = estDados;
+  const t = d.totais;
+  const agora = new Date().toLocaleString('pt-BR');
+  const pctLiq = t.empenhado ? t.liquidado/t.empenhado*100 : 0;
+  const pctPago = t.empenhado ? t.pago/t.empenhado*100 : 0;
+  const secs = [...d.secretarias].sort((a,b)=>b.empenhado-a.empenhado);
+  const funcs = [...d.funcoes].sort((a,b)=>b.empenhado-a.empenhado);
+
+  const linhasSec = secs.map((s,i) =>
+    `<tr><td>${i+1}</td><td>${estEsc(s.nome)}</td><td class="n">${estFmtBRL(s.empenhado)}</td><td class="n">${estFmtBRL(s.liquidado)}</td><td class="n">${estFmtBRL(s.pago)}</td><td class="n">${(s.empenhado?s.pago/s.empenhado*100:0).toFixed(1)}%</td></tr>`).join('');
+  const linhasFun = funcs.map(f =>
+    `<tr><td>${estEsc(f.nome)}</td><td class="n">${estFmtBRL(f.empenhado)}</td><td class="n">${estFmtBRL(f.liquidado)}</td><td class="n">${estFmtBRL(f.pago)}</td></tr>`).join('');
+  const linhasMes = (d.mensal||[]).map(m =>
+    `<tr><td>${EST_MESES[m.mes-1]}</td><td class="n">${estFmtBRL(m.empenhado)}</td><td class="n">${estFmtBRL(m.liquidado)}</td><td class="n">${estFmtBRL(m.pago)}</td></tr>`).join('');
+
+  const html = `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8">
+<title>Relatório de Estatísticas — ${d.ano}</title>
+<style>
+  * { box-sizing:border-box; }
+  body { font-family:Arial,Helvetica,sans-serif; color:#2c3e50; margin:0; padding:28px 34px; }
+  h1 { font-size:20px; color:#0f3b5e; margin:0 0 2px; }
+  .sub { font-size:12px; color:#6b7a88; margin-bottom:18px; }
+  h2 { font-size:14px; color:#0f3b5e; border-bottom:2px solid #0f3b5e; padding-bottom:5px; margin:24px 0 10px; }
+  .kpis { display:flex; gap:12px; flex-wrap:wrap; margin-bottom:8px; }
+  .k { flex:1; min-width:150px; border:1px solid #dbe3ea; border-left:5px solid #0f3b5e; border-radius:6px; padding:10px 12px; }
+  .k .l { font-size:10px; text-transform:uppercase; color:#6b7a88; font-weight:bold; letter-spacing:.5px; }
+  .k .v { font-size:18px; font-weight:bold; color:#0f3b5e; margin-top:4px; }
+  table { width:100%; border-collapse:collapse; font-size:12px; margin-top:6px; }
+  th { background:#f2f6f9; color:#0f3b5e; text-align:left; padding:7px 8px; border:1px solid #dce4ec; }
+  td { padding:6px 8px; border:1px solid #e6edf2; }
+  td.n { text-align:right; white-space:nowrap; }
+  tfoot td { font-weight:bold; background:#f8fafc; }
+  .toolbar { margin-bottom:18px; }
+  .toolbar button { padding:9px 18px; font-size:13px; border-radius:5px; border:1px solid #0a2942; background:#0f3b5e; color:#fff; cursor:pointer; margin-right:8px; }
+  @media print { .noprint { display:none !important; } body { padding:0; } }
+</style></head><body>
+  <div class="toolbar noprint">
+    <button onclick="window.print()">Imprimir / Salvar PDF</button>
+    <button onclick="window.close()" style="background:#6c757d; border-color:#5a6268;">Fechar</button>
+  </div>
+  <h1>Relatório de Execução Orçamentária — Exercício ${d.ano}</h1>
+  <div class="sub">Prefeitura Municipal de Iguatama - MG · Gerado em ${agora} · Fonte: Portal da Transparência</div>
+
+  <h2>Indicadores gerais</h2>
+  <div class="kpis">
+    <div class="k"><div class="l">Empenhado</div><div class="v">${estFmtBRL(t.empenhado)}</div></div>
+    <div class="k" style="border-left-color:#c98a16;"><div class="l">Liquidado</div><div class="v" style="color:#c98a16;">${estFmtBRL(t.liquidado)} (${pctLiq.toFixed(1)}%)</div></div>
+    <div class="k" style="border-left-color:#1e6b3b;"><div class="l">Pago</div><div class="v" style="color:#1e6b3b;">${estFmtBRL(t.pago)} (${pctPago.toFixed(1)}%)</div></div>
+    <div class="k" style="border-left-color:#a50e0e;"><div class="l">Saldo a Pagar</div><div class="v" style="color:#a50e0e;">${estFmtBRL(t.empenhado - t.pago)}</div></div>
+  </div>
+
+  <h2>Gasto por Secretaria / Unidade</h2>
+  <table>
+    <thead><tr><th>#</th><th>Secretaria / Unidade</th><th class="n">Empenhado</th><th class="n">Liquidado</th><th class="n">Pago</th><th class="n">% Pago</th></tr></thead>
+    <tbody>${linhasSec}</tbody>
+    <tfoot><tr><td colspan="2">TOTAL</td><td class="n">${estFmtBRL(t.empenhado)}</td><td class="n">${estFmtBRL(t.liquidado)}</td><td class="n">${estFmtBRL(t.pago)}</td><td class="n">${pctPago.toFixed(1)}%</td></tr></tfoot>
+  </table>
+
+  <h2>Gasto por Função</h2>
+  <table>
+    <thead><tr><th>Função</th><th class="n">Empenhado</th><th class="n">Liquidado</th><th class="n">Pago</th></tr></thead>
+    <tbody>${linhasFun}</tbody>
+  </table>
+
+  ${linhasMes ? `<h2>Evolução Mensal</h2>
+  <table>
+    <thead><tr><th>Mês</th><th class="n">Empenhado</th><th class="n">Liquidado</th><th class="n">Pago</th></tr></thead>
+    <tbody>${linhasMes}</tbody>
+  </table>` : ''}
+</body></html>`;
+
+  const w = window.open('', '_blank');
+  if (!w){ mostrarAvisoSistema('Estatísticas', 'Permita pop-ups (janelas) para gerar o relatório.'); return; }
+  w.document.open(); w.document.write(html); w.document.close(); w.focus();
 }
     </script>
 <script src="https://cdn.jsdelivr.net/npm/quill@2/dist/quill.js"></script>

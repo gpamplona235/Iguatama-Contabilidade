@@ -3293,12 +3293,35 @@ body.print-retencao .col-retencao {
     <div style="display: flex; flex-direction: column; gap: 16px;">
         <div style="background: #f8fafc; border: 1px solid #d7e0e8; border-radius: 8px; padding: 16px;">
 
-            <div class="search-form" style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+            <div class="checkbox-group" style="margin-bottom: 12px; display: flex; gap: 18px; flex-wrap: wrap;">
+                <label style="display:flex; align-items:center; gap:5px; font-weight: normal; cursor:pointer;">
+                    <input type="radio" name="modoConsultaCol1" id="modoConsultaCnpj" value="cnpj" checked onchange="alternarModoConsultaCol1()">
+                    Buscar por CNPJ
+                </label>
+                <label style="display:flex; align-items:center; gap:5px; font-weight: normal; cursor:pointer;">
+                    <input type="radio" name="modoConsultaCol1" id="modoConsultaEmpenho" value="empenho" onchange="alternarModoConsultaCol1()">
+                    Buscar por Empenho
+                </label>
+            </div>
+
+            <div class="search-form" id="form-busca-cnpj" style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
                 <input type="text" id="cnpjInput" placeholder="Digite o CNPJ" maxlength="18" style="flex: 1; min-width: 220px;">
                 <button class="btn-primary" onclick="consultarCNPJ()" style="width: auto; padding: 10px 18px;">
                     Buscar
                 </button>
             </div>
+
+            <div class="search-form" id="form-busca-empenho" style="display: none; gap: 10px; align-items: center; flex-wrap: wrap;">
+                <input type="text" id="empenhoInputCol1" placeholder="Nº do empenho" style="flex: 1; min-width: 140px;">
+                <input type="text" id="empenhoAnoCol1" placeholder="Ano" maxlength="4" value="2026" style="width: 80px;">
+                <button class="btn-primary" onclick="buscarPorEmpenhoCol1()" style="width: auto; padding: 10px 18px;">
+                    Buscar
+                </button>
+            </div>
+
+            <div id="status-busca-empenho-col1" class="alert-box alert-neutro" style="display: none; margin-top: 12px; margin-bottom: 0;"></div>
+
+            <div id="lista-resultados-empenho-col1" style="display: none; margin-top: 12px; max-height: 260px; overflow-y: auto; border: 1px solid #d7e0e8; border-radius: 6px; background: #fff;"></div>
         </div>
 
         <div class="loading" id="loading" style="display: none;">
@@ -5059,6 +5082,147 @@ document.getElementById('cnpjInput').addEventListener('input', function (e) {
                 document.getElementById('loading').style.display = 'none';
             }
         }
+
+        // ===== Coluna 1: alternar entre busca por CNPJ e busca por Empenho =====
+        function alternarModoConsultaCol1() {
+            const porEmpenho = document.getElementById('modoConsultaEmpenho').checked;
+            document.getElementById('form-busca-cnpj').style.display = porEmpenho ? 'none' : 'flex';
+            document.getElementById('form-busca-empenho').style.display = porEmpenho ? 'flex' : 'none';
+            document.getElementById('status-busca-empenho-col1').style.display = 'none';
+            document.getElementById('lista-resultados-empenho-col1').style.display = 'none';
+            document.getElementById('lista-resultados-empenho-col1').innerHTML = '';
+        }
+
+        function definirStatusBuscaEmpenhoCol1(texto, tipo) {
+            const status = document.getElementById('status-busca-empenho-col1');
+            status.style.display = 'block';
+            status.className = `alert-box alert-${tipo || 'neutro'}`;
+            status.innerHTML = texto;
+        }
+
+        // Mapa de elementos de despesa conhecidos (2 últimos dígitos do código de 6 dígitos, ex: 339039 -> "39")
+        // Fonte: Portaria STN/SOF nº 448/2002 e Manual de Despesa Nacional (classificação por natureza)
+        const MAPA_ELEMENTO_DESPESA = {
+            '30': 'material', // Material de Consumo
+            '36': 'servico',  // Outros Serviços de Terceiros - Pessoa Física
+            '37': 'servico',  // Locação de Mão de Obra
+            '39': 'servico',  // Outros Serviços de Terceiros - Pessoa Jurídica
+            '40': 'servico',  // Serviços de Tecnologia da Informação e Comunicação
+            '51': 'material', // Obras e Instalações
+            '52': 'material'  // Equipamentos e Material Permanente
+        };
+
+        function classificarNaturezaDespesa(item) {
+            const codigo = String(item?.desDespesa || '').replace(/\D/g, '');
+            if (codigo.length < 6) return null;
+            const elemento = codigo.slice(4, 6);
+            return MAPA_ELEMENTO_DESPESA[elemento] || null;
+        }
+
+        async function buscarPorEmpenhoCol1() {
+            const numero = (document.getElementById('empenhoInputCol1').value || '').trim();
+            const ano = (document.getElementById('empenhoAnoCol1').value || '2026').trim() || '2026';
+            const listaDiv = document.getElementById('lista-resultados-empenho-col1');
+
+            listaDiv.style.display = 'none';
+            listaDiv.innerHTML = '';
+
+            if (!numero) {
+                return definirStatusBuscaEmpenhoCol1('Digite o número do empenho.', 'normal');
+            }
+
+            definirStatusBuscaEmpenhoCol1('Buscando empenho no Portal da Transparência...', 'neutro');
+
+            const numeroFormatado = numero.padStart(6, '0');
+            const url = `https://transparencia.iguatama.mg.gov.br/publico/despesaDetalhada/buscarMovimentacao?numEmpenho=${encodeURIComponent(numeroFormatado)}&numAnoEmpenho=${encodeURIComponent(ano)}&codAdministracao=2`;
+
+            try {
+                const resposta = await fetch(url);
+                if (!resposta.ok) throw new Error(`Falha HTTP ${resposta.status}`);
+
+                const data = await resposta.json();
+                const lista = Array.isArray(data) ? data : (Array.isArray(data?.content) ? data.content : []);
+
+                if (!lista.length) {
+                    return definirStatusBuscaEmpenhoCol1('Nenhum registro encontrado para este empenho/ano. Você pode buscar diretamente por CNPJ.', 'normal');
+                }
+
+                if (lista.length === 1) {
+                    definirStatusBuscaEmpenhoCol1('Empenho encontrado. Preenchendo dados automaticamente...', 'simples');
+                    return aplicarRegistroEmpenhoCol1(lista[0]);
+                }
+
+                definirStatusBuscaEmpenhoCol1(`Foram encontrados ${lista.length} registros para este empenho. Selecione qual deseja usar:`, 'neutro');
+
+                listaDiv.style.display = 'block';
+                listaDiv.innerHTML = lista.map((item, idx) => {
+                    const fornecedor = item?.nomFornecedor || obterNomeFornecedorEmpenho(item) || 'Fornecedor não informado';
+                    const doc = item?.desDocumentoFornecedorFormatado || item?.desDocumentoFornecedor || obterDocumentoItem(item) || '-';
+                    const valor = item?.vlrEmpenhado ?? item?.valorEmpenhado ?? item?.vlrTotalEmpenhado ?? item?.valor ?? 0;
+                    const dataMov = item?.datMovimento || item?.dataMovimento || item?.datEmissao || item?.dataEmissao || item?.datInclusao || '';
+                    const valorFormatado = Number(valor || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                    const naturezaTexto = item?.desDepesaNaturezaFormatado || item?.desDespesaOrcamentaria || '';
+
+                    return `
+                        <div style="padding: 10px 12px; border-bottom: 1px solid #eef2f5; cursor: pointer;"
+                             onmouseover="this.style.backgroundColor='#f8fafc'" onmouseout="this.style.backgroundColor='#fff'"
+                             onclick='selecionarRegistroEmpenhoCol1(${idx})'>
+                            <strong>${fornecedor}</strong><br>
+                            <span style="font-size: 12px; color: #555;">Doc: ${doc} • Valor: ${valorFormatado}${dataMov ? ' • ' + formatarDataMovimento(dataMov) : ''}</span>
+                            ${naturezaTexto ? `<br><span style="font-size: 11px; color: #888;">${naturezaTexto}</span>` : ''}
+                        </div>
+                    `;
+                }).join('');
+
+                window._resultadosEmpenhoCol1 = lista;
+            } catch (erro) {
+                console.error('Erro ao buscar empenho (Coluna 1):', erro);
+                definirStatusBuscaEmpenhoCol1('Não foi possível consultar o Portal da Transparência agora. Tente novamente ou use a busca por CNPJ.', 'normal');
+            }
+        }
+
+        function selecionarRegistroEmpenhoCol1(idx) {
+            const lista = window._resultadosEmpenhoCol1 || [];
+            const item = lista[idx];
+            if (!item) return;
+            document.getElementById('lista-resultados-empenho-col1').style.display = 'none';
+            definirStatusBuscaEmpenhoCol1('Registro selecionado. Preenchendo dados automaticamente...', 'simples');
+            aplicarRegistroEmpenhoCol1(item);
+        }
+
+        async function aplicarRegistroEmpenhoCol1(item) {
+            const doc = obterDocumentoItem(item);
+
+            if (!doc || doc.length !== 14) {
+                return definirStatusBuscaEmpenhoCol1('Empenho localizado, mas o CNPJ do fornecedor não veio completo na API. Use a busca por CNPJ manualmente.', 'normal');
+            }
+
+            const valorEmpenhado = item?.vlrEmpenhado ?? item?.valorEmpenhado ?? item?.vlrTotalEmpenhado ?? item?.valor ?? 0;
+
+            const cnpjFormatado = doc.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/, '$1.$2.$3/$4-$5');
+            document.getElementById('cnpjInput').value = cnpjFormatado;
+
+            await consultarCNPJ();
+
+            if (Number(valorEmpenhado) > 0) {
+                document.getElementById('valorNota').value = Number(valorEmpenhado).toFixed(2);
+                document.getElementById('issqn-valor').value = Number(valorEmpenhado).toFixed(2);
+            }
+
+            const natureza = classificarNaturezaDespesa(item);
+            let avisoNatureza = '';
+
+            if (natureza) {
+                document.getElementById('tipoOperacao').value = natureza;
+                alternarTipoOperacao();
+                avisoNatureza = ` Natureza identificada: <strong>${natureza === 'servico' ? 'Prestação de serviço' : 'Aquisição de materiais/mercadorias'}</strong> (${item?.desDepesaNaturezaFormatado || item?.desDespesaOrcamentaria || ''}).`;
+            } else {
+                avisoNatureza = ' Não foi possível identificar automaticamente se é serviço ou material — confira manualmente o campo "Natureza da operação" na coluna 2.';
+            }
+
+            definirStatusBuscaEmpenhoCol1('Dados do fornecedor e valor do empenho preenchidos a partir do Portal da Transparência.' + avisoNatureza, 'simples');
+        }
+
 
        function calcularRetencao() {
   const valorNota = parseFloat(document.getElementById('valorNota').value);

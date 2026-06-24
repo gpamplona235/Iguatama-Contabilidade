@@ -4319,7 +4319,7 @@ body.print-retencao .col-retencao {
           <div class="est-card">
             <div class="est-card-head">
               <div>
-                <h3 class="est-card-title">Distribuição por elemento de despesa (teste)</h3>
+                <h3 class="est-card-title">Distribuição por Função</h3>
                 <div class="est-card-sub">Áreas de governo (empenhado)</div>
               </div>
               <button class="est-btn-mini" type="button" onclick="estExportarCSV('funcoes')">CSV</button>
@@ -5357,6 +5357,26 @@ function atualizarStatusSociedade() {
 
     if (baseCalculo < 0) {
         baseCalculo = 0;
+    }
+
+    const isSimples = document.getElementById('regime-simples').checked;
+
+    if (isSimples) {
+        document.getElementById('resultado-issqn').style.display = 'block';
+        document.getElementById('valor-issqn-tela').textContent = formatBRL(0);
+        document.getElementById('valor-issqn-tela').style.color = '#a50e0e';
+        document.getElementById('valor-issqn-tela').style.textDecoration = 'none';
+
+        document.getElementById('motivo-issqn').innerHTML =
+            `<span style="color:#a50e0e;"><strong>Não há cobrança de ISS por esta rotina.</strong></span>` +
+            `<br><br>Optante pelo Simples Nacional identificado via CNPJ: o ISS é recolhido pela própria empresa ` +
+            `dentro do regime do Simples Nacional (DAS), não cabendo apuração nem retenção de ISS por Iguatama nesta rotina.`;
+
+        document.getElementById('detalhe-issqn').innerHTML =
+            `Base de cálculo: ${formatBRL(baseCalculo)}<br>` +
+            `ISS considerado pelo sistema: ${formatBRL(0)}`;
+        atualizarBottomSheetISS();
+        return;
     }
 
     const analise = analisarRetencaoISS();

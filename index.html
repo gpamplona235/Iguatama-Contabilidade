@@ -108,6 +108,7 @@
         .status-label { padding: 3px 8px; border-radius: 2px; font-size: 11px; font-weight: bold; display: inline-block; }
         .status-sim { background-color: #e6f4ea; color: #1e4620; border: 1px solid #c8e6c9; }
         .status-nao { background-color: #fce8e6; color: #a50e0e; border: 1px solid #f8bbd0; }
+        .status-andamento { background-color: #fff4e0; color: #8a5a00; border: 1px solid #ffe0a3; }
 
         #panel-calculadora, #panel-issqn { opacity: 0.55; pointer-events: none; transition: opacity 0.3s; }
 
@@ -3825,8 +3826,17 @@ body.print-retencao .col-retencao {
     </table>
 
     <div id="gnRodapeImpressao" style="margin-top:14px; font-size:13px; font-weight:bold; color:#111; text-align:right;"></div>
-    <div id="gnLinkPublicoImpressao" style="margin-top:10px; font-size:12px; color:#111; text-align:right; word-break:break-all; border-top:1px dashed #ccc; padding-top:8px;"></div>
 </div>
+                </div>
+
+                <div style="margin-top:18px; background:#ffffff; border:1px solid #d7e0e8; border-radius:10px; overflow:hidden;">
+                    <div style="padding:14px 16px; border-bottom:1px solid #e3eaf0; background:#f7fafc; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+                        <div style="font-size:13px; font-weight:bold; color:#0f3b5e;">Histórico de lógica (logística)</div>
+                        <span id="gnStatusLogisticaAtual" class="status-label status-nao">Sem status definido</span>
+                    </div>
+                    <div id="gnHistoricoLogisticaLista" style="padding:14px 16px; font-size:13px; color:#495057; line-height:1.5;">
+                        Abra ou salve uma tabela para ver o histórico de logística.
+                    </div>
                 </div>
 
                 <div style="margin-top:18px; background:#fff; border:1px solid #d7e0e8; border-radius:10px; overflow:hidden;">
@@ -7897,12 +7907,11 @@ function confirmarImpressaoGestaoNotas() {
     imprimirTabelaGestaoNotas(filtroTipo);
 }
 
-async function imprimirTabelaGestaoNotas(filtroTipo = 'todos') {
+function imprimirTabelaGestaoNotas(filtroTipo = 'todos') {
     const folha = document.getElementById('gnFolhaImpressao');
     const dataEl = document.getElementById('gnFolhaData');
     const tbodyImpressao = document.getElementById('gnTabelaImpressaoBody');
     const rodape = document.getElementById('gnRodapeImpressao');
-    const linkEl = document.getElementById('gnLinkPublicoImpressao');
     const linhasTela = Array.from(document.querySelectorAll('#gnTabelaBody tr'));
 
     if (!folha || !dataEl || !tbodyImpressao || !rodape) {
@@ -7939,7 +7948,6 @@ async function imprimirTabelaGestaoNotas(filtroTipo = 'todos') {
     }
 
     let total = 0;
-    const itensParaPublicar = [];
 
     tbodyImpressao.innerHTML = linhasFiltradas.map(tr => {
         const colunas = tr.querySelectorAll('td');
@@ -7952,15 +7960,6 @@ async function imprimirTabelaGestaoNotas(filtroTipo = 'todos') {
         const nota = (colunas[5]?.textContent || '').trim();
 
         total += limparValorParaNumero(valorTexto);
-
-        itensParaPublicar.push({
-            empenho: empenho || '-',
-            fornecedor: fornecedor || '-',
-            tipo: tipo || '-',
-            valor: valorTexto || 'R$ 0,00',
-            data: data || '-',
-            nota: nota || '-'
-        });
 
         return `
             <tr>
@@ -7985,25 +7984,6 @@ async function imprimirTabelaGestaoNotas(filtroTipo = 'todos') {
     rodape.textContent =
         `Total de notas: ${linhasFiltradas.length} | Valor total: R$ ${formatarValorBR(total)}`;
 
-    // Gera o link público ANTES de imprimir, para que ele já saia escrito no papel/PDF.
-    let link = null;
-    let erroLink = null;
-    if (linkEl) linkEl.textContent = 'Gerando link público...';
-
-    try {
-        link = await gerarLinkPublicoGestaoNotas(itensParaPublicar, total, nomeFiltro);
-    } catch (erro) {
-        console.error('Erro ao gerar link público da lista:', erro);
-        erroLink = erro;
-    }
-
-    if (linkEl) {
-        linkEl.innerHTML = link
-            ? `<strong>Consulte esta lista também on-line em:</strong> ${link}`
-            : '';
-        console.log('[link público] valor definido na folha de impressão:', link);
-    }
-
     folha.style.display = 'block';
     document.body.classList.add('print-gestao-notas');
 
@@ -8012,29 +7992,19 @@ async function imprimirTabelaGestaoNotas(filtroTipo = 'todos') {
         setTimeout(() => {
             document.body.classList.remove('print-gestao-notas');
             folha.style.display = 'none';
-
-            if (link) {
-                exibirLinkPublicoGestaoNotas(link);
-            } else {
-                mostrarAvisoSistema(
-                    'Link público',
-                    'Não foi possível gerar o link público desta lista.' +
-                    (erroLink ? `<br><span style="font-size:11px; color:#888;">Detalhe técnico: ${erroLink.code || ''} ${erroLink.message || erroLink}</span>` : '<br><span style="font-size:11px; color:#888;">Verifique se você está logado e se a regra do Firestore para a coleção "NotasPublicas" foi cadastrada.</span>') +
-                    '<br><br>A impressão foi feita normalmente, apenas sem o link.'
-                );
-            }
         }, 300);
     }, 150);
 }
 
 // =========================================================
-// LINK PÚBLICO (sem login) PARA A LISTA IMPRESSA EM GESTÃO DE NOTAS
+// LINK PÚBLICO (sem login) — ÚNICO POR TABELA DE NOTAS
 // =========================================================
+// O link é gerado/atualizado quando a tabela é salva no Histórico (não na
+// impressão). Cada tabela (HistoricoNotas/{idTabela}) tem um único
+// "linkPublicoId", guardado no próprio documento. A coleção "NotasPublicas"
+// é só uma cópia de leitura pública (com id aleatório, não adivinhável) que
+// é resincronizada sempre que a tabela ou a logística mudam.
 
-// Gera um identificador aleatório (não sequencial, não adivinhável) para o
-// link público — propositalmente em uma coleção separada do histórico
-// interno ("HistoricoNotas"), para que compartilhar uma lista não exponha
-// as demais tabelas salvas no sistema.
 function gerarIdPublicoAleatorio(tamanho = 16) {
     const caracteres = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     const valores = new Uint32Array(tamanho);
@@ -8046,58 +8016,89 @@ function gerarIdPublicoAleatorio(tamanho = 16) {
     return resultado;
 }
 
-async function gerarLinkPublicoGestaoNotas(itens, total, nomeFiltro) {
-    if (!window.db || !window.fsDoc || !window.fsSetDoc) {
-        throw new Error('Firestore não está disponível nesta página.');
-    }
-    if (!window.auth?.currentUser) {
-        throw new Error('Você precisa estar logado para publicar um link público.');
-    }
-    if (!itens || !itens.length) {
-        return null;
-    }
-
-    const id = gerarIdPublicoAleatorio();
-
-    await window.fsSetDoc(
-        window.fsDoc(window.db, 'NotasPublicas', id),
-        {
-            id,
-            titulo: `Saída de Notas — ${nomeFiltro}`,
-            criadoPor: window.auth.currentUser.email || '',
-            dataCriacao: new Date().toISOString(),
-            filtro: nomeFiltro,
-            valorTotal: total,
-            itens
-        }
-    );
-
+function montarUrlNotaPublica(linkPublicoId) {
     const base = window.location.href.replace(/[^/]*$/, '');
-    return `${base}visualizar-nota.html?id=${id}`;
+    return `${base}visualizar-nota.html?id=${linkPublicoId}`;
 }
 
-function exibirLinkPublicoGestaoNotas(link) {
-    const html = `
-        <p>Link público gerado para esta lista. Qualquer pessoa com o link pode visualizar essa relação de notas, sem precisar fazer login.</p>
-        <div style="display:flex; gap:8px; margin-top:12px;">
-            <input type="text" id="campoLinkPublicoGestaoNotas" value="${link}" readonly
-                style="flex:1; padding:8px 10px; border:1px solid #bac5d0; border-radius:3px; font-size:13px; background:#f8fafc; color:#333;">
-            <button type="button" class="btn-primary" style="width:auto; padding:8px 14px;" onclick="copiarLinkPublicoGestaoNotas()">
-                Copiar link
-            </button>
-        </div>
-    `;
-    mostrarAvisoSistema('Link público da lista', html);
+// Copia para "NotasPublicas/{linkPublicoId}" o estado atual da tabela
+// (itens, total, status e histórico de logística). Não cria nada se a
+// tabela ainda não tiver um linkPublicoId.
+async function sincronizarNotaPublica(idTabela) {
+    if (!window.db || !window.fsDoc || !window.fsGetDoc || !window.fsSetDoc) return;
+
+    try {
+        const refTabela = window.fsDoc(window.db, 'HistoricoNotas', idTabela);
+        const snap = await window.fsGetDoc(refTabela);
+        if (!snap.exists()) return;
+
+        const dados = snap.data() || {};
+        if (!dados.linkPublicoId) return;
+
+        await window.fsSetDoc(
+            window.fsDoc(window.db, 'NotasPublicas', dados.linkPublicoId),
+            {
+                id: dados.linkPublicoId,
+                titulo: dados.titulo || 'Tabela de Notas',
+                criadoPor: dados.criadoPor || '',
+                dataCriacao: dados.dataCriacao || new Date().toISOString(),
+                dataAtualizacao: new Date().toISOString(),
+                valorTotal: dados.valorTotal || 0,
+                itens: dados.itens || [],
+                status: dados.status || null,
+                historicoStatus: Array.isArray(dados.historicoStatus) ? dados.historicoStatus : []
+            }
+        );
+    } catch (erro) {
+        console.error('Erro ao sincronizar link público:', erro);
+    }
 }
 
-function copiarLinkPublicoGestaoNotas() {
-    const campo = document.getElementById('campoLinkPublicoGestaoNotas');
-    if (!campo) return;
-    campo.select();
-    if (navigator.clipboard?.writeText) {
-        navigator.clipboard.writeText(campo.value).catch(() => document.execCommand('copy'));
-    } else {
-        document.execCommand('copy');
+// Garante que a tabela tenha um link público (cria o id na primeira vez,
+// reaproveita nas próximas) e devolve a URL pronta. Sempre resincroniza o
+// conteúdo antes de devolver o link, para garantir que está atualizado.
+async function garantirLinkPublico(idTabela) {
+    if (!idTabela || !window.db || !window.fsDoc || !window.fsGetDoc || !window.fsSetDoc) return null;
+
+    const refTabela = window.fsDoc(window.db, 'HistoricoNotas', idTabela);
+    const snap = await window.fsGetDoc(refTabela);
+    if (!snap.exists()) return null;
+
+    const dados = snap.data() || {};
+    let linkPublicoId = dados.linkPublicoId;
+
+    if (!linkPublicoId) {
+        linkPublicoId = gerarIdPublicoAleatorio();
+        await window.fsSetDoc(refTabela, { linkPublicoId }, { merge: true });
+    }
+
+    await sincronizarNotaPublica(idTabela);
+
+    return montarUrlNotaPublica(linkPublicoId);
+}
+
+// Botão "Copiar link" na lista de Histórico salvo.
+async function copiarLinkHistorico(idTabela) {
+    try {
+        const link = await garantirLinkPublico(idTabela);
+        if (!link) {
+            mostrarAvisoSistema('Link público', 'Não foi possível gerar o link agora.');
+            return;
+        }
+
+        if (navigator.clipboard?.writeText) {
+            await navigator.clipboard.writeText(link).catch(() => {});
+        }
+
+        mostrarAvisoSistema(
+            'Link copiado',
+            `Link copiado para a área de transferência:<br><span style="font-size:12px; color:#555; word-break:break-all;">${link}</span>`
+        );
+
+        carregarHistoricoGestaoNotas();
+    } catch (erro) {
+        console.error('Erro ao copiar link público:', erro);
+        mostrarAvisoSistema('Link público', 'Não foi possível gerar/copiar o link agora.');
     }
 }
 
@@ -8975,6 +8976,245 @@ let gestaoNotasFiltrados = [];
 let gestaoNotasTabelaAtualId = null;
 let gestaoNotasInicializada = false;
 
+// =========================================================
+// LOGÍSTICA (status de movimentação) DAS TABELAS SALVAS
+// =========================================================
+// Fluxo real (confirmado pelo usuário):
+//   1) Os empenhos são gerados na Contabilidade e separados por tipo:
+//      Mercadoria vai para o Almoxarifado; Serviço fica na Contabilidade
+//      aguardando o Almoxarifado devolver a parte de Mercadoria.
+//      -> status "separado" (automático, definido ao SALVAR a tabela, não
+//         ao imprimir).
+//   2) Depois que o Almoxarifado devolve a Mercadoria, tudo (Mercadoria e
+//      Serviço) é enviado junto para a Tesouraria.
+//      -> status "tesouraria" (manual, via botão "Atualizar logística").
+// O histórico de cada mudança é editável: dá para remover um lançamento
+// feito por engano (botão "Remover" em cada linha do histórico).
+
+function calcularDescricaoSeparacao(itens) {
+    const lista = Array.isArray(itens) ? itens : [];
+    const normalizar = txt => String(txt || '')
+        .trim()
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '');
+
+    const temMercadoria = lista.some(item => normalizar(item.tipoNota) === 'mercadoria');
+    const temServico = lista.some(item => normalizar(item.tipoNota) === 'servico');
+
+    if (temMercadoria && temServico) {
+        return 'Separado: Mercadoria no Almoxarifado · Serviço na Contabilidade (aguardando devolução da Mercadoria)';
+    }
+    if (temMercadoria) {
+        return 'Mercadoria no Almoxarifado (aguardando devolução)';
+    }
+    if (temServico) {
+        return 'Serviço na Contabilidade (aguardando devolução da Mercadoria)';
+    }
+    return 'Na Contabilidade';
+}
+
+function obterDescricaoStatusLogistica(status, itens) {
+    if (status === 'tesouraria') return 'Enviada à Tesouraria (Mercadoria e Serviço)';
+    if (status === 'separado') return calcularDescricaoSeparacao(itens);
+    return status || '';
+}
+
+function classeStatusLogistica(status) {
+    if (status === 'tesouraria') return 'status-sim';
+    if (status === 'separado') return 'status-andamento';
+    return 'status-nao';
+}
+
+// Nome de quem está logado, para registrar no histórico (não usa e-mail).
+function obterNomeUsuarioLogado() {
+    const usuario = window.auth?.currentUser;
+    if (!usuario) return '';
+    return usuario.displayName || usuario.email || 'Usuário';
+}
+
+function renderizarHistoricoLogisticaGestaoNotas(historico, statusAtual, idTabela) {
+    const badge = document.getElementById('gnStatusLogisticaAtual');
+    const lista = document.getElementById('gnHistoricoLogisticaLista');
+    if (!badge || !lista) return;
+
+    const idParaBotoes = idTabela || gestaoNotasTabelaAtualId;
+
+    badge.textContent = statusAtual ? obterDescricaoStatusLogistica(statusAtual, gestaoNotasItens) : 'Sem status definido';
+    badge.className = 'status-label ' + classeStatusLogistica(statusAtual);
+
+    const eventos = Array.isArray(historico) ? historico : [];
+    if (!eventos.length) {
+        lista.innerHTML = 'Nenhuma movimentação registrada ainda. O status inicial é definido automaticamente ao salvar a tabela no Histórico.';
+        return;
+    }
+
+    lista.innerHTML = eventos
+        .map((evento, indice) => ({ evento, indice }))
+        .slice()
+        .reverse()
+        .map(({ evento, indice }) => {
+            const data = evento.data ? new Date(evento.data) : null;
+            const dataTexto = data
+                ? `${data.toLocaleDateString('pt-BR')} ${data.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`
+                : '-';
+            const textoEvento = evento.descricao || obterDescricaoStatusLogistica(evento.status, gestaoNotasItens) || evento.status;
+
+            return `
+                <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px; padding:8px 0; border-bottom:1px solid #eef2f6;">
+                    <div>
+                        <div><strong>${textoEvento}</strong></div>
+                        <div style="color:#66727d; font-size:12px; margin-top:2px;">${dataTexto}${evento.usuario ? ' · ' + evento.usuario : ''}</div>
+                    </div>
+                    ${idParaBotoes ? `<button type="button" class="btn-cancelar-modal" style="padding:4px 10px; font-size:11px;" onclick="removerEventoLogistica('${idParaBotoes}', ${indice})">Remover</button>` : ''}
+                </div>
+            `;
+        })
+        .join('');
+}
+
+// Atualiza o status de logística de uma tabela salva (HistoricoNotas/{idTabela}).
+// opcoes.apenasSeNaoIniciado: só grava se a tabela ainda não tiver status
+// (usado na gravação automática ao salvar, para não sobrescrever uma
+// tabela que já foi avançada manualmente para a Tesouraria).
+// opcoes.silencioso: não mostra modal de confirmação.
+async function atualizarStatusLogisticaTabela(idTabela, novoStatus, opcoes = {}) {
+    const { apenasSeNaoIniciado = false, silencioso = false } = opcoes;
+    if (!idTabela) return;
+
+    if (!window.db || !window.fsDoc || !window.fsGetDoc || !window.fsSetDoc) return;
+
+    if (!window.auth?.currentUser) {
+        if (!silencioso) mostrarAvisoSistema('Logística', 'Você precisa estar logado para atualizar a logística.');
+        return;
+    }
+
+    try {
+        const referencia = window.fsDoc(window.db, 'HistoricoNotas', idTabela);
+        const snap = await window.fsGetDoc(referencia);
+
+        if (!snap.exists()) {
+            if (!silencioso) mostrarAvisoSistema('Logística', 'Esta tabela não foi encontrada no histórico salvo.');
+            return;
+        }
+
+        const dados = snap.data() || {};
+
+        if (apenasSeNaoIniciado && dados.status) {
+            return; // já tem uma etapa definida; não sobrescreve automaticamente
+        }
+
+        const historicoAtual = Array.isArray(dados.historicoStatus) ? dados.historicoStatus : [];
+        const evento = {
+            status: novoStatus,
+            descricao: obterDescricaoStatusLogistica(novoStatus, dados.itens),
+            data: new Date().toISOString(),
+            usuario: obterNomeUsuarioLogado()
+        };
+        const novoHistorico = [...historicoAtual, evento];
+
+        await window.fsSetDoc(referencia, {
+            status: novoStatus,
+            historicoStatus: novoHistorico
+        }, { merge: true });
+
+        if (idTabela === gestaoNotasTabelaAtualId) {
+            renderizarHistoricoLogisticaGestaoNotas(novoHistorico, novoStatus, idTabela);
+        }
+
+        await sincronizarNotaPublica(idTabela);
+
+        if (!silencioso) {
+            mostrarAvisoSistema('Logística atualizada', `Status atualizado para: <strong>${evento.descricao}</strong>.`);
+        }
+
+        if (typeof carregarHistoricoGestaoNotas === 'function') {
+            carregarHistoricoGestaoNotas();
+        }
+    } catch (erro) {
+        console.error('Erro ao atualizar logística:', erro);
+        if (!silencioso) mostrarAvisoSistema('Logística', 'Não foi possível atualizar a logística agora.');
+    }
+}
+
+// Remove um lançamento específico do histórico de logística (edição/correção
+// de um registro feito por engano). Recalcula o status atual como o do
+// último lançamento restante (ou "sem status" se a lista ficar vazia).
+async function removerEventoLogistica(idTabela, indice) {
+    if (!idTabela) return;
+    if (!window.db || !window.fsDoc || !window.fsGetDoc || !window.fsSetDoc) return;
+
+    if (!confirm('Remover este lançamento do histórico de logística?')) return;
+
+    try {
+        const referencia = window.fsDoc(window.db, 'HistoricoNotas', idTabela);
+        const snap = await window.fsGetDoc(referencia);
+        if (!snap.exists()) return;
+
+        const dados = snap.data() || {};
+        const historicoAtual = Array.isArray(dados.historicoStatus) ? dados.historicoStatus : [];
+        const novoHistorico = historicoAtual.filter((_, i) => i !== indice);
+        const novoStatus = novoHistorico.length ? novoHistorico[novoHistorico.length - 1].status : null;
+
+        await window.fsSetDoc(referencia, {
+            status: novoStatus,
+            historicoStatus: novoHistorico
+        }, { merge: true });
+
+        if (idTabela === gestaoNotasTabelaAtualId) {
+            renderizarHistoricoLogisticaGestaoNotas(novoHistorico, novoStatus, idTabela);
+        }
+
+        await sincronizarNotaPublica(idTabela);
+
+        if (typeof carregarHistoricoGestaoNotas === 'function') {
+            carregarHistoricoGestaoNotas();
+        }
+    } catch (erro) {
+        console.error('Erro ao remover lançamento de logística:', erro);
+        mostrarAvisoSistema('Logística', 'Não foi possível remover este lançamento agora.');
+    }
+}
+
+// Abre o seletor de etapa (chamado pelo botão "Atualizar logística" na lista
+// de Histórico salvo). Usa botões empilhados de largura total no corpo do
+// modal — o footer do modal padrão é estreito (380px) e não comporta vários
+// botões lado a lado.
+function abrirSeletorLogisticaHistorico(idTabela, statusAtual) {
+    const modal = document.getElementById('modalSistema');
+    const tituloEl = document.getElementById('modalTitulo');
+    const mensagemEl = document.getElementById('modalMensagem');
+    const footerEl = document.getElementById('modalFooter');
+    if (!modal || !tituloEl || !mensagemEl || !footerEl) return;
+
+    const labelAtual = statusAtual === 'tesouraria'
+        ? 'Na Tesouraria (Mercadoria e Serviço)'
+        : (statusAtual === 'separado' ? 'Separado (Mercadoria no Almoxarifado / Serviço na Contabilidade)' : 'Sem status definido');
+
+    tituloEl.textContent = 'Atualizar logística';
+    mensagemEl.innerHTML = `
+        <p style="margin-bottom:14px;">Etapa atual: <strong>${labelAtual}</strong></p>
+        <button type="button" class="btn-primary" style="width:100%; margin-bottom:8px;" onclick="definirStatusLogisticaEFechar('${idTabela}', 'separado')">
+            Separado (Mercadoria no Almoxarifado / Serviço na Contabilidade)
+        </button>
+        <button type="button" class="btn-primary" style="width:100%; background-color:#27ae60; border-color:#219653;" onclick="definirStatusLogisticaEFechar('${idTabela}', 'tesouraria')">
+            Enviada à Tesouraria (Mercadoria e Serviço)
+        </button>
+    `;
+
+    footerEl.innerHTML = `
+        <button type="button" class="btn-cancelar-modal" onclick="fecharModalSistema()">Cancelar</button>
+    `;
+
+    modal.style.display = 'flex';
+}
+
+function definirStatusLogisticaEFechar(idTabela, novoStatus) {
+    fecharModalSistema();
+    atualizarStatusLogisticaTabela(idTabela, novoStatus);
+}
+
+
 function inicializarGestaoNotas() {
     const campoValor = document.getElementById('gnValorNota');
     if (campoValor) aplicarMascaraValor(campoValor);
@@ -9038,6 +9278,7 @@ function novaTabelaGestaoNotas() {
     renderizarTabelaGestaoNotas();
     atualizarResumoGestaoNotas();
     limparFormularioGestaoNotasCompleto();
+    renderizarHistoricoLogisticaGestaoNotas([], null, null);
     const info = document.getElementById('gnInfoTabela');
     if (info) info.textContent = 'Nova tabela em branco.';
 }
@@ -12032,28 +12273,58 @@ window.salvarTabelaGestaoNotas = async function(botao) {
 
         const idTabela = gestaoNotasTabelaAtualId || ('tabela-' + Date.now());
         const total = gestaoNotasItens.reduce((soma, item) => soma + Number(item.valorNota || 0), 0);
+        const referencia = window.fsDoc(window.db, 'HistoricoNotas', idTabela);
+
+        // Lê o que já existe (se for uma tabela já salva antes) para não perder
+        // o status/histórico de logística e o link público já gerados.
+        const snapExistente = await window.fsGetDoc(referencia);
+        const existente = snapExistente.exists() ? (snapExistente.data() || {}) : null;
 
         await window.fsSetDoc(
-            window.fsDoc(window.db, 'HistoricoNotas', idTabela),
+            referencia,
             {
                 id: idTabela,
                 titulo: `Tabela de Notas ${new Date().toLocaleDateString('pt-BR')} ${new Date().toLocaleTimeString('pt-BR')}`,
-                criadoPor: window.auth.currentUser.email || '',
-                dataCriacao: new Date().toISOString(),
+                criadoPor: obterNomeUsuarioLogado(),
+                dataCriacao: existente?.dataCriacao || new Date().toISOString(),
                 dataAtualizacao: new Date().toISOString(),
                 quantidadeLinhas: gestaoNotasItens.length,
                 valorTotal: total,
                 itens: gestaoNotasItens
-            }
+            },
+            { merge: true }
         );
 
         gestaoNotasTabelaAtualId = idTabela;
 
+        // Define a etapa inicial automaticamente (Mercadoria no Almoxarifado /
+        // Serviço na Contabilidade), só se a tabela ainda não tiver nenhum
+        // status — evitando sobrescrever uma tabela já avançada manualmente.
+        await atualizarStatusLogisticaTabela(idTabela, 'separado', {
+            apenasSeNaoIniciado: true,
+            silencioso: true
+        });
+
+        const link = await garantirLinkPublico(idTabela);
+
         const info = document.getElementById('gnInfoTabela');
         if (info) info.textContent = `Tabela salva com ${gestaoNotasItens.length} linha(s).`;
 
+        const snapAtualizado = await window.fsGetDoc(referencia);
+        const dadosAtualizados = snapAtualizado.exists() ? (snapAtualizado.data() || {}) : {};
+        renderizarHistoricoLogisticaGestaoNotas(dadosAtualizados.historicoStatus, dadosAtualizados.status, idTabela);
+
         await carregarHistoricoGestaoNotas();
-        alert('Histórico salvo com sucesso.');
+
+        if (link) {
+            mostrarAvisoSistema(
+                'Histórico salvo',
+                `Tabela salva com sucesso.<br><br>Link público desta tabela (único, sempre o mesmo):<br>` +
+                `<span style="font-size:12px; color:#555; word-break:break-all;">${link}</span>`
+            );
+        } else {
+            alert('Histórico salvo com sucesso.');
+        }
     } catch (erro) {
         console.error('Erro ao salvar histórico:', erro);
         alert('Erro ao salvar histórico no Firebase.');
@@ -12104,10 +12375,13 @@ const snapshot = await window.fsGetDocs(q);
                     <div style="font-weight:bold; color:#243746;">${item.titulo || 'Tabela sem título'}</div>
                     <div style="font-size:12px; color:#66727d; margin-top:4px;">
                         ${item.quantidadeLinhas || 0} linha(s) · R$ ${formatarValorBR(item.valorTotal || 0)}
+                        · <span class="status-label ${classeStatusLogistica(item.status)}">${item.status ? obterDescricaoStatusLogistica(item.status, item.itens) : 'Sem status definido'}</span>
                     </div>
                 </div>
                 <div style="display:flex; gap:8px; flex-wrap:wrap;">
                     <button type="button" class="btn-primary" style="width:auto; padding:8px 12px;" onclick="abrirHistoricoGestaoNotas('${item.id}')">Abrir</button>
+                    <button type="button" class="btn-primary" style="width:auto; padding:8px 12px; background-color:#16a085; border-color:#138a72;" onclick="abrirSeletorLogisticaHistorico('${item.id}', '${item.status || ''}')">Atualizar logística</button>
+                    <button type="button" class="btn-primary" style="width:auto; padding:8px 12px; background-color:#2980b9; border-color:#2471a3;" onclick="copiarLinkHistorico('${item.id}')">Copiar link</button>
                 </div>
             </div>
         `).join('');
@@ -12133,6 +12407,8 @@ window.abrirHistoricoGestaoNotas = async function(idTabela) {
         gestaoNotasTabelaAtualId = dados.id || idTabela;
         gestaoNotasItens = Array.isArray(dados.itens) ? dados.itens : [];
         gestaoNotasFiltrados = [...gestaoNotasItens];
+
+        renderizarHistoricoLogisticaGestaoNotas(dados.historicoStatus, dados.status, idTabela);
 
         renderizarTabelaGestaoNotas();
         atualizarResumoGestaoNotas();

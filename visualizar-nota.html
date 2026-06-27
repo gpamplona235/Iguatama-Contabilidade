@@ -159,6 +159,41 @@
         margin: 26px 0 10px;
     }
 
+    .panel + .panel {
+        margin-top: 18px;
+    }
+
+    .status-label {
+        padding: 4px 10px;
+        border-radius: 2px;
+        font-size: 11px;
+        font-weight: bold;
+        display: inline-block;
+    }
+
+    .status-sim { background-color: #e6f4ea; color: #1e4620; border: 1px solid #c8e6c9; }
+    .status-nao { background-color: #fce8e6; color: #a50e0e; border: 1px solid #f8bbd0; }
+    .status-andamento { background-color: #fff4e0; color: #8a5a00; border: 1px solid #ffe0a3; }
+
+    .linha-historico {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 10px 0;
+        border-bottom: 1px solid #eef2f6;
+        font-size: 13px;
+    }
+
+    .linha-historico:last-child { border-bottom: none; }
+
+    .linha-historico .data-evento {
+        color: #66727d;
+        font-size: 12px;
+        margin-top: 2px;
+        white-space: nowrap;
+    }
+
     @media (max-width: 700px) {
         .panel-body { padding: 14px; overflow-x: auto; }
         .data-table { min-width: 640px; }
@@ -202,6 +237,19 @@
                 <tbody id="corpoTabela"></tbody>
             </table>
             <div class="rodape-total" id="rodapeTotal"></div>
+        </div>
+    </div>
+
+    <div class="panel">
+        <div class="panel-header">
+            <div>
+                <h2>Histórico de lógica (logística)</h2>
+                <div class="sub">Movimentação desta tabela entre Contabilidade, Almoxarifado e Tesouraria</div>
+            </div>
+            <span id="statusLogisticaAtual" class="status-label status-nao">Sem status definido</span>
+        </div>
+        <div class="panel-body" id="listaHistoricoLogistica">
+            Nenhuma movimentação registrada ainda.
         </div>
     </div>
 </div>
@@ -283,16 +331,50 @@ async function carregar() {
                 <tr>
                     <td>${escaparHtml(item.empenho)}</td>
                     <td>${escaparHtml(item.fornecedor)}</td>
-                    <td>${escaparHtml(item.tipo)}</td>
-                    <td>${escaparHtml(item.valor)}</td>
-                    <td>${escaparHtml(item.data)}</td>
-                    <td>${escaparHtml(item.nota)}</td>
+                    <td>${escaparHtml(item.tipoNota || item.tipo)}</td>
+                    <td>${escaparHtml(item.valorNotaTexto || item.valor || formatarValorBR(item.valorNota))}</td>
+                    <td>${escaparHtml(item.dataEmissao || item.data)}</td>
+                    <td>${escaparHtml(item.numeroNota || item.nota)}</td>
                 </tr>
             `).join('');
         }
 
         document.getElementById('rodapeTotal').textContent =
             `Total de notas: ${itens.length} | Valor total: R$ ${formatarValorBR(dados.valorTotal)}`;
+
+        // Histórico de lógica (logística)
+        const historico = Array.isArray(dados.historicoStatus) ? dados.historicoStatus : [];
+        const badgeStatus = document.getElementById('statusLogisticaAtual');
+        const listaLogistica = document.getElementById('listaHistoricoLogistica');
+
+        const ultimoEvento = historico.length ? historico[historico.length - 1] : null;
+        const classeStatus = dados.status === 'tesouraria'
+            ? 'status-sim'
+            : (dados.status === 'separado' ? 'status-andamento' : 'status-nao');
+
+        badgeStatus.className = 'status-label ' + classeStatus;
+        badgeStatus.textContent = ultimoEvento?.descricao || (dados.status ? dados.status : 'Sem status definido');
+
+        if (!historico.length) {
+            listaLogistica.innerHTML = 'Nenhuma movimentação registrada ainda.';
+        } else {
+            listaLogistica.innerHTML = historico
+                .slice()
+                .reverse()
+                .map(evento => {
+                    const dataEvento = evento.data ? new Date(evento.data) : null;
+                    const dataTexto = dataEvento
+                        ? `${dataEvento.toLocaleDateString('pt-BR')} ${dataEvento.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`
+                        : '-';
+                    return `
+                        <div class="linha-historico">
+                            <div><strong>${escaparHtml(evento.descricao || evento.status)}</strong></div>
+                            <div class="data-evento">${dataTexto}${evento.usuario ? ' · ' + escaparHtml(evento.usuario) : ''}</div>
+                        </div>
+                    `;
+                })
+                .join('');
+        }
 
         document.getElementById('areaCarregando').style.display = 'none';
         document.getElementById('areaConteudo').style.display = 'block';

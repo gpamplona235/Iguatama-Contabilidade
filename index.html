@@ -573,15 +573,15 @@
     }
 }
 
-#box-ia-irf {
+#box-classificacao-auto-irf {
     margin-top: 15px;
 }
 
-#resultado-descricao-irf {
+#resultado-classificacao-auto-irf {
     display: none;
 }
 
-#resultado-descricao-irf p {
+#resultado-classificacao-auto-irf p {
     margin: 8px 0;
     font-size: 12px;
     line-height: 1.45;
@@ -3378,35 +3378,14 @@ body.print-retencao .col-retencao {
                     <select id="aliquotaIRF" onchange="calcularRetencao()"></select>
                     <div id="info-coop" style="font-size: 11px; color: #666; margin-top: 4px;"></div>
                 </div>
-                <div class="box-destaque" id="box-ia-irf">
+                <div class="box-destaque" id="box-classificacao-auto-irf">
     <label style="font-weight: bold; margin-bottom: 8px; display: block;">
-        Sugestão de enquadramento por descrição
+        Classificação automática (a partir do empenho)
     </label>
 
-    <div class="form-group-calc">
-        <label for="tipoDescricaoIRF">Tipo da operação</label>
-        <select id="tipoDescricaoIRF">
-            <option value="servico">Prestação de serviço</option>
-            <option value="bem">Aquisição de bem / mercadoria</option>
-        </select>
-    </div>
-
-    <div class="form-group-calc">
-        <label for="descricaoLivreIRF">Descreva o serviço ou bem</label>
-        <input type="text" id="descricaoLivreIRF" placeholder="Ex.: compra de porta de madeira, serviço de limpeza predial, passagem rodoviária">
-    </div>
-
-    <button type="button" class="btn-primary" onclick="analisarDescricaoIRF()">
-        Analisar descrição
-    </button>
-
-    <div class="resultado-caixa" id="resultado-descricao-irf">
-        <h3>Sugestão de enquadramento</h3>
-        <p id="desc-irf-categoria"></p>
-        <p id="desc-irf-aliquota-ir"></p>
-        <p id="desc-irf-codigo"></p>
-        <p id="desc-irf-confianca"></p>
-        <p id="desc-irf-observacao"></p>
+    <div class="resultado-caixa" id="resultado-classificacao-auto-irf">
+        <h3>Enquadramento sugerido</h3>
+        <p id="auto-irf-resultado"></p>
     </div>
 </div>
 
@@ -3846,6 +3825,7 @@ body.print-retencao .col-retencao {
     </table>
 
     <div id="gnRodapeImpressao" style="margin-top:14px; font-size:13px; font-weight:bold; color:#111; text-align:right;"></div>
+    <div id="gnLinkPublicoImpressao" style="margin-top:10px; font-size:12px; color:#111; text-align:right; word-break:break-all; border-top:1px dashed #ccc; padding-top:8px;"></div>
 </div>
                 </div>
 
@@ -5202,11 +5182,64 @@ document.getElementById('cnpjInput').addEventListener('input', function (e) {
             aplicarRegistroEmpenhoCol1(item);
         }
 
+        // Identifica, a partir do histórico do empenho, que tipo de pagamento a
+        // pessoa física está recebendo (diária, reembolso, adiantamento etc.).
+        function identificarNaturezaPagamentoPessoaFisica(historico) {
+            const texto = normalizarTexto(historico || '');
+
+            if (!texto) return 'Pagamento a pessoa física (natureza não identificada no histórico)';
+
+            if (texto.includes('diaria') || texto.includes('diarias')) {
+                return 'Diária de viagem/representação — em geral, verba indenizatória, sem incidência de IRRF';
+            }
+            if (texto.includes('reembolso') || texto.includes('ressarcimento')) {
+                return 'Reembolso/ressarcimento de despesas — em geral, sem incidência de IRRF';
+            }
+            if (texto.includes('adiantamento')) {
+                return 'Adiantamento — não constitui rendimento por si só; verificar prestação de contas';
+            }
+            if (texto.includes('vale transporte') || texto.includes('vale alimentacao') || texto.includes('auxilio alimentacao')) {
+                return 'Vale-transporte/alimentação — em geral, sem incidência de IRRF';
+            }
+            if (texto.includes('locacao de mao de obra') || texto.includes('prestacao de servico') || texto.includes('servico prestado')) {
+                return 'Serviço prestado por pessoa física — sujeito à tabela progressiva mensal de IRRF (regra distinta da PJ)';
+            }
+
+            return 'Pagamento a pessoa física (natureza não identificada com clareza no histórico — confira manualmente)';
+        }
+
+        // Quando o documento do fornecedor é um CPF (11 dígitos), o empenho não
+        // se refere a uma pessoa jurídica: avisa o nome, o CPF e a natureza
+        // provável do pagamento, em vez de pedir busca manual por "CNPJ".
+        function tratarFornecedorPessoaFisicaCol1(item, doc) {
+            const nome = item?.nomFornecedor || obterNomeFornecedorEmpenho(item) || 'Nome não informado pela API';
+            const cpfFormatado = doc.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/, '$1.$2.$3-$4');
+            const historico = obterTextoHistoricoEmpenho(item);
+            const naturezaPagamento = identificarNaturezaPagamentoPessoaFisica(historico);
+
+            const valorEmpenhado = item?.vlrEmpenhado ?? item?.valorEmpenhado ?? item?.vlrTotalEmpenhado ?? item?.valor ?? 0;
+            const valorFormatado = Number(valorEmpenhado || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+            definirStatusBuscaEmpenhoCol1(
+                `Empenho localizado, mas o documento do fornecedor é um <strong>CPF</strong> (pessoa física), não um CNPJ — esta calculadora trata apenas de retenções de pessoa jurídica (IN RFB 1.234/2012).<br><br>` +
+                `<strong>Nome:</strong> ${nome}<br>` +
+                `<strong>CPF:</strong> ${cpfFormatado}<br>` +
+                `<strong>Valor do empenho:</strong> ${valorFormatado}<br>` +
+                `<strong>Natureza identificada pelo histórico:</strong> ${naturezaPagamento}` +
+                (historico ? `<br><span style="font-size:11px; color:#888;">Histórico: ${historico}</span>` : ''),
+                'normal'
+            );
+        }
+
         async function aplicarRegistroEmpenhoCol1(item) {
             const doc = obterDocumentoItem(item);
 
+            if (doc && doc.length === 11) {
+                return tratarFornecedorPessoaFisicaCol1(item, doc);
+            }
+
             if (!doc || doc.length !== 14) {
-                return definirStatusBuscaEmpenhoCol1('Empenho localizado, mas o CNPJ do fornecedor não veio completo na API. Use a busca por CNPJ manualmente.', 'normal');
+                return definirStatusBuscaEmpenhoCol1('Empenho localizado, mas o documento do fornecedor não veio completo ou reconhecível na API. Use a busca por CNPJ manualmente.', 'normal');
             }
 
             const valorEmpenhado = item?.vlrEmpenhado ?? item?.valorEmpenhado ?? item?.vlrTotalEmpenhado ?? item?.valor ?? 0;
@@ -5228,12 +5261,21 @@ document.getElementById('cnpjInput').addEventListener('input', function (e) {
                 document.getElementById('tipoOperacao').value = natureza;
                 alternarTipoOperacao();
                 avisoNatureza = ` Natureza identificada: <strong>${natureza === 'servico' ? 'Prestação de serviço' : 'Aquisição de materiais/mercadorias'}</strong> (${item?.desDepesaNaturezaFormatado || item?.desDespesaOrcamentaria || ''}).`;
+
+                if (empresaSimplesNacional || empresaMEI) {
+                    document.getElementById('resultado-classificacao-auto-irf').style.display = 'none';
+                } else {
+                    const fornecedorNome = item?.nomFornecedor || obterNomeFornecedorEmpenho(item) || '';
+                    classificarOperacaoIRFAutomatica(item, fornecedorNome);
+                }
             } else {
                 avisoNatureza = ' Não foi possível identificar automaticamente se é serviço ou material — confira manualmente o campo "Natureza da operação" na coluna 2.';
+                document.getElementById('resultado-classificacao-auto-irf').style.display = 'none';
             }
 
             definirStatusBuscaEmpenhoCol1('Dados do fornecedor e valor do empenho preenchidos a partir do Portal da Transparência.' + avisoNatureza, 'simples');
         }
+
 
 
        function calcularRetencao() {
@@ -5297,14 +5339,9 @@ function resetarCamposAposNovoCNPJ() {
   document.getElementById('tipoOperacao').value = 'servico';
   document.getElementById('cooperativaCheck').checked = false;
 
-  document.getElementById('tipoDescricaoIRF').value = 'servico';
-  document.getElementById('descricaoLivreIRF').value = '';
-  document.getElementById('resultado-descricao-irf').style.display = 'none';
-  document.getElementById('desc-irf-categoria').textContent = '';
-  document.getElementById('desc-irf-aliquota-ir').textContent = '';
-  document.getElementById('desc-irf-codigo').textContent = '';
-  document.getElementById('desc-irf-confianca').textContent = '';
-  document.getElementById('desc-irf-observacao').textContent = '';
+  document.getElementById('resultado-classificacao-auto-irf').style.display = 'none';
+  document.getElementById('auto-irf-resultado').innerHTML = '';
+
 
   document.getElementById('regime-mei').checked = false;
   document.getElementById('regime-simples').checked = false;
@@ -5907,293 +5944,161 @@ function normalizarTexto(texto) {
         .trim();
 }
 
-async function analisarDescricaoIRF() {
-    const tipo = document.getElementById('tipoDescricaoIRF').value;
-    const descricaoOriginal = document.getElementById('descricaoLivreIRF').value.trim();
+function pontuarClassificacaoServico(textoHistorico) {
+    const descricao = normalizarTexto(textoHistorico || '');
+    if (!descricao) return null;
 
-    const caixa = document.getElementById('resultado-descricao-irf');
-    const campoCategoria = document.getElementById('desc-irf-categoria');
-    const campoAliquotaIR = document.getElementById('desc-irf-aliquota-ir');
-    const campoCodigo = document.getElementById('desc-irf-codigo');
-    const campoConfianca = document.getElementById('desc-irf-confianca');
-    const campoObservacao = document.getElementById('desc-irf-observacao');
+    let melhor = null;
+    let maiorPontuacao = 0;
+    let achados = [];
+
+    tabelaIRFDescricao.forEach(item => {
+        if (!item.tipo || !item.tipo.includes('servico')) return;
+
+        let pontos = 0;
+        let achadosItem = [];
+
+        item.palavras.forEach(palavra => {
+            const p = normalizarTexto(palavra);
+            if (p && descricao.includes(p)) {
+                pontos += p.includes(' ') ? 3 : 1;
+                achadosItem.push(palavra);
+            }
+        });
+
+        if (pontos > maiorPontuacao) {
+            maiorPontuacao = pontos;
+            melhor = item;
+            achados = achadosItem;
+        }
+    });
+
+    if (!melhor) return null;
+
+    return {
+        categoria: melhor.categoria,
+        aliquotaIR: melhor.aliquotaIR,
+        codigo: melhor.codigo,
+        achados: achados
+    };
+}
+
+// Texto-base do empenho usado para identificar a natureza do servico (seguro, material empregado etc.)
+function obterTextoHistoricoEmpenho(item) {
+    return (
+        item?.desEmpenhoHistorico ||
+        item?.desHistoricoLiquido ||
+        item?.desHistorico ||
+        item?.desDespesaOrcamentaria ||
+        item?.desDepesaNaturezaFormatado ||
+        ''
+    );
+}
+
+function nomeContemAutoPosto(nome) {
+    return normalizarTexto(nome || '').includes('auto posto');
+}
+
+// Seleciona, no select #aliquotaIRF ja populado por atualizarOpcoesIRF(), a opcao
+// cujo data-codigo esta entre os codigos aceitos. Retorna true se encontrou.
+function selecionarOpcaoIRFPorCodigo(codigosAceitos) {
+    const selectIRF = document.getElementById('aliquotaIRF');
+    if (!selectIRF) return false;
+
+    let encontrado = false;
+    Array.from(selectIRF.options).forEach((opt, index) => {
+        const codigo = String(opt.getAttribute('data-codigo') || '');
+        if (codigosAceitos.includes(codigo)) {
+            selectIRF.selectedIndex = index;
+            encontrado = true;
+        }
+    });
+    return encontrado;
+}
+
+function exibirClassificacaoAutomaticaIRF(html, tipoAlerta) {
+    const caixa = document.getElementById('resultado-classificacao-auto-irf');
+    const campo = document.getElementById('auto-irf-resultado');
+    if (!caixa || !campo) return;
 
     caixa.style.display = 'block';
+    const classeAlerta = tipoAlerta === 'atencao' ? 'texto-alerta' : 'texto-sucesso';
+    campo.innerHTML = '<span class="' + classeAlerta + '">' + html + '</span>';
+}
 
-    if (!descricaoOriginal) {
-        campoCategoria.innerHTML = '<span class="texto-erro">Digite uma descrição para analisar.</span>';
-        campoAliquotaIR.textContent = '';
-        campoCodigo.textContent = '';
-        campoConfianca.textContent = '';
-        campoObservacao.textContent = '';
+// Classificacao 100% baseada em regras fixas (sem IA), a partir dos dados do
+// proprio empenho: natureza da despesa (material/servico), nome do fornecedor
+// e historico/descricao da despesa.
+//
+// Regras aplicadas (conforme definido para o municipio):
+//   - Optante pelo Simples / MEI -> dispensa de IRRF (ja tratado em calcularRetencao()).
+//   - Material/mercadoria + fornecedor "AUTO POSTO" -> combustivel, 0,24%.
+//   - Material/mercadoria, demais casos -> mercadorias em geral, 1,2%.
+//   - Servico + historico indica seguro/bancario/cambio/passagem -> 2,4% (cod. 6175/6188).
+//   - Servico + historico indica emprego de materiais -> 1,2% (cod. 6147).
+//   - Servico, demais casos (regra geral) -> 4,8% (cod. 6190).
+//   - Cooperativa -> automacao nao cobre; pede confirmacao manual.
+function classificarOperacaoIRFAutomatica(item, fornecedorNome) {
+    const caixaCoop = document.getElementById('cooperativaCheck');
+    if (caixaCoop && caixaCoop.checked) {
+        exibirClassificacaoAutomaticaIRF(
+            'Prestador marcado como cooperativa: a classificacao automatica nao cobre esse caso. Confira manualmente a aliquota IRF.',
+            'atencao'
+        );
         return;
     }
 
-    campoCategoria.innerHTML = '<span class="texto-alerta">Analisando descrição com Gemini...</span>';
-    campoAliquotaIR.textContent = '';
-    campoCodigo.textContent = '';
-    campoConfianca.textContent = '';
-    campoObservacao.textContent = '';
+    const natureza = document.getElementById('tipoOperacao').value;
+    const historico = obterTextoHistoricoEmpenho(item);
 
-    function normalizarTexto(texto) {
-        return (texto || '')
-            .toLowerCase()
-            .normalize('NFD')
-            .replace(/[\u0300-\u036f]/g, '')
-            .replace(/[^\w\s]/g, ' ')
-            .replace(/\s+/g, ' ')
-            .trim();
-    }
-
-    function aplicarResultadoNaTela(resultado, origemTexto) {
-        campoCategoria.innerHTML = `<span class="texto-sucesso"><strong>Categoria sugerida:</strong> ${resultado.categoria || 'Não informado'}</span>`;
-        campoAliquotaIR.innerHTML = `<strong>Alíquota de IR:</strong> ${resultado.aliquotaIR || 'Não informada'}`;
-        campoCodigo.innerHTML = `<strong>Código da receita:</strong> ${resultado.codigo || 'Não informado'}`;
-        campoConfianca.innerHTML = `<strong>Nível de confiança:</strong> ${resultado.confianca || 'Não informado'}`;
-        campoObservacao.innerHTML = `<span class="texto-alerta"><strong>Observação:</strong> ${resultado.observacao || ''} ${origemTexto}</span>`;
-
-        const selectIRF = document.getElementById('aliquotaIRF');
-        if (selectIRF && resultado.codigo) {
-            let encontrou = false;
-
-            Array.from(selectIRF.options).forEach((opt, index) => {
-                const codigo = opt.getAttribute('data-codigo');
-                if (String(codigo) === String(resultado.codigo)) {
-                    selectIRF.selectedIndex = index;
-                    encontrou = true;
-                }
-            });
-
-            if (!encontrou) {
-                Array.from(selectIRF.options).forEach((opt, index) => {
-                    const texto = (opt.textContent || '').toLowerCase();
-                    if (
-                        (String(resultado.codigo) === '6147' && texto.includes('6147')) ||
-                        (String(resultado.codigo) === '6175' && texto.includes('6175')) ||
-                        (String(resultado.codigo) === '6188' && texto.includes('6188')) ||
-                        (String(resultado.codigo) === '6190' && texto.includes('6190')) ||
-                        (String(resultado.codigo) === '9060' && texto.includes('9060')) ||
-                        (String(resultado.codigo) === '8739' && texto.includes('8739'))
-                    ) {
-                        selectIRF.selectedIndex = index;
-                    }
-                });
-            }
+    if (natureza === 'material') {
+        if (nomeContemAutoPosto(fornecedorNome)) {
+            selecionarOpcaoIRFPorCodigo(['9060', '8739']);
+            exibirClassificacaoAutomaticaIRF(
+                '<strong>Classificacao automatica:</strong> combustivel (fornecedor identificado como AUTO POSTO) — aliquota 0,24%.',
+                'ok'
+            );
+        } else {
+            selecionarOpcaoIRFPorCodigo(['6147']);
+            exibirClassificacaoAutomaticaIRF(
+                '<strong>Classificacao automatica:</strong> aquisicao de mercadoria em geral — aliquota 1,2%.',
+                'ok'
+            );
         }
+    } else if (natureza === 'servico') {
+        const resultado = pontuarClassificacaoServico(historico);
 
-        if (document.getElementById('valorNota').value) {
-            calcularRetencao();
+        if (resultado && ['6175', '6188', '8850'].includes(resultado.codigo)) {
+            selecionarOpcaoIRFPorCodigo(['6175']);
+            exibirClassificacaoAutomaticaIRF(
+                '<strong>Classificacao automatica:</strong> ' + resultado.categoria + ' — aliquota 2,4%. ' +
+                'Termo identificado no historico do empenho: "' + (resultado.achados[0] || '') + '".',
+                'ok'
+            );
+        } else if (resultado && ['6147', '8767'].includes(resultado.codigo)) {
+            selecionarOpcaoIRFPorCodigo(['6147']);
+            exibirClassificacaoAutomaticaIRF(
+                '<strong>Classificacao automatica:</strong> servico com emprego de materiais — aliquota 1,2%. ' +
+                'Termo identificado no historico do empenho: "' + (resultado.achados[0] || '') + '".',
+                'ok'
+            );
+        } else {
+            selecionarOpcaoIRFPorCodigo(['6190']);
+            exibirClassificacaoAutomaticaIRF(
+                '<strong>Classificacao automatica:</strong> demais servicos (regra geral) — aliquota 4,8%.' +
+                (resultado ? '' : ' Nenhum termo especifico foi identificado no historico do empenho — confira manualmente se necessario.'),
+                resultado ? 'ok' : 'atencao'
+            );
         }
-    }
-
-    function fallbackLocal() {
-        const descricao = normalizarTexto(descricaoOriginal);
-
-        const tabelaIRFDescricao = [
-            {
-                categoria: 'Mercadorias e bens em geral / serviços com emprego de materiais',
-                aliquotaIR: '1,20%',
-                codigo: '6147',
-                confianca: 'média',
-                palavras: [
-                    'mercadoria', 'mercadorias', 'bem', 'bens', 'material', 'materiais',
-                    'fornecimento', 'compra', 'aquisição', 'aquisicao', 'porta', 'janela',
-                    'cimento', 'areia', 'brita', 'tijolo', 'madeira', 'material de construção',
-                    'material de construcao', 'obra', 'empreitada', 'reforma',
-                    'energia elétrica', 'energia eletrica', 'alimentação', 'alimentacao',
-                    'serviço hospitalar', 'servico hospitalar', 'diagnóstico', 'diagnostico'
-                ]
-            },
-            {
-                categoria: 'Passagens aéreas, rodoviárias e transporte de passageiros',
-                aliquotaIR: '2,40%',
-                codigo: '6175',
-                confianca: 'alta',
-                palavras: [
-                    'passagem', 'passagens', 'passagem aérea', 'passagem aerea',
-                    'passagem rodoviária', 'passagem rodoviaria', 'bilhete',
-                    'tarifa de embarque', 'embarque', 'viagem', 'transporte de passageiros'
-                ]
-            },
-            {
-                categoria: 'Serviços bancários, seguros, câmbio e arrendamento mercantil',
-                aliquotaIR: '2,40%',
-                codigo: '6188',
-                confianca: 'alta',
-                palavras: [
-                    'banco', 'bancário', 'bancario', 'seguro', 'seguros',
-                    'apólice', 'apolice', 'câmbio', 'cambio', 'leasing',
-                    'arrendamento mercantil', 'instituição financeira', 'instituicao financeira'
-                ]
-            },
-            {
-                categoria: 'Combustíveis',
-                aliquotaIR: '0,24%',
-                codigo: '9060',
-                confianca: 'alta',
-                palavras: [
-                    'combustível', 'combustivel', 'gasolina', 'diesel', 'etanol', 'glp',
-                    'abastecimento', 'posto', 'óleo diesel', 'oleo diesel'
-                ]
-            },
-            {
-                categoria: 'Demais serviços',
-                aliquotaIR: '4,80%',
-                codigo: '6190',
-                confianca: 'média',
-                palavras: [
-                    'serviço', 'servico', 'prestação', 'prestacao', 'limpeza', 'vigilância',
-                    'vigilancia', 'locação', 'locacao', 'assessoria', 'consultoria',
-                    'administração', 'administracao', 'internet', 'telefonia', 'correios'
-                ]
-            }
-        ];
-
-        let melhor = null;
-        let maiorPontuacao = 0;
-        let melhoresAchados = [];
-
-        tabelaIRFDescricao.forEach(item => {
-            let pontos = 0;
-            let achados = [];
-
-            item.palavras.forEach(palavra => {
-                const p = normalizarTexto(palavra);
-                if (descricao.includes(p)) {
-                    pontos += p.includes(' ') ? 3 : 1;
-                    achados.push(palavra);
-                }
-            });
-
-            if (tipo === 'bem' && item.codigo === '6147') {
-                if (
-                    descricao.includes('compra') ||
-                    descricao.includes('aquisição') ||
-                    descricao.includes('aquisicao') ||
-                    descricao.includes('fornecimento') ||
-                    descricao.includes('material') ||
-                    descricao.includes('mercadoria')
-                ) {
-                    pontos += 4;
-                }
-            }
-
-            if (tipo === 'servico' && item.codigo === '6190') {
-                if (
-                    descricao.includes('serviço') ||
-                    descricao.includes('servico') ||
-                    descricao.includes('prestação') ||
-                    descricao.includes('prestacao')
-                ) {
-                    pontos += 2;
-                }
-            }
-
-            if (pontos > maiorPontuacao) {
-                maiorPontuacao = pontos;
-                melhor = item;
-                melhoresAchados = achados;
-            }
-        });
-
-        if (!melhor) {
-            campoCategoria.innerHTML = '<span class="texto-erro">Não foi possível classificar com segurança.</span>';
-            campoAliquotaIR.textContent = '';
-            campoCodigo.textContent = '';
-            campoConfianca.textContent = '';
-            campoObservacao.textContent = 'Nenhuma correspondência suficiente foi encontrada.';
-            return;
-        }
-
-        let confiancaFinal = 'baixa';
-        if (maiorPontuacao >= 4) confiancaFinal = 'média';
-        if (maiorPontuacao >= 8) confiancaFinal = 'alta';
-
-        aplicarResultadoNaTela(
-            {
-                categoria: melhor.categoria,
-                aliquotaIR: melhor.aliquotaIR,
-                codigo: melhor.codigo,
-                confianca: confiancaFinal,
-                observacao: `Classificação feita pela base local. Termos encontrados: ${melhoresAchados.slice(0, 6).join(', ') || 'sem destaque específico'}.`
-            },
-            '(fallback local)'
+    } else {
+        exibirClassificacaoAutomaticaIRF(
+            'Nao foi possivel identificar automaticamente se e servico ou material — selecione manualmente o tipo de operacao.',
+            'atencao'
         );
     }
 
-    try {
-        const resposta = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview:generateContent?key=AQ.Ab8RN6KgnBXF2vNFONEiveWqIDLLz71fYiSKGhl735sp6inoLA', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                system_instruction: {
-                    parts: [{
-                        text: `Você é um classificador fiscal de IRRF para órgão público municipal.
-Responda somente em JSON válido, sem markdown e sem comentários.
-
-Campos obrigatórios:
-categoria
-aliquotaIR
-codigo
-confianca
-observacao
-
-Regras obrigatórias:
-- tipo = "servico" ou "bem"
-- Use apenas um destes códigos:
-6147, 6175, 6188, 6190, 9060, 8739
-- Use apenas uma destas alíquotas:
-1,20%
-2,40%
-4,80%
-0,24%
-0,00%
-- confianca deve ser: baixa, média ou alta
-- Seja conservador em caso de dúvida.`
-                    }]
-                },
-                contents: [{
-                    role: 'user',
-                    parts: [{
-                        text: JSON.stringify({
-                            tipo: tipo,
-                            descricao: descricaoOriginal
-                        })
-                    }]
-                }],
-                generationConfig: {
-                    temperature: 0.1
-                }
-            })
-        });
-
-        if (!resposta.ok) {
-            throw new Error('Falha ao consultar Gemini');
-        }
-
-        const dados = await resposta.json();
-        const texto = dados?.candidates?.[0]?.content?.parts?.[0]?.text || '';
-
-        const inicio = texto.indexOf('{');
-        const fim = texto.lastIndexOf('}');
-
-        if (inicio === -1 || fim === -1) {
-            throw new Error('Gemini não retornou JSON válido');
-        }
-
-        const jsonLimpo = texto.slice(inicio, fim + 1);
-        const analise = JSON.parse(jsonLimpo);
-
-        if (!analise.codigo || !analise.aliquotaIR || !analise.categoria) {
-            throw new Error('Resposta incompleta do Gemini');
-        }
-
-        aplicarResultadoNaTela(analise, '(classificação por Gemini)');
-    } catch (erro) {
-        console.error('Erro ao consultar Gemini:', erro);
-        fallbackLocal();
+    if (document.getElementById('valorNota').value) {
+        calcularRetencao();
     }
 }
 
@@ -7992,11 +7897,12 @@ function confirmarImpressaoGestaoNotas() {
     imprimirTabelaGestaoNotas(filtroTipo);
 }
 
-function imprimirTabelaGestaoNotas(filtroTipo = 'todos') {
+async function imprimirTabelaGestaoNotas(filtroTipo = 'todos') {
     const folha = document.getElementById('gnFolhaImpressao');
     const dataEl = document.getElementById('gnFolhaData');
     const tbodyImpressao = document.getElementById('gnTabelaImpressaoBody');
     const rodape = document.getElementById('gnRodapeImpressao');
+    const linkEl = document.getElementById('gnLinkPublicoImpressao');
     const linhasTela = Array.from(document.querySelectorAll('#gnTabelaBody tr'));
 
     if (!folha || !dataEl || !tbodyImpressao || !rodape) {
@@ -8033,6 +7939,7 @@ function imprimirTabelaGestaoNotas(filtroTipo = 'todos') {
     }
 
     let total = 0;
+    const itensParaPublicar = [];
 
     tbodyImpressao.innerHTML = linhasFiltradas.map(tr => {
         const colunas = tr.querySelectorAll('td');
@@ -8045,6 +7952,15 @@ function imprimirTabelaGestaoNotas(filtroTipo = 'todos') {
         const nota = (colunas[5]?.textContent || '').trim();
 
         total += limparValorParaNumero(valorTexto);
+
+        itensParaPublicar.push({
+            empenho: empenho || '-',
+            fornecedor: fornecedor || '-',
+            tipo: tipo || '-',
+            valor: valorTexto || 'R$ 0,00',
+            data: data || '-',
+            nota: nota || '-'
+        });
 
         return `
             <tr>
@@ -8069,6 +7985,25 @@ function imprimirTabelaGestaoNotas(filtroTipo = 'todos') {
     rodape.textContent =
         `Total de notas: ${linhasFiltradas.length} | Valor total: R$ ${formatarValorBR(total)}`;
 
+    // Gera o link público ANTES de imprimir, para que ele já saia escrito no papel/PDF.
+    let link = null;
+    let erroLink = null;
+    if (linkEl) linkEl.textContent = 'Gerando link público...';
+
+    try {
+        link = await gerarLinkPublicoGestaoNotas(itensParaPublicar, total, nomeFiltro);
+    } catch (erro) {
+        console.error('Erro ao gerar link público da lista:', erro);
+        erroLink = erro;
+    }
+
+    if (linkEl) {
+        linkEl.innerHTML = link
+            ? `<strong>Consulte esta lista também on-line em:</strong> ${link}`
+            : '';
+        console.log('[link público] valor definido na folha de impressão:', link);
+    }
+
     folha.style.display = 'block';
     document.body.classList.add('print-gestao-notas');
 
@@ -8077,8 +8012,93 @@ function imprimirTabelaGestaoNotas(filtroTipo = 'todos') {
         setTimeout(() => {
             document.body.classList.remove('print-gestao-notas');
             folha.style.display = 'none';
+
+            if (link) {
+                exibirLinkPublicoGestaoNotas(link);
+            } else {
+                mostrarAvisoSistema(
+                    'Link público',
+                    'Não foi possível gerar o link público desta lista.' +
+                    (erroLink ? `<br><span style="font-size:11px; color:#888;">Detalhe técnico: ${erroLink.code || ''} ${erroLink.message || erroLink}</span>` : '<br><span style="font-size:11px; color:#888;">Verifique se você está logado e se a regra do Firestore para a coleção "NotasPublicas" foi cadastrada.</span>') +
+                    '<br><br>A impressão foi feita normalmente, apenas sem o link.'
+                );
+            }
         }, 300);
     }, 150);
+}
+
+// =========================================================
+// LINK PÚBLICO (sem login) PARA A LISTA IMPRESSA EM GESTÃO DE NOTAS
+// =========================================================
+
+// Gera um identificador aleatório (não sequencial, não adivinhável) para o
+// link público — propositalmente em uma coleção separada do histórico
+// interno ("HistoricoNotas"), para que compartilhar uma lista não exponha
+// as demais tabelas salvas no sistema.
+function gerarIdPublicoAleatorio(tamanho = 16) {
+    const caracteres = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    const valores = new Uint32Array(tamanho);
+    (window.crypto || window.msCrypto).getRandomValues(valores);
+    let resultado = '';
+    for (let i = 0; i < tamanho; i++) {
+        resultado += caracteres[valores[i] % caracteres.length];
+    }
+    return resultado;
+}
+
+async function gerarLinkPublicoGestaoNotas(itens, total, nomeFiltro) {
+    if (!window.db || !window.fsDoc || !window.fsSetDoc) {
+        throw new Error('Firestore não está disponível nesta página.');
+    }
+    if (!window.auth?.currentUser) {
+        throw new Error('Você precisa estar logado para publicar um link público.');
+    }
+    if (!itens || !itens.length) {
+        return null;
+    }
+
+    const id = gerarIdPublicoAleatorio();
+
+    await window.fsSetDoc(
+        window.fsDoc(window.db, 'NotasPublicas', id),
+        {
+            id,
+            titulo: `Saída de Notas — ${nomeFiltro}`,
+            criadoPor: window.auth.currentUser.email || '',
+            dataCriacao: new Date().toISOString(),
+            filtro: nomeFiltro,
+            valorTotal: total,
+            itens
+        }
+    );
+
+    const base = window.location.href.replace(/[^/]*$/, '');
+    return `${base}visualizar-nota.html?id=${id}`;
+}
+
+function exibirLinkPublicoGestaoNotas(link) {
+    const html = `
+        <p>Link público gerado para esta lista. Qualquer pessoa com o link pode visualizar essa relação de notas, sem precisar fazer login.</p>
+        <div style="display:flex; gap:8px; margin-top:12px;">
+            <input type="text" id="campoLinkPublicoGestaoNotas" value="${link}" readonly
+                style="flex:1; padding:8px 10px; border:1px solid #bac5d0; border-radius:3px; font-size:13px; background:#f8fafc; color:#333;">
+            <button type="button" class="btn-primary" style="width:auto; padding:8px 14px;" onclick="copiarLinkPublicoGestaoNotas()">
+                Copiar link
+            </button>
+        </div>
+    `;
+    mostrarAvisoSistema('Link público da lista', html);
+}
+
+function copiarLinkPublicoGestaoNotas() {
+    const campo = document.getElementById('campoLinkPublicoGestaoNotas');
+    if (!campo) return;
+    campo.select();
+    if (navigator.clipboard?.writeText) {
+        navigator.clipboard.writeText(campo.value).catch(() => document.execCommand('copy'));
+    } else {
+        document.execCommand('copy');
+    }
 }
 
 function calcularSomasMateriais(incluirRetencao = false) {
@@ -8457,37 +8477,35 @@ function limparDocumento(valor) {
     return String(valor || '').replace(/\D/g, '');
 }
 
+// Alguns campos vêm mascarados pela API por LGPD (ex.: "***.238.366-**").
+// Por isso não basta pegar o primeiro campo não vazio: é preciso ignorar
+// qualquer valor que contenha "*" e usar o primeiro candidato realmente
+// completo (11 dígitos = CPF, 14 dígitos = CNPJ).
 function obterDocumentoItem(item) {
-    return limparDocumento(
-        item?.desDocumentoFornecedorFormatado ||
-        item?.desDocumentoFornecedor ||
-        item?.numCpfCnpj ||
-        item?.cpfCnpj ||
-        item?.cnpjCpf ||
-        item?.documento ||
-        item?.cnpj ||
-        item?.cpf ||
-        ''
-    );
-}
+    const candidatos = [
+        item?.desDocumentoFornecedorFormatado,
+        item?.desDocumentoFornecedor,
+        item?.numCpfCnpj,
+        item?.cpfCnpj,
+        item?.cnpjCpf,
+        item?.documento,
+        item?.cnpj,
+        item?.cpf
+    ];
 
+    for (const candidato of candidatos) {
+        if (!candidato) continue;
+        if (String(candidato).includes('*')) continue;
+        const limpo = limparDocumento(candidato);
+        if (limpo.length === 11 || limpo.length === 14) return limpo;
+    }
 
-function limparDocumento(valor) {
-    return String(valor || '').replace(/\D/g, '');
-}
-
-function obterDocumentoItem(item) {
-    return limparDocumento(
-        item?.desDocumentoFornecedorFormatado ||
-        item?.desDocumentoFornecedor ||
-        item?.numCpfCnpj ||
-        item?.cpfCnpj ||
-        item?.cnpjCpf ||
-        item?.documento ||
-        item?.cnpj ||
-        item?.cpf ||
-        ''
-    );
+    // Nenhum candidato veio completo e sem máscara — mantém o comportamento
+    // antigo como último recurso (vai cair no aviso de documento incompleto).
+    for (const candidato of candidatos) {
+        if (candidato) return limparDocumento(candidato);
+    }
+    return '';
 }
 
 function formatarDataMovimento(valor) {

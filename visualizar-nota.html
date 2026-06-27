@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Lista de Notas - Iguatama</title>
+<style>
+    body {
+        font-family: Arial, Helvetica, sans-serif;
+        background-color: #f4f6f8;
+        color: #333;
+        margin: 0;
+        padding: 0;
+    }
+
+    .top-navbar {
+        background-color: #0f3b5e;
+        color: #ffffff;
+        padding: 15px 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .top-navbar h1 {
+        margin: 0;
+        font-size: 18px;
+        font-weight: normal;
+        letter-spacing: 0.5px;
+    }
+
+    .top-navbar span {
+        font-size: 12px;
+        color: #aebfd0;
+    }
+
+    .wrapper {
+        max-width: 1100px;
+        width: 94%;
+        margin: 30px auto;
+    }
+
+    .panel {
+        background: #ffffff;
+        border: 1px solid #cfd7df;
+        border-radius: 4px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        overflow: hidden;
+    }
+
+    .panel-header {
+        padding: 18px 20px;
+        border-bottom: 1px solid #cfd7df;
+        background-color: #fbfcfd;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 16px;
+        flex-wrap: wrap;
+    }
+
+    .panel-header h2 {
+        margin: 0;
+        font-size: 16px;
+        color: #0f3b5e;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+    }
+
+    .panel-header .sub {
+        font-size: 12px;
+        color: #66727d;
+        margin-top: 4px;
+    }
+
+    .panel-meta {
+        font-size: 12px;
+        color: #66727d;
+        text-align: right;
+    }
+
+    .panel-body {
+        padding: 20px;
+    }
+
+    .data-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        border: 1px solid #dce4ec;
+        border-radius: 4px;
+        overflow: hidden;
+        margin-bottom: 0;
+        font-size: 13px;
+    }
+
+    .data-table th, .data-table td {
+        padding: 10px 12px;
+        border-bottom: 1px solid #dce4ec;
+        text-align: left;
+        vertical-align: middle;
+    }
+
+    .data-table th {
+        background-color: #f2f6f9;
+        color: #0f3b5e;
+        font-weight: 600;
+        border-right: 1px solid #dce4ec;
+    }
+
+    .data-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .data-table td {
+        color: #333;
+        line-height: 1.5;
+        background-color: #ffffff;
+    }
+
+    .rodape-total {
+        margin-top: 14px;
+        font-size: 13px;
+        font-weight: bold;
+        color: #0f3b5e;
+        text-align: right;
+    }
+
+    .alert-box {
+        padding: 12px 14px;
+        border-radius: 3px;
+        font-size: 13px;
+        margin: 30px auto;
+        max-width: 1100px;
+        width: 94%;
+        line-height: 1.6;
+    }
+
+    .alert-erro {
+        background-color: #fce8e6;
+        border: 1px solid #f8bbd0;
+        color: #a50e0e;
+    }
+
+    .alert-carregando {
+        background-color: #f8f9fa;
+        border: 1px solid #e9ecef;
+        color: #6c757d;
+    }
+
+    .rodape-pagina {
+        text-align: center;
+        font-size: 11px;
+        color: #99a4ad;
+        margin: 26px 0 10px;
+    }
+
+    @media (max-width: 700px) {
+        .panel-body { padding: 14px; overflow-x: auto; }
+        .data-table { min-width: 640px; }
+    }
+</style>
+</head>
+<body>
+
+<div class="top-navbar">
+    <h1>Sistema de Consulta Fiscal e Retenções — Iguatama</h1>
+    <span>Visualização pública de lista de notas</span>
+</div>
+
+<div id="areaCarregando" class="alert-box alert-carregando">
+    Carregando lista...
+</div>
+
+<div id="areaErro" class="alert-box alert-erro" style="display:none;"></div>
+
+<div id="areaConteudo" class="wrapper" style="display:none;">
+    <div class="panel">
+        <div class="panel-header">
+            <div>
+                <h2 id="tituloLista">Saída de Notas</h2>
+                <div class="sub">Relação de notas fiscais lançadas</div>
+            </div>
+            <div class="panel-meta" id="metaLista"></div>
+        </div>
+        <div class="panel-body">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Empenho</th>
+                        <th>Fornecedor</th>
+                        <th>Tipo</th>
+                        <th>Valor</th>
+                        <th>Data Emissão</th>
+                        <th>Nº da Nota</th>
+                    </tr>
+                </thead>
+                <tbody id="corpoTabela"></tbody>
+            </table>
+            <div class="rodape-total" id="rodapeTotal"></div>
+        </div>
+    </div>
+</div>
+
+<div class="rodape-pagina">
+    Documento gerado pelo Sistema de Consulta Fiscal e Retenções — Iguatama. Link de visualização pública, sem necessidade de login.
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+// Mesmo projeto Firebase usado no sistema principal.
+const firebaseConfig = {
+    apiKey: "AIzaSyB09-qIkz483j429m6QsBFzSjmThdO5ST8",
+    authDomain: "iguatama-4f8d3.firebaseapp.com",
+    projectId: "iguatama-4f8d3",
+    storageBucket: "iguatama-4f8d3.firebasestorage.app",
+    messagingSenderId: "897646784440",
+    appId: "1:897646784440:web:f0ba79eb55a1bbc76ba94d",
+    measurementId: "G-EMGN2ZMQ4X"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+function escaparHtml(texto) {
+    return String(texto ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+}
+
+function formatarValorBR(valor) {
+    return Number(valor || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function mostrarErro(mensagem) {
+    document.getElementById('areaCarregando').style.display = 'none';
+    const areaErro = document.getElementById('areaErro');
+    areaErro.style.display = 'block';
+    areaErro.textContent = mensagem;
+}
+
+async function carregar() {
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get('id');
+
+    if (!id) {
+        mostrarErro('Link inválido: não foi informado um identificador de lista.');
+        return;
+    }
+
+    try {
+        const referencia = doc(db, 'NotasPublicas', id);
+        const snap = await getDoc(referencia);
+
+        if (!snap.exists()) {
+            mostrarErro('Esta lista não foi encontrada. O link pode ter sido removido ou estar incorreto.');
+            return;
+        }
+
+        const dados = snap.data() || {};
+        const itens = Array.isArray(dados.itens) ? dados.itens : [];
+
+        document.getElementById('tituloLista').textContent = dados.titulo || 'Saída de Notas';
+
+        const dataCriacao = dados.dataCriacao ? new Date(dados.dataCriacao) : null;
+        const dataFormatada = dataCriacao
+            ? `${dataCriacao.toLocaleDateString('pt-BR')} ${dataCriacao.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`
+            : '-';
+        document.getElementById('metaLista').textContent = `Gerado em: ${dataFormatada}`;
+
+        const corpo = document.getElementById('corpoTabela');
+        if (!itens.length) {
+            corpo.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:18px;">Nenhuma linha nesta lista.</td></tr>';
+        } else {
+            corpo.innerHTML = itens.map(item => `
+                <tr>
+                    <td>${escaparHtml(item.empenho)}</td>
+                    <td>${escaparHtml(item.fornecedor)}</td>
+                    <td>${escaparHtml(item.tipo)}</td>
+                    <td>${escaparHtml(item.valor)}</td>
+                    <td>${escaparHtml(item.data)}</td>
+                    <td>${escaparHtml(item.nota)}</td>
+                </tr>
+            `).join('');
+        }
+
+        document.getElementById('rodapeTotal').textContent =
+            `Total de notas: ${itens.length} | Valor total: R$ ${formatarValorBR(dados.valorTotal)}`;
+
+        document.getElementById('areaCarregando').style.display = 'none';
+        document.getElementById('areaConteudo').style.display = 'block';
+    } catch (erro) {
+        console.error('Erro ao carregar lista pública:', erro);
+        mostrarErro('Não foi possível carregar esta lista agora. Tente novamente em alguns instantes.');
+    }
+}
+
+carregar();
+</script>
+
+</body>
+</html>

@@ -3846,6 +3846,17 @@ body.print-retencao .col-retencao {
                     <div id="gnHistoricoLista" style="padding:14px 16px; color:#66727d; font-size:13px;">
                         Nenhum histórico carregado.
                     </div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 16px; border-top:1px solid #e3eaf0; background:#f7fafc;">
+                        <div id="gnHistPaginacaoInfo" style="font-size:12px; color:#54606b;">Página 1</div>
+                        <div style="display:flex; gap:8px;">
+                            <button type="button" class="btn-primary" id="btnGnHistPaginaAnterior" style="width:auto; padding:6px 12px;" onclick="mudarPaginaHistoricoGestaoNotas(-1)" disabled>
+                                ‹ Anterior
+                            </button>
+                            <button type="button" class="btn-primary" id="btnGnHistPaginaProxima" style="width:auto; padding:6px 12px;" onclick="mudarPaginaHistoricoGestaoNotas(1)" disabled>
+                                Próxima ›
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -4410,6 +4421,10 @@ function fecharModalSistema() {
     const modal = document.getElementById('modalSistema');
     if (modal) {
         modal.style.display = 'none';
+    }
+    const painel = document.getElementById('modalSistemaPainel');
+    if (painel) {
+        painel.style.width = '';
     }
 }
 
@@ -9003,26 +9018,27 @@ function calcularDescricaoSeparacao(itens) {
     const temServico = lista.some(item => normalizar(item.tipoNota) === 'servico');
 
     if (temMercadoria && temServico) {
-        return 'Separado: Mercadoria no Almoxarifado · Serviço na Contabilidade (aguardando devolução da Mercadoria)';
+        return 'Mercadoria enviada ao Almoxarifado · Serviço aguardando consolidação com a Mercadoria';
     }
     if (temMercadoria) {
-        return 'Mercadoria no Almoxarifado (aguardando devolução)';
+        return 'Mercadoria enviada ao Almoxarifado';
     }
     if (temServico) {
-        return 'Serviço na Contabilidade (aguardando devolução da Mercadoria)';
+        return 'Serviço aguardando consolidação no Almoxarifado';
     }
-    return 'Na Contabilidade';
+    return 'Enviado ao Almoxarifado';
 }
 
 function obterDescricaoStatusLogistica(status, itens) {
-    if (status === 'tesouraria') return 'Enviada à Tesouraria (Mercadoria e Serviço)';
-    if (status === 'separado') return calcularDescricaoSeparacao(itens);
+    if (status === 'contabilidade') return 'Empenhados na Contabilidade';
+    if (status === 'almoxarifado') return calcularDescricaoSeparacao(itens);
+    if (status === 'tesouraria') return 'Empenhos consolidados e enviados à Tesouraria';
     return status || '';
 }
 
 function classeStatusLogistica(status) {
     if (status === 'tesouraria') return 'status-sim';
-    if (status === 'separado') return 'status-andamento';
+    if (status === 'almoxarifado') return 'status-andamento';
     return 'status-nao';
 }
 
@@ -9045,7 +9061,7 @@ function renderizarHistoricoLogisticaGestaoNotas(historico, statusAtual, idTabel
 
     const eventos = Array.isArray(historico) ? historico : [];
     if (!eventos.length) {
-        lista.innerHTML = 'Nenhuma movimentação registrada ainda. O status inicial é definido automaticamente ao salvar a tabela no Histórico.';
+        lista.innerHTML = 'Nenhuma movimentação registrada ainda. O status "Empenhados na Contabilidade" é definido automaticamente ao salvar a tabela no Histórico.';
         return;
     }
 
@@ -9076,7 +9092,7 @@ function renderizarHistoricoLogisticaGestaoNotas(historico, statusAtual, idTabel
 // Atualiza o status de logística de uma tabela salva (HistoricoNotas/{idTabela}).
 // opcoes.apenasSeNaoIniciado: só grava se a tabela ainda não tiver status
 // (usado na gravação automática ao salvar, para não sobrescrever uma
-// tabela que já foi avançada manualmente para a Tesouraria).
+// tabela que já foi avançada manualmente para uma etapa posterior).
 // opcoes.silencioso: não mostra modal de confirmação.
 async function atualizarStatusLogisticaTabela(idTabela, novoStatus, opcoes = {}) {
     const { apenasSeNaoIniciado = false, silencioso = false } = opcoes;
@@ -9177,28 +9193,38 @@ async function removerEventoLogistica(idTabela, indice) {
 }
 
 // Abre o seletor de etapa (chamado pelo botão "Atualizar logística" na lista
-// de Histórico salvo). Usa botões empilhados de largura total no corpo do
-// modal — o footer do modal padrão é estreito (380px) e não comporta vários
-// botões lado a lado.
+// de Histórico salvo). O painel deste modal é alargado e os botões recebem
+// "white-space: normal" porque os textos das etapas são longos e o
+// .btn-primary padrão do site força nowrap (quebraria/cortaria o texto).
 function abrirSeletorLogisticaHistorico(idTabela, statusAtual) {
     const modal = document.getElementById('modalSistema');
+    const painel = document.getElementById('modalSistemaPainel');
     const tituloEl = document.getElementById('modalTitulo');
     const mensagemEl = document.getElementById('modalMensagem');
     const footerEl = document.getElementById('modalFooter');
     if (!modal || !tituloEl || !mensagemEl || !footerEl) return;
 
-    const labelAtual = statusAtual === 'tesouraria'
-        ? 'Na Tesouraria (Mercadoria e Serviço)'
-        : (statusAtual === 'separado' ? 'Separado (Mercadoria no Almoxarifado / Serviço na Contabilidade)' : 'Sem status definido');
+    if (painel) {
+        painel.style.width = '460px';
+    }
+
+    const labelAtual = statusAtual
+        ? obterDescricaoStatusLogistica(statusAtual, [])
+        : 'Sem status definido';
+
+    const estiloBotao = 'width:100%; margin-bottom:8px; white-space:normal; line-height:1.35; padding:10px 14px; text-align:left;';
 
     tituloEl.textContent = 'Atualizar logística';
     mensagemEl.innerHTML = `
         <p style="margin-bottom:14px;">Etapa atual: <strong>${labelAtual}</strong></p>
-        <button type="button" class="btn-primary" style="width:100%; margin-bottom:8px;" onclick="definirStatusLogisticaEFechar('${idTabela}', 'separado')">
-            Separado (Mercadoria no Almoxarifado / Serviço na Contabilidade)
+        <button type="button" class="btn-primary" style="${estiloBotao}" onclick="definirStatusLogisticaEFechar('${idTabela}', 'contabilidade')">
+            1. Empenhados na Contabilidade
         </button>
-        <button type="button" class="btn-primary" style="width:100%; background-color:#27ae60; border-color:#219653;" onclick="definirStatusLogisticaEFechar('${idTabela}', 'tesouraria')">
-            Enviada à Tesouraria (Mercadoria e Serviço)
+        <button type="button" class="btn-primary" style="${estiloBotao} background-color:#8a5a00; border-color:#8a5a00;" onclick="definirStatusLogisticaEFechar('${idTabela}', 'almoxarifado')">
+            2. Empenhos de mercadoria enviados ao Almoxarifado (serviço aguarda consolidação)
+        </button>
+        <button type="button" class="btn-primary" style="${estiloBotao} margin-bottom:0; background-color:#27ae60; border-color:#219653;" onclick="definirStatusLogisticaEFechar('${idTabela}', 'tesouraria')">
+            3. Empenhos consolidados e enviados à Tesouraria
         </button>
     `;
 
@@ -9213,6 +9239,7 @@ function definirStatusLogisticaEFechar(idTabela, novoStatus) {
     fecharModalSistema();
     atualizarStatusLogisticaTabela(idTabela, novoStatus);
 }
+
 
 
 function inicializarGestaoNotas() {
@@ -12297,10 +12324,10 @@ window.salvarTabelaGestaoNotas = async function(botao) {
 
         gestaoNotasTabelaAtualId = idTabela;
 
-        // Define a etapa inicial automaticamente (Mercadoria no Almoxarifado /
-        // Serviço na Contabilidade), só se a tabela ainda não tiver nenhum
-        // status — evitando sobrescrever uma tabela já avançada manualmente.
-        await atualizarStatusLogisticaTabela(idTabela, 'separado', {
+        // Define a etapa inicial automaticamente ("Empenhados na Contabilidade"),
+        // só se a tabela ainda não tiver nenhum status — evitando sobrescrever
+        // uma tabela já avançada manualmente para uma etapa posterior.
+        await atualizarStatusLogisticaTabela(idTabela, 'contabilidade', {
             apenasSeNaoIniciado: true,
             silencioso: true
         });
@@ -12336,7 +12363,36 @@ window.salvarTabelaGestaoNotas = async function(botao) {
     }
 };
 
-window.carregarHistoricoGestaoNotas = async function() {
+const LIMITE_HIST_GN_POR_PAGINA = 10;
+let gnHistPaginaAtual = 1;
+let gnHistCursorPorPagina = { 1: null };
+let gnHistUltimoDocPagina = null;
+let gnHistTemProximaPagina = false;
+
+function atualizarPaginacaoHistoricoGestaoNotas() {
+    const info = document.getElementById('gnHistPaginacaoInfo');
+    const btnAnterior = document.getElementById('btnGnHistPaginaAnterior');
+    const btnProxima = document.getElementById('btnGnHistPaginaProxima');
+
+    if (info) info.textContent = `Página ${gnHistPaginaAtual}`;
+    if (btnAnterior) btnAnterior.disabled = gnHistPaginaAtual === 1;
+    if (btnProxima) btnProxima.disabled = !gnHistTemProximaPagina;
+}
+
+async function mudarPaginaHistoricoGestaoNotas(direcao) {
+    if (direcao > 0) {
+        if (!gnHistTemProximaPagina || !gnHistUltimoDocPagina) return;
+        gnHistCursorPorPagina[gnHistPaginaAtual + 1] = gnHistUltimoDocPagina;
+        gnHistPaginaAtual += 1;
+    } else {
+        if (gnHistPaginaAtual === 1) return;
+        gnHistPaginaAtual -= 1;
+    }
+
+    await carregarHistoricoGestaoNotas(false);
+}
+
+window.carregarHistoricoGestaoNotas = async function(reiniciar = true) {
     const box = document.getElementById('gnHistoricoLista');
     if (!box) return;
 
@@ -12345,27 +12401,37 @@ window.carregarHistoricoGestaoNotas = async function() {
         return;
     }
 
+    if (reiniciar) {
+        gnHistPaginaAtual = 1;
+        gnHistCursorPorPagina = { 1: null };
+    }
+
     try {
         box.innerHTML = 'Carregando histórico...';
 
-       const q = window.fsQuery(
-  window.fsCollection(window.db, "HistoricoNotas"),
-  window.fsOrderBy("dataAtualizacao", "desc"),
-  window.fsLimit(20)
-);
+        const cursor = gnHistCursorPorPagina[gnHistPaginaAtual] || null;
+        const partesQuery = [
+            window.fsCollection(window.db, 'HistoricoNotas'),
+            window.fsOrderBy('dataAtualizacao', 'desc')
+        ];
+        if (cursor) partesQuery.push(window.fsStartAfter(cursor));
+        partesQuery.push(window.fsLimit(LIMITE_HIST_GN_POR_PAGINA));
 
-const snapshot = await window.fsGetDocs(q);
+        const q = window.fsQuery(...partesQuery);
+        const snapshot = await window.fsGetDocs(q);
+
+        gnHistUltimoDocPagina = snapshot.docs.length ? snapshot.docs[snapshot.docs.length - 1] : null;
+        gnHistTemProximaPagina = snapshot.docs.length === LIMITE_HIST_GN_POR_PAGINA;
+        atualizarPaginacaoHistoricoGestaoNotas();
+
         const lista = [];
-
         snapshot.forEach(docItem => {
             const d = docItem.data() || {};
             lista.push(d);
         });
 
-        lista.sort((a, b) => String(b.dataAtualizacao || '').localeCompare(String(a.dataAtualizacao || '')));
-
         if (!lista.length) {
-            box.innerHTML = 'Nenhum histórico salvo.';
+            box.innerHTML = gnHistPaginaAtual > 1 ? 'Não há mais registros.' : 'Nenhum histórico salvo.';
             return;
         }
 
@@ -12382,6 +12448,7 @@ const snapshot = await window.fsGetDocs(q);
                     <button type="button" class="btn-primary" style="width:auto; padding:8px 12px;" onclick="abrirHistoricoGestaoNotas('${item.id}')">Abrir</button>
                     <button type="button" class="btn-primary" style="width:auto; padding:8px 12px; background-color:#16a085; border-color:#138a72;" onclick="abrirSeletorLogisticaHistorico('${item.id}', '${item.status || ''}')">Atualizar logística</button>
                     <button type="button" class="btn-primary" style="width:auto; padding:8px 12px; background-color:#2980b9; border-color:#2471a3;" onclick="copiarLinkHistorico('${item.id}')">Copiar link</button>
+                    <button type="button" class="btn-primary" style="width:auto; padding:8px 12px; background-color:#c0392b; border-color:#a5281b;" onclick="excluirTabelaHistorico('${item.id}')">Excluir</button>
                 </div>
             </div>
         `).join('');
@@ -12390,6 +12457,41 @@ const snapshot = await window.fsGetDocs(q);
         box.innerHTML = 'Erro ao carregar histórico.';
     }
 };
+
+// Exclui a tabela do Histórico salvo (e, se houver, o link público
+// associado, para que ele deixe de funcionar também).
+async function excluirTabelaHistorico(idTabela) {
+    if (!idTabela) return;
+    if (!window.db || !window.fsDoc || !window.fsGetDoc || !window.fsDeleteDoc) return;
+
+    if (!confirm('Excluir esta tabela do histórico? Essa ação não pode ser desfeita, e o link público (se existir) deixa de funcionar.')) return;
+
+    try {
+        const refTabela = window.fsDoc(window.db, 'HistoricoNotas', idTabela);
+        const snap = await window.fsGetDoc(refTabela);
+        const dados = snap.exists() ? (snap.data() || {}) : null;
+
+        if (dados?.linkPublicoId) {
+            try {
+                await window.fsDeleteDoc(window.fsDoc(window.db, 'NotasPublicas', dados.linkPublicoId));
+            } catch (erroLink) {
+                console.error('Erro ao remover link público associado:', erroLink);
+            }
+        }
+
+        await window.fsDeleteDoc(refTabela);
+
+        if (idTabela === gestaoNotasTabelaAtualId) {
+            novaTabelaGestaoNotas();
+        }
+
+        await carregarHistoricoGestaoNotas(false);
+    } catch (erro) {
+        console.error('Erro ao excluir tabela do histórico:', erro);
+        mostrarAvisoSistema('Histórico', 'Não foi possível excluir esta tabela agora.');
+    }
+}
+
 
 window.abrirHistoricoGestaoNotas = async function(idTabela) {
     if (!window.db || !window.fsDoc || !window.fsGetDoc) return;
@@ -13291,7 +13393,7 @@ return true;
 </div>
 </div>
 <div id="modalSistema" class="modal-overlay" style="display: none;">
-    <div class="modal-panel">
+    <div class="modal-panel" id="modalSistemaPainel">
         <div class="modal-header-custom" id="modalTitulo">Aviso</div>
         <div class="modal-body-custom" id="modalMensagem">Mensagem</div>
         <div class="modal-footer-custom" id="modalFooter"></div>

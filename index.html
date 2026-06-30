@@ -9271,9 +9271,27 @@ async function carregarDetalhesEmpenho(numEmpenho, anoFinal) {
                 <div class="emp-panel">
                     <div class="emp-panel-header">
                         <h3>Resumo Financeiro</h3>
-                        <button type="button" class="btn-primary" style="width:auto; padding:7px 14px; font-size:12px;" onclick="abrirModalLiquidacoesEmpenho()">
-                            Ver Liquidações (${lista.length})
-                        </button>
+                        <div style="display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end;">
+                            <button type="button" class="btn-primary" style="width:auto; padding:7px 14px; font-size:12px;" onclick="abrirModalLiquidacoesEmpenho()">
+                                Ver Liquidações (${lista.length})
+                            </button>
+                            ${detalhe.desContratoEmpenho && detalhe.desContratoEmpenho !== '-' && detalhe.desContratoEmpenho !== '0000000000000000000/0000'
+                                ? `<button type="button" style="width:auto; padding:7px 14px; font-size:12px; background-color:#1e6b3b; color:#fff; border:1px solid #155229; border-radius:3px; cursor:pointer; white-space:nowrap;" onclick="abrirModalContratoEmpenho('${String(detalhe.desContratoEmpenho).replace(/'/g, "\\'")}', '${String(detalhe.nomFornecedor || detalhe.desFavorecido || detalhe.nomCredor || '').replace(/'/g, "\\'")}')">
+                                    Ver Contrato
+                                </button>`
+                                : `<button type="button" disabled style="width:auto; padding:7px 14px; font-size:12px; background-color:#e9ecef; color:#adb5bd; border:1px solid #dee2e6; border-radius:3px; cursor:not-allowed; white-space:nowrap;" title="Número de contrato não vinculado a este empenho">
+                                    Sem Contrato
+                                </button>`
+                            }
+                            ${(detalhe.desLicitacaoEmpenhoFormatado || detalhe.desLicitacaoEmpenho) && (detalhe.desLicitacaoEmpenhoFormatado || detalhe.desLicitacaoEmpenho) !== '-' && (detalhe.desLicitacaoEmpenhoFormatado || detalhe.desLicitacaoEmpenho) !== '000000/0000'
+                                ? `<button type="button" style="width:auto; padding:7px 14px; font-size:12px; background-color:#c98a16; color:#fff; border:1px solid #a37012; border-radius:3px; cursor:pointer; white-space:nowrap;" onclick="abrirModalLicitacaoEmpenho('${String(detalhe.desLicitacaoEmpenhoFormatado || detalhe.desLicitacaoEmpenho).replace(/'/g, "\\'")}')">
+                                    Ver Licitação
+                                </button>`
+                                : `<button type="button" disabled style="width:auto; padding:7px 14px; font-size:12px; background-color:#e9ecef; color:#adb5bd; border:1px solid #dee2e6; border-radius:3px; cursor:not-allowed; white-space:nowrap;" title="Número de licitação não vinculado a este empenho">
+                                    Sem Licitação
+                                </button>`
+                            }
+                        </div>
                     </div>
                     <div class="emp-saldo-bar" style="background:#f8fafc; border-bottom:1px solid #edf1f5;">
                         <div>
@@ -9527,6 +9545,765 @@ function abrirModalLiquidacoesEmpenho() {
 function fecharModalLiquidacoesEmpenho() {
     const modal = document.getElementById('modalLiquidacoesEmpenho');
     if (modal) modal.style.display = 'none';
+}
+
+// ============================================================
+// MODAL DE CONTRATO — busca dados do contrato vinculado ao
+// empenho no Portal da Transparência de Iguatama/MG.
+// ============================================================
+
+function fecharModalContratoEmpenho() {
+    const modal = document.getElementById('modalContratoEmpenho');
+    if (modal) modal.style.display = 'none';
+}
+
+async function abrirModalContratoEmpenho(desContratoEmpenho, nomeFornecedor) {
+    const modal    = document.getElementById('modalContratoEmpenho');
+    const titulo   = document.getElementById('tituloModalContrato');
+    const conteudo = document.getElementById('conteudoModalContrato');
+    const linkExt  = document.getElementById('linkContratoExterno');
+
+    if (!modal || !conteudo) return;
+
+    titulo.textContent = `Contrato ${desContratoEmpenho}`;
+    linkExt.style.display = 'none';
+    conteudo.innerHTML = `<div style="padding:40px; text-align:center; font-size:14px; color:#6c757d;">
+        <div style="margin-bottom:10px; font-size:24px;">🔍</div>
+        Buscando dados do contrato <strong>${desContratoEmpenho}</strong>...
+    </div>`;
+    modal.style.display = 'flex';
+
+    // O empenho costuma trazer o contrato como "78/2026" ou só "78".
+    // A API não tem busca textual funcional (termoBase64 não filtra nada,
+    // foi testado e ignora o parâmetro), então separamos número e ano e
+    // varremos as páginas da listagem (ordenada por numContrato decrescente)
+    // comparando numContrato + numAnoContrato diretamente.
+    const bruto = String(desContratoEmpenho).trim();
+    const partes = bruto.split('/');
+    const numeroAlvo = (partes[0] || '').replace(/^0+(?=\d)/, '').trim(); // remove zeros à esquerda
+    const anoAlvo = partes[1] ? partes[1].trim() : null;
+
+    const ELEMENTOS_POR_PAGINA = 50;
+    const MAX_PAGINAS = 12; // cobre ~600 contratos, suficiente para o histórico do município
+
+    try {
+        let contratoEncontrado = null;
+
+        for (let pagina = 1; pagina <= MAX_PAGINAS && !contratoEncontrado; pagina++) {
+            const urlLista = `https://transparencia.iguatama.mg.gov.br/publico/contrato?elementosPorPagina=${ELEMENTOS_POR_PAGINA}&pagina=${pagina}&termoBase64=&datAssinaturaInicio=2015-01-01&datAssinaturaFim=2030-12-31&codAdministracao=2&filtrarApenasCovid=false&filtrarApenasPublicidade=false`;
+
+            const res = await fetch(urlLista);
+            if (!res.ok) throw new Error('Falha ao consultar lista de contratos.');
+            const data = await res.json();
+
+            const lista = Array.isArray(data) ? data : (Array.isArray(data.content) ? data.content : []);
+            if (!lista.length) break;
+
+            contratoEncontrado = lista.find(c => {
+                const num = String(c.numContrato || '').replace(/^0+(?=\d)/, '').trim();
+                const ano = c.numAnoContrato != null ? String(c.numAnoContrato).trim() : null;
+                if (anoAlvo) {
+                    return num === numeroAlvo && ano === anoAlvo;
+                }
+                return num === numeroAlvo;
+            });
+
+            // Última página alcançada (API expõe "last": true)
+            if (data && data.last === true) break;
+        }
+
+        if (!contratoEncontrado) {
+            conteudo.innerHTML = _htmlSemContrato(desContratoEmpenho, nomeFornecedor);
+            return;
+        }
+
+        // Busca detalhe completo pelo ID interno (codContrato), que é o
+        // identificador usado na URL /publico/contrato/{id} — não tem
+        // relação numérica com o número visível do contrato.
+        let contrato = contratoEncontrado;
+        if (contrato.codContrato != null) {
+            try {
+                const resDetalhe = await fetch(`https://transparencia.iguatama.mg.gov.br/publico/contrato/${contrato.codContrato}`);
+                if (resDetalhe.ok) {
+                    const detalhe = await resDetalhe.json();
+                    if (detalhe && typeof detalhe === 'object') {
+                        contrato = { ...contrato, ...detalhe };
+                    }
+                }
+            } catch (_) { /* mantém dados da listagem */ }
+
+            linkExt.href = `https://transparencia.iguatama.mg.gov.br/publico/contrato/${contrato.codContrato}`;
+            linkExt.style.display = 'inline';
+        }
+
+        conteudo.innerHTML = _htmlContratoDetalhado(contrato, desContratoEmpenho);
+
+    } catch (erro) {
+        console.error('Erro ao buscar contrato:', erro);
+        conteudo.innerHTML = `
+            <div style="padding:24px;">
+                <div style="background:#fce8e6; border:1px solid #f8bbd0; border-radius:4px; padding:14px; font-size:13px; color:#a50e0e;">
+                    <strong>Não foi possível carregar os dados do contrato.</strong><br>
+                    O Portal da Transparência pode estar temporariamente indisponível.<br>
+                    Número informado no empenho: <strong>${desContratoEmpenho}</strong>
+                </div>
+                <div style="margin-top:14px; text-align:center;">
+                    <a href="https://transparencia.iguatama.mg.gov.br/publico/contrato?elementosPorPagina=10&pagina=1&codAdministracao=2" target="_blank" rel="noopener"
+                       style="font-size:13px; color:#1e6b3b; text-decoration:underline;">
+                        🔗 Buscar manualmente no Portal
+                    </a>
+                </div>
+            </div>`;
+    }
+}
+
+function _htmlSemContrato(desContratoEmpenho, nomeFornecedor) {
+    return `
+        <div style="padding:24px;">
+            <div style="background:#fff3cd; border:1px solid #ffeeba; border-radius:4px; padding:14px; font-size:13px; color:#856404; margin-bottom:14px;">
+                <strong>Contrato não encontrado na base de dados.</strong><br>
+                O número <strong>"${desContratoEmpenho}"</strong> consta no empenho, mas não retornou resultados na API de contratos.
+                ${nomeFornecedor ? `<br>Fornecedor: <strong>${nomeFornecedor}</strong>` : ''}
+            </div>
+            <div style="text-align:center;">
+                <a href="https://transparencia.iguatama.mg.gov.br/publico/contrato?elementosPorPagina=10&pagina=1&codAdministracao=2" target="_blank" rel="noopener"
+                   style="font-size:13px; color:#1e6b3b; text-decoration:underline;">
+                    🔗 Buscar manualmente no Portal da Transparência
+                </a>
+            </div>
+        </div>`;
+}
+
+function _htmlContratoDetalhado(c, desContratoEmpenho) {
+    const fmt = (v) => (v !== null && v !== undefined && v !== '' && v !== 'null' && v !== 'undefined') ? String(v).trim() : null;
+    const fmtBRL = (v) => Number(v || 0).toLocaleString('pt-BR', { style:'currency', currency:'BRL' });
+    const fmtData = (v) => {
+        if (!v) return null;
+        const s = String(v).slice(0, 10);
+        if (/^\d{4}-\d{2}-\d{2}$/.test(s)) { const [a,m,d]=s.split('-'); return `${d}/${m}/${a}`; }
+        return v;
+    };
+
+    const row = (label, valor, destaque) => {
+        if (!valor) return '';
+        return `<tr>
+            <th style="padding:9px 12px; background:#f8fafc; color:#495057; font-weight:600; white-space:nowrap; vertical-align:top; width:160px; border-right:1px solid #edf1f5; border-bottom:1px solid #edf1f5; font-size:13px;">${label}</th>
+            <td style="padding:9px 12px; color:#243746; vertical-align:top; line-height:1.5; border-bottom:1px solid #edf1f5; font-size:13px; ${destaque ? 'font-weight:700;' : ''}">${valor}</td>
+        </tr>`;
+    };
+
+    const statusAtivo = (s) => {
+        if (!s) return '';
+        const sl = s.toLowerCase();
+        const ok = sl.includes('vigor') || sl.includes('ativo') || sl.includes('vigente');
+        const cor = ok ? '#e6f4ea' : '#fce8e6';
+        const txt = ok ? '#1e4620' : '#a50e0e';
+        const brd = ok ? '#c8e6c9' : '#f8bbd0';
+        return `<span style="display:inline-block; padding:3px 10px; border-radius:2px; font-size:11px; font-weight:700; background:${cor}; color:${txt}; border:1px solid ${brd};">${s}</span>`;
+    };
+
+    // Campos confirmados na API real do Portal da Transparência de Iguatama/MG
+    const numero      = fmt(c.numeroContratoEAno) || fmt(c.numContrato) || desContratoEmpenho;
+    const objeto      = fmt(c.desObjeto) || fmt(c.descricao);
+    const fornecedor  = fmt(c.nomFornecedor);
+    const cnpj        = fmt(c.fornecedorFormatado) || fmt(c.desDocumentoFornecedor);
+    const modalidade  = fmt(c.desModalidade);
+    const natureza    = fmt(c.desNatureza);
+    const veiculo     = fmt(c.desVeiculoVulgacao);
+    const situacao    = fmt(c.indSituacao);
+    const dtAssin     = fmtData(c.datAssinatura);
+    const dtPublic    = fmtData(c.datPublicacao);
+    const dtVenc      = fmtData(c.datVencimento);
+    const prazo       = fmt(c.desPrazo); // já vem formatado, ex: "365 dias"
+    const vlrContratado = (c.vlrContratado != null) ? fmtBRL(c.vlrContratado) : null;
+    const vlrExecutado  = (c.vlrExecutado != null) ? fmtBRL(c.vlrExecutado) : null;
+    const vlrAditado    = (c.vlrAditado != null) ? fmtBRL(c.vlrAditado) : null;
+    const orgao       = fmt(c.desAdministracao) || fmt(c.administracaoFormatado);
+    const processo    = fmt(c.numeroProcessoEAno);
+    const covid       = c.indCovid === 'S';
+    const publicidade = c.indPublicidade === 'S';    // Saldo restante a executar
+    const saldoExecucao = (c.vlrContratado != null && c.vlrExecutado != null)
+        ? Number(c.vlrContratado) - Number(c.vlrExecutado)
+        : null;
+    const pctExecutado = (c.vlrContratado > 0 && c.vlrExecutado != null)
+        ? Math.min(100, Math.round((Number(c.vlrExecutado) / Number(c.vlrContratado)) * 100))
+        : null;
+
+    // Calcula vigência atual a partir de datVencimento
+    let vigenciaInfo = '';
+    if (c.datVencimento) {
+        try {
+            const partes = String(c.datVencimento).slice(0,10).split('-');
+            if (partes.length === 3) {
+                const fim = new Date(+partes[0], +partes[1]-1, +partes[2]);
+                const hoje = new Date(); hoje.setHours(0,0,0,0);
+                const diff = Math.round((fim - hoje) / 86400000);
+                if (diff > 0) vigenciaInfo = `<span style="color:#1e6b3b; font-size:11px; margin-left:8px;">✔ Vigente · vence em ${diff} dia(s)</span>`;
+                else if (diff === 0) vigenciaInfo = `<span style="color:#856404; font-size:11px; margin-left:8px;">⚠ Vence hoje</span>`;
+                else vigenciaInfo = `<span style="color:#a50e0e; font-size:11px; margin-left:8px;">✖ Vencido há ${Math.abs(diff)} dia(s)</span>`;
+            }
+        } catch(_){}
+    }
+
+    // Fonte de recursos orçamentários (vem só no detalhe /publico/contrato/{id})
+    let fonteRecursosHtml = '';
+    const fontes = Array.isArray(c.fonteRecursos) ? c.fonteRecursos : [];
+    if (fontes.length) {
+        const linhasFonte = fontes.map(f => `
+            <tr>
+                <td style="padding:8px 10px; border-bottom:1px solid #edf1f5; font-size:12px;">${fmt(f.desFonteRecurso) || '-'}</td>
+                <td style="padding:8px 10px; border-bottom:1px solid #edf1f5; font-size:12px; font-weight:700; color:#0f3b5e; text-align:right;">${(f.vlrFonteRecurso != null) ? fmtBRL(f.vlrFonteRecurso) : '-'}</td>
+            </tr>`).join('');
+        fonteRecursosHtml = `
+            <div style="background:#fff; border:1px solid #cfd7df; border-radius:5px; overflow:hidden;">
+                <div style="padding:12px 16px; background:#f2f6f9; border-bottom:1px solid #dce4ec;">
+                    <span style="font-size:13px; font-weight:700; color:#0f3b5e; text-transform:uppercase; letter-spacing:0.4px;">Fonte de Recursos</span>
+                </div>
+                <table style="width:100%; border-collapse:collapse; font-size:13px;">
+                    <tbody>${linhasFonte}</tbody>
+                </table>
+            </div>`;
+    }
+
+    // Itens contratados (vem só no detalhe /publico/contrato/{id})
+    let itensHtml = '';
+    const itensContrato = Array.isArray(c.itens) ? c.itens : [];
+    if (itensContrato.length) {
+        const linhasItem = itensContrato.map(it => `
+            <tr>
+                <td style="padding:8px 10px; border-bottom:1px solid #edf1f5; font-size:12px;">${fmt(it.desItem) || '-'}</td>
+                <td style="padding:8px 10px; border-bottom:1px solid #edf1f5; font-size:12px; text-align:center;">${fmt(it.desUnidade) || '-'}</td>
+                <td style="padding:8px 10px; border-bottom:1px solid #edf1f5; font-size:12px; text-align:center;">${fmt(it.numQuantidade) || '-'}</td>
+                <td style="padding:8px 10px; border-bottom:1px solid #edf1f5; font-size:12px; text-align:right;">${(it.vlrUnitario != null) ? fmtBRL(it.vlrUnitario) : '-'}</td>
+                <td style="padding:8px 10px; border-bottom:1px solid #edf1f5; font-size:12px; text-align:right; font-weight:700; color:#0f3b5e;">${(it.vlrTotal != null) ? fmtBRL(it.vlrTotal) : '-'}</td>
+            </tr>`).join('');
+        itensHtml = `
+            <div style="background:#fff; border:1px solid #cfd7df; border-radius:5px; overflow:hidden;">
+                <div style="padding:12px 16px; background:#f2f6f9; border-bottom:1px solid #dce4ec;">
+                    <span style="font-size:13px; font-weight:700; color:#0f3b5e; text-transform:uppercase; letter-spacing:0.4px;">Itens do Contrato (${itensContrato.length})</span>
+                </div>
+                <div style="overflow-x:auto;">
+                    <table style="width:100%; border-collapse:collapse; font-size:13px;">
+                        <thead>
+                            <tr style="background:#f8fafc;">
+                                <th style="padding:8px 10px; text-align:left; color:#495057; font-weight:600; border-bottom:1px solid #edf1f5; font-size:12px;">Descrição</th>
+                                <th style="padding:8px 10px; text-align:center; color:#495057; font-weight:600; border-bottom:1px solid #edf1f5; font-size:12px;">Unidade</th>
+                                <th style="padding:8px 10px; text-align:center; color:#495057; font-weight:600; border-bottom:1px solid #edf1f5; font-size:12px;">Qtd.</th>
+                                <th style="padding:8px 10px; text-align:right; color:#495057; font-weight:600; border-bottom:1px solid #edf1f5; font-size:12px;">Vlr. Unit.</th>
+                                <th style="padding:8px 10px; text-align:right; color:#495057; font-weight:600; border-bottom:1px solid #edf1f5; font-size:12px;">Vlr. Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>${linhasItem}</tbody>
+                    </table>
+                </div>
+            </div>`;
+    }
+
+    // Documentos anexos (editais, termos etc.), se a API retornar links
+    let documentosHtml = '';
+    const docs = Array.isArray(c.documentos) ? c.documentos : [];
+    if (docs.length) {
+        const linksDoc = docs.map(d => {
+            const url = fmt(d.url || d.link || d.caminho);
+            const nome = fmt(d.nome || d.desDocumento || d.titulo) || 'Documento';
+            return url
+                ? `<a href="${url}" target="_blank" rel="noopener" style="display:block; padding:8px 10px; border-bottom:1px solid #edf1f5; font-size:12px; color:#1e6b3b; text-decoration:underline;">📎 ${nome}</a>`
+                : `<div style="padding:8px 10px; border-bottom:1px solid #edf1f5; font-size:12px; color:#243746;">📎 ${nome}</div>`;
+        }).join('');
+        documentosHtml = `
+            <div style="background:#fff; border:1px solid #cfd7df; border-radius:5px; overflow:hidden;">
+                <div style="padding:12px 16px; background:#f2f6f9; border-bottom:1px solid #dce4ec;">
+                    <span style="font-size:13px; font-weight:700; color:#0f3b5e; text-transform:uppercase; letter-spacing:0.4px;">Documentos (${docs.length})</span>
+                </div>
+                ${linksDoc}
+            </div>`;
+    }
+
+    let aditivosHtml = '';
+    const aditivos = Array.isArray(c.aditivos) ? c.aditivos : [];
+    if (aditivos.length) {
+        const linhasAdit = aditivos.map(a => `
+            <tr>
+                <td style="padding:8px 10px; border-bottom:1px solid #edf1f5; font-size:12px;">${fmt(a.numAditivo || a.numero) || '-'}</td>
+                <td style="padding:8px 10px; border-bottom:1px solid #edf1f5; font-size:12px;">${fmtData(a.datAssinatura || a.datPublicacao) || '-'}</td>
+                <td style="padding:8px 10px; border-bottom:1px solid #edf1f5; font-size:12px; font-weight:700; color:#1e6b3b;">${(a.vlrAditivo != null) ? fmtBRL(a.vlrAditivo) : '-'}</td>
+                <td style="padding:8px 10px; border-bottom:1px solid #edf1f5; font-size:12px;">${fmt(a.desObjeto || a.descricao) || '-'}</td>
+            </tr>`).join('');
+        aditivosHtml = `
+            <div style="background:#fff; border:1px solid #cfd7df; border-radius:5px; overflow:hidden; margin-top:2px;">
+                <div style="padding:12px 16px; background:#f2f6f9; border-bottom:1px solid #dce4ec;">
+                    <span style="font-size:13px; font-weight:700; color:#0f3b5e; text-transform:uppercase; letter-spacing:0.4px;">Aditivos (${aditivos.length})</span>
+                </div>
+                <div style="overflow-x:auto;">
+                    <table style="width:100%; border-collapse:collapse; font-size:13px;">
+                        <thead>
+                            <tr style="background:#f8fafc;">
+                                <th style="padding:8px 10px; text-align:left; color:#495057; font-weight:600; border-bottom:1px solid #edf1f5; font-size:12px;">Nº Aditivo</th>
+                                <th style="padding:8px 10px; text-align:left; color:#495057; font-weight:600; border-bottom:1px solid #edf1f5; font-size:12px;">Assinatura</th>
+                                <th style="padding:8px 10px; text-align:left; color:#495057; font-weight:600; border-bottom:1px solid #edf1f5; font-size:12px;">Valor</th>
+                                <th style="padding:8px 10px; text-align:left; color:#495057; font-weight:600; border-bottom:1px solid #edf1f5; font-size:12px;">Objeto</th>
+                            </tr>
+                        </thead>
+                        <tbody>${linhasAdit}</tbody>
+                    </table>
+                </div>
+            </div>`;
+    }
+
+    return `
+        <div style="display:flex; flex-direction:column; gap:14px;">
+
+            <!-- CABEÇALHO DO CONTRATO -->
+            <div style="background:#fff; border:1px solid #cfd7df; border-radius:5px; overflow:hidden;">
+                <div style="padding:14px 18px; background:#f2f6f9; border-bottom:1px solid #dce4ec; display:flex; justify-content:space-between; align-items:flex-start; gap:12px; flex-wrap:wrap;">
+                    <div>
+                        <div style="font-size:15px; font-weight:700; color:#0f3b5e; margin-bottom:4px;">CONTRATO Nº ${numero}</div>
+                        ${fornecedor ? `<div style="font-size:13px; color:#54606b;">${fornecedor}</div>` : ''}
+                        ${cnpj ? `<div style="font-size:12px; color:#8a96a3; margin-top:2px;">${cnpj}</div>` : ''}
+                    </div>
+                    <div style="text-align:right;">
+                        ${situacao ? statusAtivo(situacao) : ''}
+                        ${vigenciaInfo ? `<div style="margin-top:4px;">${vigenciaInfo}</div>` : ''}
+                        ${(covid || publicidade) ? `<div style="margin-top:4px; font-size:10px; color:#6c757d;">${covid ? 'COVID-19 ' : ''}${publicidade ? 'Publicidade' : ''}</div>` : ''}
+                    </div>
+                </div>
+                ${objeto ? `<div style="padding:12px 18px; background:#f0faf4; border-bottom:1px solid #c8e6c9;">
+                    <div style="font-size:11px; font-weight:700; color:#6c757d; text-transform:uppercase; letter-spacing:0.4px; margin-bottom:4px;">Objeto</div>
+                    <div style="font-size:13px; color:#243746; line-height:1.6; white-space:pre-line;">${objeto}</div>
+                </div>` : ''}
+            </div>
+
+            <!-- VALORES -->
+            <div style="background:#fff; border:1px solid #cfd7df; border-radius:5px; overflow:hidden;">
+                <div style="padding:12px 16px; background:#f2f6f9; border-bottom:1px solid #dce4ec;">
+                    <span style="font-size:13px; font-weight:700; color:#0f3b5e; text-transform:uppercase; letter-spacing:0.4px;">Valores</span>
+                </div>
+                <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));">
+                    ${vlrContratado ? `<div style="padding:16px; text-align:center; border-right:1px solid #edf1f5;">
+                        <div style="font-size:11px; font-weight:700; color:#6c757d; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px;">Valor Contratado</div>
+                        <div style="font-size:20px; font-weight:700; color:#0f3b5e;">${vlrContratado}</div>
+                    </div>` : ''}
+                    ${vlrAditado ? `<div style="padding:16px; text-align:center; border-right:1px solid #edf1f5;">
+                        <div style="font-size:11px; font-weight:700; color:#6c757d; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px;">Valor Aditado</div>
+                        <div style="font-size:20px; font-weight:700; color:#856404;">${vlrAditado}</div>
+                    </div>` : ''}
+                    ${vlrExecutado ? `<div style="padding:16px; text-align:center;">
+                        <div style="font-size:11px; font-weight:700; color:#6c757d; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px;">Valor Executado</div>
+                        <div style="font-size:20px; font-weight:700; color:#1e6b3b;">${vlrExecutado}</div>
+                    </div>` : ''}
+                    ${!vlrContratado && !vlrExecutado ? `<div style="padding:20px; text-align:center; font-size:13px; color:#6c757d;">Valores não disponíveis nesta consulta.</div>` : ''}
+                </div>
+                ${(pctExecutado !== null) ? `
+                    <div style="padding:0 16px 16px;">
+                        <div style="display:flex; justify-content:space-between; font-size:11px; color:#6c757d; margin-bottom:4px;">
+                            <span>Execução do contrato</span>
+                            <span>${pctExecutado}% · Saldo: ${fmtBRL(saldoExecucao)}</span>
+                        </div>
+                        <div style="background:#edf1f5; border-radius:4px; height:8px; overflow:hidden;">
+                            <div style="background:#1e6b3b; height:100%; width:${pctExecutado}%;"></div>
+                        </div>
+                    </div>` : ''}
+            </div>
+
+            <!-- DATAS E VIGÊNCIA -->
+            <div style="background:#fff; border:1px solid #cfd7df; border-radius:5px; overflow:hidden;">
+                <div style="padding:12px 16px; background:#f2f6f9; border-bottom:1px solid #dce4ec;">
+                    <span style="font-size:13px; font-weight:700; color:#0f3b5e; text-transform:uppercase; letter-spacing:0.4px;">Datas e Vigência</span>
+                </div>
+                <table style="width:100%; border-collapse:collapse;">
+                    <tbody>
+                        ${row('Assinatura', dtAssin)}
+                        ${row('Publicação', dtPublic)}
+                        ${row('Vencimento', dtVenc ? dtVenc + (vigenciaInfo ? ` ${vigenciaInfo}` : '') : null)}
+                        ${row('Prazo', prazo)}
+                    </tbody>
+                </table>
+                ${(!dtAssin && !dtPublic && !dtVenc && !prazo) ? '<div style="padding:14px 16px; font-size:13px; color:#6c757d;">Datas não disponíveis nesta consulta.</div>' : ''}
+            </div>
+
+            <!-- DETALHES DO PROCESSO -->
+            <div style="background:#fff; border:1px solid #cfd7df; border-radius:5px; overflow:hidden;">
+                <div style="padding:12px 16px; background:#f2f6f9; border-bottom:1px solid #dce4ec;">
+                    <span style="font-size:13px; font-weight:700; color:#0f3b5e; text-transform:uppercase; letter-spacing:0.4px;">Processo e Modalidade</span>
+                </div>
+                <table style="width:100%; border-collapse:collapse;">
+                    <tbody>
+                        ${row('Administração', orgao)}
+                        ${row('Modalidade', modalidade)}
+                        ${row('Natureza', natureza)}
+                        ${row('Processo', processo)}
+                        ${row('Veículo de Divulgação', veiculo)}
+                    </tbody>
+                </table>
+                ${(!orgao && !modalidade && !natureza && !processo) ? '<div style="padding:14px 16px; font-size:13px; color:#6c757d;">Informações de processo não disponíveis.</div>' : ''}
+            </div>
+
+            ${fonteRecursosHtml}
+
+            ${itensHtml}
+
+            ${aditivosHtml}
+
+            ${documentosHtml}
+
+        </div>`;
+}
+
+// ============================================================
+// MODAL DE LICITAÇÃO — busca dados da licitação vinculada ao
+// empenho no Portal da Transparência de Iguatama/MG.
+// ============================================================
+
+function fecharModalLicitacaoEmpenho() {
+    const modal = document.getElementById('modalLicitacaoEmpenho');
+    if (modal) modal.style.display = 'none';
+}
+
+async function abrirModalLicitacaoEmpenho(desLicitacaoEmpenho) {
+    const modal    = document.getElementById('modalLicitacaoEmpenho');
+    const titulo   = document.getElementById('tituloModalLicitacao');
+    const conteudo = document.getElementById('conteudoModalLicitacao');
+    const linkExt  = document.getElementById('linkLicitacaoExterno');
+
+    if (!modal || !conteudo) return;
+
+    titulo.textContent = `Licitação ${desLicitacaoEmpenho}`;
+    linkExt.style.display = 'none';
+    conteudo.innerHTML = `<div style="padding:40px; text-align:center; font-size:14px; color:#6c757d;">
+        <div style="margin-bottom:10px; font-size:24px;">🔍</div>
+        Buscando dados da licitação <strong>${desLicitacaoEmpenho}</strong>...
+    </div>`;
+    modal.style.display = 'flex';
+
+    // Mesmo padrão do contrato: a listagem não tem busca textual funcional
+    // (parâmetros de data/termo são ignorados pela API), então paginamos
+    // comparando numLicitacao + numAnoLicitacao com o que veio do empenho.
+    const bruto = String(desLicitacaoEmpenho).trim();
+    const partes = bruto.split('/');
+    const numeroAlvo = (partes[0] || '').replace(/^0+(?=\d)/, '').trim();
+    const anoAlvo = partes[1] ? partes[1].trim() : null;
+
+    const ELEMENTOS_POR_PAGINA = 50;
+    const MAX_PAGINAS = 14; // cobre ~700 licitações
+
+    try {
+        let licitacaoEncontrada = null;
+
+        for (let pagina = 1; pagina <= MAX_PAGINAS && !licitacaoEncontrada; pagina++) {
+            const urlLista = `https://transparencia.iguatama.mg.gov.br/publico/licitacao?elementosPorPagina=${ELEMENTOS_POR_PAGINA}&pagina=${pagina}&termoBase64=&datAberturaInicio=2015-01-01&datAberturaFim=2030-12-31&codAdministracao=2&desModalidade=&filtrarApenasCovid=false`;
+
+            const res = await fetch(urlLista);
+            if (!res.ok) throw new Error('Falha ao consultar lista de licitações.');
+            const data = await res.json();
+
+            const lista = Array.isArray(data) ? data : (Array.isArray(data.content) ? data.content : []);
+            if (!lista.length) break;
+
+            licitacaoEncontrada = lista.find(l => {
+                const num = String(l.numLicitacao || '').replace(/^0+(?=\d)/, '').trim();
+                const ano = l.numAnoLicitacao != null ? String(l.numAnoLicitacao).trim() : null;
+                if (anoAlvo) {
+                    return num === numeroAlvo && ano === anoAlvo;
+                }
+                return num === numeroAlvo;
+            });
+
+            if (data && data.last === true) break;
+        }
+
+        if (!licitacaoEncontrada) {
+            conteudo.innerHTML = _htmlSemLicitacao(desLicitacaoEmpenho);
+            return;
+        }
+
+        // Busca detalhe completo pelo ID interno (codLicitacao) — assim
+        // como em contrato, não tem relação numérica com o número visível.
+        let licitacao = licitacaoEncontrada;
+        if (licitacao.codLicitacao != null) {
+            try {
+                const resDetalhe = await fetch(`https://transparencia.iguatama.mg.gov.br/publico/licitacao/${licitacao.codLicitacao}`);
+                if (resDetalhe.ok) {
+                    const detalhe = await resDetalhe.json();
+                    if (detalhe && typeof detalhe === 'object') {
+                        licitacao = { ...licitacao, ...detalhe };
+                    }
+                }
+            } catch (_) { /* mantém dados da listagem */ }
+
+            linkExt.href = `https://transparencia.iguatama.mg.gov.br/publico/licitacao/${licitacao.codLicitacao}`;
+            linkExt.style.display = 'inline';
+        }
+
+        conteudo.innerHTML = _htmlLicitacaoDetalhada(licitacao, desLicitacaoEmpenho);
+
+    } catch (erro) {
+        console.error('Erro ao buscar licitação:', erro);
+        conteudo.innerHTML = `
+            <div style="padding:24px;">
+                <div style="background:#fce8e6; border:1px solid #f8bbd0; border-radius:4px; padding:14px; font-size:13px; color:#a50e0e;">
+                    <strong>Não foi possível carregar os dados da licitação.</strong><br>
+                    O Portal da Transparência pode estar temporariamente indisponível.<br>
+                    Número informado no empenho: <strong>${desLicitacaoEmpenho}</strong>
+                </div>
+                <div style="margin-top:14px; text-align:center;">
+                    <a href="https://transparencia.iguatama.mg.gov.br/publico/licitacao?elementosPorPagina=10&pagina=1&codAdministracao=2" target="_blank" rel="noopener"
+                       style="font-size:13px; color:#c98a16; text-decoration:underline;">
+                        🔗 Buscar manualmente no Portal
+                    </a>
+                </div>
+            </div>`;
+    }
+}
+
+function _htmlSemLicitacao(desLicitacaoEmpenho) {
+    return `
+        <div style="padding:24px;">
+            <div style="background:#fff3cd; border:1px solid #ffeeba; border-radius:4px; padding:14px; font-size:13px; color:#856404; margin-bottom:14px;">
+                <strong>Licitação não encontrada na base de dados.</strong><br>
+                O número <strong>"${desLicitacaoEmpenho}"</strong> consta no empenho, mas não retornou resultados na API de licitações.
+            </div>
+            <div style="text-align:center;">
+                <a href="https://transparencia.iguatama.mg.gov.br/publico/licitacao?elementosPorPagina=10&pagina=1&codAdministracao=2" target="_blank" rel="noopener"
+                   style="font-size:13px; color:#c98a16; text-decoration:underline;">
+                    🔗 Buscar manualmente no Portal da Transparência
+                </a>
+            </div>
+        </div>`;
+}
+
+function _htmlLicitacaoDetalhada(l, desLicitacaoEmpenho) {
+    const fmt = (v) => (v !== null && v !== undefined && v !== '' && v !== 'null' && v !== 'undefined') ? String(v).trim() : null;
+    const fmtBRL = (v) => Number(v || 0).toLocaleString('pt-BR', { style:'currency', currency:'BRL' });
+    const fmtData = (v) => {
+        if (!v) return null;
+        const s = String(v).slice(0, 10);
+        if (/^\d{4}-\d{2}-\d{2}$/.test(s)) { const [a,m,d]=s.split('-'); return `${d}/${m}/${a}`; }
+        return v;
+    };
+    const fmtHora = (v) => {
+        if (!v) return null;
+        const s = String(v).padStart(4, '0');
+        return `${s.slice(0,2)}:${s.slice(2)}`;
+    };
+
+    const row = (label, valor, destaque) => {
+        if (!valor) return '';
+        return `<tr>
+            <th style="padding:9px 12px; background:#f8fafc; color:#495057; font-weight:600; white-space:nowrap; vertical-align:top; width:170px; border-right:1px solid #edf1f5; border-bottom:1px solid #edf1f5; font-size:13px;">${label}</th>
+            <td style="padding:9px 12px; color:#243746; vertical-align:top; line-height:1.5; border-bottom:1px solid #edf1f5; font-size:13px; ${destaque ? 'font-weight:700;' : ''}">${valor}</td>
+        </tr>`;
+    };
+
+    const statusBadge = (s, sFormatado) => {
+        const texto = sFormatado || s;
+        if (!texto) return '';
+        const sl = String(s || texto).toLowerCase();
+        let cor = '#f1f3f5', txt = '#6c757d', brd = '#dee2e6';
+        if (sl.includes('abe') || sl.includes('aberto')) { cor = '#e6f4ea'; txt = '#1e4620'; brd = '#c8e6c9'; }
+        else if (sl.includes('enc') || sl.includes('encerrado') || sl.includes('homolog')) { cor = '#e7eef7'; txt = '#1c3f6e'; brd = '#c3d6ec'; }
+        else if (sl.includes('cancel') || sl.includes('revog') || sl.includes('fracass') || sl.includes('desert')) { cor = '#fce8e6'; txt = '#a50e0e'; brd = '#f8bbd0'; }
+        else if (sl.includes('suspens')) { cor = '#fff3cd'; txt = '#856404'; brd = '#ffeeba'; }
+        return `<span style="display:inline-block; padding:3px 10px; border-radius:2px; font-size:11px; font-weight:700; background:${cor}; color:${txt}; border:1px solid ${brd};">${texto}</span>`;
+    };
+
+    // Campos confirmados na API real do Portal da Transparência de Iguatama/MG
+    const numero      = fmt(l.numeroLicitacaoEAno) || fmt(l.numLicitacao) || desLicitacaoEmpenho;
+    const objeto      = fmt(l.txtObjeto) || fmt(l.descricao);
+    const modalidade  = fmt(l.desModalidade);
+    const natureza    = fmt(l.desNaturezaProcedimento);
+    const naturezaObj = fmt(l.desNaturezaObjeto);
+    const criterio    = fmt(l.desCriterioJulgamento);
+    const unidade     = fmt(l.desUnidadeResponsavel);
+    const situacao    = fmt(l.indSituacao);
+    const situacaoFmt = fmt(l.indSituacaoFormatado);
+    const dtAbertura  = fmtData(l.datAbertura);
+    const dtEntrega   = fmtData(l.datEntregaEnvelope);
+    const horEntrega  = fmt(l.horEntregaEnvelopeFormatado) || fmtHora(l.horEntregaEnvelope);
+    const vlrEstimado = (l.vlrEstimado != null) ? fmtBRL(l.vlrEstimado) : null;
+    const vlrHomolog  = (l.vlrHomologado != null && l.vlrHomologado > 0) ? fmtBRL(l.vlrHomologado) : null;
+    const orgao       = fmt(l.desAdministracao) || fmt(l.administracaoFormatado);
+    const processo    = fmt(l.numeroProcessoEAno);
+    const externa     = l.indLicitacaoExterna === 'S';
+    const covid       = l.indCovid === 'S';
+
+    // Economia gerada (estimado vs homologado), quando ambos disponíveis
+    let economiaHtml = '';
+    if (l.vlrEstimado > 0 && l.vlrHomologado > 0) {
+        const economia = Number(l.vlrEstimado) - Number(l.vlrHomologado);
+        const pct = Math.round((economia / Number(l.vlrEstimado)) * 100);
+        if (economia !== 0) {
+            const cor = economia > 0 ? '#1e6b3b' : '#a50e0e';
+            const rotulo = economia > 0 ? 'Economia obtida' : 'Acima do estimado';
+            economiaHtml = `
+                <div style="padding:0 16px 16px;">
+                    <div style="background:#f8fafc; border:1px solid #edf1f5; border-radius:4px; padding:10px 12px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+                        <span style="font-size:12px; color:#6c757d;">${rotulo}</span>
+                        <span style="font-size:14px; font-weight:700; color:${cor};">${fmtBRL(Math.abs(economia))} (${Math.abs(pct)}%)</span>
+                    </div>
+                </div>`;
+        }
+    }
+
+    // Participantes, se a API de detalhe retornar
+    let participantesHtml = '';
+    const participantes = Array.isArray(l.participantes) ? l.participantes : [];
+    if (participantes.length) {
+        const linhasPart = participantes.map(p => `
+            <tr>
+                <td style="padding:8px 10px; border-bottom:1px solid #edf1f5; font-size:12px;">${fmt(p.nomFornecedor || p.nomParticipante) || '-'}</td>
+                <td style="padding:8px 10px; border-bottom:1px solid #edf1f5; font-size:12px;">${fmt(p.desDocumentoFornecedor || p.numDocumento) || '-'}</td>
+                <td style="padding:8px 10px; border-bottom:1px solid #edf1f5; font-size:12px; text-align:center;">${fmt(p.indVencedor) === 'S' ? '🏆 Vencedor' : '-'}</td>
+            </tr>`).join('');
+        participantesHtml = `
+            <div style="background:#fff; border:1px solid #cfd7df; border-radius:5px; overflow:hidden;">
+                <div style="padding:12px 16px; background:#f2f6f9; border-bottom:1px solid #dce4ec;">
+                    <span style="font-size:13px; font-weight:700; color:#0f3b5e; text-transform:uppercase; letter-spacing:0.4px;">Participantes (${participantes.length})</span>
+                </div>
+                <div style="overflow-x:auto;">
+                    <table style="width:100%; border-collapse:collapse; font-size:13px;">
+                        <thead>
+                            <tr style="background:#f8fafc;">
+                                <th style="padding:8px 10px; text-align:left; color:#495057; font-weight:600; border-bottom:1px solid #edf1f5; font-size:12px;">Fornecedor</th>
+                                <th style="padding:8px 10px; text-align:left; color:#495057; font-weight:600; border-bottom:1px solid #edf1f5; font-size:12px;">CNPJ/CPF</th>
+                                <th style="padding:8px 10px; text-align:center; color:#495057; font-weight:600; border-bottom:1px solid #edf1f5; font-size:12px;">Resultado</th>
+                            </tr>
+                        </thead>
+                        <tbody>${linhasPart}</tbody>
+                    </table>
+                </div>
+            </div>`;
+    }
+
+    // Contratos originados desta licitação, se a API retornar
+    let contratosHtml = '';
+    const contratosLic = Array.isArray(l.contratos) ? l.contratos : [];
+    if (contratosLic.length) {
+        const linhasContrato = contratosLic.map(ct => `
+            <tr>
+                <td style="padding:8px 10px; border-bottom:1px solid #edf1f5; font-size:12px;">${fmt(ct.numeroContratoEAno || ct.numContrato) || '-'}</td>
+                <td style="padding:8px 10px; border-bottom:1px solid #edf1f5; font-size:12px;">${fmt(ct.nomFornecedor) || '-'}</td>
+                <td style="padding:8px 10px; border-bottom:1px solid #edf1f5; font-size:12px; text-align:right; font-weight:700; color:#0f3b5e;">${(ct.vlrContratado != null) ? fmtBRL(ct.vlrContratado) : '-'}</td>
+            </tr>`).join('');
+        contratosHtml = `
+            <div style="background:#fff; border:1px solid #cfd7df; border-radius:5px; overflow:hidden;">
+                <div style="padding:12px 16px; background:#f2f6f9; border-bottom:1px solid #dce4ec;">
+                    <span style="font-size:13px; font-weight:700; color:#0f3b5e; text-transform:uppercase; letter-spacing:0.4px;">Contratos Originados (${contratosLic.length})</span>
+                </div>
+                <div style="overflow-x:auto;">
+                    <table style="width:100%; border-collapse:collapse; font-size:13px;">
+                        <thead>
+                            <tr style="background:#f8fafc;">
+                                <th style="padding:8px 10px; text-align:left; color:#495057; font-weight:600; border-bottom:1px solid #edf1f5; font-size:12px;">Contrato</th>
+                                <th style="padding:8px 10px; text-align:left; color:#495057; font-weight:600; border-bottom:1px solid #edf1f5; font-size:12px;">Fornecedor</th>
+                                <th style="padding:8px 10px; text-align:right; color:#495057; font-weight:600; border-bottom:1px solid #edf1f5; font-size:12px;">Valor</th>
+                            </tr>
+                        </thead>
+                        <tbody>${linhasContrato}</tbody>
+                    </table>
+                </div>
+            </div>`;
+    }
+
+    // Documentos anexos (editais etc.), se a API retornar
+    let documentosHtml = '';
+    const docs = Array.isArray(l.documentos) ? l.documentos : [];
+    if (docs.length) {
+        const linksDoc = docs.map(d => {
+            const url = fmt(d.url || d.link || d.caminho);
+            const nome = fmt(d.nome || d.desDocumento || d.titulo) || 'Documento';
+            return url
+                ? `<a href="${url}" target="_blank" rel="noopener" style="display:block; padding:8px 10px; border-bottom:1px solid #edf1f5; font-size:12px; color:#c98a16; text-decoration:underline;">📎 ${nome}</a>`
+                : `<div style="padding:8px 10px; border-bottom:1px solid #edf1f5; font-size:12px; color:#243746;">📎 ${nome}</div>`;
+        }).join('');
+        documentosHtml = `
+            <div style="background:#fff; border:1px solid #cfd7df; border-radius:5px; overflow:hidden;">
+                <div style="padding:12px 16px; background:#f2f6f9; border-bottom:1px solid #dce4ec;">
+                    <span style="font-size:13px; font-weight:700; color:#0f3b5e; text-transform:uppercase; letter-spacing:0.4px;">Documentos (${docs.length})</span>
+                </div>
+                ${linksDoc}
+            </div>`;
+    }
+
+    return `
+        <div style="display:flex; flex-direction:column; gap:14px;">
+
+            <!-- CABEÇALHO DA LICITAÇÃO -->
+            <div style="background:#fff; border:1px solid #cfd7df; border-radius:5px; overflow:hidden;">
+                <div style="padding:14px 18px; background:#f2f6f9; border-bottom:1px solid #dce4ec; display:flex; justify-content:space-between; align-items:flex-start; gap:12px; flex-wrap:wrap;">
+                    <div>
+                        <div style="font-size:15px; font-weight:700; color:#c98a16; margin-bottom:4px;">LICITAÇÃO Nº ${numero}</div>
+                        ${modalidade ? `<div style="font-size:13px; color:#54606b;">${modalidade}</div>` : ''}
+                    </div>
+                    <div style="text-align:right;">
+                        ${(situacao || situacaoFmt) ? statusBadge(situacao, situacaoFmt) : ''}
+                        ${(externa || covid) ? `<div style="margin-top:4px; font-size:10px; color:#6c757d;">${externa ? 'Licitação Externa ' : ''}${covid ? 'COVID-19' : ''}</div>` : ''}
+                    </div>
+                </div>
+                ${objeto ? `<div style="padding:12px 18px; background:#eef3f8; border-bottom:1px solid #cfd7df;">
+                    <div style="font-size:11px; font-weight:700; color:#6c757d; text-transform:uppercase; letter-spacing:0.4px; margin-bottom:4px;">Objeto</div>
+                    <div style="font-size:13px; color:#243746; line-height:1.6; white-space:pre-line;">${objeto}</div>
+                </div>` : ''}
+            </div>
+
+            <!-- VALORES -->
+            <div style="background:#fff; border:1px solid #cfd7df; border-radius:5px; overflow:hidden;">
+                <div style="padding:12px 16px; background:#f2f6f9; border-bottom:1px solid #dce4ec;">
+                    <span style="font-size:13px; font-weight:700; color:#0f3b5e; text-transform:uppercase; letter-spacing:0.4px;">Valores</span>
+                </div>
+                <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));">
+                    ${vlrEstimado ? `<div style="padding:16px; text-align:center; border-right:1px solid #edf1f5;">
+                        <div style="font-size:11px; font-weight:700; color:#6c757d; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px;">Valor Estimado</div>
+                        <div style="font-size:20px; font-weight:700; color:#0f3b5e;">${vlrEstimado}</div>
+                    </div>` : ''}
+                    ${vlrHomolog ? `<div style="padding:16px; text-align:center;">
+                        <div style="font-size:11px; font-weight:700; color:#6c757d; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px;">Valor Homologado</div>
+                        <div style="font-size:20px; font-weight:700; color:#1e6b3b;">${vlrHomolog}</div>
+                    </div>` : ''}
+                    ${!vlrEstimado && !vlrHomolog ? `<div style="padding:20px; text-align:center; font-size:13px; color:#6c757d;">Valores não disponíveis nesta consulta.</div>` : ''}
+                </div>
+                ${economiaHtml}
+            </div>
+
+            <!-- DATAS -->
+            <div style="background:#fff; border:1px solid #cfd7df; border-radius:5px; overflow:hidden;">
+                <div style="padding:12px 16px; background:#f2f6f9; border-bottom:1px solid #dce4ec;">
+                    <span style="font-size:13px; font-weight:700; color:#0f3b5e; text-transform:uppercase; letter-spacing:0.4px;">Datas</span>
+                </div>
+                <table style="width:100%; border-collapse:collapse;">
+                    <tbody>
+                        ${row('Abertura', dtAbertura)}
+                        ${row('Entrega de Envelopes', dtEntrega ? dtEntrega + (horEntrega ? ` às ${horEntrega}` : '') : null)}
+                    </tbody>
+                </table>
+                ${(!dtAbertura && !dtEntrega) ? '<div style="padding:14px 16px; font-size:13px; color:#6c757d;">Datas não disponíveis nesta consulta.</div>' : ''}
+            </div>
+
+            <!-- DETALHES DO PROCESSO -->
+            <div style="background:#fff; border:1px solid #cfd7df; border-radius:5px; overflow:hidden;">
+                <div style="padding:12px 16px; background:#f2f6f9; border-bottom:1px solid #dce4ec;">
+                    <span style="font-size:13px; font-weight:700; color:#0f3b5e; text-transform:uppercase; letter-spacing:0.4px;">Processo e Modalidade</span>
+                </div>
+                <table style="width:100%; border-collapse:collapse;">
+                    <tbody>
+                        ${row('Administração', orgao)}
+                        ${row('Unidade Responsável', unidade)}
+                        ${row('Modalidade', modalidade)}
+                        ${row('Natureza do Procedimento', natureza)}
+                        ${row('Natureza do Objeto', naturezaObj)}
+                        ${row('Critério de Julgamento', criterio)}
+                        ${row('Processo', processo)}
+                    </tbody>
+                </table>
+                ${(!orgao && !unidade && !modalidade && !processo) ? '<div style="padding:14px 16px; font-size:13px; color:#6c757d;">Informações de processo não disponíveis.</div>' : ''}
+            </div>
+
+            ${participantesHtml}
+
+            ${contratosHtml}
+
+            ${documentosHtml}
+
+        </div>`;
 }
 
 function reclassificarEmpenho(numEmpenho, anoFinal) {
@@ -14112,6 +14889,50 @@ return true;
 </div>
 
 <div id="fatRelatorioImpressao" style="display:none;"></div>
+
+<!-- MODAL: DADOS DA LICITAÇÃO -->
+<div id="modalLicitacaoEmpenho" style="display:none; position:fixed; inset:0; background:rgba(15, 59, 94, 0.4); z-index:10002; align-items:center; justify-content:center; padding:24px;">
+    <div style="background:#fff; width:100%; max-width:1100px; border-radius:5px; border:1px solid #bac5d0; box-shadow:0 4px 18px rgba(0,0,0,0.18); overflow:hidden; display:flex; flex-direction:column; max-height:92vh;">
+        <div style="background:#c98a16; color:#fff; padding:16px 22px; display:flex; justify-content:space-between; align-items:center; gap:16px; border-bottom:1px solid #a37012; flex-shrink:0;">
+            <div>
+                <h3 id="tituloModalLicitacao" style="margin:0; font-size:18px; font-weight:normal; letter-spacing:0.3px;">Dados da Licitação</h3>
+                <div style="font-size:12px; color:rgba(255,255,255,0.8); margin-top:4px;">Portal da Transparência · Iguatama/MG</div>
+            </div>
+            <button type="button" onclick="fecharModalLicitacaoEmpenho()" style="background:transparent; border:none; color:#fff; font-size:24px; cursor:pointer; line-height:1;">&times;</button>
+        </div>
+        <div id="conteudoModalLicitacao" style="padding:22px; overflow-y:auto; background:#f4f6f8; flex:1;"></div>
+        <div style="padding:12px 20px; background:#fbfcfd; border-top:1px solid #cfd7df; display:flex; justify-content:space-between; align-items:center; flex-shrink:0; gap:12px; flex-wrap:wrap;">
+            <a id="linkLicitacaoExterno" href="#" target="_blank" rel="noopener noreferrer"
+               style="font-size:12px; color:#c98a16; text-decoration:underline; display:none;">
+                🔗 Abrir no Portal da Transparência
+            </a>
+            <div style="margin-left:auto;">
+                <button type="button" class="btn-primary" onclick="fecharModalLicitacaoEmpenho()" style="width:auto; padding:8px 16px;">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="modalContratoEmpenho" style="display:none; position:fixed; inset:0; background:rgba(15, 59, 94, 0.4); z-index:10001; align-items:center; justify-content:center; padding:24px;">
+    <div style="background:#fff; width:100%; max-width:1100px; border-radius:5px; border:1px solid #bac5d0; box-shadow:0 4px 18px rgba(0,0,0,0.18); overflow:hidden; display:flex; flex-direction:column; max-height:92vh;">
+        <div style="background:#1e6b3b; color:#fff; padding:16px 22px; display:flex; justify-content:space-between; align-items:center; gap:16px; border-bottom:1px solid #155229; flex-shrink:0;">
+            <div>
+                <h3 id="tituloModalContrato" style="margin:0; font-size:18px; font-weight:normal; letter-spacing:0.3px;">Dados do Contrato</h3>
+                <div style="font-size:12px; color:rgba(255,255,255,0.8); margin-top:4px;">Portal da Transparência · Iguatama/MG</div>
+            </div>
+            <button type="button" onclick="fecharModalContratoEmpenho()" style="background:transparent; border:none; color:#fff; font-size:24px; cursor:pointer; line-height:1;">&times;</button>
+        </div>
+        <div id="conteudoModalContrato" style="padding:22px; overflow-y:auto; background:#f4f6f8; flex:1;"></div>
+        <div style="padding:12px 20px; background:#fbfcfd; border-top:1px solid #cfd7df; display:flex; justify-content:space-between; align-items:center; flex-shrink:0; gap:12px; flex-wrap:wrap;">
+            <a id="linkContratoExterno" href="#" target="_blank" rel="noopener noreferrer"
+               style="font-size:12px; color:#1e6b3b; text-decoration:underline; display:none;">
+                🔗 Abrir no Portal da Transparência
+            </a>
+            <div style="margin-left:auto;">
+                <button type="button" class="btn-primary" onclick="fecharModalContratoEmpenho()" style="width:auto; padding:8px 16px;">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <!-- MODAL: CLASSIFICAÇÃO DE EMPENHO (ORDINÁRIO / GLOBAL / ESTIMATIVO) -->
 <div id="modalClassificarEmpenho" class="modal-overlay" style="display: none;">

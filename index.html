@@ -951,6 +951,21 @@
     font-size: 12px;
 }
 
+/* ============================================================
+   DESTAQUE DE CAMPOS PREENCHIDOS AUTOMATICAMENTE / PENDENTES
+   ============================================================ */
+.campo-auto-preenchido {
+    background-color: #eafaf1 !important;
+    border: 1.5px solid #27ae60 !important;
+    box-shadow: 0 0 0 2px rgba(39, 174, 96, 0.12) !important;
+}
+
+.campo-pendente-fiscal {
+    background-color: #fdecea !important;
+    border: 1.5px solid #e74c3c !important;
+    box-shadow: 0 0 0 2px rgba(231, 76, 60, 0.12) !important;
+}
+
 .col-retencao {
     display: none;
 }
@@ -1942,10 +1957,13 @@ body.print-retencao .col-retencao {
         z-index: auto !important;
     }
 
-    /* Página em paisagem: dá espaço suficiente para as colunas de mês do
-       relatório compacto e evita que o conteúdo precise se espremer. */
+    /* A orientação da página (retrato/paisagem) deixou de ser fixa aqui —
+       antes este "@page" global travava TODAS as impressões do site em
+       paisagem, pois a regra @page não pode ser restrita por classe do
+       body. Agora a orientação é definida dinamicamente por
+       aplicarOrientacaoImpressao(), de acordo com a escolha do usuário
+       em cada impressão. */
     @page {
-        size: A4 landscape;
         margin: 10mm;
     }
 
@@ -2694,6 +2712,20 @@ body.print-retencao .col-retencao {
 
         <div class="modal-body-custom">
             <div class="form-group-calc" style="margin-bottom:16px;">
+                <label style="font-weight:bold; font-size:12px; color:#495057; display:block; margin-bottom:8px;">Orientação da página</label>
+                <div style="display:flex; gap:16px;">
+                    <label style="display:flex; align-items:center; gap:6px; font-weight:normal; cursor:pointer;">
+                        <input type="radio" name="orientacaoRelatorioFaturas" value="retrato" style="width:auto;">
+                        Retrato
+                    </label>
+                    <label style="display:flex; align-items:center; gap:6px; font-weight:normal; cursor:pointer;">
+                        <input type="radio" name="orientacaoRelatorioFaturas" value="paisagem" checked style="width:auto;">
+                        Paisagem
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group-calc" style="margin-bottom:16px;">
                 <label style="font-weight:bold; font-size:12px; color:#495057; display:block; margin-bottom:8px;">Formato do relatório</label>
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
                     <label id="relFatFormatoLabelCompleto" style="display:flex; align-items:flex-start; gap:10px; padding:12px 14px; border:2px solid #0f3b5e; border-radius:4px; cursor:pointer; background:#eef3f7;">
@@ -3268,7 +3300,20 @@ body.print-retencao .col-retencao {
                 </div>
 
                 <table class="data-table" id="tabela-dados"></table>
-                                    <button id="btnImprimir" class="btn-print" onclick="window.print()" style="display: none;">
+
+                <div id="orientacaoImpressaoCnpjBox" style="display:none; align-items:center; gap:16px; margin:10px 0; font-size:12px; color:#495057;">
+                    <strong style="font-weight:bold;">Orientação da página:</strong>
+                    <label style="display:flex; align-items:center; gap:6px; font-weight:normal; cursor:pointer;">
+                        <input type="radio" name="orientacaoImpressaoCnpj" value="retrato" checked style="width:auto;">
+                        Retrato
+                    </label>
+                    <label style="display:flex; align-items:center; gap:6px; font-weight:normal; cursor:pointer;">
+                        <input type="radio" name="orientacaoImpressaoCnpj" value="paisagem" style="width:auto;">
+                        Paisagem
+                    </label>
+                </div>
+
+                                    <button id="btnImprimir" class="btn-print" onclick="aplicarOrientacaoImpressao(obterOrientacaoSelecionada('orientacaoImpressaoCnpj', 'retrato')); window.print()" style="display: none;">
                         Imprimir Comprovante
                     </button>
             </div>
@@ -3311,7 +3356,7 @@ body.print-retencao .col-retencao {
                 <!-- Grupo dinâmico de alíquotas IRF -->
                 <div class="form-group-calc" id="grupo-aliquota-irf">
                     <label>Classificação IRF</label>
-                    <select id="aliquotaIRF" onchange="calcularRetencao()"></select>
+                    <select id="aliquotaIRF" onchange="this.classList.remove('campo-auto-preenchido'); calcularRetencao()"></select>
                     <div id="info-coop" style="font-size: 11px; color: #666; margin-top: 4px;"></div>
                 </div>
                 <div class="box-destaque" id="box-classificacao-auto-irf">
@@ -3471,7 +3516,7 @@ body.print-retencao .col-retencao {
 
                 <div class="form-group-calc">
                     <label>Código do Serviço (Anexo I Completo)</label>
-                    <select id="issqn-servico" onchange="verificarConstrucaoCivil(); verificarExcecaoArt210()"></select>
+                    <select id="issqn-servico" onchange="this.classList.remove('campo-pendente-fiscal'); verificarConstrucaoCivil(); verificarExcecaoArt210()"></select>
                 </div>
                 <div id="excecao-art210-info" class="excecao-info"></div>
 
@@ -3487,7 +3532,7 @@ body.print-retencao .col-retencao {
                     </div>
                     <div class="form-group-calc" style="flex: 1;">
                         <label>Local da Execução</label>
-                        <select id="issqn-execucao">
+                        <select id="issqn-execucao" onchange="this.classList.remove('campo-pendente-fiscal')">
                             <option value="iguatama">Iguatama</option>
                             <option value="fora">Outro Município</option>
                         </select>
@@ -3651,7 +3696,7 @@ body.print-retencao .col-retencao {
     <input type="text" id="gnFornecedor" placeholder="Nome do fornecedor" autocomplete="off" style="width: 100%;">
     <div id="listaFornecedoresGestaoNotas" style="display:none; position:absolute; top:100%; left:0; right:0; background:#fff; border:1px solid #bac5d0; border-top:none; z-index:30; max-height:220px; overflow-y:auto;"></div>
 </div>
-                            <select id="gnTipoNota">
+                            <select id="gnTipoNota" onchange="this.classList.remove('campo-auto-preenchido')">
                                 <option value="">Tipo da nota</option>
                                 <option value="Mercadoria">Mercadoria</option>
                                 <option value="Serviço">Serviço</option>
@@ -3761,7 +3806,6 @@ body.print-retencao .col-retencao {
     </table>
 
     <div id="gnRodapeImpressao" style="margin-top:14px; font-size:13px; font-weight:bold; color:#111; text-align:right;"></div>
-    <div id="gnLinkPublicoImpressao" style="margin-top:10px; font-size:12px; color:#111; text-align:right; word-break:break-all; border-top:1px dashed #ccc; padding-top:8px;"></div>
 </div>
                 </div>
 
@@ -4997,10 +5041,18 @@ document.getElementById('cnpjInput').addEventListener('input', function (e) {
 
                 document.getElementById('regime-mei').checked = empresaMEI;
                 document.getElementById('regime-simples').checked = empresaSimplesNacional;
+                document.getElementById('regime-mei').classList.add('campo-auto-preenchido');
+                document.getElementById('regime-simples').classList.add('campo-auto-preenchido');
 
                 // Atualiza campo "Sede do Prestador"
                 const isIguatama = (data.municipio && data.municipio.toUpperCase() === 'IGUATAMA');
                 document.getElementById('sede-prestador-text').value = isIguatama ? 'Iguatama' : 'Outro Município';
+                document.getElementById('sede-prestador-text').classList.add('campo-auto-preenchido');
+
+                // "Código do Serviço" e "Local da Execução" não são
+                // determinados automaticamente pelo sistema — ficam
+                // destacados em vermelho até que o usuário confira/preencha.
+                marcarCamposFiscaisPendentes();
 
                 // Preenche tabela de dados
                 const classSimples = empresaSimplesNacional ? 'status-sim' : 'status-nao';
@@ -5062,6 +5114,7 @@ document.getElementById('cnpjInput').addEventListener('input', function (e) {
 
                                 document.getElementById('result').style.display = 'block';
                 document.getElementById('btnImprimir').style.display = 'block';
+                document.getElementById('orientacaoImpressaoCnpjBox').style.display = 'flex';
                 document.getElementById('panel-calculadora').style.opacity = '1';
                 document.getElementById('panel-calculadora').style.pointerEvents = 'auto';
                 alternarTipoOperacao();
@@ -5077,6 +5130,7 @@ document.getElementById('cnpjInput').addEventListener('input', function (e) {
                 const autoPrint = document.getElementById('autoPrintSimples')?.checked;
                 if (autoPrint && (empresaSimplesNacional || empresaMEI)) {
                     setTimeout(() => {
+                        aplicarOrientacaoImpressao(obterOrientacaoSelecionada('orientacaoImpressaoCnpj', 'retrato'));
                         window.print();
                     }, 500);
                 }
@@ -5149,6 +5203,33 @@ document.getElementById('cnpjInput').addEventListener('input', function (e) {
             if (codigo.length < 6) return null;
             const elemento = codigo.slice(4, 6);
             return MAPA_ELEMENTO_DESPESA[elemento] || null;
+        }
+
+        // Busca a natureza da despesa (mercadoria x serviço) na rota de
+        // movimentação do Portal da Transparência — a mesma usada com
+        // sucesso em "Consultar CNPJ" > Buscar por Empenho. Usada como
+        // reforço/fallback quando a rota principal de busca por empenho
+        // não traz o código de despesa no registro retornado.
+        async function obterNaturezaDespesaPorMovimentacao(numero, ano) {
+            try {
+                const numeroFormatado = String(numero).trim().padStart(6, '0');
+                const url = `https://transparencia.iguatama.mg.gov.br/publico/despesaDetalhada/buscarMovimentacao?numEmpenho=${encodeURIComponent(numeroFormatado)}&numAnoEmpenho=${encodeURIComponent(ano)}&codAdministracao=2`;
+                const resposta = await fetch(url);
+                if (!resposta.ok) return null;
+
+                const data = await resposta.json();
+                const lista = Array.isArray(data) ? data : (Array.isArray(data?.content) ? data.content : []);
+                if (!lista.length) return null;
+
+                for (const registro of lista) {
+                    const natureza = classificarNaturezaDespesa(registro);
+                    if (natureza) return natureza;
+                }
+                return null;
+            } catch (erro) {
+                console.error('Erro ao identificar natureza da despesa via movimentação:', erro);
+                return null;
+            }
         }
 
         async function buscarPorEmpenhoCol1() {
@@ -5292,6 +5373,8 @@ document.getElementById('cnpjInput').addEventListener('input', function (e) {
             if (Number(valorEmpenhado) > 0) {
                 document.getElementById('valorNota').value = Number(valorEmpenhado).toFixed(2);
                 document.getElementById('issqn-valor').value = Number(valorEmpenhado).toFixed(2);
+                document.getElementById('valorNota').classList.add('campo-auto-preenchido');
+                document.getElementById('issqn-valor').classList.add('campo-auto-preenchido');
             }
 
             const natureza = classificarNaturezaDespesa(item);
@@ -5299,6 +5382,7 @@ document.getElementById('cnpjInput').addEventListener('input', function (e) {
 
             if (natureza) {
                 document.getElementById('tipoOperacao').value = natureza;
+                document.getElementById('tipoOperacao').classList.add('campo-auto-preenchido');
                 alternarTipoOperacao();
                 avisoNatureza = ` Natureza identificada: <strong>${natureza === 'servico' ? 'Prestação de serviço' : 'Aquisição de materiais/mercadorias'}</strong> (${item?.desDepesaNaturezaFormatado || item?.desDespesaOrcamentaria || ''}).`;
 
@@ -5356,12 +5440,38 @@ document.getElementById('cnpjInput').addEventListener('input', function (e) {
 }
 
 
+// Destaca em vermelho os campos que o sistema NÃO consegue preencher
+// sozinho a partir do CNPJ/empenho (Código do Serviço e Local da
+// Execução do ISSQN) — eles exigem confirmação manual do usuário a
+// cada nova consulta. O destaque some assim que o usuário altera o campo.
+function marcarCamposFiscaisPendentes() {
+    const servico = document.getElementById('issqn-servico');
+    const execucao = document.getElementById('issqn-execucao');
+    if (servico) servico.classList.add('campo-pendente-fiscal');
+    if (execucao) execucao.classList.add('campo-pendente-fiscal');
+}
+
+function limparDestaqueCamposFiscais() {
+    const ids = [
+        'regime-mei', 'regime-simples', 'sede-prestador-text',
+        'valorNota', 'issqn-valor', 'tipoOperacao', 'aliquotaIRF',
+        'issqn-servico', 'issqn-execucao'
+    ];
+    ids.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.remove('campo-auto-preenchido', 'campo-pendente-fiscal');
+    });
+}
+
 function resetarCamposAposNovoCNPJ() {
   empresaSimplesNacional = false;
   empresaMEI = false;
 
+  limparDestaqueCamposFiscais();
+
   document.getElementById('result').style.display = 'none';
   document.getElementById('btnImprimir').style.display = 'none';
+  document.getElementById('orientacaoImpressaoCnpjBox').style.display = 'none';
   document.getElementById('loading').style.display = 'none';
 
   document.getElementById('tabela-dados').innerHTML = '';
@@ -6053,6 +6163,7 @@ function selecionarOpcaoIRFPorCodigo(codigosAceitos) {
             encontrado = true;
         }
     });
+    if (encontrado) selectIRF.classList.add('campo-auto-preenchido');
     return encontrado;
 }
 
@@ -7073,6 +7184,29 @@ function formatarValorBR(valor) {
     return numero.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
+// =========================================================
+// ORIENTAÇÃO DE IMPRESSÃO (RETRATO / PAISAGEM)
+// =========================================================
+// Define dinamicamente a orientação da página para a PRÓXIMA impressão
+// (window.print()), via um <style> injetado no <head>. Isso substitui
+// a antiga regra fixa "@page { size: A4 landscape }" que travava TODAS
+// as impressões do site em paisagem.
+function aplicarOrientacaoImpressao(orientacao) {
+    let style = document.getElementById('estiloOrientacaoImpressaoDinamica');
+    if (!style) {
+        style = document.createElement('style');
+        style.id = 'estiloOrientacaoImpressaoDinamica';
+        document.head.appendChild(style);
+    }
+    const valorCss = orientacao === 'paisagem' ? 'landscape' : 'portrait';
+    style.textContent = `@media print { @page { size: A4 ${valorCss}; } }`;
+}
+
+function obterOrientacaoSelecionada(nomeGrupoRadio, padrao) {
+    const el = document.querySelector(`input[name="${nomeGrupoRadio}"]:checked`);
+    return el ? el.value : (padrao || 'retrato');
+}
+
 function limparValorParaNumero(texto) {
     if (!texto) return 0;
     return Number(
@@ -7895,6 +8029,9 @@ function abrirModalImpressaoMateriais() {
     const filtroTipo = document.getElementById('filtroTipoImpressao');
     if (filtroTipo) filtroTipo.value = 'todos';
 
+    const radioRetrato = document.querySelector('input[name="orientacaoImpressaoMateriais"][value="retrato"]');
+    if (radioRetrato) radioRetrato.checked = true;
+
     const modal = document.getElementById('modalImpressaoMateriais');
     if (modal) modal.style.display = 'flex';
 }
@@ -7908,9 +8045,10 @@ function confirmarImpressaoMateriais() {
     const incluirRetencao = !!document.getElementById('chkImprimirRetencao')?.checked;
     const incluirSomas = !!document.getElementById('chkImprimirSomas')?.checked;
     const filtroTipo = document.getElementById('filtroTipoImpressao')?.value || 'todos';
+    const orientacao = obterOrientacaoSelecionada('orientacaoImpressaoMateriais', 'retrato');
 
     fecharModalImpressaoMateriais();
-    prepararImpressaoMateriais(incluirRetencao, incluirSomas, filtroTipo);
+    prepararImpressaoMateriais(incluirRetencao, incluirSomas, filtroTipo, orientacao);
 }
 
 function abrirModalImpressaoGestaoNotas() {
@@ -7924,6 +8062,9 @@ function abrirModalImpressaoGestaoNotas() {
 
     const select = document.getElementById('gnFiltroTipoImpressao');
     if (select) select.value = 'todos';
+
+    const radioRetrato = document.querySelector('input[name="orientacaoImpressaoGestaoNotas"][value="retrato"]');
+    if (radioRetrato) radioRetrato.checked = true;
 
     const modal = document.getElementById('modalImpressaoGestaoNotas');
     if (modal) modal.style.display = 'flex';
@@ -7945,16 +8086,16 @@ function normalizarTipoGestaoNotas(texto) {
 function confirmarImpressaoGestaoNotas() {
     const select = document.getElementById('gnFiltroTipoImpressao');
     const filtroTipo = select ? select.value : 'todos';
+    const orientacao = obterOrientacaoSelecionada('orientacaoImpressaoGestaoNotas', 'retrato');
     fecharModalImpressaoGestaoNotas();
-    imprimirTabelaGestaoNotas(filtroTipo);
+    imprimirTabelaGestaoNotas(filtroTipo, orientacao);
 }
 
-async function imprimirTabelaGestaoNotas(filtroTipo = 'todos') {
+async function imprimirTabelaGestaoNotas(filtroTipo = 'todos', orientacao = 'retrato') {
     const folha = document.getElementById('gnFolhaImpressao');
     const dataEl = document.getElementById('gnFolhaData');
     const tbodyImpressao = document.getElementById('gnTabelaImpressaoBody');
     const rodape = document.getElementById('gnRodapeImpressao');
-    const linkEl = document.getElementById('gnLinkPublicoImpressao');
     const linhasTela = Array.from(document.querySelectorAll('#gnTabelaBody tr'));
 
     if (!folha || !dataEl || !tbodyImpressao || !rodape) {
@@ -7991,7 +8132,6 @@ async function imprimirTabelaGestaoNotas(filtroTipo = 'todos') {
     }
 
     let total = 0;
-    const itensParaPublicar = [];
 
     tbodyImpressao.innerHTML = linhasFiltradas.map(tr => {
         const colunas = tr.querySelectorAll('td');
@@ -8004,15 +8144,6 @@ async function imprimirTabelaGestaoNotas(filtroTipo = 'todos') {
         const nota = (colunas[5]?.textContent || '').trim();
 
         total += limparValorParaNumero(valorTexto);
-
-        itensParaPublicar.push({
-            empenho: empenho || '-',
-            fornecedor: fornecedor || '-',
-            tipo: tipo || '-',
-            valor: valorTexto || 'R$ 0,00',
-            data: data || '-',
-            nota: nota || '-'
-        });
 
         return `
             <tr>
@@ -8037,24 +8168,7 @@ async function imprimirTabelaGestaoNotas(filtroTipo = 'todos') {
     rodape.textContent =
         `Total de notas: ${linhasFiltradas.length} | Valor total: R$ ${formatarValorBR(total)}`;
 
-    // Gera o link público ANTES de imprimir, para que ele já saia escrito no papel/PDF.
-    let link = null;
-    let erroLink = null;
-    if (linkEl) linkEl.textContent = 'Gerando link público...';
-
-    try {
-        link = await gerarLinkPublicoGestaoNotas(itensParaPublicar, total, nomeFiltro);
-    } catch (erro) {
-        console.error('Erro ao gerar link público da lista:', erro);
-        erroLink = erro;
-    }
-
-    if (linkEl) {
-        linkEl.innerHTML = link
-            ? `<strong>Consulte esta lista também on-line em:</strong> ${link}`
-            : '';
-        console.log('[link público] valor definido na folha de impressão:', link);
-    }
+    aplicarOrientacaoImpressao(orientacao);
 
     folha.style.display = 'block';
     document.body.classList.add('print-gestao-notas');
@@ -8064,93 +8178,8 @@ async function imprimirTabelaGestaoNotas(filtroTipo = 'todos') {
         setTimeout(() => {
             document.body.classList.remove('print-gestao-notas');
             folha.style.display = 'none';
-
-            if (link) {
-                exibirLinkPublicoGestaoNotas(link);
-            } else {
-                mostrarAvisoSistema(
-                    'Link público',
-                    'Não foi possível gerar o link público desta lista.' +
-                    (erroLink ? `<br><span style="font-size:11px; color:#888;">Detalhe técnico: ${erroLink.code || ''} ${erroLink.message || erroLink}</span>` : '<br><span style="font-size:11px; color:#888;">Verifique se você está logado e se a regra do Firestore para a coleção "NotasPublicas" foi cadastrada.</span>') +
-                    '<br><br>A impressão foi feita normalmente, apenas sem o link.'
-                );
-            }
         }, 300);
     }, 150);
-}
-
-// =========================================================
-// LINK PÚBLICO (sem login) PARA A LISTA IMPRESSA EM GESTÃO DE NOTAS
-// =========================================================
-
-// Gera um identificador aleatório (não sequencial, não adivinhável) para o
-// link público — propositalmente em uma coleção separada do histórico
-// interno ("HistoricoNotas"), para que compartilhar uma lista não exponha
-// as demais tabelas salvas no sistema.
-function gerarIdPublicoAleatorio(tamanho = 16) {
-    const caracteres = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    const valores = new Uint32Array(tamanho);
-    (window.crypto || window.msCrypto).getRandomValues(valores);
-    let resultado = '';
-    for (let i = 0; i < tamanho; i++) {
-        resultado += caracteres[valores[i] % caracteres.length];
-    }
-    return resultado;
-}
-
-async function gerarLinkPublicoGestaoNotas(itens, total, nomeFiltro) {
-    if (!window.db || !window.fsDoc || !window.fsSetDoc) {
-        throw new Error('Firestore não está disponível nesta página.');
-    }
-    if (!window.auth?.currentUser) {
-        throw new Error('Você precisa estar logado para publicar um link público.');
-    }
-    if (!itens || !itens.length) {
-        return null;
-    }
-
-    const id = gerarIdPublicoAleatorio();
-
-    await window.fsSetDoc(
-        window.fsDoc(window.db, 'NotasPublicas', id),
-        {
-            id,
-            titulo: `Saída de Notas — ${nomeFiltro}`,
-            criadoPor: window.auth.currentUser.email || '',
-            dataCriacao: new Date().toISOString(),
-            filtro: nomeFiltro,
-            valorTotal: total,
-            itens
-        }
-    );
-
-    const base = window.location.href.replace(/[^/]*$/, '');
-    return `${base}visualizar-nota.html?id=${id}`;
-}
-
-function exibirLinkPublicoGestaoNotas(link) {
-    const html = `
-        <p>Link público gerado para esta lista. Qualquer pessoa com o link pode visualizar essa relação de notas, sem precisar fazer login.</p>
-        <div style="display:flex; gap:8px; margin-top:12px;">
-            <input type="text" id="campoLinkPublicoGestaoNotas" value="${link}" readonly
-                style="flex:1; padding:8px 10px; border:1px solid #bac5d0; border-radius:3px; font-size:13px; background:#f8fafc; color:#333;">
-            <button type="button" class="btn-primary" style="width:auto; padding:8px 14px;" onclick="copiarLinkPublicoGestaoNotas()">
-                Copiar link
-            </button>
-        </div>
-    `;
-    mostrarAvisoSistema('Link público da lista', html);
-}
-
-function copiarLinkPublicoGestaoNotas() {
-    const campo = document.getElementById('campoLinkPublicoGestaoNotas');
-    if (!campo) return;
-    campo.select();
-    if (navigator.clipboard?.writeText) {
-        navigator.clipboard.writeText(campo.value).catch(() => document.execCommand('copy'));
-    } else {
-        document.execCommand('copy');
-    }
 }
 
 function calcularSomasMateriais(incluirRetencao = false) {
@@ -8191,7 +8220,8 @@ function calcularSomasMateriais(incluirRetencao = false) {
     };
 }
 
-function prepararImpressaoMateriais(incluirRetencao, incluirSomas, filtroTipo = 'todos') {
+function prepararImpressaoMateriais(incluirRetencao, incluirSomas, filtroTipo = 'todos', orientacao = 'retrato') {
+    aplicarOrientacaoImpressao(orientacao);
     const body = document.body;
     const todasLinhas = Array.from(document.querySelectorAll('#materiaisTabelaBody tr'));
     const rodapeOriginal = document.getElementById('materiaisTotal');
@@ -10959,6 +10989,8 @@ function limparCamposAutoEmpenhoGestaoNotas() {
         const campo = document.getElementById(id);
         if (campo) campo.value = '';
     });
+    const campoTipo = document.getElementById('gnTipoNota');
+    if (campoTipo) campoTipo.classList.remove('campo-auto-preenchido');
 }
 
 async function buscarEmpenhoGestaoNotas() {
@@ -11005,7 +11037,10 @@ if (window.auth?.currentUser && window.db && window.fsDoc && window.fsGetDoc) {
     const emp = snap.data();
 
     if (campoFornecedor) campoFornecedor.value = emp.fornecedor || emp.nomeFornecedor || emp.razaoSocial || '';
-    if (campoTipoNota && !campoTipoNota.value && emp.tipoNota) campoTipoNota.value = emp.tipoNota;
+    if (campoTipoNota && !campoTipoNota.value && emp.tipoNota) {
+      campoTipoNota.value = emp.tipoNota;
+      campoTipoNota.classList.add('campo-auto-preenchido');
+    }
     if (campoValorNota) campoValorNota.value = emp.valorEmpenho
       ? (typeof emp.valorEmpenho === 'string'
           ? emp.valorEmpenho
@@ -11078,10 +11113,36 @@ if (window.auth?.currentUser && window.db && window.fsDoc && window.fsGetDoc) {
                 campoNumeroNota.value = numeroNota || '';
             }
 
+            // Usa a mesma classificação de natureza da despesa (mercadoria x
+            // serviço) já utilizada no banner "Consultar CNPJ", a partir do
+            // código de despesa retornado pelo Portal da Transparência, para
+            // pré-preencher o "Tipo da nota" automaticamente.
+            let tipoIdentificadoAuto = false;
+            if (campoTipoNota) {
+                campoTipoNota.classList.remove('campo-auto-preenchido');
+                let natureza = classificarNaturezaDespesa(item);
+
+                // O endpoint acima (lista agrupada por fornecedor) nem sempre
+                // traz o código de despesa. Quando isso acontece, busca o
+                // mesmo registro na rota de movimentação (a mesma usada com
+                // sucesso em "Consultar CNPJ" > Buscar por Empenho) só para
+                // obter essa classificação.
+                if (!natureza) {
+                    natureza = await obterNaturezaDespesaPorMovimentacao(numero, ano);
+                }
+
+                if (natureza) {
+                    campoTipoNota.value = natureza === 'servico' ? 'Serviço' : 'Mercadoria';
+                    campoTipoNota.classList.add('campo-auto-preenchido');
+                    tipoIdentificadoAuto = true;
+                }
+            }
+
             status.className = 'alert-box alert-simples';
-            status.textContent = fornecedor
+            status.textContent = (fornecedor
                 ? 'Empenho encontrado na API da Transparência e dados básicos atualizados.'
-                : 'Empenho encontrado na API da Transparência. Alguns campos vieram incompletos.';
+                : 'Empenho encontrado na API da Transparência. Alguns campos vieram incompletos.')
+                + (tipoIdentificadoAuto ? ' Tipo da nota identificado automaticamente (destacado em verde) — confira antes de adicionar a linha.' : '');
             return;
         }
 
@@ -12839,6 +12900,9 @@ async function gerarRelatorioFaturas() {
     // Torna o container visível antes de imprimir (ele tem display:none padrão)
     area.style.display = 'block';
 
+    var orientacaoRelatorio = obterOrientacaoSelecionada('orientacaoRelatorioFaturas', 'paisagem');
+    aplicarOrientacaoImpressao(orientacaoRelatorio);
+
     fecharModalRelatorioFaturas();
     document.body.classList.add('print-relatorio-faturas');
 
@@ -13475,12 +13539,20 @@ function estGerarRelatorio(){
   tfoot td { font-weight:bold; background:#f8fafc; }
   .toolbar { margin-bottom:18px; }
   .toolbar button { padding:9px 18px; font-size:13px; border-radius:5px; border:1px solid #0a2942; background:#0f3b5e; color:#fff; cursor:pointer; margin-right:8px; }
+  .toolbar label { font-size:13px; margin-right:10px; cursor:pointer; }
   @media print { .noprint { display:none !important; } body { padding:0; } }
+  @page { size: A4 portrait; }
 </style></head><body>
   <div class="toolbar noprint">
     <button onclick="window.print()">Imprimir / Salvar PDF</button>
     <button onclick="window.close()" style="background:#6c757d; border-color:#5a6268;">Fechar</button>
+    <span style="margin-left:10px; font-size:13px;">
+      Orientação:
+      <label><input type="radio" name="orientEst" value="retrato" checked onchange="document.querySelector('style#estOrient').textContent='@page{size:A4 portrait;}'"> Retrato</label>
+      <label><input type="radio" name="orientEst" value="paisagem" onchange="document.querySelector('style#estOrient').textContent='@page{size:A4 landscape;}'"> Paisagem</label>
+    </span>
   </div>
+  <style id="estOrient">@page{size:A4 portrait;}</style>
   <h1>Relatório de Execução Orçamentária — Exercício ${d.ano}</h1>
   <div class="sub">Prefeitura Municipal de Iguatama - MG · Gerado em ${agora} · Fonte: Portal da Transparência</div>
 
@@ -13764,6 +13836,10 @@ window.salvarTabelaGestaoNotas = async function(botao) {
     }
 };
 
+let gnHistoricoCompleto = [];
+let gnHistoricoPaginaAtual = 1;
+const GN_HISTORICO_ITENS_POR_PAGINA = 5;
+
 window.carregarHistoricoGestaoNotas = async function() {
     const box = document.getElementById('gnHistoricoLista');
     if (!box) return;
@@ -13776,13 +13852,13 @@ window.carregarHistoricoGestaoNotas = async function() {
     try {
         box.innerHTML = 'Carregando histórico...';
 
-       const q = window.fsQuery(
-  window.fsCollection(window.db, "HistoricoNotas"),
-  window.fsOrderBy("dataAtualizacao", "desc"),
-  window.fsLimit(20)
-);
+        const q = window.fsQuery(
+            window.fsCollection(window.db, "HistoricoNotas"),
+            window.fsOrderBy("dataAtualizacao", "desc"),
+            window.fsLimit(100)
+        );
 
-const snapshot = await window.fsGetDocs(q);
+        const snapshot = await window.fsGetDocs(q);
         const lista = [];
 
         snapshot.forEach(docItem => {
@@ -13792,29 +13868,65 @@ const snapshot = await window.fsGetDocs(q);
 
         lista.sort((a, b) => String(b.dataAtualizacao || '').localeCompare(String(a.dataAtualizacao || '')));
 
-        if (!lista.length) {
-            box.innerHTML = 'Nenhum histórico salvo.';
-            return;
-        }
+        gnHistoricoCompleto = lista;
+        gnHistoricoPaginaAtual = 1;
 
-        box.innerHTML = lista.map(item => `
-            <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; padding:12px 0; border-bottom:1px solid #e7edf2; flex-wrap:wrap;">
-                <div>
-                    <div style="font-weight:bold; color:#243746;">${item.titulo || 'Tabela sem título'}</div>
-                    <div style="font-size:12px; color:#66727d; margin-top:4px;">
-                        ${item.quantidadeLinhas || 0} linha(s) · R$ ${formatarValorBR(item.valorTotal || 0)}
-                    </div>
-                </div>
-                <div style="display:flex; gap:8px; flex-wrap:wrap;">
-                    <button type="button" class="btn-primary" style="width:auto; padding:8px 12px;" onclick="abrirHistoricoGestaoNotas('${item.id}')">Abrir</button>
-                </div>
-            </div>
-        `).join('');
+        renderizarHistoricoGestaoNotas();
     } catch (erro) {
         console.error('Erro ao carregar histórico:', erro);
         box.innerHTML = 'Erro ao carregar histórico.';
     }
 };
+
+function renderizarHistoricoGestaoNotas() {
+    const box = document.getElementById('gnHistoricoLista');
+    if (!box) return;
+
+    if (!gnHistoricoCompleto.length) {
+        box.innerHTML = 'Nenhum histórico salvo.';
+        return;
+    }
+
+    const totalPaginas = Math.max(1, Math.ceil(gnHistoricoCompleto.length / GN_HISTORICO_ITENS_POR_PAGINA));
+    if (gnHistoricoPaginaAtual > totalPaginas) gnHistoricoPaginaAtual = totalPaginas;
+    if (gnHistoricoPaginaAtual < 1) gnHistoricoPaginaAtual = 1;
+
+    const inicio = (gnHistoricoPaginaAtual - 1) * GN_HISTORICO_ITENS_POR_PAGINA;
+    const paginaItens = gnHistoricoCompleto.slice(inicio, inicio + GN_HISTORICO_ITENS_POR_PAGINA);
+
+    const listaHtml = paginaItens.map(item => `
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; padding:12px 0; border-bottom:1px solid #e7edf2; flex-wrap:wrap;">
+            <div>
+                <div style="font-weight:bold; color:#243746;">${item.titulo || 'Tabela sem título'}</div>
+                <div style="font-size:12px; color:#66727d; margin-top:4px;">
+                    ${item.quantidadeLinhas || 0} linha(s) · R$ ${formatarValorBR(item.valorTotal || 0)}
+                </div>
+            </div>
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                <button type="button" class="btn-primary" style="width:auto; padding:8px 12px;" onclick="abrirHistoricoGestaoNotas('${item.id}')">Abrir</button>
+            </div>
+        </div>
+    `).join('');
+
+    const paginacaoHtml = `
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; padding-top:14px; flex-wrap:wrap;">
+            <span style="font-size:12px; color:#66727d;">
+                Página ${gnHistoricoPaginaAtual} de ${totalPaginas} · ${gnHistoricoCompleto.length} tabela(s) salva(s)
+            </span>
+            <div style="display:flex; gap:8px;">
+                <button type="button" class="btn-primary" style="width:auto; padding:6px 12px; background-color:#eef2f6; color:#0f3b5e; border-color:#bac5d0;" ${gnHistoricoPaginaAtual <= 1 ? 'disabled' : ''} onclick="mudarPaginaHistoricoGestaoNotas(-1)">&laquo; Anterior</button>
+                <button type="button" class="btn-primary" style="width:auto; padding:6px 12px; background-color:#eef2f6; color:#0f3b5e; border-color:#bac5d0;" ${gnHistoricoPaginaAtual >= totalPaginas ? 'disabled' : ''} onclick="mudarPaginaHistoricoGestaoNotas(1)">Próxima &raquo;</button>
+            </div>
+        </div>
+    `;
+
+    box.innerHTML = listaHtml + paginacaoHtml;
+}
+
+function mudarPaginaHistoricoGestaoNotas(delta) {
+    gnHistoricoPaginaAtual += delta;
+    renderizarHistoricoGestaoNotas();
+}
 
 window.abrirHistoricoGestaoNotas = async function(idTabela) {
     if (!window.db || !window.fsDoc || !window.fsGetDoc) return;
@@ -14770,6 +14882,22 @@ return true;
             <option value="mercadoria">Apenas Mercadoria</option>
         </select>
     </div>
+
+    <div style="margin-top: 14px;">
+        <label style="display:block; font-weight:bold; font-size:12px; color:#495057; margin-bottom:6px;">
+            Orientação da página
+        </label>
+        <div style="display:flex; gap:16px;">
+            <label style="display:flex; align-items:center; gap:6px; font-weight:normal; cursor:pointer;">
+                <input type="radio" name="orientacaoImpressaoMateriais" value="retrato" checked style="width:auto;">
+                Retrato
+            </label>
+            <label style="display:flex; align-items:center; gap:6px; font-weight:normal; cursor:pointer;">
+                <input type="radio" name="orientacaoImpressaoMateriais" value="paisagem" style="width:auto;">
+                Paisagem
+            </label>
+        </div>
+    </div>
 </div>
         <div class="modal-footer-custom">
             <button type="button" class="btn-cancelar-modal" onclick="fecharModalImpressaoMateriais()">Cancelar</button>
@@ -14833,6 +14961,20 @@ return true;
                     <option value="mercadoria">Mercadoria</option>
                     <option value="servico">Serviço</option>
                 </select>
+            </div>
+
+            <div class="form-group-calc" style="margin-bottom: 0; margin-top: 14px;">
+                <label style="font-weight: bold; display:block; margin-bottom: 6px;">Orientação da página</label>
+                <div style="display:flex; gap:16px;">
+                    <label style="display:flex; align-items:center; gap:6px; font-weight:normal; cursor:pointer;">
+                        <input type="radio" name="orientacaoImpressaoGestaoNotas" value="retrato" checked style="width:auto;">
+                        Retrato
+                    </label>
+                    <label style="display:flex; align-items:center; gap:6px; font-weight:normal; cursor:pointer;">
+                        <input type="radio" name="orientacaoImpressaoGestaoNotas" value="paisagem" style="width:auto;">
+                        Paisagem
+                    </label>
+                </div>
             </div>
         </div>
 

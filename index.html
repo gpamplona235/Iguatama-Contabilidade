@@ -5023,7 +5023,153 @@ document.getElementById('cnpjInput').addEventListener('input', function (e) {
   }
 });
 
-       async function consultarCNPJ() {
+       // ===== Consulta de CNPJ com múltiplas APIs (fallback automático) =====
+        // Ordem de tentativa: BrasilAPI -> CNPJ.ws (publica.cnpj.ws) -> ReceitaWS
+        // Todas as respostas são normalizadas para o mesmo formato usado
+        // pelo restante do sistema (equivalente ao schema da BrasilAPI),
+        // então nenhuma outra parte do código precisa ser alterada.
+
+        function normalizarDadosBrasilAPI(data) {
+            return {
+                razao_social: data.razao_social || '',
+                nome_fantasia: data.nome_fantasia || '',
+                opcao_pelo_simples: !!data.opcao_pelo_simples,
+                opcao_pelo_mei: !!data.opcao_pelo_mei,
+                data_opcao_pelo_simples: data.data_opcao_pelo_simples || '',
+                data_opcao_pelo_mei: data.data_opcao_pelo_mei || '',
+                municipio: data.municipio || '',
+                uf: data.uf || '',
+                logradouro: data.logradouro || '',
+                numero: data.numero || '',
+                complemento: data.complemento || '',
+                bairro: data.bairro || '',
+                cep: data.cep || '',
+                ddd_telefone_1: data.ddd_telefone_1 || '',
+                ddd_telefone_2: data.ddd_telefone_2 || '',
+                natureza_juridica: data.natureza_juridica || '',
+                cnae_fiscal: data.cnae_fiscal || '',
+                cnae_fiscal_descricao: data.cnae_fiscal_descricao || '',
+                descricao_situacao_cadastral: data.descricao_situacao_cadastral || '',
+                data_situacao_cadastral: data.data_situacao_cadastral || '',
+                email: data.email || '',
+                porte: data.porte || '',
+                capital_social: data.capital_social || ''
+            };
+        }
+
+        function normalizarDadosCnpjWs(data) {
+            const est = data.estabelecimento || {};
+            const simples = data.simples || {};
+            const simei = simples.mei || data.simei || {};
+            const logradouroCompleto = [est.tipo_logradouro, est.logradouro].filter(Boolean).join(' ');
+            return {
+                razao_social: data.razao_social || '',
+                nome_fantasia: est.nome_fantasia || '',
+                opcao_pelo_simples: simples.optante === true || simples.optante === 'True',
+                opcao_pelo_mei: simei.optante === true || simei.optante === 'True',
+                data_opcao_pelo_simples: simples.data_opcao || '',
+                data_opcao_pelo_mei: simei.data_opcao || '',
+                municipio: (est.cidade && est.cidade.nome) || '',
+                uf: (est.estado && est.estado.sigla) || '',
+                logradouro: logradouroCompleto,
+                numero: est.numero || '',
+                complemento: est.complemento || '',
+                bairro: est.bairro || '',
+                cep: est.cep || '',
+                ddd_telefone_1: (est.ddd1 && est.telefone1) ? `(${est.ddd1}) ${est.telefone1}` : '',
+                ddd_telefone_2: (est.ddd2 && est.telefone2) ? `(${est.ddd2}) ${est.telefone2}` : '',
+                natureza_juridica: (data.natureza_juridica && data.natureza_juridica.descricao) || '',
+                cnae_fiscal: (est.atividade_principal && est.atividade_principal.id) || '',
+                cnae_fiscal_descricao: (est.atividade_principal && est.atividade_principal.descricao) || '',
+                descricao_situacao_cadastral: est.situacao_cadastral || '',
+                data_situacao_cadastral: est.data_situacao_cadastral || '',
+                email: est.email || '',
+                porte: (data.porte && data.porte.descricao) || '',
+                capital_social: data.capital_social || ''
+            };
+        }
+
+        function normalizarDadosReceitaWS(data) {
+            const atividadePrincipal = (data.atividade_principal && data.atividade_principal[0]) || {};
+            const simples = data.simples || {};
+            const simei = data.simei || {};
+            return {
+                razao_social: data.nome || '',
+                nome_fantasia: data.fantasia || '',
+                opcao_pelo_simples: simples.optante === true || simples.optante === 'True' || data.opcao_pelo_simples === 'Sim',
+                opcao_pelo_mei: simei.optante === true || simei.optante === 'True' || data.opcao_pelo_mei === 'Sim',
+                data_opcao_pelo_simples: simples.data_opcao || '',
+                data_opcao_pelo_mei: simei.data_opcao || '',
+                municipio: data.municipio || '',
+                uf: data.uf || '',
+                logradouro: data.logradouro || '',
+                numero: data.numero || '',
+                complemento: data.complemento || '',
+                bairro: data.bairro || '',
+                cep: data.cep || '',
+                ddd_telefone_1: data.telefone || '',
+                ddd_telefone_2: '',
+                natureza_juridica: data.natureza_juridica || '',
+                cnae_fiscal: atividadePrincipal.code || '',
+                cnae_fiscal_descricao: atividadePrincipal.text || '',
+                descricao_situacao_cadastral: data.situacao || '',
+                data_situacao_cadastral: data.data_situacao || '',
+                email: data.email || '',
+                porte: data.porte || '',
+                capital_social: data.capital_social || ''
+            };
+        }
+
+        // Cada fonte é tentada em sequência; se uma falhar (rede, timeout,
+        // CNPJ não encontrado, limite de consultas etc.) a próxima é usada
+        // automaticamente, de forma transparente para o restante do sistema.
+        async function buscarDadosCNPJComFallback(cnpj) {
+            const fontes = [
+                {
+                    nome: 'BrasilAPI',
+                    url: `https://brasilapi.com.br/api/cnpj/v1/${cnpj}`,
+                    normalizar: normalizarDadosBrasilAPI
+                },
+                {
+                    nome: 'CNPJ.ws',
+                    url: `https://publica.cnpj.ws/cnpj/${cnpj}`,
+                    normalizar: normalizarDadosCnpjWs
+                },
+                {
+                    nome: 'ReceitaWS',
+                    url: `https://receitaws.com.br/v1/cnpj/${cnpj}`,
+                    normalizar: normalizarDadosReceitaWS
+                }
+            ];
+
+            const erros = [];
+            for (const fonte of fontes) {
+                try {
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), 12000);
+                    const response = await fetch(fonte.url, { signal: controller.signal });
+                    clearTimeout(timeoutId);
+
+                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                    const bruto = await response.json();
+
+                    // ReceitaWS retorna status "ERROR" com HTTP 200 em alguns casos
+                    if (bruto && bruto.status === 'ERROR') throw new Error(bruto.message || 'CNPJ não encontrado.');
+
+                    const dadosNormalizados = fonte.normalizar(bruto);
+                    if (!dadosNormalizados.razao_social) throw new Error('Resposta sem razão social.');
+
+                    return { dados: dadosNormalizados, fonteUsada: fonte.nome };
+                } catch (err) {
+                    erros.push(`${fonte.nome}: ${err.message || err}`);
+                    console.warn(`Falha ao consultar CNPJ via ${fonte.nome}:`, err);
+                }
+            }
+
+            throw new Error(`Todas as fontes de consulta falharam. Detalhes: ${erros.join(' | ')}`);
+        }
+
+        async function consultarCNPJ() {
     const cnpj = document.getElementById('cnpjInput').value.replace(/\D/g, '');
     if (cnpj.length !== 14) return alert('CNPJ inválido (14 dígitos).');
 
@@ -5031,9 +5177,10 @@ document.getElementById('cnpjInput').addEventListener('input', function (e) {
     document.getElementById('loading').style.display = 'block';
 
     try {
-                const response = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${cnpj}`);
-                if (!response.ok) throw new Error('CNPJ não encontrado.');
-                const data = await response.json();
+                const { dados: data, fonteUsada } = await buscarDadosCNPJComFallback(cnpj);
+                if (fonteUsada !== 'BrasilAPI') {
+                    console.info(`Consulta de CNPJ realizada via fonte alternativa: ${fonteUsada}`);
+                }
                 ultimoCNPJConsultado = cnpj;
 
                 empresaSimplesNacional = !!data.opcao_pelo_simples;
@@ -5163,7 +5310,8 @@ document.getElementById('cnpjInput').addEventListener('input', function (e) {
                     </div>
                 `;
             } catch (error) {
-                alert('Erro na consulta do CNPJ.');
+                console.error('Erro na consulta do CNPJ (todas as fontes falharam):', error);
+                alert('Erro na consulta do CNPJ. Foram tentadas 3 fontes diferentes (BrasilAPI, CNPJ.ws e ReceitaWS) e nenhuma respondeu. Verifique sua conexão e tente novamente em instantes, ou preencha os dados manualmente.');
             } finally {
                 document.getElementById('loading').style.display = 'none';
             }

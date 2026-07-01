@@ -3693,7 +3693,7 @@ body.print-retencao .col-retencao {
                         <div class="materiais-form" style="grid-template-columns: 95px minmax(320px, 2.5fr) 125px 135px 115px 145px; align-items: end;">
                             <input type="text" id="gnEmpenho" placeholder="Nº do empenho">
                            <div style="position: relative;">
-    <input type="text" id="gnFornecedor" placeholder="Nome do fornecedor" autocomplete="off" style="width: 100%;">
+    <input type="text" id="gnFornecedor" placeholder="Nome do fornecedor" autocomplete="off" style="width: 100%;" oninput="this.classList.remove('campo-auto-preenchido')">
     <div id="listaFornecedoresGestaoNotas" style="display:none; position:absolute; top:100%; left:0; right:0; background:#fff; border:1px solid #bac5d0; border-top:none; z-index:30; max-height:220px; overflow-y:auto;"></div>
 </div>
                             <select id="gnTipoNota" onchange="this.classList.remove('campo-auto-preenchido')">
@@ -3701,16 +3701,16 @@ body.print-retencao .col-retencao {
                                 <option value="Mercadoria">Mercadoria</option>
                                 <option value="Serviço">Serviço</option>
                             </select>
-                            <input type="text" id="gnValorNota" placeholder="Valor da nota">
+                            <input type="text" id="gnValorNota" placeholder="Valor da nota" oninput="this.classList.remove('campo-auto-preenchido')">
                            <input
     type="text"
     id="gnDataEmissao"
     placeholder="Data emissão"
     maxlength="10"
-    oninput="this.value = formatarDigitacaoData(this.value)"
+    oninput="this.value = formatarDigitacaoData(this.value); this.classList.remove('campo-auto-preenchido')"
     onblur="this.value = formatarDigitacaoData(this.value)"
 >
-                            <input type="text" id="gnNumeroNota" placeholder="Número da nota">
+                            <input type="text" id="gnNumeroNota" placeholder="Número da nota" oninput="this.classList.remove('campo-auto-preenchido')">
                         </div>
 
                         <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:14px;">
@@ -10987,7 +10987,10 @@ function limparCamposAutoEmpenhoGestaoNotas() {
     const ids = ['gnFornecedor', 'gnValorNota', 'gnDataEmissao', 'gnNumeroNota'];
     ids.forEach(id => {
         const campo = document.getElementById(id);
-        if (campo) campo.value = '';
+        if (campo) {
+            campo.value = '';
+            campo.classList.remove('campo-auto-preenchido');
+        }
     });
     const campoTipo = document.getElementById('gnTipoNota');
     if (campoTipo) campoTipo.classList.remove('campo-auto-preenchido');
@@ -11095,22 +11098,27 @@ if (window.auth?.currentUser && window.db && window.fsDoc && window.fsGetDoc) {
 
             if (campoFornecedor) {
                 campoFornecedor.value = fornecedor || '';
+                campoFornecedor.classList.toggle('campo-auto-preenchido', !!fornecedor);
             }
 
             if (campoValorNota) {
-                campoValorNota.value = Number(valorEmpenhado) > 0
+                const temValor = Number(valorEmpenhado) > 0;
+                campoValorNota.value = temValor
                     ? formatarValorBR(Number(valorEmpenhado || 0))
                     : '';
+                campoValorNota.classList.toggle('campo-auto-preenchido', temValor);
             }
 
             if (campoDataEmissao) {
                 campoDataEmissao.value = dataMov
                     ? formatarDataParaInput(dataMov)
                     : '';
+                campoDataEmissao.classList.toggle('campo-auto-preenchido', !!dataMov);
             }
 
             if (campoNumeroNota) {
                 campoNumeroNota.value = numeroNota || '';
+                campoNumeroNota.classList.toggle('campo-auto-preenchido', !!numeroNota);
             }
 
             // Usa a mesma classificação de natureza da despesa (mercadoria x
@@ -13878,7 +13886,7 @@ window.carregarHistoricoGestaoNotas = async function() {
     }
 };
 
-function renderizarHistoricoGestaoNotas() {
+window.renderizarHistoricoGestaoNotas = function renderizarHistoricoGestaoNotas() {
     const box = document.getElementById('gnHistoricoLista');
     if (!box) return;
 
@@ -13921,12 +13929,13 @@ function renderizarHistoricoGestaoNotas() {
     `;
 
     box.innerHTML = listaHtml + paginacaoHtml;
-}
+};
+const renderizarHistoricoGestaoNotas = window.renderizarHistoricoGestaoNotas;
 
-function mudarPaginaHistoricoGestaoNotas(delta) {
+window.mudarPaginaHistoricoGestaoNotas = function(delta) {
     gnHistoricoPaginaAtual += delta;
     renderizarHistoricoGestaoNotas();
-}
+};
 
 window.abrirHistoricoGestaoNotas = async function(idTabela) {
     if (!window.db || !window.fsDoc || !window.fsGetDoc) return;

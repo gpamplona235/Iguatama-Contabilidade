@@ -3181,9 +3181,8 @@ body.print-retencao .col-retencao {
     <div class="card-desc">Crie lembretes compartilhados, acompanhe prioridades e visualize itens pendentes da equipe.</div>
   </button>
 
-  <button type="button" class="home-card disabled" onclick="alert('Módulo em manutenção.')">
-    <div class="badge-manutencao">EM MANUTENÇÃO</div>
-    <div class="card-title" style="color:#6c757d;">Fornecedores</div>
+  <button type="button" class="home-card" onclick="mostrarTela('fornecedores')">
+    <div class="card-title">Fornecedores</div>
     <div class="card-desc">Banco de dados de fornecedores e prestadores de serviço cadastrados.</div>
   </button>
 
@@ -4095,8 +4094,13 @@ body.print-retencao .col-retencao {
 <div id="tela-fornecedores" class="screen-section">
     <div class="panels-wrapper">
         <div class="panel" style="width: 100%; max-width: 1400px;">
-            <div class="panel-header" style="display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;">
-                <h2 style="margin: 0;">Cadastro de Fornecedores Salvos na Nuvem</h2>
+            <div class="panel-header" style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; background:#0f3b5e; border-bottom:1px solid #0a2942; padding:18px 20px;">
+                <div>
+                    <h2 style="margin:0; color:#ffffff;">CADASTRO DE FORNECEDORES</h2>
+                    <div style="font-size:12px; color:rgba(255,255,255,0.85); margin-top:4px;">
+                        Fornecedores salvos na nuvem, com dados cadastrais e consulta de movimentações no Portal da Transparência.
+                    </div>
+                </div>
                 <div style="display: flex; gap: 8px; flex-wrap: wrap;">
                     <button class="btn-primary" type="button" onclick="window.carregarFornecedoresNuvem(true)" style="width: auto;">
                         Atualizar Lista
@@ -4108,12 +4112,24 @@ body.print-retencao .col-retencao {
             </div>
 
             <div class="panel-body">
-                <div style="display: grid; grid-template-columns: 1.2fr 1fr 180px; gap: 12px; margin-bottom: 18px;">
-                    <input type="text" id="filtroFornecedorTexto" placeholder="Filtrar por razão social, nome fantasia ou CNPJ">
-                    <input type="text" id="filtroFornecedorCidade" placeholder="Filtrar por município">
-                    <button class="btn-primary" type="button" onclick="window.aplicarFiltroFornecedor()" style="width: 100%;">
-                        Filtrar
-                    </button>
+                <div style="background: #f8fafc; border: 1px solid #d7e0e8; border-radius: 8px; padding: 18px; margin-bottom: 20px;">
+                    <div style="font-size: 14px; font-weight: bold; color: #0f3b5e; margin-bottom: 12px;">Filtros de Busca</div>
+                    <div style="display: grid; grid-template-columns: 1.2fr 1fr 180px; gap: 12px; align-items: end;">
+                        <div class="form-group-calc">
+                            <label>Razão Social / Nome Fantasia / CNPJ</label>
+                            <input type="text" id="filtroFornecedorTexto" placeholder="Digite para filtrar">
+                        </div>
+                        <div class="form-group-calc">
+                            <label>Município</label>
+                            <input type="text" id="filtroFornecedorCidade" placeholder="Filtrar por município">
+                        </div>
+                        <div class="form-group-calc" style="margin-bottom: 15px;">
+                            <label style="visibility: hidden;">Filtrar</label>
+                            <button class="btn-primary" type="button" onclick="window.aplicarFiltroFornecedor()" style="width: 100%; padding: 10px 12px; height: 38px; margin: 0;">
+                                Filtrar
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
                 <div id="fornecedoresResumo" class="alert-box alert-neutro" style="margin-bottom: 16px;">
@@ -7160,13 +7176,7 @@ function mostrarTela(tela, atualizarHash = true) {
   }
 
   if (tela === 'fornecedores') {
-    const el = document.getElementById('tela-fornecedores');
-    if (el) {
-      el.classList.add('active');
-      el.style.display = 'block';
-      el.style.visibility = 'visible';
-      el.style.opacity = '1';
-    }
+    document.getElementById('tela-fornecedores')?.classList.add('active');
 
     const resumo = document.getElementById('fornecedoresResumo');
     if (resumo) {
@@ -7389,34 +7399,16 @@ function visualizarFornecedor(dadosCodificados) {
     const conteudo = document.getElementById('conteudoModalFornecedor');
     const modal = document.getElementById('modalFornecedor');
 
+    window._fornecedorAtualMovimentacoes = {
+        cnpj: fornecedor.cnpj || '',
+        nome: fornecedor.razaoSocial || fornecedor.nomeFantasia || 'Fornecedor sem nome'
+    };
+
     const enderecoCompleto = [
         fornecedor.logradouro || '',
         fornecedor.numero || '',
         fornecedor.complemento ? ' - ' + fornecedor.complemento : ''
     ].filter(Boolean).join(' ');
-
-    const campo = (label, valor, col = '1fr') => `
-        <div style="display: flex; flex-direction: column; gap: 4px; min-width: 0; grid-column: span 1;">
-            <label style="font-size: 12px; color: #5f6b76; font-weight: bold; text-transform: uppercase; letter-spacing: 0.3px;">
-                ${label}
-            </label>
-            <div style="
-                min-height: 34px;
-                padding: 7px 10px;
-                background: #ffffff;
-                border: 1px solid #bac5d0;
-                border-radius: 5px;
-                color: #243746;
-                font-size: 13px;
-                line-height: 1.35;
-                display: flex;
-                align-items: center;
-                box-shadow: inset 0 1px 1px rgba(0,0,0,0.02);
-            ">
-                ${valor || 'Não informado'}
-            </div>
-        </div>
-    `;
 
     const badgeSimples = fornecedor.simplesNacional
         ? '<span style="display:inline-block; padding:6px 10px; background:#dff3e4; color:#1f6b38; border:1px solid #b9dfc5; border-radius:999px; font-size:12px; font-weight:bold;">OPTANTE</span>'
@@ -7427,116 +7419,107 @@ function visualizarFornecedor(dadosCodificados) {
         : '<span style="display:inline-block; padding:6px 10px; background:#f8d7da; color:#8a2632; border:1px solid #efb8be; border-radius:999px; font-size:12px; font-weight:bold;">NÃO OPTANTE</span>';
 
     conteudo.innerHTML = `
-        <div style="display: flex; flex-direction: column; gap: 18px;">
+        <style>
+            .forn-detail-grid { display:flex; flex-direction:column; gap:14px; }
+            .forn-panel { background:#fff; border:1px solid #cfd7df; border-radius:5px; overflow:hidden; }
+            .forn-panel-header { padding:12px 16px; background:#f2f6f9; border-bottom:1px solid #dce4ec; display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; }
+            .forn-panel-header h3 { margin:0; font-size:13px; font-weight:700; color:#0f3b5e; text-transform:uppercase; letter-spacing:0.4px; }
+            .forn-panel-body { padding:14px 16px; }
+            .forn-kv { width:100%; border-collapse:collapse; font-size:13px; }
+            .forn-kv tr { border-bottom:1px solid #edf1f5; }
+            .forn-kv tr:last-child { border-bottom:none; }
+            .forn-kv th { padding:8px 10px; background:#f8fafc; color:#495057; font-weight:600; white-space:nowrap; vertical-align:top; width:160px; min-width:140px; max-width:200px; border-right:1px solid #edf1f5; }
+            .forn-kv td { padding:8px 10px; color:#243746; vertical-align:top; line-height:1.45; word-break:break-word; }
+            .forn-2col { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+            .forn-orcamento-grid { display:grid; grid-template-columns:1fr 1fr; gap:0; }
+            .forn-orcamento-item { padding:8px 10px; border-bottom:1px solid #edf1f5; border-right:1px solid #edf1f5; }
+            .forn-orcamento-item:nth-child(even) { border-right:none; }
+            .forn-orcamento-item:nth-last-child(-n+2) { border-bottom:none; }
+            .forn-orcamento-label { font-size:11px; font-weight:700; color:#6c757d; text-transform:uppercase; letter-spacing:0.3px; margin-bottom:3px; }
+            .forn-orcamento-value { font-size:13px; color:#243746; line-height:1.4; }
+            @media (max-width:700px) {
+                .forn-2col { grid-template-columns:1fr; }
+                .forn-orcamento-grid { grid-template-columns:1fr; }
+                .forn-orcamento-item { border-right:none; }
+            }
+        </style>
+        <div class="forn-detail-grid">
 
-            <div style="
-                background: #ffffff;
-                border: 1px solid #bac5d0;
-                border-radius: 8px;
-                padding: 18px 20px;
-            ">
-                <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; flex-wrap: wrap;">
+            <!-- CABEÇALHO -->
+            <div class="forn-panel">
+                <div class="forn-panel-header">
                     <div>
-                        <div style="font-size: 12px; color: #6c7a86; text-transform: uppercase; font-weight: bold; margin-bottom: 6px;">
-                            Ficha cadastral do fornecedor
-                        </div>
-                        <div style="font-size: 23px; color: #0f3b5e; font-weight: bold; line-height: 1.2;">
-                            ${fornecedor.razaoSocial || 'Fornecedor sem nome'}
-                        </div>
-                        <div style="font-size: 14px; color: #5d6b78; margin-top: 6px;">
-                            ${fornecedor.nomeFantasia || 'Sem nome fantasia'}
-                        </div>
+                        <div style="font-size:15px; font-weight:700; color:#0f3b5e; margin-bottom:4px;">${fornecedor.razaoSocial || 'Fornecedor sem nome'}</div>
+                        <div style="font-size:13px; color:#54606b;">${fornecedor.nomeFantasia || 'Sem nome fantasia'}</div>
+                        <div style="font-size:12px; color:#8a96a3; margin-top:2px;">CNPJ: ${fornecedor.cnpj || '-'}</div>
                     </div>
-
-                    <div style="text-align: right;">
-                        <div style="font-size: 12px; color: #6c7a86; text-transform: uppercase; font-weight: bold; margin-bottom: 6px;">
-                            Última atualização
+                    <div style="display:flex; flex-direction:column; align-items:flex-end; gap:6px; flex-shrink:0;">
+                        <div style="display:flex; gap:8px; align-items:center;">
+                            <button type="button" class="btn-primary" style="width:auto; padding:7px 14px; font-size:12px; white-space:nowrap;" onclick="abrirModalMovimentacoesFornecedor()">
+                                Ver Todas as Movimentações
+                            </button>
                         </div>
-                        <div style="font-size: 14px; color: #243746; font-weight: bold;">
-                            ${fornecedor.dataAtualizacao || 'Não informado'}
-                        </div>
+                        <div style="font-size:11px; color:#8a96a3;">Atualizado em: ${fornecedor.dataAtualizacao || 'Não informado'}</div>
                     </div>
+                </div>
+                <div class="forn-panel-body" style="padding:0;">
+                    <table class="forn-kv">
+                        <tbody>
+                            <tr>
+                                <th>Natureza Jurídica</th>
+                                <td>${fornecedor.naturezaJuridica || '-'}</td>
+                                <th style="border-left:1px solid #edf1f5;">Porte</th>
+                                <td>${fornecedor.porte || '-'}</td>
+                            </tr>
+                            <tr>
+                                <th>Capital Social</th>
+                                <td>${fornecedor.capitalSocial || '-'}</td>
+                                <th style="border-left:1px solid #edf1f5;">Situação Cadastral</th>
+                                <td>${fornecedor.situacaoCadastral || '-'}</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
-            <div style="
-                background: #ffffff;
-                border: 1px solid #bac5d0;
-                border-radius: 8px;
-                overflow: hidden;
-            ">
-                <div style="background: #eef3f7; padding: 12px 16px; border-bottom: 1px solid #bac5d0; font-weight: bold; color: #0f3b5e;">
-                    Dados principais
-                </div>
-                <div style="padding: 16px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px;">
-                    ${campo('CNPJ', fornecedor.cnpj)}
-                    ${campo('Nome Fantasia', fornecedor.nomeFantasia)}
-                    ${campo('Razão Social', fornecedor.razaoSocial)}
-                    ${campo('Natureza Jurídica', fornecedor.naturezaJuridica)}
-                    ${campo('Porte', fornecedor.porte)}
-                    ${campo('Capital Social', fornecedor.capitalSocial)}
-                </div>
-            </div>
-
-            <div style="
-                background: #ffffff;
-                border: 1px solid #bac5d0;
-                border-radius: 8px;
-                overflow: hidden;
-            ">
-                <div style="background: #eef3f7; padding: 12px 16px; border-bottom: 1px solid #bac5d0; font-weight: bold; color: #0f3b5e;">
-                    Endereço e contato
-                </div>
-                <div style="padding: 16px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px;">
-                    ${campo('Logradouro', enderecoCompleto)}
-                    ${campo('Bairro', fornecedor.bairro)}
-                    ${campo('Município / UF', `${fornecedor.municipio || ''} / ${fornecedor.uf || ''}`)}
-                    ${campo('CEP', fornecedor.cep)}
-                    ${campo('Telefone', fornecedor.telefone)}
-                    ${campo('E-mail', fornecedor.email)}
-                </div>
-            </div>
-
-            <div style="
-                background: #ffffff;
-                border: 1px solid #bac5d0;
-                border-radius: 8px;
-                overflow: hidden;
-            ">
-                <div style="background: #eef3f7; padding: 12px 16px; border-bottom: 1px solid #bac5d0; font-weight: bold; color: #0f3b5e;">
-                    Enquadramento fiscal
-                </div>
-                <div style="padding: 16px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px;">
-                    ${campo('CNAE Principal', `${fornecedor.cnaePrincipalCodigo || ''} - ${fornecedor.cnaePrincipal || ''}`)}
-                    ${campo('Situação Cadastral', fornecedor.situacaoCadastral)}
-
-                    <div style="display: flex; flex-direction: column; gap: 4px;">
-    <label style="font-size: 12px; color: #5f6b76; font-weight: bold; text-transform: uppercase;">
-        Alíquota manual de retenção (%)
-    </label>
-   <input
-    type="text"
-    id="fornecedorAliquotaManual"
-    data-cnpj="${String(fornecedor.cnpj || '').replace(/\D/g, '')}"
-    value="${fornecedor.aliquotaRetencaoManual || ''}"
-    placeholder="Ex.: 0,24"
-    style="min-height: 42px; padding: 8px 12px; background: #fff; border: 1px solid #bac5d0; border-radius: 6px; color: #243746; font-size: 13px;"
->
-</div>
-
-                    ${campo('Data da Situação Cadastral', fornecedor.dataSituacaoCadastral)}
-
-                    <div style="display: flex; flex-direction: column; gap: 4px;">
-                        <label style="font-size: 12px; color: #5f6b76; font-weight: bold; text-transform: uppercase;">Simples Nacional</label>
-                        <div style="min-height: 42px; padding: 8px 12px; background: #fff; border: 1px solid #bac5d0; border-radius: 6px; display: flex; align-items: center;">
-                            ${badgeSimples}
-                        </div>
+            <!-- ENDEREÇO + ENQUADRAMENTO FISCAL -->
+            <div class="forn-2col">
+                <div class="forn-panel">
+                    <div class="forn-panel-header"><h3>Endereço e Contato</h3></div>
+                    <div class="forn-panel-body" style="padding:0;">
+                        <table class="forn-kv">
+                            <tbody>
+                                <tr><th>Logradouro</th><td>${enderecoCompleto || 'Não informado'}</td></tr>
+                                <tr><th>Bairro</th><td>${fornecedor.bairro || '-'}</td></tr>
+                                <tr><th>Município / UF</th><td>${fornecedor.municipio || '-'} / ${fornecedor.uf || '-'}</td></tr>
+                                <tr><th>CEP</th><td>${fornecedor.cep || '-'}</td></tr>
+                                <tr><th>Telefone</th><td>${fornecedor.telefone || '-'}</td></tr>
+                                <tr><th>E-mail</th><td>${fornecedor.email || '-'}</td></tr>
+                            </tbody>
+                        </table>
                     </div>
+                </div>
 
-                    <div style="display: flex; flex-direction: column; gap: 4px;">
-                        <label style="font-size: 12px; color: #5f6b76; font-weight: bold; text-transform: uppercase;">MEI</label>
-                        <div style="min-height: 42px; padding: 8px 12px; background: #fff; border: 1px solid #bac5d0; border-radius: 6px; display: flex; align-items: center;">
-                            ${badgeMEI}
+                <div class="forn-panel">
+                    <div class="forn-panel-header"><h3>Enquadramento Fiscal</h3></div>
+                    <div class="forn-panel-body" style="padding:0;">
+                        <div class="forn-orcamento-grid">
+                            <div class="forn-orcamento-item">
+                                <div class="forn-orcamento-label">CNAE Principal</div>
+                                <div class="forn-orcamento-value">${fornecedor.cnaePrincipalCodigo || ''} - ${fornecedor.cnaePrincipal || 'Não informado'}</div>
+                            </div>
+                            <div class="forn-orcamento-item">
+                                <div class="forn-orcamento-label">Data da Situação Cadastral</div>
+                                <div class="forn-orcamento-value">${fornecedor.dataSituacaoCadastral || 'Não informado'}</div>
+                            </div>
+                            <div class="forn-orcamento-item">
+                                <div class="forn-orcamento-label">Simples Nacional</div>
+                                <div class="forn-orcamento-value">${badgeSimples}</div>
+                            </div>
+                            <div class="forn-orcamento-item">
+                                <div class="forn-orcamento-label">MEI</div>
+                                <div class="forn-orcamento-value">${badgeMEI}</div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -9599,6 +9582,22 @@ async function carregarDetalhesEmpenho(numEmpenho, anoFinal) {
 }
 
 // ============================================================
+// ORDENAÇÃO DAS MOVIMENTAÇÕES — simplesmente por data, mais
+// recente primeiro. Chegou a existir aqui uma reordenação especial
+// que forçava Liquidação sempre antes de Pagamento do mesmo Nº
+// Liquid., mas isso quebrava a ordem cronológica real da tabela
+// (ex.: um Pagamento de 11/06 acabava aparecendo abaixo de uma
+// Liquidação de 08/06). O pedido correto é manter a ordem por data.
+// ============================================================
+function ordenarMovimentacoesLogico(lista) {
+    return lista.slice().sort((a, b) => {
+        const da = a.datMovimento || a.datUltimoMovimento || a.datLiquidacao || a.datPagamento || '';
+        const db_ = b.datMovimento || b.datUltimoMovimento || b.datLiquidacao || b.datPagamento || '';
+        return String(db_).localeCompare(String(da));
+    });
+}
+
+// ============================================================
 // MODAL DE LIQUIDAÇÕES — todas as movimentações individuais
 // (empenho/liquidação/pagamento) de um único empenho, em tabela
 // grande e organizada, aberta separadamente dos Detalhes.
@@ -9616,11 +9615,7 @@ function abrirModalLiquidacoesEmpenho() {
 
     titulo.textContent = `Liquidações do Empenho ${numEmpenho}/${anoFinal}`;
 
-    const movimentacoesOrdenadas = lista.slice().sort((a, b) => {
-        const da = a.datMovimento || a.datUltimoMovimento || a.datLiquidacao || a.datPagamento || '';
-        const db_ = b.datMovimento || b.datUltimoMovimento || b.datLiquidacao || b.datPagamento || '';
-        return String(db_).localeCompare(String(da));
-    });
+    const movimentacoesOrdenadas = ordenarMovimentacoesLogico(lista);
 
     const linhas = movimentacoesOrdenadas.map(item => {
         const valEmp = Number(item.vlrEmpenhado || 0);
@@ -9635,9 +9630,7 @@ function abrirModalLiquidacoesEmpenho() {
                 <td style="font-weight:600; color:#243746;" class="td-sep">${tipoMov}</td>
                 <td style="color:#495057;">${item.numNotaFiscal && item.numNotaFiscal !== '0' ? item.numNotaFiscal : '<span style="color:#c4cdd6;">—</span>'}</td>
                 <td style="color:#495057;">${item.numLiquidacao || '<span style="color:#c4cdd6;">—</span>'}</td>
-                <td style="white-space:nowrap; font-size:12px; color:#54606b;" class="td-sep">${formatarData(item.datLiquidacao)}</td>
-                <td style="color:#495057;">${item.numPagamento || '<span style="color:#c4cdd6;">—</span>'}</td>
-                <td style="white-space:nowrap; font-size:12px; color:#54606b;" class="td-sep">${formatarData(item.datPagamento)}</td>
+                <td style="color:#495057;" class="td-sep">${item.numPagamento || '<span style="color:#c4cdd6;">—</span>'}</td>
                 <td style="text-align:right; ${valEmp ? 'font-weight:700; color:#0f3b5e;' : 'color:#c4cdd6;'}">${valEmp ? formatarBRL(valEmp) : '—'}</td>
                 <td style="text-align:right; ${valLiq ? 'font-weight:700; color:#856404;' : 'color:#c4cdd6;'}">${valLiq ? formatarBRL(valLiq) : '—'}</td>
                 <td style="text-align:right; ${valPag ? 'font-weight:700; color:#1e6b3b;' : 'color:#c4cdd6;'}">${valPag ? formatarBRL(valPag) : '—'}</td>
@@ -9692,13 +9685,11 @@ function abrirModalLiquidacoesEmpenho() {
                         <th style="width:120px;">Tipo de Movimento</th>
                         <th style="width:60px;" class="grp-liq">NF</th>
                         <th style="width:64px;" class="grp-liq">Nº Liquid.</th>
-                        <th style="width:76px;" class="grp-liq">Dt. Liquid.</th>
                         <th style="width:64px;" class="grp-pag">Nº Pagto.</th>
-                        <th style="width:76px;" class="grp-pag">Dt. Pagto.</th>
                         <th style="width:105px; text-align:right;">Empenhado</th>
                         <th style="width:105px; text-align:right;">Liquidado</th>
                         <th style="width:105px; text-align:right;">Pago</th>
-                        <th style="min-width:220px;">Histórico</th>
+                        <th style="min-width:380px;">Histórico</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -9706,7 +9697,7 @@ function abrirModalLiquidacoesEmpenho() {
                 </tbody>
                 <tfoot>
                     <tr>
-                        <td colspan="7" style="text-align:right; color:#0f3b5e;">TOTAIS</td>
+                        <td colspan="5" style="text-align:right; color:#0f3b5e;">TOTAIS</td>
                         <td style="text-align:right; color:#0f3b5e;">${formatarBRL(totalEmpenhado)}</td>
                         <td style="text-align:right; color:#856404;">${formatarBRL(totalLiquidado)}</td>
                         <td style="text-align:right; color:#1e6b3b;">${formatarBRL(totalPago)}</td>
@@ -9723,6 +9714,414 @@ function abrirModalLiquidacoesEmpenho() {
 function fecharModalLiquidacoesEmpenho() {
     const modal = document.getElementById('modalLiquidacoesEmpenho');
     if (modal) modal.style.display = 'none';
+}
+
+// ============================================================
+// MODAL DE MOVIMENTAÇÕES DO FORNECEDOR — busca TODOS os
+// empenhos do fornecedor (por CNPJ) em um ano no Portal da
+// Transparência e junta as movimentações de todos eles em
+// uma única tabela, no mesmo padrão do modal de Liquidações
+// do Empenho, porém com uma coluna extra identificando o
+// empenho de origem de cada linha.
+// ============================================================
+
+function fecharModalMovimentacoesFornecedor() {
+    const modal = document.getElementById('modalMovimentacoesFornecedor');
+    if (modal) modal.style.display = 'none';
+}
+
+function abrirModalMovimentacoesFornecedor() {
+    const contexto = window._fornecedorAtualMovimentacoes;
+    const modal = document.getElementById('modalMovimentacoesFornecedor');
+    const titulo = document.getElementById('tituloModalMovimentacoesFornecedor');
+    const conteudo = document.getElementById('conteudoModalMovimentacoesFornecedor');
+
+    if (!contexto || !modal || !titulo || !conteudo) return;
+
+    if (!limparDocumento(contexto.cnpj)) {
+        mostrarAvisoSistema('Erro', 'Este fornecedor não possui CNPJ/CPF cadastrado para consulta no Portal da Transparência.');
+        return;
+    }
+
+    const anoAtual = new Date().getFullYear();
+
+    titulo.textContent = `Movimentações de ${contexto.nome}`;
+
+    // Antes de buscar, o usuário escolhe o período: o ano inteiro ou uma
+    // faixa de datas específica (data inicial e final).
+    conteudo.innerHTML = `
+        <style>
+            .fmf-titulo { font-size:13px; font-weight:bold; color:#0f3b5e; margin-bottom:10px; text-align:center; }
+            .fmf-check { display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:12px; }
+            .fmf-row { display:flex; align-items:end; justify-content:center; gap:10px; flex-wrap:wrap; }
+            .fmf-campo { display:flex; flex-direction:column; gap:4px; }
+            .fmf-campo label { font-size:11px; font-weight:bold; color:#495057; text-align:left; }
+            .fmf-campo input[type="number"], .fmf-campo input[type="date"] {
+                box-sizing:border-box; height:36px; padding:0 10px;
+                border:1px solid #bac5d0; border-radius:3px;
+                font-family: Arial, Helvetica, sans-serif !important;
+                font-size:13px !important; color:#333; background:#fff;
+                appearance:none; -webkit-appearance:none;
+            }
+            .fmf-campo input[type="number"] { width:80px; }
+            .fmf-campo input[type="date"] { width:145px; }
+            .fmf-campo input:disabled { background:#eef1f4; color:#8a96a3; }
+            .fmf-campo input[type="date"]::-webkit-datetime-edit,
+            .fmf-campo input[type="date"]::-webkit-datetime-edit-text,
+            .fmf-campo input[type="date"]::-webkit-datetime-edit-day-field,
+            .fmf-campo input[type="date"]::-webkit-datetime-edit-month-field,
+            .fmf-campo input[type="date"]::-webkit-datetime-edit-year-field {
+                font-family: Arial, Helvetica, sans-serif !important;
+                font-size:13px !important; color:#333 !important; padding:0;
+            }
+        </style>
+
+        <div id="filtroMovimentacoesFornecedorWrap" style="margin-bottom:20px;">
+            <div class="fmf-titulo">Filtros de Busca</div>
+
+            <div class="fmf-check">
+                <input type="checkbox" id="fornMovAnoInteiro" checked onchange="toggleFiltroAnoInteiroFornecedor()" style="width:16px; height:16px; cursor:pointer;">
+                <label for="fornMovAnoInteiro" style="font-size:13px; color:#243746; cursor:pointer; margin:0;">Buscar o ano inteiro</label>
+            </div>
+
+            <div class="fmf-row">
+                <div class="fmf-campo">
+                    <label>Ano</label>
+                    <input type="number" id="fornMovFiltroAno" value="${anoAtual}">
+                </div>
+                <div class="fmf-campo">
+                    <label>Data Inicial</label>
+                    <input type="date" id="fornMovFiltroDataIni" value="${anoAtual}-01-01" disabled>
+                </div>
+                <div class="fmf-campo">
+                    <label>Data Final</label>
+                    <input type="date" id="fornMovFiltroDataFim" value="${anoAtual}-12-31" disabled>
+                </div>
+                <button class="btn-primary" type="button" onclick="buscarMovimentacoesFornecedorFiltro()" style="width:auto; padding:0 18px; height:36px; margin:0;">Buscar</button>
+            </div>
+        </div>
+
+        <div id="resultadoMovimentacoesFornecedor">
+            <div style="padding:20px; text-align:center; color:#6c757d; font-size:13px;">Selecione o período acima e clique em Buscar.</div>
+        </div>
+    `;
+
+    modal.style.display = 'flex';
+}
+
+function toggleFiltroAnoInteiroFornecedor() {
+    const anoInteiro = document.getElementById('fornMovAnoInteiro')?.checked;
+    const campoAno = document.getElementById('fornMovFiltroAno');
+    const campoIni = document.getElementById('fornMovFiltroDataIni');
+    const campoFim = document.getElementById('fornMovFiltroDataFim');
+
+    if (!campoAno || !campoIni || !campoFim) return;
+
+    campoAno.disabled = !anoInteiro;
+    campoIni.disabled = anoInteiro;
+    campoFim.disabled = anoInteiro;
+
+    if (anoInteiro) {
+        const ano = campoAno.value || new Date().getFullYear();
+        campoIni.value = `${ano}-01-01`;
+        campoFim.value = `${ano}-12-31`;
+    }
+}
+
+async function buscarMovimentacoesFornecedorFiltro() {
+    const contexto = window._fornecedorAtualMovimentacoes;
+    if (!contexto) return;
+
+    const anoInteiro = document.getElementById('fornMovAnoInteiro')?.checked;
+    let datInicio, datFim, labelPeriodo;
+
+    if (anoInteiro) {
+        const ano = (document.getElementById('fornMovFiltroAno')?.value || '').trim() || String(new Date().getFullYear());
+        datInicio = `${ano}-01-01`;
+        datFim = `${ano}-12-31`;
+        labelPeriodo = `no ano de ${ano}`;
+    } else {
+        datInicio = document.getElementById('fornMovFiltroDataIni')?.value || '';
+        datFim = document.getElementById('fornMovFiltroDataFim')?.value || '';
+
+        if (!datInicio || !datFim) {
+            mostrarAvisoSistema('Erro', 'Informe a data inicial e a data final para a busca, ou marque "Buscar o ano inteiro".');
+            return;
+        }
+
+        if (datInicio > datFim) {
+            mostrarAvisoSistema('Erro', 'A data inicial não pode ser posterior à data final.');
+            return;
+        }
+
+        const formatarDataBR = (iso) => {
+            const [a, m, d] = iso.split('-');
+            return `${d}/${m}/${a}`;
+        };
+        labelPeriodo = `entre ${formatarDataBR(datInicio)} e ${formatarDataBR(datFim)}`;
+    }
+
+    await executarBuscaMovimentacoesFornecedor(contexto.cnpj, contexto.nome, datInicio, datFim, labelPeriodo);
+}
+
+// ============================================================
+// Busca, de fato, todos os empenhos do fornecedor dentro do
+// período informado e junta as movimentações de todos eles em
+// uma única tabela, no mesmo padrão do modal de Liquidações
+// do Empenho, porém com uma coluna extra identificando o
+// empenho de origem de cada linha.
+// ============================================================
+async function executarBuscaMovimentacoesFornecedor(cnpjBruto, nomeFornecedor, datInicio, datFim, labelPeriodo) {
+    const resultado = document.getElementById('resultadoMovimentacoesFornecedor');
+    if (!resultado) return;
+
+    // Some com os filtros assim que a busca é disparada — só reaparecem
+    // se o modal for reaberto.
+    const filtroWrap = document.getElementById('filtroMovimentacoesFornecedorWrap');
+    if (filtroWrap) filtroWrap.style.display = 'none';
+
+    const cnpj = limparDocumento(cnpjBruto);
+    resultado.innerHTML = `<div style="padding:30px; text-align:center; font-size:14px; color:#6c757d;">Buscando empenhos do fornecedor no Portal da Transparência...</div>`;
+
+    try {
+        const formatarBRL = (valor) =>
+            Number(valor || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        const formatarData = (valor) => {
+            if (!valor) return '-';
+            const texto = String(valor).slice(0, 10);
+            if (/^\d{4}-\d{2}-\d{2}$/.test(texto)) {
+                const [anoTx, mes, dia] = texto.split('-');
+                return `${dia}/${mes}/${anoTx}`;
+            }
+            return valor;
+        };
+
+        // 1) Busca todos os empenhos do fornecedor no período escolhido.
+        // O parâmetro cpfCnpj da API não filtra de fato no servidor (o
+        // mesmo problema existe na Consulta de Empenhos — ver
+        // buscarDadosTransparencia), então o filtro real do lado do
+        // servidor é feito pelo nome (termoBase64, agrupado por
+        // fornecedor) e o CNPJ é conferido depois, linha a linha, para
+        // não misturar fornecedores de nome parecido.
+        const termoBase64 = nomeFornecedor ? btoa(unescape(encodeURIComponent(nomeFornecedor))) : '';
+        const empenhosEncontrados = new Map();
+        let pagina = 1;
+        let totalPaginas = 1;
+
+        do {
+            const urlLista = `https://transparencia.iguatama.mg.gov.br/publico/despesaDetalhada?elementosPorPagina=50&pagina=${pagina}&termoBase64=${termoBase64}&indAgrupamento=FOR&datInicio=${datInicio}&datFim=${datFim}&desNatureza=&codAdministracao=2&filtrarApenasCovid=false&numEmpenho=&cpfCnpj=${encodeURIComponent(cnpj)}`;
+            const resLista = await fetch(urlLista);
+            if (!resLista.ok) throw new Error(`Lista HTTP ${resLista.status}`);
+            const dataLista = await resLista.json();
+
+            let itens = Array.isArray(dataLista?.content) ? dataLista.content
+                       : Array.isArray(dataLista?.data) ? dataLista.data
+                       : Array.isArray(dataLista?.items) ? dataLista.items
+                       : Array.isArray(dataLista?.lista) ? dataLista.lista
+                       : [];
+
+            // Filtro client-side pelo CNPJ/CPF real do fornecedor — garante
+            // que só entram empenhos deste fornecedor, mesmo que o termo de
+            // busca por nome traga homônimos ou correspondências parciais.
+            itens = itens.filter(item => {
+                const docItem = obterDocumentoItem(item);
+                return docItem && (docItem.includes(cnpj) || cnpj.includes(docItem));
+            });
+
+            itens.forEach(item => {
+                const numEmp = item.numEmpenho || item.empenho || item.numeroEmpenho || item.nrEmpenho || item.codEmpenho;
+                const anoEmp = item.numAnoEmpenho || item.anoEmpenho || (item.empenhoFormatado ? String(item.empenhoFormatado).split('/')[1] : datInicio.slice(0, 4));
+                if (!numEmp) return;
+                empenhosEncontrados.set(`${numEmp}/${anoEmp}`, { numEmp, anoEmp });
+            });
+
+            totalPaginas = Number(dataLista?.totalPages || 1);
+            pagina++;
+        } while (pagina <= totalPaginas);
+
+        if (!empenhosEncontrados.size) {
+            resultado.innerHTML = `<div style="padding:20px; color:#a50e0e;">Nenhum empenho encontrado para este fornecedor ${labelPeriodo}.</div>`;
+            return;
+        }
+
+        resultado.innerHTML = `<div style="padding:30px; text-align:center; font-size:14px; color:#6c757d;">Encontrado(s) ${empenhosEncontrados.size} empenho(s). Carregando movimentações...</div>`;
+
+        // 2) Para cada empenho, busca todas as movimentações
+        // (empenho/liquidação/pagamento), reaproveitando o cache de
+        // sessão já usado na tela de Detalhes do Empenho.
+        let todasMovimentacoes = [];
+
+        for (const { numEmp, anoEmp } of empenhosEncontrados.values()) {
+            try {
+                let dataMov = _ApiCache.getSession('mov', numEmp, anoEmp);
+                if (!dataMov) {
+                    const urlMov = `https://transparencia.iguatama.mg.gov.br/publico/despesaDetalhada/buscarMovimentacao?numEmpenho=${encodeURIComponent(numEmp)}&numAnoEmpenho=${encodeURIComponent(anoEmp)}&codAdministracao=2`;
+                    const resMov = await fetch(urlMov);
+                    if (!resMov.ok) throw new Error(`Movimentação HTTP ${resMov.status}`);
+                    dataMov = await resMov.json();
+                    _ApiCache.setSession(dataMov, 'mov', numEmp, anoEmp);
+                    await new Promise(resolve => setTimeout(resolve, 250));
+                }
+
+                const lista = Array.isArray(dataMov) ? dataMov : (dataMov ? [dataMov] : []);
+                lista.forEach(item => {
+                    todasMovimentacoes.push({ ...item, _numEmp: numEmp, _anoEmp: anoEmp });
+                });
+            } catch (erroEmpenho) {
+                console.error(`Erro ao buscar movimentações do empenho ${numEmp}/${anoEmp}:`, erroEmpenho);
+            }
+        }
+
+        // Um empenho encontrado no período pode ter movimentações (ex.:
+        // pagamentos) em datas fora da faixa escolhida — filtra linha a
+        // linha para que a tabela mostre só o que aconteceu de fato dentro
+        // do período selecionado (é aqui que "buscar um mês depois do
+        // definido" era possível antes desta filtragem existir).
+        todasMovimentacoes = todasMovimentacoes.filter(item => {
+            const dataRef = String(item.datMovimento || item.datUltimoMovimento || item.datLiquidacao || item.datPagamento || '').slice(0, 10);
+            if (!dataRef) return true;
+            return dataRef >= datInicio && dataRef <= datFim;
+        });
+
+        if (!todasMovimentacoes.length) {
+            resultado.innerHTML = `<div style="padding:20px; color:#a50e0e;">Nenhuma movimentação encontrada para os empenhos deste fornecedor ${labelPeriodo}.</div>`;
+            return;
+        }
+
+        const movimentacoesOrdenadas = ordenarMovimentacoesLogico(todasMovimentacoes);
+
+        // Movimentações de estorno/anulação são um tipo à parte — são
+        // sinalizadas em vermelho para diferenciar de Empenhado/Liquidado/Pago.
+        const ehEstornoOuAnulacao = (desMovimento) => /anula|estorn/i.test(String(desMovimento || ''));
+
+        // Cada empenho recebe uma cor de fundo fraca própria, para que as
+        // linhas do mesmo empenho fiquem fáceis de identificar visualmente
+        // dentro da tabela combinada de vários empenhos. Em vez de uma
+        // paleta fixa (que repete e destoa quando há muitos empenhos), o
+        // matiz é gerado por empenho usando o ângulo áureo — dá cores
+        // sempre bem distribuídas e discretas (saturação baixa, claridade
+        // alta), sem repetir nem destoar visualmente por mais empenhos
+        // que existam.
+        const coresPorEmpenho = new Map();
+        const obterCorEmpenho = (chave) => {
+            if (!coresPorEmpenho.has(chave)) {
+                const indice = coresPorEmpenho.size;
+                const matiz = (indice * 137.508) % 360;
+                coresPorEmpenho.set(chave, `hsl(${matiz.toFixed(1)}, 30%, 95.5%)`);
+            }
+            return coresPorEmpenho.get(chave);
+        };
+
+        const linhas = movimentacoesOrdenadas.map(item => {
+            const valEmp = Number(item.vlrEmpenhado || 0);
+            const valLiq = Number(item.vlrLiquidado || 0);
+            const valPag = Number(item.vlrPago || 0);
+            const tipoMov = item.desMovimento || '-';
+            const estornado = ehEstornoOuAnulacao(tipoMov);
+            const corLinha = estornado ? '#fdf2f2' : obterCorEmpenho(`${item._numEmp}/${item._anoEmp}`);
+            const numEmpEscapado = String(item._numEmp).replace(/'/g, "\\'");
+            const anoEmpEscapado = String(item._anoEmp).replace(/'/g, "\\'");
+
+            return `
+                <tr style="background:${corLinha};">
+                    <td style="white-space:nowrap;" class="td-sep">
+                        <a href="javascript:void(0)" onclick="verDetalhesAPI('${numEmpEscapado}', '${anoEmpEscapado}')" style="font-weight:700; color:#0f3b5e; text-decoration:underline; cursor:pointer;">${item._numEmp}/${item._anoEmp}</a>
+                    </td>
+                    <td style="white-space:nowrap; font-size:12px; color:#54606b;">${formatarData(item.datMovimento)}</td>
+                    <td style="font-weight:600; ${estornado ? 'color:#a50e0e;' : 'color:#243746;'}" class="td-sep">${tipoMov}</td>
+                    <td style="color:#495057;">${item.numNotaFiscal && item.numNotaFiscal !== '0' ? item.numNotaFiscal : '<span style="color:#c4cdd6;">—</span>'}</td>
+                    <td style="color:#495057;">${item.numLiquidacao || '<span style="color:#c4cdd6;">—</span>'}</td>
+                    <td style="color:#495057;" class="td-sep">${item.numPagamento || '<span style="color:#c4cdd6;">—</span>'}</td>
+                    <td style="text-align:right; ${estornado && valEmp ? 'font-weight:700; color:#a50e0e;' : (valEmp ? 'font-weight:700; color:#0f3b5e;' : 'color:#c4cdd6;')}">${valEmp ? formatarBRL(valEmp) : '—'}</td>
+                    <td style="text-align:right; ${estornado && valLiq ? 'font-weight:700; color:#a50e0e;' : (valLiq ? 'font-weight:700; color:#856404;' : 'color:#c4cdd6;')}">${valLiq ? formatarBRL(valLiq) : '—'}</td>
+                    <td style="text-align:right; ${estornado && valPag ? 'font-weight:700; color:#a50e0e;' : (valPag ? 'font-weight:700; color:#1e6b3b;' : 'color:#c4cdd6;')}">${valPag ? formatarBRL(valPag) : '—'}</td>
+                    <td style="font-size:11.5px; color:#6c757d; line-height:1.4;">${item.desHistoricoLiquido || item.desEmpenhoHistorico || item.desHistorico || '<span style="color:#c4cdd6;">—</span>'}</td>
+                </tr>
+            `;
+        }).join('');
+
+        const totalEmpenhado = todasMovimentacoes.reduce((soma, item) => soma + Number(item.vlrEmpenhado || 0), 0);
+        const totalLiquidado = todasMovimentacoes.reduce((soma, item) => soma + Number(item.vlrLiquidado || 0), 0);
+        const totalPago = todasMovimentacoes.reduce((soma, item) => soma + Number(item.vlrPago || 0), 0);
+        const totalEstornadoAnulado = todasMovimentacoes
+            .filter(item => ehEstornoOuAnulacao(item.desMovimento))
+            .reduce((soma, item) => soma + Math.abs(Number(item.vlrEmpenhado || 0)) + Math.abs(Number(item.vlrLiquidado || 0)) + Math.abs(Number(item.vlrPago || 0)), 0);
+
+        resultado.innerHTML = `
+            <style>
+                .liq-info { font-size:13px; color:#495057; background:#f2f6f9; border:1px solid #dce4ec; border-radius:4px; padding:10px 14px; margin-bottom:14px; }
+                .liq-wrap { overflow-x:auto; border:1px solid #cfd7df; border-radius:5px; }
+                .liq-table { width:100%; min-width:1080px; border-collapse:collapse; font-size:12.5px; }
+                .liq-table thead tr { background:#0f3b5e; }
+                .liq-table thead th { padding:9px 10px; color:#ffffff; font-weight:600; text-align:left; white-space:nowrap; border-right:1px solid rgba(255,255,255,0.15); font-size:12px; }
+                .liq-table thead th:last-child { border-right:none; }
+                .liq-table thead th.grp-liq { background:#1a4f7a; }
+                .liq-table thead th.grp-pag { background:#1a4f7a; }
+                .liq-table tbody tr { border-bottom:1px solid #edf1f5; }
+                .liq-table tbody tr:last-child { border-bottom:none; }
+                .liq-table tbody tr:hover { background:#f5f8fb; }
+                .liq-table tbody td { padding:8px 10px; vertical-align:top; color:#333; border-right:1px solid #edf1f5; }
+                .liq-table tbody td:last-child { border-right:none; }
+                .liq-table tbody td.td-sep { border-right:2px solid #cfd7df; }
+                .liq-table tfoot tr { background:#f2f6f9; border-top:2px solid #cfd7df; }
+                .liq-table tfoot td { padding:9px 10px; font-weight:700; font-size:13px; border-right:1px solid #dce4ec; }
+                .liq-table tfoot td:last-child { border-right:none; }
+                .liq-legenda { display:flex; gap:16px; margin-bottom:12px; flex-wrap:wrap; }
+                .liq-leg-item { display:flex; align-items:center; gap:6px; font-size:12px; color:#495057; }
+                .liq-leg-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+            </style>
+
+            <div class="liq-info">
+                <strong>${empenhosEncontrados.size}</strong> empenho(s) e <strong>${movimentacoesOrdenadas.length}</strong> registro(s) de movimentação para <strong>${nomeFornecedor}</strong> ${labelPeriodo} — do mais recente ao mais antigo
+            </div>
+
+            <div class="liq-legenda">
+                <div class="liq-leg-item"><div class="liq-leg-dot" style="background:#0f3b5e;"></div> Empenhado</div>
+                <div class="liq-leg-item"><div class="liq-leg-dot" style="background:#856404;"></div> Liquidado</div>
+                <div class="liq-leg-item"><div class="liq-leg-dot" style="background:#1e6b3b;"></div> Pago</div>
+                <div class="liq-leg-item"><div class="liq-leg-dot" style="background:#a50e0e;"></div> Estornado / Anulado</div>
+            </div>
+
+            <div class="liq-wrap">
+                <table class="liq-table">
+                    <thead>
+                        <tr>
+                            <th style="width:90px;">Empenho</th>
+                            <th style="width:76px;">Data</th>
+                            <th style="width:120px;">Tipo de Movimento</th>
+                            <th style="width:60px;" class="grp-liq">NF</th>
+                            <th style="width:64px;" class="grp-liq">Nº Liquid.</th>
+                            <th style="width:64px;" class="grp-pag">Nº Pagto.</th>
+                            <th style="width:105px; text-align:right;">Empenhado</th>
+                            <th style="width:105px; text-align:right;">Liquidado</th>
+                            <th style="width:105px; text-align:right;">Pago</th>
+                            <th style="min-width:380px;">Histórico</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${linhas}
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="6" style="text-align:right; color:#0f3b5e;">TOTAIS</td>
+                            <td style="text-align:right; color:#0f3b5e;">${formatarBRL(totalEmpenhado)}</td>
+                            <td style="text-align:right; color:#856404;">${formatarBRL(totalLiquidado)}</td>
+                            <td style="text-align:right; color:#1e6b3b;">${formatarBRL(totalPago)}</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td colspan="9" style="text-align:right; color:#a50e0e;">TOTAL ESTORNADO / ANULADO</td>
+                            <td style="text-align:right; color:#a50e0e;">${formatarBRL(totalEstornadoAnulado)}</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        `;
+
+    } catch (erro) {
+        console.error('Erro ao buscar movimentações do fornecedor:', erro);
+        resultado.innerHTML = `<div style="padding:20px; color:#a50e0e;">Não foi possível carregar as movimentações deste fornecedor.</div>`;
+    }
 }
 
 // ============================================================
@@ -14639,8 +15038,8 @@ window.carregarFornecedoresNuvem = async function(reiniciar = false) {
 
             html += `
                 <tr>
-                    <td>${f.cnpj || ''}</td>
-                    <td>${f.razaoSocial || ''}</td>
+                    <td style="min-width:150px;"><div style="font-size:12px; color:#66727d;">${f.cnpj || ''}</div></td>
+                    <td style="min-width:260px;"><div style="font-weight:bold; color:#243746;">${f.razaoSocial || ''}</div></td>
                     <td>${(f.municipio || '')}${f.uf ? '/' + f.uf : ''}</td>
                     <td>${f.simplesNacional ? 'Optante' : 'Não'}</td>
                     <td>${f.mei ? 'Optante' : 'Não'}</td>
@@ -14701,22 +15100,81 @@ window.carregarFornecedoresNuvem = async function(reiniciar = false) {
         await window.carregarFornecedoresNuvem(pilhaPaginasFornecedores.length === 0);
     };
 
-    window.aplicarFiltroFornecedor = function() {
+    // Antes, o filtro só escondia/mostrava linhas da página de 20
+    // registros já carregada — ou seja, só "buscava" dentro da primeira
+    // página. Agora, quando há texto ou cidade preenchidos, a busca é
+    // feita na coleção inteira do Firestore, não apenas na página atual.
+    window.aplicarFiltroFornecedor = async function() {
         const texto = document.getElementById('filtroFornecedorTexto').value.trim().toLowerCase();
         const cidade = document.getElementById('filtroFornecedorCidade').value.trim().toLowerCase();
-        const linhas = document.querySelectorAll('#tabela-fornecedores-nuvem tr');
 
-        let visiveis = 0;
-
-        linhas.forEach((linha) => {
-            const textoLinha = linha.textContent.toLowerCase();
-            const mostrar = (!texto || textoLinha.includes(texto)) && (!cidade || textoLinha.includes(cidade));
-            linha.style.display = mostrar ? '' : 'none';
-            if (mostrar) visiveis++;
-        });
-
+        const tbody = document.getElementById('tabela-fornecedores-nuvem');
         const resumo = document.getElementById('fornecedoresResumo');
-        resumo.innerHTML = `<strong>${visiveis}</strong> fornecedor(es) visíveis após o filtro local.`;
+        const info = document.getElementById('fornecedoresPaginacaoInfo');
+        const btnAnterior = document.getElementById('btnPaginaAnteriorFornecedores');
+        const btnProxima = document.getElementById('btnProximaPaginaFornecedores');
+
+        if (!tbody || !resumo) return;
+
+        if (!texto && !cidade) {
+            // Sem filtro: volta para a navegação paginada normal.
+            await window.carregarFornecedoresNuvem(true);
+            return;
+        }
+
+        if (!auth.currentUser) {
+            resumo.innerHTML = 'Usuário não autenticado.';
+            return;
+        }
+
+        resumo.innerHTML = 'Buscando em todos os fornecedores cadastrados...';
+        tbody.innerHTML = `<tr><td colspan="7" style="padding:16px; text-align:center;">Buscando...</td></tr>`;
+
+        try {
+            const snapshot = await getDocs(query(collection(db, "Fornecedores"), orderBy("razaoSocial")));
+
+            const encontrados = [];
+            snapshot.forEach((docItem) => {
+                const f = docItem.data() || {};
+                const textoLinha = [f.cnpj, f.razaoSocial, f.nomeFantasia].filter(Boolean).join(' ').toLowerCase();
+                const textoCidade = [f.municipio, f.uf].filter(Boolean).join(' ').toLowerCase();
+
+                const combina = (!texto || textoLinha.includes(texto)) && (!cidade || textoCidade.includes(cidade));
+                if (combina) encontrados.push(f);
+            });
+
+            if (!encontrados.length) {
+                tbody.innerHTML = `<tr><td colspan="7" style="padding:16px; text-align:center;">Nenhum fornecedor encontrado para este filtro.</td></tr>`;
+            } else {
+                tbody.innerHTML = encontrados.map((f) => {
+                    const dadosJson = encodeURIComponent(JSON.stringify(f));
+                    return `
+                        <tr>
+                            <td style="min-width:150px;"><div style="font-size:12px; color:#66727d;">${f.cnpj || ''}</div></td>
+                            <td style="min-width:260px;"><div style="font-weight:bold; color:#243746;">${f.razaoSocial || ''}</div></td>
+                            <td>${(f.municipio || '')}${f.uf ? '/' + f.uf : ''}</td>
+                            <td>${f.simplesNacional ? 'Optante' : 'Não'}</td>
+                            <td>${f.mei ? 'Optante' : 'Não'}</td>
+                            <td>${f.cnaePrincipalCodigo || ''}</td>
+                            <td>
+                                <button type="button" class="btn-primary" style="width:auto; padding:6px 12px;" onclick="visualizarFornecedor('${dadosJson}')">
+                                    Visualizar
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+
+            resumo.innerHTML = `<strong>${encontrados.length}</strong> fornecedor(es) encontrados em toda a base para este filtro.`;
+            if (info) info.textContent = 'Resultado de busca — não paginado.';
+            if (btnAnterior) btnAnterior.disabled = true;
+            if (btnProxima) btnProxima.disabled = true;
+        } catch (erro) {
+            console.error('Erro ao buscar fornecedores:', erro);
+            tbody.innerHTML = `<tr><td colspan="7" style="padding:16px; text-align:center; color:#a50e0e;">Erro ao buscar fornecedores.</td></tr>`;
+            resumo.innerHTML = 'Erro ao buscar fornecedores.';
+        }
     };
 
     function mostrarMensagem(texto, tipo = 'error') {
@@ -14964,15 +15422,6 @@ return true;
     <button
         type="button"
         class="btn-primary"
-        onclick="salvarAliquotaManualFornecedor()"
-        style="width: auto; padding: 8px 16px; background-color: #27ae60; border-color: #219653;"
-    >
-        Salvar
-    </button>
-
-    <button
-        type="button"
-        class="btn-primary"
         onclick="fecharModalFornecedor()"
         style="width: auto; padding: 8px 16px;"
     >
@@ -15063,7 +15512,7 @@ return true;
     </div>
 </div>
 
-<div id="modalDetalheApiEmpenho" style="display:none; position:fixed; inset:0; background:rgba(15, 59, 94, 0.4); z-index:9999; align-items:center; justify-content:center; padding:24px;">
+<div id="modalDetalheApiEmpenho" style="display:none; position:fixed; inset:0; background:rgba(15, 59, 94, 0.4); z-index:10010; align-items:center; justify-content:center; padding:24px;">
     <div style="background:#fff; width:100%; max-width:1320px; border-radius:5px; border:1px solid #bac5d0; box-shadow:0 4px 18px rgba(0,0,0,0.18); overflow:hidden;">
         <div style="background:#0f3b5e; color:#fff; padding:16px 22px; display:flex; justify-content:space-between; align-items:center; gap:16px; border-bottom:1px solid #0a2942;">
             <div>
@@ -15082,7 +15531,7 @@ return true;
 </div>
 
 <!-- MODAL: TODAS AS LIQUIDAÇÕES/MOVIMENTAÇÕES DE UM EMPENHO -->
-<div id="modalLiquidacoesEmpenho" style="display:none; position:fixed; inset:0; background:rgba(15, 59, 94, 0.4); z-index:10000; align-items:center; justify-content:center; padding:24px;">
+<div id="modalLiquidacoesEmpenho" style="display:none; position:fixed; inset:0; background:rgba(15, 59, 94, 0.4); z-index:10011; align-items:center; justify-content:center; padding:24px;">
     <div style="background:#fff; width:100%; max-width:1720px; border-radius:5px; border:1px solid #bac5d0; box-shadow:0 4px 18px rgba(0,0,0,0.18); overflow:hidden; display:flex; flex-direction:column; max-height:92vh;">
         <div style="background:#0f3b5e; color:#fff; padding:16px 22px; display:flex; justify-content:space-between; align-items:center; gap:16px; border-bottom:1px solid #0a2942; flex-shrink:0;">
             <div>
@@ -15096,6 +15545,25 @@ return true;
 
         <div style="padding:12px 20px; background:#fbfcfd; border-top:1px solid #cfd7df; text-align:right; flex-shrink:0;">
             <button type="button" class="btn-primary" onclick="fecharModalLiquidacoesEmpenho()" style="width:auto; padding:8px 16px;">Fechar</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL: TODAS AS MOVIMENTAÇÕES (TODOS OS EMPENHOS) DE UM FORNECEDOR NO ANO -->
+<div id="modalMovimentacoesFornecedor" style="display:none; position:fixed; inset:0; background:rgba(15, 59, 94, 0.4); z-index:10000; align-items:center; justify-content:center; padding:24px;">
+    <div style="background:#fff; width:100%; max-width:1720px; border-radius:5px; border:1px solid #bac5d0; box-shadow:0 4px 18px rgba(0,0,0,0.18); overflow:hidden; display:flex; flex-direction:column; max-height:92vh;">
+        <div style="background:#0f3b5e; color:#fff; padding:16px 22px; display:flex; justify-content:space-between; align-items:center; gap:16px; border-bottom:1px solid #0a2942; flex-shrink:0;">
+            <div>
+                <h3 id="tituloModalMovimentacoesFornecedor" style="margin:0; font-size:18px; font-weight:normal; letter-spacing:0.3px;">Movimentações do Fornecedor</h3>
+                <div style="font-size:12px; color:rgba(255,255,255,0.8); margin-top:4px;">Todos os empenhos e movimentações encontrados no Portal da Transparência para este fornecedor no ano</div>
+            </div>
+            <button type="button" onclick="fecharModalMovimentacoesFornecedor()" style="background:transparent; border:none; color:#fff; font-size:24px; cursor:pointer; line-height:1;">&times;</button>
+        </div>
+
+        <div id="conteudoModalMovimentacoesFornecedor" style="padding:22px; overflow-y:auto; background:#f4f6f8; flex:1;"></div>
+
+        <div style="padding:12px 20px; background:#fbfcfd; border-top:1px solid #cfd7df; text-align:right; flex-shrink:0;">
+            <button type="button" class="btn-primary" onclick="fecharModalMovimentacoesFornecedor()" style="width:auto; padding:8px 16px;">Fechar</button>
         </div>
     </div>
 </div>
@@ -15190,7 +15658,7 @@ return true;
 <div id="fatRelatorioImpressao" style="display:none;"></div>
 
 <!-- MODAL: DADOS DA LICITAÇÃO -->
-<div id="modalLicitacaoEmpenho" style="display:none; position:fixed; inset:0; background:rgba(15, 59, 94, 0.4); z-index:10002; align-items:center; justify-content:center; padding:24px;">
+<div id="modalLicitacaoEmpenho" style="display:none; position:fixed; inset:0; background:rgba(15, 59, 94, 0.4); z-index:10013; align-items:center; justify-content:center; padding:24px;">
     <div style="background:#fff; width:100%; max-width:1100px; border-radius:5px; border:1px solid #bac5d0; box-shadow:0 4px 18px rgba(0,0,0,0.18); overflow:hidden; display:flex; flex-direction:column; max-height:92vh;">
         <div style="background:#c98a16; color:#fff; padding:16px 22px; display:flex; justify-content:space-between; align-items:center; gap:16px; border-bottom:1px solid #a37012; flex-shrink:0;">
             <div>
@@ -15211,7 +15679,7 @@ return true;
         </div>
     </div>
 </div>
-<div id="modalContratoEmpenho" style="display:none; position:fixed; inset:0; background:rgba(15, 59, 94, 0.4); z-index:10001; align-items:center; justify-content:center; padding:24px;">
+<div id="modalContratoEmpenho" style="display:none; position:fixed; inset:0; background:rgba(15, 59, 94, 0.4); z-index:10012; align-items:center; justify-content:center; padding:24px;">
     <div style="background:#fff; width:100%; max-width:1100px; border-radius:5px; border:1px solid #bac5d0; box-shadow:0 4px 18px rgba(0,0,0,0.18); overflow:hidden; display:flex; flex-direction:column; max-height:92vh;">
         <div style="background:#1e6b3b; color:#fff; padding:16px 22px; display:flex; justify-content:space-between; align-items:center; gap:16px; border-bottom:1px solid #155229; flex-shrink:0;">
             <div>

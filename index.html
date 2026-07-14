@@ -108,6 +108,7 @@
         .status-label { padding: 3px 8px; border-radius: 2px; font-size: 11px; font-weight: bold; display: inline-block; }
         .status-sim { background-color: #e6f4ea; color: #1e4620; border: 1px solid #c8e6c9; }
         .status-nao { background-color: #fce8e6; color: #a50e0e; border: 1px solid #f8bbd0; }
+        .status-indef { background-color: #fff3cd; color: #856404; border: 1px solid #ffe69c; }
 
         #panel-calculadora, #panel-issqn { opacity: 0.55; pointer-events: none; transition: opacity 0.3s; }
 
@@ -3294,8 +3295,16 @@ body.print-retencao .col-retencao {
 
         <div class="result-container" id="result" style="display: none;">
             <div style="background: #ffffff; border: 1px solid #d7e0e8; border-radius: 8px; padding: 16px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 1px;">
-
+                <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 1px; position: relative;">
+                    <div id="fonteConsultaBadge" onclick="toggleFonteConsultaPainel(event)" style="display:none; align-items:center; gap:6px; cursor:pointer; font-size:12px; padding:4px 10px; border-radius:12px; border:1px solid transparent; user-select:none;">
+                        <span id="fonteConsultaIcone"></span>
+                        <span id="fonteConsultaTexto"></span>
+                    </div>
+                    <div id="fonteConsultaPainel" style="display:none; position:absolute; top:100%; right:0; margin-top:6px; z-index:50; background:#ffffff; border:1px solid #d7e0e8; border-radius:8px; box-shadow:0 4px 16px rgba(0,0,0,0.12); padding:12px 14px; font-size:12px; color:#333; min-width:260px; max-width:340px;">
+                        <div style="font-weight:bold; margin-bottom:8px; color:#495057;">Status das fontes de consulta</div>
+                        <div id="fonteConsultaLista" style="display:flex; flex-direction:column; gap:6px;"></div>
+                        <div style="margin-top:10px; padding-top:8px; border-top:1px solid #eef1f4; font-size:11px; color:#8a94a0;">O sistema consulta 3 fontes públicas e usa a primeira que responder corretamente, para não depender de uma única API.</div>
+                    </div>
                 </div>
 
                 <table class="data-table" id="tabela-dados"></table>
@@ -5045,12 +5054,22 @@ document.getElementById('cnpjInput').addEventListener('input', function (e) {
         // pelo restante do sistema (equivalente ao schema da BrasilAPI),
         // então nenhuma outra parte do código precisa ser alterada.
 
+        // Converte o valor bruto de "optante" em três estados possíveis:
+        // true  -> confirmadamente optante
+        // false -> confirmadamente NÃO optante
+        // null  -> a fonte não trouxe essa informação (não pode ser tratado como "não optante"!)
+        function paraBooleanOuNull(valor) {
+            if (valor === true || valor === 'True' || valor === 'Sim' || valor === 'S') return true;
+            if (valor === false || valor === 'False' || valor === 'Não' || valor === 'Nao' || valor === 'N') return false;
+            return null; // undefined, null, string vazia, ou qualquer valor não conclusivo
+        }
+
         function normalizarDadosBrasilAPI(data) {
             return {
                 razao_social: data.razao_social || '',
                 nome_fantasia: data.nome_fantasia || '',
-                opcao_pelo_simples: !!data.opcao_pelo_simples,
-                opcao_pelo_mei: !!data.opcao_pelo_mei,
+                opcao_pelo_simples: paraBooleanOuNull(data.opcao_pelo_simples),
+                opcao_pelo_mei: paraBooleanOuNull(data.opcao_pelo_mei),
                 data_opcao_pelo_simples: data.data_opcao_pelo_simples || '',
                 data_opcao_pelo_mei: data.data_opcao_pelo_mei || '',
                 municipio: data.municipio || '',
@@ -5075,16 +5094,31 @@ document.getElementById('cnpjInput').addEventListener('input', function (e) {
 
         function normalizarDadosCnpjWs(data) {
             const est = data.estabelecimento || {};
-            const simples = data.simples || {};
-            const simei = simples.mei || data.simei || {};
+            // IMPORTANTE: a API pública do CNPJ.ws NÃO retorna "simples.optante" nem
+            // "simples.mei.optante". Segundo a documentação oficial
+            // (docs.cnpj.ws/modelos-de-dados/simples-nacional), os campos corretos
+            // são "simples.simples" (optante pelo Simples?) e "simples.mei" (optante
+            // pelo MEI?), ambos diretamente dentro do objeto "simples".
+            //
+            // ATENÇÃO: esse objeto só vem preenchido se a empresa JÁ FOI optante
+            // pelo Simples ou pelo MEI em algum momento. Se a empresa NUNCA foi
+            // optante de nenhum dos dois, "data.simples" vem ausente/null.
+            // Isso NÃO é uma informação "indisponível" — pela própria documentação,
+            // a ausência do campo já é a confirmação de que a empresa nunca optou,
+            // ou seja, equivale a NÃO OPTANTE (false), e não a "não confirmado".
+            // Só tratamos como indefinido (null) o caso raro em que o objeto
+            // "simples" vem presente, mas sem o subcampo esperado.
+            const simples = data.simples;
+            const opcaoSimples = simples ? paraBooleanOuNull(simples.simples) : false;
+            const opcaoMei = simples ? paraBooleanOuNull(simples.mei) : false;
             const logradouroCompleto = [est.tipo_logradouro, est.logradouro].filter(Boolean).join(' ');
             return {
                 razao_social: data.razao_social || '',
                 nome_fantasia: est.nome_fantasia || '',
-                opcao_pelo_simples: simples.optante === true || simples.optante === 'True',
-                opcao_pelo_mei: simei.optante === true || simei.optante === 'True',
-                data_opcao_pelo_simples: simples.data_opcao || '',
-                data_opcao_pelo_mei: simei.data_opcao || '',
+                opcao_pelo_simples: opcaoSimples,
+                opcao_pelo_mei: opcaoMei,
+                data_opcao_pelo_simples: (simples && simples.data_opcao_simples) || '',
+                data_opcao_pelo_mei: (simples && simples.data_opcao_mei) || '',
                 municipio: (est.cidade && est.cidade.nome) || '',
                 uf: (est.estado && est.estado.sigla) || '',
                 logradouro: logradouroCompleto,
@@ -5112,8 +5146,8 @@ document.getElementById('cnpjInput').addEventListener('input', function (e) {
             return {
                 razao_social: data.nome || '',
                 nome_fantasia: data.fantasia || '',
-                opcao_pelo_simples: simples.optante === true || simples.optante === 'True' || data.opcao_pelo_simples === 'Sim',
-                opcao_pelo_mei: simei.optante === true || simei.optante === 'True' || data.opcao_pelo_mei === 'Sim',
+                opcao_pelo_simples: paraBooleanOuNull(simples.optante !== undefined ? simples.optante : data.opcao_pelo_simples),
+                opcao_pelo_mei: paraBooleanOuNull(simei.optante !== undefined ? simei.optante : data.opcao_pelo_mei),
                 data_opcao_pelo_simples: simples.data_opcao || '',
                 data_opcao_pelo_mei: simei.data_opcao || '',
                 municipio: data.municipio || '',
@@ -5159,6 +5193,12 @@ document.getElementById('cnpjInput').addEventListener('input', function (e) {
             ];
 
             const erros = [];
+            // Registra o resultado de CADA fonte (sucesso ou falha) para exibir
+            // depois no badge/painel discreto de status das fontes.
+            const statusFontes = [];
+            let dadosPrincipais = null;
+            let fontePrincipal = null;
+
             for (const fonte of fontes) {
                 try {
                     const controller = new AbortController();
@@ -5175,15 +5215,142 @@ document.getElementById('cnpjInput').addEventListener('input', function (e) {
                     const dadosNormalizados = fonte.normalizar(bruto);
                     if (!dadosNormalizados.razao_social) throw new Error('Resposta sem razão social.');
 
-                    return { dados: dadosNormalizados, fonteUsada: fonte.nome };
+                    dadosPrincipais = dadosNormalizados;
+                    fontePrincipal = fonte.nome;
+                    statusFontes.push({ nome: fonte.nome, ok: true, usada: true, mensagem: 'Respondeu e forneceu os dados.' });
+                    break;
                 } catch (err) {
-                    erros.push(`${fonte.nome}: ${err.message || err}`);
+                    const msg = err && err.message ? err.message : String(err);
+                    erros.push(`${fonte.nome}: ${msg}`);
+                    statusFontes.push({ nome: fonte.nome, ok: false, usada: false, mensagem: msg });
                     console.warn(`Falha ao consultar CNPJ via ${fonte.nome}:`, err);
                 }
             }
 
-            throw new Error(`Todas as fontes de consulta falharam. Detalhes: ${erros.join(' | ')}`);
+            if (!dadosPrincipais) {
+                const erroFinal = new Error(`Todas as fontes de consulta falharam. Detalhes: ${erros.join(' | ')}`);
+                erroFinal.statusFontes = statusFontes;
+                throw erroFinal;
+            }
+
+            // IMPORTANTE: a fonte principal pode trazer os dados cadastrais certinhos
+            // mas não saber informar o Simples Nacional/MEI (campo null). Nesse caso,
+            // NÃO se pode concluir "não optante" — é preciso tentar confirmar esse
+            // dado específico nas outras fontes antes de desistir.
+            if (dadosPrincipais.opcao_pelo_simples === null || dadosPrincipais.opcao_pelo_mei === null) {
+                const fontesRestantes = fontes.filter(f => f.nome !== fontePrincipal);
+                for (const fonte of fontesRestantes) {
+                    if (dadosPrincipais.opcao_pelo_simples !== null && dadosPrincipais.opcao_pelo_mei !== null) break;
+                    try {
+                        const controller = new AbortController();
+                        const timeoutId = setTimeout(() => controller.abort(), 12000);
+                        const response = await fetch(fonte.url, { signal: controller.signal });
+                        clearTimeout(timeoutId);
+                        if (!response.ok) continue;
+                        const bruto = await response.json();
+                        if (bruto && bruto.status === 'ERROR') continue;
+
+                        const extra = fonte.normalizar(bruto);
+                        if (dadosPrincipais.opcao_pelo_simples === null && extra.opcao_pelo_simples !== null) {
+                            dadosPrincipais.opcao_pelo_simples = extra.opcao_pelo_simples;
+                            dadosPrincipais.data_opcao_pelo_simples = dadosPrincipais.data_opcao_pelo_simples || extra.data_opcao_pelo_simples;
+                            console.info(`Situação do Simples Nacional confirmada via fonte alternativa: ${fonte.nome}`);
+                        }
+                        if (dadosPrincipais.opcao_pelo_mei === null && extra.opcao_pelo_mei !== null) {
+                            dadosPrincipais.opcao_pelo_mei = extra.opcao_pelo_mei;
+                            dadosPrincipais.data_opcao_pelo_mei = dadosPrincipais.data_opcao_pelo_mei || extra.data_opcao_pelo_mei;
+                            console.info(`Situação do MEI confirmada via fonte alternativa: ${fonte.nome}`);
+                        }
+                    } catch (err) {
+                        console.warn(`Falha ao tentar confirmar Simples/MEI via ${fonte.nome}:`, err);
+                    }
+                }
+            }
+
+            // Fontes que nem chegaram a ser tentadas (porque uma anterior já
+            // deu certo) entram na lista como "não consultada" — não é uma
+            // falha, só não foi necessário usá-la.
+            for (const fonte of fontes) {
+                if (!statusFontes.find(s => s.nome === fonte.nome)) {
+                    statusFontes.push({ nome: fonte.nome, ok: null, usada: false, mensagem: 'Não foi necessário consultar (fonte anterior já respondeu).' });
+                }
+            }
+            // Reordena statusFontes na ordem original das fontes, para exibição consistente
+            statusFontes.sort((a, b) => fontes.findIndex(f => f.nome === a.nome) - fontes.findIndex(f => f.nome === b.nome));
+
+            return { dados: dadosPrincipais, fonteUsada: fontePrincipal, statusFontes };
         }
+
+        // ===== Badge discreto de status das fontes de consulta =====
+        // Mostra, de forma sutil, se alguma das 3 APIs falhou, sem interromper
+        // o fluxo do usuário. Clicando no badge, abre um painel com detalhes.
+        function atualizarBadgeFontesConsulta(statusFontes, fonteUsada) {
+            const badge = document.getElementById('fonteConsultaBadge');
+            const icone = document.getElementById('fonteConsultaIcone');
+            const texto = document.getElementById('fonteConsultaTexto');
+            const lista = document.getElementById('fonteConsultaLista');
+            if (!badge || !statusFontes) return;
+
+            const falhas = statusFontes.filter(s => s.ok === false);
+
+            if (falhas.length === 0) {
+                // Tudo certo na primeira fonte: badge quase imperceptível, só confirma a fonte.
+                badge.style.background = '#f4f9f5';
+                badge.style.borderColor = '#dcedde';
+                badge.style.color = '#4a7a56';
+                icone.textContent = '●';
+                icone.style.color = '#5cb377';
+                texto.textContent = fonteUsada ? `Fonte: ${fonteUsada}` : 'Consulta OK';
+            } else if (fonteUsada) {
+                // Usou uma fonte alternativa ou teve falhas parciais: aviso amarelo discreto.
+                badge.style.background = '#fff8ec';
+                badge.style.borderColor = '#f5e3bd';
+                badge.style.color = '#8a6d1f';
+                icone.textContent = '⚠';
+                icone.style.color = '#c99a2e';
+                texto.textContent = `${falhas.length} de 3 fontes falharam`;
+            } else {
+                // Todas falharam: aviso vermelho discreto (a consulta em si já falhou globalmente).
+                badge.style.background = '#fdf1f1';
+                badge.style.borderColor = '#f3cfcf';
+                badge.style.color = '#a13a3a';
+                icone.textContent = '⚠';
+                icone.style.color = '#c94545';
+                texto.textContent = 'Nenhuma fonte respondeu';
+            }
+
+            // Monta a lista de detalhes por fonte
+            const iconePorStatus = (s) => s.ok === true ? '✓' : (s.ok === false ? '✕' : '–');
+            const corPorStatus = (s) => s.ok === true ? '#4a7a56' : (s.ok === false ? '#a13a3a' : '#9aa3ab');
+            lista.innerHTML = statusFontes.map(s => `
+                <div style="display:flex; gap:8px; align-items:flex-start;">
+                    <span style="color:${corPorStatus(s)}; font-weight:bold; width:14px; flex-shrink:0;">${iconePorStatus(s)}</span>
+                    <div>
+                        <div style="font-weight:600; color:#2c333a;">${s.nome}${s.usada ? ' (usada)' : ''}</div>
+                        <div style="color:#6b7580;">${s.mensagem}</div>
+                    </div>
+                </div>
+            `).join('');
+
+            badge.style.display = 'inline-flex';
+            badge.style.border = '1px solid';
+            document.getElementById('fonteConsultaPainel').style.display = 'none';
+        }
+
+        function toggleFonteConsultaPainel(evt) {
+            if (evt) evt.stopPropagation();
+            const painel = document.getElementById('fonteConsultaPainel');
+            painel.style.display = (painel.style.display === 'none' || !painel.style.display) ? 'block' : 'none';
+        }
+
+        // Fecha o painel ao clicar fora dele
+        document.addEventListener('click', function(evt) {
+            const painel = document.getElementById('fonteConsultaPainel');
+            const badge = document.getElementById('fonteConsultaBadge');
+            if (!painel || painel.style.display === 'none') return;
+            if (painel.contains(evt.target) || (badge && badge.contains(evt.target))) return;
+            painel.style.display = 'none';
+        });
 
         async function consultarCNPJ() {
     const cnpj = document.getElementById('cnpjInput').value.replace(/\D/g, '');
@@ -5193,14 +5360,22 @@ document.getElementById('cnpjInput').addEventListener('input', function (e) {
     document.getElementById('loading').style.display = 'block';
 
     try {
-                const { dados: data, fonteUsada } = await buscarDadosCNPJComFallback(cnpj);
+                const { dados: data, fonteUsada, statusFontes } = await buscarDadosCNPJComFallback(cnpj);
                 if (fonteUsada !== 'BrasilAPI') {
                     console.info(`Consulta de CNPJ realizada via fonte alternativa: ${fonteUsada}`);
                 }
+                atualizarBadgeFontesConsulta(statusFontes, fonteUsada);
                 ultimoCNPJConsultado = cnpj;
 
-                empresaSimplesNacional = !!data.opcao_pelo_simples;
-                empresaMEI = !!data.opcao_pelo_mei;
+                // Três estados possíveis: true (optante), false (não optante),
+                // null (nenhuma fonte conseguiu confirmar - NÃO tratar como "não optante")
+                empresaSimplesNacional = data.opcao_pelo_simples === true;
+                empresaMEI = data.opcao_pelo_mei === true;
+                const simplesIndefinido = data.opcao_pelo_simples === null;
+                const meiIndefinido = data.opcao_pelo_mei === null;
+                if (simplesIndefinido || meiIndefinido) {
+                    console.warn('Não foi possível confirmar em nenhuma das 3 fontes o enquadramento no Simples/MEI para este CNPJ. Requer verificação manual.');
+                }
 
                 document.getElementById('regime-mei').checked = empresaMEI;
                 document.getElementById('regime-simples').checked = empresaSimplesNacional;
@@ -5218,8 +5393,10 @@ document.getElementById('cnpjInput').addEventListener('input', function (e) {
                 marcarCamposFiscaisPendentes();
 
                 // Preenche tabela de dados
-                const classSimples = empresaSimplesNacional ? 'status-sim' : 'status-nao';
-                const classMEI = empresaMEI ? 'status-sim' : 'status-nao';
+                const classSimples = simplesIndefinido ? 'status-indef' : (empresaSimplesNacional ? 'status-sim' : 'status-nao');
+                const classMEI = meiIndefinido ? 'status-indef' : (empresaMEI ? 'status-sim' : 'status-nao');
+                const labelSimples = simplesIndefinido ? 'NÃO CONFIRMADO' : (empresaSimplesNacional ? 'OPTANTE' : 'NÃO OPTANTE');
+                const labelMEI = meiIndefinido ? 'NÃO CONFIRMADO' : (empresaMEI ? 'OPTANTE' : 'NÃO OPTANTE');
                 const nomeFantasia = data.nome_fantasia || 'Não informado';
                 const telefone = data.ddd_telefone_1 || data.ddd_telefone_2 || 'Não informado';
                 const enderecoCompleto = `${data.logradouro || ''}, ${data.numero || 'S/N'}${data.complemento ? ' - ' + data.complemento : ''}`;
@@ -5238,8 +5415,8 @@ document.getElementById('cnpjInput').addEventListener('input', function (e) {
                         <tr><th>UF</th><td>${data.uf || ''}</td>
                         <tr><th>CEP</th><td>${data.cep || ''}</td>
                         <tr><th>Telefone</th><td>${telefone}</td>
-                        <tr><th>Simples Nacional</th><td><span class="status-label ${classSimples}">${empresaSimplesNacional ? 'OPTANTE' : 'NÃO OPTANTE'}</span></td>
-                        <tr><th>MEI</th><td><span class="status-label ${classMEI}">${empresaMEI ? 'OPTANTE' : 'NÃO OPTANTE'}</span></td>
+                        <tr><th>Simples Nacional</th><td><span class="status-label ${classSimples}">${labelSimples}</span></td>
+                        <tr><th>MEI</th><td><span class="status-label ${classMEI}">${labelMEI}</span></td>
                     </tbody>
                 `;
 
@@ -5263,8 +5440,8 @@ document.getElementById('cnpjInput').addEventListener('input', function (e) {
         capitalSocial: data.capital_social || 'Não informado',
         cnaePrincipal: data.cnae_fiscal_descricao || 'Não informado',
         cnaePrincipalCodigo: data.cnae_fiscal || 'Não informado',
-        simplesNacional: !!data.opcao_pelo_simples,
-        mei: !!data.opcao_pelo_mei,
+        simplesNacional: empresaSimplesNacional,
+        mei: empresaMEI,
         situacaoCadastral: data.descricao_situacao_cadastral || 'Não informado',
         dataSituacaoCadastral: data.data_situacao_cadastral || 'Não informado'
     });
@@ -5285,6 +5462,9 @@ document.getElementById('cnpjInput').addEventListener('input', function (e) {
                               if (empresaSimplesNacional || empresaMEI) {
                     document.getElementById('status-enquadramento').className = 'alert-box alert-simples';
                     document.getElementById('status-enquadramento').innerHTML = '<strong>Enquadramento:</strong> MEI ou Simples Nacional → dispensa IRRF.';
+                } else if (simplesIndefinido || meiIndefinido) {
+                    document.getElementById('status-enquadramento').className = 'alert-box alert-normal';
+                    document.getElementById('status-enquadramento').innerHTML = '<strong>Atenção:</strong> não foi possível confirmar automaticamente o enquadramento no Simples Nacional/MEI nas 3 fontes consultadas. Verifique manualmente no site da Receita Federal antes de aplicar ou dispensar a retenção.';
                 } else {
                     document.getElementById('status-enquadramento').className = 'alert-box alert-normal';
                     document.getElementById('status-enquadramento').innerHTML = '<strong>Enquadramento:</strong> não optante Simples → avaliar retenção IRF.';
@@ -5313,8 +5493,8 @@ document.getElementById('cnpjInput').addEventListener('input', function (e) {
                     <div class="rfb-box">
                         <div class="rfb-box-header">Situação Atual</div>
                         <div class="rfb-box-content">
-                             Situação no Simples Nacional: <span class="rfb-texto-verde">${empresaSimplesNacional ? 'OPTANTE pelo Simples Nacional' : 'NÃO optante pelo Simples Nacional'}${empresaSimplesNacional && data.data_opcao_pelo_simples ? ' desde ' + data.data_opcao_pelo_simples.split('-').reverse().join('/') : ''}</span><br>
-                            Situação no SIMEI: <span class="rfb-texto-verde">${empresaMEI ? 'OPTANTE pelo SIMEI' : 'NÃO enquadrado no SIMEI'}${empresaMEI && data.data_opcao_pelo_mei ? ' desde ' + data.data_opcao_pelo_mei.split('-').reverse().join('/') : ''}</span>
+                             Situação no Simples Nacional: <span class="rfb-texto-verde">${simplesIndefinido ? 'NÃO CONFIRMADO AUTOMATICAMENTE - verificar manualmente' : (empresaSimplesNacional ? 'OPTANTE pelo Simples Nacional' : 'NÃO optante pelo Simples Nacional')}${empresaSimplesNacional && data.data_opcao_pelo_simples ? ' desde ' + data.data_opcao_pelo_simples.split('-').reverse().join('/') : ''}</span><br>
+                            Situação no SIMEI: <span class="rfb-texto-verde">${meiIndefinido ? 'NÃO CONFIRMADO AUTOMATICAMENTE - verificar manualmente' : (empresaMEI ? 'OPTANTE pelo SIMEI' : 'NÃO enquadrado no SIMEI')}${empresaMEI && data.data_opcao_pelo_mei ? ' desde ' + data.data_opcao_pelo_mei.split('-').reverse().join('/') : ''}</span>
                         </div>
                     </div>
 
@@ -5327,6 +5507,9 @@ document.getElementById('cnpjInput').addEventListener('input', function (e) {
                 `;
             } catch (error) {
                 console.error('Erro na consulta do CNPJ (todas as fontes falharam):', error);
+                if (error && error.statusFontes) {
+                    atualizarBadgeFontesConsulta(error.statusFontes, null);
+                }
                 alert('Erro na consulta do CNPJ. Foram tentadas 3 fontes diferentes (BrasilAPI, CNPJ.ws e ReceitaWS) e nenhuma respondeu. Verifique sua conexão e tente novamente em instantes, ou preencha os dados manualmente.');
             } finally {
                 document.getElementById('loading').style.display = 'none';
@@ -5637,6 +5820,10 @@ function resetarCamposAposNovoCNPJ() {
   document.getElementById('btnImprimir').style.display = 'none';
   document.getElementById('orientacaoImpressaoCnpjBox').style.display = 'none';
   document.getElementById('loading').style.display = 'none';
+  const badgeFonte = document.getElementById('fonteConsultaBadge');
+  if (badgeFonte) badgeFonte.style.display = 'none';
+  const painelFonte = document.getElementById('fonteConsultaPainel');
+  if (painelFonte) painelFonte.style.display = 'none';
 
   document.getElementById('tabela-dados').innerHTML = '';
 

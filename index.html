@@ -3295,15 +3295,20 @@ body.print-retencao .col-retencao {
 
         <div class="result-container" id="result" style="display: none;">
             <div style="background: #ffffff; border: 1px solid #d7e0e8; border-radius: 8px; padding: 16px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 1px; position: relative;">
-                    <div id="fonteConsultaBadge" onclick="toggleFonteConsultaPainel(event)" style="display:none; align-items:center; gap:6px; cursor:pointer; font-size:12px; padding:4px 10px; border-radius:12px; border:1px solid transparent; user-select:none;">
-                        <span id="fonteConsultaIcone"></span>
-                        <span id="fonteConsultaTexto"></span>
+                <div id="fonteConsultaWrapper" style="position: relative; margin-bottom: 1px;">
+                    <div id="fonteConsultaBadge" onclick="toggleFonteConsultaPainel(event)" class="alert-box alert-neutro" style="display:none; align-items:center; gap:10px; cursor:pointer; user-select:none; margin-bottom:12px; padding:8px 12px;">
+                        <div id="fonteConsultaTermometro" style="flex-shrink:0; width:64px; height:8px; border-radius:4px; background:#e2e6ea; overflow:hidden; display:flex; gap:2px; padding:1px;">
+                            <span class="fonteConsultaSegmento" style="flex:1; border-radius:2px; background:#d7dde2;"></span>
+                            <span class="fonteConsultaSegmento" style="flex:1; border-radius:2px; background:#d7dde2;"></span>
+                            <span class="fonteConsultaSegmento" style="flex:1; border-radius:2px; background:#d7dde2;"></span>
+                        </div>
+                        <span id="fonteConsultaTexto" style="font-size:12px;"></span>
+                        <span style="margin-left:auto; font-size:11px; color:#9aa3ab;">detalhes ▾</span>
                     </div>
-                    <div id="fonteConsultaPainel" style="display:none; position:absolute; top:100%; right:0; margin-top:6px; z-index:50; background:#ffffff; border:1px solid #d7e0e8; border-radius:8px; box-shadow:0 4px 16px rgba(0,0,0,0.12); padding:12px 14px; font-size:12px; color:#333; min-width:260px; max-width:340px;">
-                        <div style="font-weight:bold; margin-bottom:8px; color:#495057;">Status das fontes de consulta</div>
+                    <div id="fonteConsultaPainel" style="display:none; position:absolute; top:100%; left:0; margin-top:-8px; z-index:50; background:#ffffff; border:1px solid #d7e0e8; border-radius:8px; box-shadow:0 4px 16px rgba(0,0,0,0.12); padding:12px 14px; font-size:12px; color:#333; min-width:260px; max-width:340px;">
+                        <div style="font-weight:bold; margin-bottom:8px; color:#495057;">Confirmação por fontes independentes</div>
                         <div id="fonteConsultaLista" style="display:flex; flex-direction:column; gap:6px;"></div>
-                        <div style="margin-top:10px; padding-top:8px; border-top:1px solid #eef1f4; font-size:11px; color:#8a94a0;">O sistema consulta 3 fontes públicas e usa a primeira que responder corretamente, para não depender de uma única API.</div>
+                        <div style="margin-top:10px; padding-top:8px; border-top:1px solid #eef1f4; font-size:11px; color:#8a94a0;">Sempre consultamos ao menos 2 fontes públicas e comparamos os resultados; uma 3ª fonte é usada como desempate quando necessário, para nenhuma informação depender de uma única API.</div>
                     </div>
                 </div>
 
@@ -5170,20 +5175,25 @@ document.getElementById('cnpjInput').addEventListener('input', function (e) {
             };
         }
 
-        // Cada fonte é tentada em sequência; se uma falhar (rede, timeout,
-        // CNPJ não encontrado, limite de consultas etc.) a próxima é usada
-        // automaticamente, de forma transparente para o restante do sistema.
+        // Ordem de prioridade: CNPJ.ws -> BrasilAPI -> ReceitaWS.
+        // Estratégia "2 de 3": consultamos SEMPRE as duas primeiras fontes
+        // (não paramos na primeira que responder) e cruzamos o resultado do
+        // Simples Nacional/MEI entre elas. A 3ª fonte (ReceitaWS) só entra em
+        // cena como reserva/desempate: quando uma das duas primeiras falha,
+        // ou quando as duas respondem mas discordam entre si sobre
+        // Simples/MEI. Isso evita ficar refém de uma única API dizer
+        // "não optante" por engano.
         async function buscarDadosCNPJComFallback(cnpj) {
             const fontes = [
-                {
-                    nome: 'BrasilAPI',
-                    url: `https://brasilapi.com.br/api/cnpj/v1/${cnpj}`,
-                    normalizar: normalizarDadosBrasilAPI
-                },
                 {
                     nome: 'CNPJ.ws',
                     url: `https://publica.cnpj.ws/cnpj/${cnpj}`,
                     normalizar: normalizarDadosCnpjWs
+                },
+                {
+                    nome: 'BrasilAPI',
+                    url: `https://brasilapi.com.br/api/cnpj/v1/${cnpj}`,
+                    normalizar: normalizarDadosBrasilAPI
                 },
                 {
                     nome: 'ReceitaWS',
@@ -5192,14 +5202,9 @@ document.getElementById('cnpjInput').addEventListener('input', function (e) {
                 }
             ];
 
-            const erros = [];
-            // Registra o resultado de CADA fonte (sucesso ou falha) para exibir
-            // depois no badge/painel discreto de status das fontes.
             const statusFontes = [];
-            let dadosPrincipais = null;
-            let fontePrincipal = null;
 
-            for (const fonte of fontes) {
+            async function consultarFonte(fonte) {
                 try {
                     const controller = new AbortController();
                     const timeoutId = setTimeout(() => controller.abort(), 12000);
@@ -5212,59 +5217,99 @@ document.getElementById('cnpjInput').addEventListener('input', function (e) {
                     // ReceitaWS retorna status "ERROR" com HTTP 200 em alguns casos
                     if (bruto && bruto.status === 'ERROR') throw new Error(bruto.message || 'CNPJ não encontrado.');
 
-                    const dadosNormalizados = fonte.normalizar(bruto);
-                    if (!dadosNormalizados.razao_social) throw new Error('Resposta sem razão social.');
+                    const dados = fonte.normalizar(bruto);
+                    if (!dados.razao_social) throw new Error('Resposta sem razão social.');
 
-                    dadosPrincipais = dadosNormalizados;
-                    fontePrincipal = fonte.nome;
                     statusFontes.push({ nome: fonte.nome, ok: true, usada: true, mensagem: 'Respondeu e forneceu os dados.' });
-                    break;
+                    return dados;
                 } catch (err) {
                     const msg = err && err.message ? err.message : String(err);
-                    erros.push(`${fonte.nome}: ${msg}`);
                     statusFontes.push({ nome: fonte.nome, ok: false, usada: false, mensagem: msg });
                     console.warn(`Falha ao consultar CNPJ via ${fonte.nome}:`, err);
+                    return null;
                 }
+            }
+
+            // Passo 1: consulta as DUAS primeiras fontes em paralelo (sempre as duas,
+            // não só até a primeira que responder — é isso que garante a checagem cruzada).
+            const [resA, resB] = await Promise.all([consultarFonte(fontes[0]), consultarFonte(fontes[1])]);
+
+            let dadosPrincipais = null;
+            let fontePrincipal = null;
+            let precisaDesempate = false;
+
+            if (resA && resB) {
+                // As duas responderam: usamos a primeira (CNPJ.ws) como base,
+                // mas conferimos se elas concordam sobre Simples/MEI.
+                dadosPrincipais = resA;
+                fontePrincipal = fontes[0].nome;
+
+                const simplesBateu = (resA.opcao_pelo_simples === null || resB.opcao_pelo_simples === null)
+                    || (resA.opcao_pelo_simples === resB.opcao_pelo_simples);
+                const meiBateu = (resA.opcao_pelo_mei === null || resB.opcao_pelo_mei === null)
+                    || (resA.opcao_pelo_mei === resB.opcao_pelo_mei);
+
+                // Preenche o que uma sabe e a outra não
+                if (dadosPrincipais.opcao_pelo_simples === null && resB.opcao_pelo_simples !== null) {
+                    dadosPrincipais.opcao_pelo_simples = resB.opcao_pelo_simples;
+                    dadosPrincipais.data_opcao_pelo_simples = dadosPrincipais.data_opcao_pelo_simples || resB.data_opcao_pelo_simples;
+                }
+                if (dadosPrincipais.opcao_pelo_mei === null && resB.opcao_pelo_mei !== null) {
+                    dadosPrincipais.opcao_pelo_mei = resB.opcao_pelo_mei;
+                    dadosPrincipais.data_opcao_pelo_mei = dadosPrincipais.data_opcao_pelo_mei || resB.data_opcao_pelo_mei;
+                }
+
+                if (!simplesBateu || !meiBateu) {
+                    console.warn(`CNPJ.ws e BrasilAPI divergem sobre Simples/MEI para este CNPJ. Acionando ReceitaWS como desempate.`);
+                    precisaDesempate = true;
+                }
+            } else if (resA || resB) {
+                // Só uma respondeu: usamos ela, mas ainda vamos à 3ª fonte
+                // para tentar CONFIRMAR (não só preencher lacuna) o resultado,
+                // já que não tivemos a checagem cruzada das duas primeiras.
+                dadosPrincipais = resA || resB;
+                fontePrincipal = resA ? fontes[0].nome : fontes[1].nome;
+                precisaDesempate = true;
+            }
+
+            // Passo 2: aciona a 3ª fonte (reserva) somente quando necessário —
+            // uma das duas primeiras falhou, nenhuma respondeu, ou elas divergiram.
+            const nenhumaRespondeu = !resA && !resB;
+            if (nenhumaRespondeu || precisaDesempate) {
+                const reserva = await consultarFonte(fontes[2]);
+                if (reserva) {
+                    if (!dadosPrincipais) {
+                        dadosPrincipais = reserva;
+                        fontePrincipal = fontes[2].nome;
+                    } else {
+                        // Usa a reserva para desempatar/confirmar Simples e MEI:
+                        // se 2 das 3 fontes concordam, vale a maioria; senão,
+                        // preenche o que ainda estiver em branco.
+                        if (dadosPrincipais.opcao_pelo_simples === null) {
+                            dadosPrincipais.opcao_pelo_simples = reserva.opcao_pelo_simples;
+                            dadosPrincipais.data_opcao_pelo_simples = dadosPrincipais.data_opcao_pelo_simples || reserva.data_opcao_pelo_simples;
+                        } else if (resA && resB && resA.opcao_pelo_simples !== resB.opcao_pelo_simples && reserva.opcao_pelo_simples !== null) {
+                            // Empate 1x1 entre as duas primeiras: ReceitaWS decide.
+                            dadosPrincipais.opcao_pelo_simples = reserva.opcao_pelo_simples;
+                        }
+                        if (dadosPrincipais.opcao_pelo_mei === null) {
+                            dadosPrincipais.opcao_pelo_mei = reserva.opcao_pelo_mei;
+                            dadosPrincipais.data_opcao_pelo_mei = dadosPrincipais.data_opcao_pelo_mei || reserva.data_opcao_pelo_mei;
+                        } else if (resA && resB && resA.opcao_pelo_mei !== resB.opcao_pelo_mei && reserva.opcao_pelo_mei !== null) {
+                            dadosPrincipais.opcao_pelo_mei = reserva.opcao_pelo_mei;
+                        }
+                    }
+                }
+            } else {
+                // Não foi necessário consultar a reserva
+                statusFontes.push({ nome: fontes[2].nome, ok: null, usada: false, mensagem: 'Não foi necessário consultar (as 2 primeiras fontes já confirmaram os dados).' });
             }
 
             if (!dadosPrincipais) {
-                const erroFinal = new Error(`Todas as fontes de consulta falharam. Detalhes: ${erros.join(' | ')}`);
+                const detalhes = statusFontes.filter(s => s.ok === false).map(s => `${s.nome}: ${s.mensagem}`).join(' | ');
+                const erroFinal = new Error(`Todas as fontes de consulta falharam. Detalhes: ${detalhes}`);
                 erroFinal.statusFontes = statusFontes;
                 throw erroFinal;
-            }
-
-            // IMPORTANTE: a fonte principal pode trazer os dados cadastrais certinhos
-            // mas não saber informar o Simples Nacional/MEI (campo null). Nesse caso,
-            // NÃO se pode concluir "não optante" — é preciso tentar confirmar esse
-            // dado específico nas outras fontes antes de desistir.
-            if (dadosPrincipais.opcao_pelo_simples === null || dadosPrincipais.opcao_pelo_mei === null) {
-                const fontesRestantes = fontes.filter(f => f.nome !== fontePrincipal);
-                for (const fonte of fontesRestantes) {
-                    if (dadosPrincipais.opcao_pelo_simples !== null && dadosPrincipais.opcao_pelo_mei !== null) break;
-                    try {
-                        const controller = new AbortController();
-                        const timeoutId = setTimeout(() => controller.abort(), 12000);
-                        const response = await fetch(fonte.url, { signal: controller.signal });
-                        clearTimeout(timeoutId);
-                        if (!response.ok) continue;
-                        const bruto = await response.json();
-                        if (bruto && bruto.status === 'ERROR') continue;
-
-                        const extra = fonte.normalizar(bruto);
-                        if (dadosPrincipais.opcao_pelo_simples === null && extra.opcao_pelo_simples !== null) {
-                            dadosPrincipais.opcao_pelo_simples = extra.opcao_pelo_simples;
-                            dadosPrincipais.data_opcao_pelo_simples = dadosPrincipais.data_opcao_pelo_simples || extra.data_opcao_pelo_simples;
-                            console.info(`Situação do Simples Nacional confirmada via fonte alternativa: ${fonte.nome}`);
-                        }
-                        if (dadosPrincipais.opcao_pelo_mei === null && extra.opcao_pelo_mei !== null) {
-                            dadosPrincipais.opcao_pelo_mei = extra.opcao_pelo_mei;
-                            dadosPrincipais.data_opcao_pelo_mei = dadosPrincipais.data_opcao_pelo_mei || extra.data_opcao_pelo_mei;
-                            console.info(`Situação do MEI confirmada via fonte alternativa: ${fonte.nome}`);
-                        }
-                    } catch (err) {
-                        console.warn(`Falha ao tentar confirmar Simples/MEI via ${fonte.nome}:`, err);
-                    }
-                }
             }
 
             // Fontes que nem chegaram a ser tentadas (porque uma anterior já
@@ -5281,47 +5326,43 @@ document.getElementById('cnpjInput').addEventListener('input', function (e) {
             return { dados: dadosPrincipais, fonteUsada: fontePrincipal, statusFontes };
         }
 
-        // ===== Badge discreto de status das fontes de consulta =====
-        // Mostra, de forma sutil, se alguma das 3 APIs falhou, sem interromper
-        // o fluxo do usuário. Clicando no badge, abre um painel com detalhes.
+        // ===== Termômetro discreto: quantas fontes confirmaram o resultado =====
+        // 3 segmentos horizontais, preenchidos conforme o nº de fontes (de 3)
+        // que responderam com sucesso e concordaram entre si. Clicando, abre
+        // o detalhamento de cada fonte.
         function atualizarBadgeFontesConsulta(statusFontes, fonteUsada) {
             const badge = document.getElementById('fonteConsultaBadge');
-            const icone = document.getElementById('fonteConsultaIcone');
             const texto = document.getElementById('fonteConsultaTexto');
             const lista = document.getElementById('fonteConsultaLista');
+            const segmentos = badge ? badge.querySelectorAll('.fonteConsultaSegmento') : [];
             if (!badge || !statusFontes) return;
 
-            const falhas = statusFontes.filter(s => s.ok === false);
+            const sucessos = statusFontes.filter(s => s.ok === true).length;
+            const falhas = statusFontes.filter(s => s.ok === false).length;
 
-            if (falhas.length === 0) {
-                // Tudo certo na primeira fonte: badge quase imperceptível, só confirma a fonte.
-                badge.style.background = '#f4f9f5';
-                badge.style.borderColor = '#dcedde';
-                badge.style.color = '#4a7a56';
-                icone.textContent = '●';
-                icone.style.color = '#5cb377';
-                texto.textContent = fonteUsada ? `Fonte: ${fonteUsada}` : 'Consulta OK';
-            } else if (fonteUsada) {
-                // Usou uma fonte alternativa ou teve falhas parciais: aviso amarelo discreto.
-                badge.style.background = '#fff8ec';
-                badge.style.borderColor = '#f5e3bd';
-                badge.style.color = '#8a6d1f';
-                icone.textContent = '⚠';
-                icone.style.color = '#c99a2e';
-                texto.textContent = `${falhas.length} de 3 fontes falharam`;
-            } else {
-                // Todas falharam: aviso vermelho discreto (a consulta em si já falhou globalmente).
-                badge.style.background = '#fdf1f1';
-                badge.style.borderColor = '#f3cfcf';
-                badge.style.color = '#a13a3a';
-                icone.textContent = '⚠';
-                icone.style.color = '#c94545';
+            // Cores reaproveitadas do restante do site (status-sim/indef/nao)
+            const corCheia = sucessos >= 2 ? '#5cb377' /* verde, como status-sim */
+                            : sucessos === 1 ? '#e0ad3f' /* amarelo, como status-indef */
+                            : '#d9534f'; /* vermelho, como status-nao */
+            const corVazia = '#e2e6ea';
+
+            segmentos.forEach((seg, i) => {
+                seg.style.background = (i < sucessos) ? corCheia : corVazia;
+            });
+
+            badge.style.borderColor = sucessos >= 2 ? '#c8e6c9' : (sucessos === 1 ? '#ffe69c' : '#f8bbd0');
+            badge.style.background = sucessos >= 2 ? '#f4f9f5' : (sucessos === 1 ? '#fffaf0' : '#fdf1f1');
+            badge.style.color = sucessos >= 2 ? '#1e4620' : (sucessos === 1 ? '#856404' : '#a50e0e');
+
+            if (sucessos === 0) {
                 texto.textContent = 'Nenhuma fonte respondeu';
+            } else {
+                texto.textContent = `Confirmado por ${sucessos} de 3 fontes`;
             }
 
             // Monta a lista de detalhes por fonte
             const iconePorStatus = (s) => s.ok === true ? '✓' : (s.ok === false ? '✕' : '–');
-            const corPorStatus = (s) => s.ok === true ? '#4a7a56' : (s.ok === false ? '#a13a3a' : '#9aa3ab');
+            const corPorStatus = (s) => s.ok === true ? '#1e4620' : (s.ok === false ? '#a50e0e' : '#9aa3ab');
             lista.innerHTML = statusFontes.map(s => `
                 <div style="display:flex; gap:8px; align-items:flex-start;">
                     <span style="color:${corPorStatus(s)}; font-weight:bold; width:14px; flex-shrink:0;">${iconePorStatus(s)}</span>
@@ -5332,8 +5373,7 @@ document.getElementById('cnpjInput').addEventListener('input', function (e) {
                 </div>
             `).join('');
 
-            badge.style.display = 'inline-flex';
-            badge.style.border = '1px solid';
+            badge.style.display = 'flex';
             document.getElementById('fonteConsultaPainel').style.display = 'none';
         }
 

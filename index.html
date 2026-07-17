@@ -566,6 +566,33 @@
     background: rgba(255,255,255,0.08);
 }
 
+.auth-tab.disabled-tab {
+    opacity: 0.55;
+    cursor: not-allowed;
+    position: relative;
+}
+
+.auth-tab.disabled-tab:hover {
+    background: inherit;
+}
+
+.auth-tab.disabled-tab::after {
+    content: "Indisponível";
+    position: absolute;
+    top: -8px;
+    right: -6px;
+    background: #a50e0e;
+    color: #fff;
+    font-size: 8px;
+    font-weight: bold;
+    padding: 2px 5px;
+    border-radius: 3px;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+    line-height: 1;
+}
+
+
 @media (max-width: 640px) {
     .auth-card-header,
     .auth-card-body {
@@ -2370,15 +2397,19 @@ body.print-retencao .col-retencao {
         <div class="auth-card">
             <div class="auth-card-header">
                 <h2>Acesso ao sistema</h2>
-                <p>Faça login ou crie sua conta para liberar o acesso.</p>
+                <p>Faça login para liberar o sistema completo. A tela de consulta de empenhos pode ser acessada como visitante.</p>
             </div>
 
             <div class="auth-card-body">
                 <div id="authMessage" class="auth-message"></div>
 
+                <div style="margin-bottom:14px;">
+                    <button type="button" class="auth-btn auth-btn-secondary" onclick="mostrarTela('consulta-empenho'); return false;">Entrar como visitante na consulta de empenhos</button>
+                </div>
+
                 <div class="auth-tabs">
                     <button type="button" class="auth-tab active" id="tabLogin">Login</button>
-                    <button type="button" class="auth-tab" id="tabCadastro">Cadastro</button>
+                    <button type="button" class="auth-tab disabled-tab" id="tabCadastro" aria-disabled="true" title="Cadastro de novas contas está temporariamente indisponível">Cadastro</button>
                 </div>
 
                 <form id="loginForm" class="auth-form active">
@@ -2434,16 +2465,16 @@ body.print-retencao .col-retencao {
 
 <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
   <span id="navSubtitle">Prefeitura Municipal de Iguatama - MG</span>
-  <button type="button" class="btn-primary" onclick="mostrarTela('consulta')" style="width: auto; padding: 8px 14px;">
+  <button type="button" class="btn-primary" data-require-auth="true" onclick="mostrarTela('consulta')" style="width: auto; padding: 8px 14px;">
     FISCAL
   </button>
-  <button type="button" class="btn-primary" onclick="mostrarTela('faturas')" style="width: auto; padding: 8px 14px;">
+  <button type="button" class="btn-primary" data-require-auth="true" onclick="mostrarTela('faturas')" style="width: auto; padding: 8px 14px;">
     FATURAS
   </button>
-  <button type="button" class="btn-primary" onclick="mostrarTela('lembretes')" style="width: auto; padding: 8px 14px;">
+  <button type="button" class="btn-primary" data-require-auth="true" onclick="mostrarTela('lembretes')" style="width: auto; padding: 8px 14px;">
     LEMBRETES
   </button>
-  <button type="button" class="btn-primary" onclick="mostrarTela('gestao-notas')" style="width: auto; padding: 8px 14px;">
+  <button type="button" class="btn-primary" data-require-auth="true" onclick="mostrarTela('gestao-notas')" style="width: auto; padding: 8px 14px;">
     GESTAO DE NOTAS
   </button>
   <button type="button" class="btn-primary" onclick="mostrarTela('consulta-empenho')" style="width: auto; padding: 8px 14px;">
@@ -2456,10 +2487,10 @@ body.print-retencao .col-retencao {
         </button>
 
         <div class="submenu-dropdown-cadastro">
-  <button type="button" onclick="mostrarTela('fornecedores')">
+  <button type="button" data-require-auth="true" onclick="mostrarTela('fornecedores')">
     Fornecedores
 </button>
-    <button type="button" onclick="mostrarTela('empenhos')">
+    <button type="button" data-require-auth="true" onclick="mostrarTela('empenhos')">
     Empenhos
 </button>
 </div>
@@ -3160,7 +3191,7 @@ body.print-retencao .col-retencao {
       <h2 style="font-size: 18px; color: #2c3e50; margin-bottom: 20px;">ACESSO RÁPIDO</h2>
       
      <div class="home-cards">
-  <button type="button" class="home-card" onclick="mostrarTela('consulta')">
+  <button type="button" class="home-card" data-require-auth="true" onclick="mostrarTela('consulta')">
     <div class="card-title">Consulta Fiscal</div>
     <div class="card-desc">Análise de IRF, ISSQN, retenções e impressão de comprovantes do Simples Nacional.</div>
   </button>
@@ -3170,19 +3201,19 @@ body.print-retencao .col-retencao {
     <div class="card-desc">Busque empenhos no Portal da Transparência por CNPJ e Nome.</div>
   </button>
 
-  <button type="button" class="home-card" onclick="mostrarTela('faturas')">
+  <button type="button" class="home-card" data-require-auth="true" onclick="mostrarTela('faturas')">
     <div class="badge-novo">NOVO</div>
     <div class="card-title">Controle de Faturas</div>
     <div class="card-desc">Cadastre endereços, lance faturas mensais e acompanhe vencimentos.</div>
   </button>
 
-  <button type="button" class="home-card" onclick="mostrarTela('lembretes')">
+  <button type="button" class="home-card" data-require-auth="true" onclick="mostrarTela('lembretes')">
     <div class="badge-novo">NOVO</div>
     <div class="card-title">Lembretes</div>
     <div class="card-desc">Crie lembretes compartilhados, acompanhe prioridades e visualize itens pendentes da equipe.</div>
   </button>
 
-  <button type="button" class="home-card" onclick="mostrarTela('fornecedores')">
+  <button type="button" class="home-card" data-require-auth="true" onclick="mostrarTela('fornecedores')">
     <div class="card-title">Fornecedores</div>
     <div class="card-desc">Banco de dados de fornecedores e prestadores de serviço cadastrados.</div>
   </button>
@@ -3193,7 +3224,7 @@ body.print-retencao .col-retencao {
     <div class="card-desc">Módulo antigo de lançamento de notas de consumo, mantido apenas como referência.</div>
   </button>
 
-<button type="button" class="home-card" onclick="mostrarTela('globais-estimativos')">
+<button type="button" class="home-card" data-require-auth="true" onclick="mostrarTela('globais-estimativos')">
   <div class="badge-novo">NOVO</div>
   <div class="card-title">Empenhos Globais e Estimativos</div>
   <div class="card-desc">Consulte os empenhos classificados como Global/Estimativo, com saldo restante e filtro por fornecedor.</div>
@@ -3205,7 +3236,7 @@ body.print-retencao .col-retencao {
     <div class="card-desc">Painel gerencial com indicadores, gasto por secretaria, função, evolução mensal, ranking de fornecedores e relatórios.</div>
   </button>
 
-  <button type="button" class="home-card" onclick="mostrarTela('gestao-notas')">
+  <button type="button" class="home-card" data-require-auth="true" onclick="mostrarTela('gestao-notas')">
     <div class="card-title">Gestão de Notas</div>
     <div class="card-desc">Crie novas tabelas e gerencie o histórico de remessas e notas lançadas.</div>
   </button>
@@ -3227,7 +3258,7 @@ body.print-retencao .col-retencao {
       <div class="mural-clean-subtitle">Itens mais recentes e classificado por prioritários</div>
     </div>
 
-    <button type="button" class="mural-clean-link" onclick="mostrarTela('lembretes')">
+    <button type="button" class="mural-clean-link" data-require-auth="true" onclick="mostrarTela('lembretes')">
       Abrir lista completa
     </button>
   </div>
@@ -3911,8 +3942,11 @@ body.print-retencao .col-retencao {
 </div>
 
 <div id="tela-consulta-empenho" class="screen-section">
+  <style>
+    #tela-consulta-empenho .panels-wrapper { max-width: 1650px; }
+  </style>
   <div class="panels-wrapper">
-    <div class="panel" style="width: 100%; max-width: 1400px;">
+    <div class="panel" style="width: 100%; max-width: 1650px;">
       <div class="panel-header" style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; background:#0f3b5e; border-bottom:1px solid #0a2942; padding:18px 20px;">
         <div>
           <h2 style="margin:0; color:#ffffff;">CONSULTA DE EMPENHOS</h2>
@@ -3967,23 +4001,24 @@ body.print-retencao .col-retencao {
                 </div>
 
                 <!-- Tabela de Dados -->
-              <div style="overflow-x: auto;">
-    <table class="data-table" style="min-width: 1260px;">
+              <div>
+    <table class="data-table" style="width: 100%; table-layout: fixed;">
         <thead>
             <tr>
-                <th style="width: 100px;">Empenho</th>
-                <th style="width: 320px;">Fornecedor</th>
-                <th style="width: 170px;">CNPJ/CPF</th>
-                <th style="width: 140px;">Data do Movimento</th>
-                <th style="width: 140px;">Empenhado</th>
-                <th style="width: 140px;">Liquidado</th>
-                <th style="width: 140px;">Pago</th>
-                <th style="width: 100px;">Ações</th>
+                <th style="width: 90px;">Empenho</th>
+                <th style="width: 300px;">Fornecedor</th>
+                <th style="width: 150px;">CNPJ/CPF</th>
+                <th style="width: 130px;">Natureza</th>
+                <th style="width: 120px;">Data do Movimento</th>
+                <th style="width: 120px;">Empenhado</th>
+                <th style="width: 120px;">Liquidado</th>
+                <th style="width: 120px;">Pago</th>
+                <th style="width: 90px;">Ações</th>
             </tr>
         </thead>
         <tbody id="api-tabela-corpo">
             <tr>
-                <td colspan="8" style="text-align: center; padding: 18px;">Utilize os filtros e clique em Buscar Dados.</td>
+                <td colspan="9" style="text-align: center; padding: 18px;">Utilize os filtros e clique em Buscar Dados.</td>
             </tr>
         </tbody>
     </table>
@@ -6536,6 +6571,81 @@ function obterTextoHistoricoEmpenho(item) {
     );
 }
 
+// Classifica a natureza do empenho (Mercadoria, Serviço, Diária, Adiantamento
+// ou Reembolso) com base no texto do histórico/descrição das movimentações
+// retornadas pelo Portal da Transparência (rota buscarMovimentacao).
+// Regras por palavras-chave, da mais específica para a mais genérica.
+const NATUREZA_EMPENHO_REGRAS = [
+    {
+        natureza: 'Diária',
+        termos: ['diaria', 'diarias', 'adiantamento de viagem', 'concessao de diaria', 'concessao de diarias']
+    },
+    {
+        natureza: 'Adiantamento',
+        termos: ['adiantamento', 'suprimento de fundo', 'suprimento de fundos', 'regime de adiantamento']
+    },
+    {
+        natureza: 'Reembolso',
+        termos: ['reembolso', 'ressarcimento', 'restituicao']
+    },
+    {
+        natureza: 'Serviço',
+        termos: [
+            'prestacao de servico', 'prestacao de servicos', 'contratacao de servico',
+            'contratacao de servicos', 'servicos de', 'servico de', 'servico prestado',
+            'mao de obra', 'locacao de', 'manutencao', 'consultoria', 'assessoria',
+            'honorarios', 'obra de', 'execucao de obra', 'prestacao dos servicos',
+            'referente a servico', 'referente ao servico', 'referente aos servicos',
+            'refere se a prestacao', 'refere se a contratacao', 'refere se ao servico',
+            'refere se aos servicos'
+        ]
+    },
+    {
+        natureza: 'Mercadoria',
+        termos: [
+            'aquisicao de material', 'aquisicao de materiais', 'fornecimento de material',
+            'fornecimento de materiais', 'compra de material', 'compra de materiais',
+            'aquisicao de mercadoria', 'aquisicao de mercadorias', 'fornecimento de mercadoria',
+            'fornecimento de mercadorias', 'aquisicao de genero', 'aquisicao de generos',
+            'aquisicao de equipamento', 'aquisicao de equipamentos', 'aquisicao de bem',
+            'aquisicao de bens', 'aquisicao de item', 'aquisicao de itens',
+            'aquisicao dos itens', 'aquisicao de produto', 'aquisicao de produtos',
+            'refere se a aquisicao', 'refere-se a aquisicao', 'referente a aquisicao',
+            'referente aquisicao', 'compra de', 'fornecimento de', 'aquisicao de'
+        ]
+    }
+];
+
+function classificarNaturezaEmpenho(listaMovimentacao) {
+    const itens = Array.isArray(listaMovimentacao) ? listaMovimentacao : (listaMovimentacao ? [listaMovimentacao] : []);
+    if (!itens.length) return null;
+
+    // Junta o histórico de todas as linhas de movimentação — o texto mais
+    // descritivo costuma estar no empenho inicial, mas pode variar.
+    const textoCompleto = itens
+        .map(item => obterTextoHistoricoEmpenho(item))
+        .filter(Boolean)
+        .join(' | ');
+
+    const texto = normalizarTexto(textoCompleto);
+    if (!texto) return null;
+
+    for (const regra of NATUREZA_EMPENHO_REGRAS) {
+        if (regra.termos.some(termo => texto.includes(termo))) {
+            return regra.natureza;
+        }
+    }
+
+    return null;
+}
+
+function renderizarBadgeNaturezaEmpenho(natureza) {
+    if (!natureza) {
+        return '<span style="font-size:12px; color:#66727d;">Não identificado</span>';
+    }
+    return `<span style="font-size:12px; color:#243746;">${natureza}</span>`;
+}
+
 function nomeContemAutoPosto(nome) {
     return normalizarTexto(nome || '').includes('auto posto');
 }
@@ -7349,7 +7459,59 @@ window.inicializarTelaLembretes = async function () {
   renderizarMuralHome();
 };
 
+function telaPublicaPermitida(tela) {
+  return tela === 'consulta-empenho';
+}
+
+function usuarioAutenticado() {
+  return !!(window.auth && window.auth.currentUser);
+}
+
+function atualizarInterfaceVisitante(telaAtual) {
+  const visitante = !usuarioAutenticado();
+  const modoPublico = visitante && telaPublicaPermitida(telaAtual);
+
+  document.querySelectorAll('[data-require-auth="true"]').forEach(function (el) {
+    if (modoPublico) {
+      el.style.display = 'none';
+    } else {
+      el.style.display = '';
+    }
+  });
+
+  const userBar = document.getElementById('userBar');
+  if (userBar && modoPublico) {
+    userBar.classList.remove('active');
+  }
+}
+
+function aplicarControleAcessoTela(tela) {
+  const overlay = document.getElementById('authOverlay');
+  const site = document.getElementById('siteContent');
+  const permitidoSemLogin = telaPublicaPermitida(tela);
+  const autenticado = usuarioAutenticado();
+
+  if (autenticado || permitidoSemLogin) {
+    if (overlay) overlay.classList.remove('active');
+    if (site) site.classList.remove('locked');
+    atualizarInterfaceVisitante(tela);
+    return true;
+  }
+
+  if (overlay) overlay.classList.add('active');
+  if (site) site.classList.add('locked');
+  atualizarInterfaceVisitante(tela);
+  return false;
+}
+
 function mostrarTela(tela, atualizarHash = true) {
+  if (!aplicarControleAcessoTela(tela)) {
+    if (atualizarHash && tela !== 'home') {
+      window.location.hash = 'home';
+    }
+    return;
+  }
+
   const telas = [
     document.getElementById('tela-home'),
     document.getElementById('tela-consulta'),
@@ -8994,7 +9156,7 @@ async function buscarDadosTransparencia(pagina = 1) {
     const filtroNome = document.getElementById('api-filtro-nome')?.value?.trim() || '';
     const filtroDoc = limparDocumento(document.getElementById('api-filtro-doc')?.value || '');
 
-    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:18px;">Carregando dados...</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; padding:18px;">Carregando dados...</td></tr>`;
     if (infoPag) infoPag.textContent = `Carregando página ${apiPaginaAtual}...`;
 
     const termoBase64 = filtroNome ? btoa(unescape(encodeURIComponent(filtroNome))) : '';
@@ -9044,7 +9206,7 @@ async function buscarDadosTransparencia(pagina = 1) {
         const totalElementos = Number(dataDetalhada?.totalElements || lista.length);
 
         if (!lista.length) {
-            tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:18px;">Nenhum registro encontrado.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; padding:18px;">Nenhum registro encontrado.</td></tr>`;
             if (infoPag) infoPag.textContent = 'Sem resultados';
             if (btnAnt) btnAnt.disabled = true;
             if (btnProx) btnProx.disabled = true;
@@ -9107,6 +9269,7 @@ async function buscarDadosTransparencia(pagina = 1) {
 
             const dataInicial = dataMovimentoLista ? formatarDataMovimento(dataMovimentoLista) : 'Carregando...';
             const linhaId = `mov-${String(numEmp).replace(/\W/g, '')}-${String(anoEmp).replace(/\W/g, '')}-${index}`;
+            const naturezaId = `nat-${String(numEmp).replace(/\W/g, '')}-${String(anoEmp).replace(/\W/g, '')}-${index}`;
 
             tr.innerHTML = `
                 <td style="font-weight:bold; color:#0f3b5e;">
@@ -9118,6 +9281,9 @@ async function buscarDadosTransparencia(pagina = 1) {
                 </td>
                 <td style="min-width:150px;">
                     <div style="font-size:12px; color:#66727d;">${docFornecedor}</div>
+                </td>
+                <td style="white-space:nowrap;" id="${naturezaId}">
+                    <span style="font-size:11px; color:#9aa5b1;">Classificando...</span>
                 </td>
                 <td style="white-space:nowrap;" id="${linhaId}">
                     ${dataInicial}
@@ -9139,9 +9305,7 @@ async function buscarDadosTransparencia(pagina = 1) {
 
             tbody.appendChild(tr);
 
-            if (!dataMovimentoLista && numEmp !== '-' && anoEmp !== '-') {
-                linhasParaAtualizarData.push({ numEmp, anoEmp, linhaId });
-            }
+            linhasParaAtualizarData.push({ numEmp, anoEmp, linhaId, naturezaId, temData: !!dataMovimentoLista });
         });
 
         if (infoPag) {
@@ -9153,16 +9317,17 @@ async function buscarDadosTransparencia(pagina = 1) {
         if (btnAnt) btnAnt.disabled = apiPaginaAtual <= 1;
         if (btnProx) btnProx.disabled = apiPaginaAtual >= apiTotalPaginas;
 
-for (const { numEmp, anoEmp, linhaId } of linhasParaAtualizarData) {
+for (const { numEmp, anoEmp, linhaId, naturezaId, temData } of linhasParaAtualizarData) {
     let veioDoCache = false;
+    let listaMov = [];
     try {
         // Tenta cache de sessão antes de ir ao portal
         let detalhe = null;
         const cachedMov = _ApiCache.getSession('mov', numEmp, anoEmp);
         if (cachedMov) {
             veioDoCache = true;
-            const lista = Array.isArray(cachedMov) ? cachedMov : [cachedMov];
-            detalhe = lista.slice().sort((a, b) =>
+            listaMov = Array.isArray(cachedMov) ? cachedMov : [cachedMov];
+            detalhe = listaMov.slice().sort((a, b) =>
                 String(b.datMovimento || '').localeCompare(String(a.datMovimento || ''))
             )[0];
         } else {
@@ -9171,18 +9336,30 @@ for (const { numEmp, anoEmp, linhaId } of linhasParaAtualizarData) {
             if (!resMov.ok) throw new Error(`HTTP ${resMov.status}`);
             const dataMov = await resMov.json();
             _ApiCache.setSession(dataMov, 'mov', numEmp, anoEmp);
-            detalhe = Array.isArray(dataMov) ? dataMov[0] : dataMov;
+            listaMov = Array.isArray(dataMov) ? dataMov : (dataMov ? [dataMov] : []);
+            detalhe = listaMov[0];
         }
 
-        const campo = document.getElementById(linhaId);
-        if (campo) {
-            campo.textContent = detalhe?.datMovimento
-                ? formatarDataMovimento(detalhe.datMovimento)
-                : '-';
+        if (!temData) {
+            const campo = document.getElementById(linhaId);
+            if (campo) {
+                campo.textContent = detalhe?.datMovimento
+                    ? formatarDataMovimento(detalhe.datMovimento)
+                    : '-';
+            }
+        }
+
+        const campoNatureza = document.getElementById(naturezaId);
+        if (campoNatureza) {
+            campoNatureza.innerHTML = renderizarBadgeNaturezaEmpenho(classificarNaturezaEmpenho(listaMov));
         }
     } catch (e) {
-        const campo = document.getElementById(linhaId);
-        if (campo) campo.textContent = '-';
+        if (!temData) {
+            const campo = document.getElementById(linhaId);
+            if (campo) campo.textContent = '-';
+        }
+        const campoNatureza = document.getElementById(naturezaId);
+        if (campoNatureza) campoNatureza.innerHTML = renderizarBadgeNaturezaEmpenho(null);
     }
 
     // Só pausa entre requisições reais (não para dados do cache)
@@ -9191,7 +9368,7 @@ for (const { numEmp, anoEmp, linhaId } of linhasParaAtualizarData) {
 
     } catch (error) {
         console.error('Erro ao buscar API Transparência:', error);
-        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:18px; color:#a50e0e;">Erro ao buscar dados da API: ${error.message}</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; padding:18px; color:#a50e0e;">Erro ao buscar dados da API: ${error.message}</td></tr>`;
         if (infoPag) infoPag.textContent = 'Erro na consulta';
         if (btnAnt) btnAnt.disabled = true;
         if (btnProx) btnProx.disabled = true;
@@ -11111,6 +11288,11 @@ function _htmlLicitacaoDetalhada(l, desLicitacaoEmpenho) {
 }
 
 function reclassificarEmpenho(numEmpenho, anoFinal) {
+    if (!usuarioAutenticado()) {
+        mostrarAvisoSistema('Acesso restrito', 'A classificação de empenho está disponível apenas para usuários logados.', 'Fechar');
+        return;
+    }
+
     abrirModalClassificarEmpenho(numEmpenho, anoFinal, () => {
         carregarDetalhesEmpenho(numEmpenho, anoFinal);
         // Se o painel de Globais/Estimativos já tiver sido carregado nesta sessão,
@@ -15446,7 +15628,9 @@ window.carregarFornecedoresNuvem = async function(reiniciar = false) {
     }
 
     tabLogin.addEventListener('click', () => ativarAba('login'));
-    tabCadastro.addEventListener('click', () => ativarAba('cadastro'));
+    tabCadastro.addEventListener('click', () => {
+        mostrarMensagem('O autocadastro de novas contas está temporariamente desabilitado. Para solicitar a criação de um acesso, favor entrar em contato com o Sr. Guilherme, do setor de Contabilidade.', 'error');
+    });
 
     cadastroForm.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -15929,7 +16113,7 @@ return true;
 </div>
 
 <!-- MODAL: CLASSIFICAÇÃO DE EMPENHO (ORDINÁRIO / GLOBAL / ESTIMATIVO) -->
-<div id="modalClassificarEmpenho" class="modal-overlay" style="display: none;">
+<div id="modalClassificarEmpenho" class="modal-overlay" style="display: none; z-index: 10020;">
   <div class="modal-panel" style="width: 420px; max-width: calc(100vw - 30px);">
     <div class="modal-header-custom">
       <strong>Classificar Empenho <span id="classEmpenhoTitulo"></span></strong>

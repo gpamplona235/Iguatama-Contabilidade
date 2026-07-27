@@ -1353,17 +1353,17 @@ body.print-retencao .col-retencao {
 
     body.print-gestao-notas #gnTabelaImpressao th:nth-child(1),
     body.print-gestao-notas #gnTabelaImpressao td:nth-child(1) {
-        width: 10% !important;
+        width: 8% !important;
     }
 
     body.print-gestao-notas #gnTabelaImpressao th:nth-child(2),
     body.print-gestao-notas #gnTabelaImpressao td:nth-child(2) {
-        width: 34% !important;
+        width: 24% !important;
     }
 
     body.print-gestao-notas #gnTabelaImpressao th:nth-child(3),
     body.print-gestao-notas #gnTabelaImpressao td:nth-child(3) {
-        width: 10% !important;
+        width: 8% !important;
     }
 
     body.print-gestao-notas #gnTabelaImpressao th:nth-child(4),
@@ -1373,12 +1373,35 @@ body.print-retencao .col-retencao {
 
     body.print-gestao-notas #gnTabelaImpressao th:nth-child(5),
     body.print-gestao-notas #gnTabelaImpressao td:nth-child(5) {
-        width: 15% !important;
+        width: 10% !important;
     }
 
     body.print-gestao-notas #gnTabelaImpressao th:nth-child(6),
     body.print-gestao-notas #gnTabelaImpressao td:nth-child(6) {
-        width: 11% !important;
+        width: 9% !important;
+    }
+
+    body.print-gestao-notas #gnTabelaImpressao th:nth-child(7),
+    body.print-gestao-notas #gnTabelaImpressao td:nth-child(7) {
+        width: 17% !important;
+    }
+
+    body.print-gestao-notas #gnTabelaImpressao th:nth-child(8),
+    body.print-gestao-notas #gnTabelaImpressao td:nth-child(8) {
+        width: 14% !important;
+    }
+
+    body.print-gestao-notas #gnLinkPublicoImpressao {
+        display: block !important;
+        margin: 3px 0 0 !important;
+        padding: 0 !important;
+        border: 0 !important;
+        font-size: 8px !important;
+        font-weight: normal !important;
+        line-height: 1.25 !important;
+        color: #666 !important;
+        text-align: right !important;
+        word-break: break-all !important;
     }
 
     body.print-gestao-notas #gnRodapeImpressao {
@@ -3702,16 +3725,63 @@ body.print-retencao .col-retencao {
         #tela-gestao-notas .gn-busca-grid .form-group-calc { min-width:0; margin-bottom:0; }
         #tela-gestao-notas .gn-busca-grid input { width:100%; min-width:0; height:38px; box-sizing:border-box; padding:8px 10px; border:1px solid #bac5d0; border-radius:3px; background:#fff; color:#243746; font:inherit; font-size:13px; }
         #tela-gestao-notas .gn-busca-grid input:focus { border-color:#47789f; outline:2px solid rgba(71,120,159,.14); outline-offset:0; }
+        .gn-rastreio-painel { background:#0f3b5e; color:#fff; border-radius:10px; padding:16px; margin-bottom:18px; box-shadow:0 4px 14px rgba(15,59,94,.16); }
+        .gn-rastreio-grid { display:grid; grid-template-columns:minmax(210px,1fr) minmax(220px,1.25fr) auto; gap:10px; align-items:end; }
+        .gn-rastreio-painel label { display:block; color:rgba(255,255,255,.82); font-size:11px; font-weight:bold; margin-bottom:6px; text-transform:uppercase; letter-spacing:.35px; }
+        .gn-rastreio-painel select,.gn-rastreio-painel input { height:40px; border:1px solid rgba(255,255,255,.4); border-radius:5px; background:#fff; color:#243746; }
+        .gn-rastreio-atalhos { display:flex; gap:7px; flex-wrap:wrap; margin-top:12px; align-items:center; }
+        .gn-rastreio-atalhos button { border:1px solid rgba(255,255,255,.38); color:#fff; background:rgba(255,255,255,.1); border-radius:5px; padding:7px 10px; cursor:pointer; font-size:11px; }
+        .gn-rastreio-atalhos button:hover { background:rgba(255,255,255,.18); }
+        .gn-rastreio-reabrir { display:none; margin:0 0 18px; width:100%; padding:10px 14px; border:1px solid #b9c8d4; border-radius:7px; background:#f4f7f9; color:#0f3b5e; font-size:12px; font-weight:bold; text-align:left; cursor:pointer; }
+        .gn-rastreio-ocultar { border:1px solid rgba(255,255,255,.38); color:#fff; background:transparent; border-radius:5px; padding:6px 9px; cursor:pointer; font-size:11px; }
+        .gn-rastreio-personalizado { display:none; grid-column:1 / -1; grid-template-columns:1.4fr 1fr; gap:10px; padding-top:2px; }
+        .gn-publicacao-box { display:none; margin:0 0 18px; padding:14px 16px; background:#edf8f1; border:1px solid #b9dfc5; border-left:5px solid #27864b; border-radius:8px; }
+        .gn-publicacao-box.active { display:block; }
+        .gn-publicacao-linha { display:flex; gap:9px; align-items:center; flex-wrap:wrap; margin-top:8px; }
+        .gn-publicacao-linha input { flex:1; min-width:260px; height:38px; background:#fff; }
+        .gn-status-chip { display:inline-flex; align-items:center; gap:6px; border-radius:999px; padding:5px 9px; font-size:11px; font-weight:bold; line-height:1.2; white-space:normal; }
+        .gn-status-chip::before { content:''; width:7px; height:7px; border-radius:50%; background:currentColor; flex:none; }
+        .gn-status-contabilidade { color:#174f78; background:#e7f0f7; }
+        .gn-status-almoxarifado { color:#8a5a00; background:#fff1cf; }
+        .gn-status-tesouraria { color:#1e6b3b; background:#e5f4ea; }
+        .gn-status-compras { color:#a33a2b; background:#fdeae7; }
+        .gn-status-finalizado { color:#5e3d91; background:#f0eafa; }
+        .gn-status-personalizado { color:#4f4f4f; background:#eeeeee; }
+        .gn-selecao-box { width:18px !important; height:18px; accent-color:#0f3b5e; cursor:pointer; }
+        .gn-local-texto { display:block; font-size:12px; color:#334b5c; font-weight:bold; }
+        .gn-atualizado-texto { display:block; font-size:10px; color:#778692; margin-top:3px; }
+        .rastreio-publico-cabecalho { background:#0f3b5e; color:#fff; padding:26px 28px; border-radius:10px 10px 0 0; }
+        .rastreio-publico-corpo { background:#fff; border:1px solid #cfd7df; border-top:0; border-radius:0 0 10px 10px; padding:20px; }
+        .rastreio-publico-kpis { display:grid; grid-template-columns:repeat(4,minmax(130px,1fr)); gap:10px; margin:16px 0; }
+        .rastreio-publico-kpi { padding:12px; border:1px solid #dbe4eb; border-radius:8px; background:#f8fafc; }
+        .rastreio-publico-kpi strong { display:block; font-size:22px; color:#0f3b5e; }
+        .rastreio-publico-kpi span { font-size:11px; color:#687987; }
+        .rastreio-publico-busca { display:flex; gap:10px; margin:16px 0; flex-wrap:wrap; }
+        .rastreio-publico-busca input { flex:1; min-width:240px; }
+        .rp-empenho-link { border:0; padding:0; background:transparent; color:#0f3b5e; font:inherit; font-weight:bold; text-decoration:underline; cursor:pointer; }
+        .rastreio-linha-eventos td { background:#f8fafc !important; padding:0 !important; }
+        .rastreio-timeline { padding:16px 22px 18px 46px; }
+        .rastreio-evento { position:relative; padding:0 0 16px 18px; border-left:2px solid #cbd8e2; }
+        .rastreio-evento:last-child { padding-bottom:0; border-left-color:transparent; }
+        .rastreio-evento::before { content:''; position:absolute; width:10px; height:10px; border-radius:50%; background:#0f3b5e; left:-6px; top:2px; }
+        .rastreio-evento strong { display:block; color:#243746; font-size:12px; }
+        .rastreio-evento span { display:block; color:#6d7d89; font-size:11px; margin-top:3px; }
         @media (max-width: 900px) {
             #tela-gestao-notas .gn-busca-grid { grid-template-columns:1fr 1fr !important; }
+            .gn-rastreio-grid { grid-template-columns:1fr 1fr; }
+            .gn-rastreio-grid > button { grid-column:1 / -1; }
+            .gn-rastreio-personalizado { grid-template-columns:1fr; }
+            .rastreio-publico-kpis { grid-template-columns:1fr 1fr; }
         }
         @media (max-width: 600px) {
             #tela-gestao-notas .gn-busca-grid { grid-template-columns:1fr !important; }
+            .gn-rastreio-grid,.rastreio-publico-kpis { grid-template-columns:1fr; }
+            .gn-publicacao-linha input { min-width:100%; }
         }
     </style>
     <div class="materiais-wrapper">
         <div class="materiais-panel" style="border-radius: 10px; overflow: hidden;">
-            <div class="materiais-header" style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; background: linear-gradient(180deg, #fbfcfd 0%, #f4f8fb 100%);">
+            <div class="materiais-header" style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; background:#f4f8fb;">
                 <div>
                     <h2 style="margin:0;">Gestão de Notas</h2>
                     <div style="font-size:12px; color:#66727d; margin-top:4px;">Lançamento, edição e histórico de tabelas de notas fiscais</div>
@@ -3720,7 +3790,7 @@ body.print-retencao .col-retencao {
         <button type="button" class="btn-primary" onclick="novaTabelaGestaoNotas()" style="width:auto;">Nova Tabela</button>
 
 <button type="button" class="btn-primary" onclick="salvarTabelaGestaoNotas(this)" style="width:auto; background-color:#27ae60; border-color:#219653;">
-    Salvar Histórico
+    Salvar e Gerar Link
 </button>
 
 <button type="button" class="btn-primary" onclick="carregarHistoricoGestaoNotas()" style="width:auto; background-color:#6c757d; border-color:#5a6268;">
@@ -3792,6 +3862,69 @@ body.print-retencao .col-retencao {
                     </div>
                 </div>
 
+                <div id="gnPublicacaoBox" class="gn-publicacao-box">
+                    <div style="font-size:13px; font-weight:bold; color:#1e6b3b;">Lista pública criada e congelada</div>
+                    <div style="font-size:12px; color:#456454; margin-top:4px;">Os empenhos desta lista não podem ser alterados. O andamento continuará sendo atualizado normalmente.</div>
+                    <div class="gn-publicacao-linha">
+                        <input type="text" id="gnLinkPublico" readonly aria-label="Link público de rastreamento">
+                        <button type="button" class="btn-primary" onclick="copiarLinkPublicoGestaoNotas()" style="width:auto;">Copiar link</button>
+                        <button type="button" class="btn-primary" onclick="abrirLinkPublicoGestaoNotas()" style="width:auto; background:#1e6b3b; border-color:#16552f;">Abrir consulta</button>
+                    </div>
+                </div>
+
+                <button type="button" id="gnRastreioMostrarBtn" class="gn-rastreio-reabrir" onclick="alternarPainelRastreio(true)">Mostrar atualização rápida do rastreamento</button>
+                <div id="gnRastreioPainel" class="gn-rastreio-painel">
+                    <div style="display:flex; justify-content:space-between; gap:12px; align-items:flex-start; flex-wrap:wrap; margin-bottom:12px;">
+                        <div>
+                            <div style="font-size:15px; font-weight:bold;">Atualização rápida do rastreamento</div>
+                            <div style="font-size:11px; color:rgba(255,255,255,.72); margin-top:3px;">Marque os empenhos na tabela, escolha o próximo passo e atualize todos de uma vez.</div>
+                        </div>
+                        <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+                            <span id="gnSelecionadosResumo" style="font-size:12px; font-weight:bold; background:rgba(255,255,255,.12); padding:6px 9px; border-radius:999px;">0 selecionados</span>
+                            <button type="button" class="gn-rastreio-ocultar" onclick="alternarPainelRastreio(false)">Ocultar</button>
+                        </div>
+                    </div>
+                    <div class="gn-rastreio-grid">
+                        <div>
+                            <label for="gnAcaoRastreio">Próximo passo</label>
+                            <select id="gnAcaoRastreio" onchange="alternarCamposRastreioPersonalizado()">
+                                <option value="">Selecione...</option>
+                                <option value="recebido_contabilidade">Recebido na Contabilidade</option>
+                                <option value="em_liquidacao">Em liquidação</option>
+                                <option value="liquidado_auto">Liquidado — encaminhar automaticamente</option>
+                                <option value="almoxarifado">Enviar ao Almoxarifado</option>
+                                <option value="aguardando_tesouraria">Aguardando remessa à Tesouraria</option>
+                                <option value="tesouraria">Enviar à Tesouraria</option>
+                                <option value="devolvido_compras">Devolver ao Setor de Compras</option>
+                                <option value="finalizado">Finalizado</option>
+                                <option value="personalizado">Outro próximo passo...</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="gnObservacaoRastreio">Observação opcional</label>
+                            <input type="text" id="gnObservacaoRastreio" maxlength="180" placeholder="Ex.: devolvido para corrigir a nota fiscal">
+                        </div>
+                        <button type="button" class="btn-primary" onclick="atualizarRastreamentoSelecionados(this)" style="width:auto; height:40px; background:#27ae60; border-color:#219653;">Atualizar selecionados</button>
+                        <div id="gnRastreioPersonalizado" class="gn-rastreio-personalizado">
+                            <div>
+                                <label for="gnDescricaoRastreioPersonalizado">Descrição do próximo passo</label>
+                                <input type="text" id="gnDescricaoRastreioPersonalizado" maxlength="80" placeholder="Ex.: Encaminhado à Secretaria de Saúde">
+                            </div>
+                            <div>
+                                <label for="gnLocalRastreioPersonalizado">Local atual</label>
+                                <input type="text" id="gnLocalRastreioPersonalizado" maxlength="60" placeholder="Ex.: Secretaria de Saúde">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="gn-rastreio-atalhos">
+                        <span style="font-size:11px; color:rgba(255,255,255,.72);">Seleção rápida:</span>
+                        <button type="button" onclick="selecionarItensGestaoNotas('todos')">Todos</button>
+                        <button type="button" onclick="selecionarItensGestaoNotas('Mercadoria')">Mercadorias</button>
+                        <button type="button" onclick="selecionarItensGestaoNotas('Serviço')">Serviços</button>
+                        <button type="button" onclick="selecionarItensGestaoNotas('nenhum')">Limpar seleção</button>
+                    </div>
+                </div>
+
                 <div class="gn-busca-unificada">
                     <div class="gn-busca-grid">
                         <div class="form-group-calc">
@@ -3821,21 +3954,24 @@ body.print-retencao .col-retencao {
                     </div>
 
                    <div style="overflow-x:auto;">
-    <table class="data-table" style="margin-bottom:0; min-width:1100px;">
+    <table class="data-table" style="margin-bottom:0; min-width:1460px;">
         <thead>
             <tr>
+                <th style="width:44px; text-align:center;"><input type="checkbox" class="gn-selecao-box" id="gnSelecionarTodos" aria-label="Selecionar todos" onchange="alternarSelecaoTodosGestaoNotas(this.checked)"></th>
                 <th style="width:120px;">Empenho</th>
-                <th style="width:320px;">Fornecedor</th>
+                <th style="width:280px;">Fornecedor</th>
                 <th style="width:140px;">Tipo</th>
                 <th style="width:140px;">Valor</th>
                 <th style="width:140px;">Data Emissão</th>
                 <th style="width:140px;">Nº da Nota</th>
+                <th style="width:230px;">Situação</th>
+                <th style="width:190px;">Local atual</th>
                 <th style="width:170px;">Ações</th>
             </tr>
         </thead>
         <tbody id="gnTabelaBody">
             <tr>
-                <td colspan="7" style="text-align:center; padding:20px;">Nenhuma linha adicionada.</td>
+                <td colspan="10" style="text-align:center; padding:20px;">Nenhuma linha adicionada.</td>
             </tr>
         </tbody>
     </table>
@@ -3851,7 +3987,10 @@ body.print-retencao .col-retencao {
                 Relação de notas fiscais lançadas
             </div>
         </div>
-        <div id="gnFolhaData" style="font-size:13px; color:#333; text-align:right;"></div>
+        <div style="text-align:right; max-width:48%;">
+            <div id="gnFolhaData" style="font-size:13px; color:#333;"></div>
+            <div id="gnLinkPublicoImpressao" style="font-size:9px; color:#777; margin-top:3px; word-break:break-all;">Rastreio: lista ainda não publicada.</div>
+        </div>
     </div>
 
     <table id="gnTabelaImpressao" class="materiais-tabela" style="width:100%; border-collapse:collapse; font-size:13px; color:#111;">
@@ -3863,11 +4002,13 @@ body.print-retencao .col-retencao {
                 <th>Valor</th>
                 <th>Data Emissão</th>
                 <th>Nº da Nota</th>
+                <th>Situação</th>
+                <th>Local atual</th>
             </tr>
         </thead>
         <tbody id="gnTabelaImpressaoBody">
             <tr>
-                <td colspan="6" style="text-align:center; padding:18px;">Nenhuma linha adicionada.</td>
+                <td colspan="8" style="text-align:center; padding:18px;">Nenhuma linha adicionada.</td>
             </tr>
         </tbody>
     </table>
@@ -3885,6 +4026,52 @@ body.print-retencao .col-retencao {
                         Nenhum histórico carregado.
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="tela-rastreio-publico" class="screen-section">
+    <div class="materiais-wrapper" style="max-width:1500px;">
+        <div class="rastreio-publico-cabecalho">
+            <div style="display:flex; justify-content:space-between; gap:16px; align-items:flex-start; flex-wrap:wrap;">
+                <div>
+                    <div style="font-size:11px; text-transform:uppercase; letter-spacing:1.1px; color:rgba(255,255,255,.68);">Prefeitura Municipal de Iguatama · Contabilidade</div>
+                    <h2 style="margin:7px 0 4px; color:#fff; font-size:23px;">Rastreamento de Empenhos</h2>
+                    <div id="rpTitulo" style="font-size:13px; color:rgba(255,255,255,.8);">Carregando lista pública...</div>
+                </div>
+                <button type="button" class="btn-primary" onclick="carregarRastreioPublicoDoHash(true)" style="width:auto; background:rgba(255,255,255,.12); border-color:rgba(255,255,255,.38);">Atualizar agora</button>
+            </div>
+            <div id="rpAtualizacao" style="font-size:11px; color:rgba(255,255,255,.68); margin-top:14px;">Aguardando dados.</div>
+        </div>
+        <div class="rastreio-publico-corpo">
+            <div id="rpAviso" class="alert-box alert-neutro">Consultando o andamento dos empenhos...</div>
+            <div id="rpKpis" class="rastreio-publico-kpis" style="display:none;"></div>
+            <div class="rastreio-publico-busca">
+                <input type="search" id="rpBusca" placeholder="Buscar por empenho, fornecedor ou nota fiscal" oninput="filtrarRastreioPublico()" aria-label="Buscar na lista pública">
+                <button type="button" class="btn-primary" onclick="document.getElementById('rpBusca').value=''; filtrarRastreioPublico();" style="width:auto; background:#eef2f6; color:#0f3b5e; border-color:#bac5d0;">Limpar</button>
+            </div>
+            <div style="overflow-x:auto; border:1px solid #dbe4eb; border-radius:8px;">
+                <table class="data-table" style="margin:0; min-width:980px; table-layout:auto;">
+                    <thead>
+                        <tr>
+                            <th style="width:82px; min-width:82px;">Empenho</th>
+                            <th style="width:auto; min-width:240px;">Fornecedor</th>
+                            <th style="width:86px; min-width:86px;">Nota fiscal</th>
+                            <th style="width:92px; min-width:92px;">Tipo</th>
+                            <th style="width:210px; min-width:190px;">Situação</th>
+                            <th style="width:135px; min-width:125px;">Local atual</th>
+                            <th style="width:130px; min-width:120px;">Última atualização</th>
+                            <th style="width:90px; min-width:90px;">Trajetória</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rpTabelaBody">
+                        <tr><td colspan="8" style="text-align:center; padding:24px;">Carregando...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div style="margin-top:14px; font-size:11px; line-height:1.5; color:#71818d;">
+                Esta consulta apresenta a localização administrativa informada pela Contabilidade. A relação original de empenhos é imutável; somente o andamento é atualizado.
             </div>
         </div>
     </div>
@@ -7564,7 +7751,7 @@ window.inicializarTelaLembretes = async function () {
 };
 
 function telaPublicaPermitida(tela) {
-  return tela === 'consulta-empenho';
+  return tela === 'consulta-empenho' || tela === 'rastreio-publico';
 }
 
 function usuarioAutenticado() {
@@ -7624,6 +7811,7 @@ function mostrarTela(tela, atualizarHash = true) {
     document.getElementById('tela-fornecedores'),
     document.getElementById('tela-empenhos'),
     document.getElementById('tela-consulta-empenho'),
+    document.getElementById('tela-rastreio-publico'),
     document.getElementById('tela-globais-estimativos'),
     document.getElementById('tela-gestao-notas'),
     document.getElementById('tela-lembretes'),
@@ -7708,6 +7896,16 @@ function mostrarTela(tela, atualizarHash = true) {
     return;
   }
 
+  if (tela === 'rastreio-publico') {
+    document.getElementById('tela-rastreio-publico')?.classList.add('active');
+    setTimeout(function () {
+      if (typeof carregarRastreioPublicoDoHash === 'function') {
+        carregarRastreioPublicoDoHash();
+      }
+    }, 80);
+    return;
+  }
+
   if (tela === 'globais-estimativos') {
     document.getElementById('tela-globais-estimativos')?.classList.add('active');
     setTimeout(function () {
@@ -7753,6 +7951,12 @@ function mostrarTela(tela, atualizarHash = true) {
 
 function abrirTelaPeloHash() {
   const hash = window.location.hash.replace('#', '').trim();
+  const codigoRastreioQuery = new URLSearchParams(window.location.search).get('rastreio');
+
+  if (codigoRastreioQuery || /^(?:rastreio|r)=/i.test(hash)) {
+    mostrarTela('rastreio-publico', false);
+    return;
+  }
 
   const telasValidas = [
     'home',
@@ -8770,6 +8974,11 @@ function abrirModalImpressaoGestaoNotas() {
         return;
     }
 
+    if (!gestaoNotasPublicoId || !gestaoNotasLinkPublico) {
+        mostrarAvisoSistema('Salve antes de imprimir', 'Use <strong>Salvar e Gerar Link</strong> primeiro. Assim, o link público de rastreamento constará obrigatoriamente na folha impressa.');
+        return;
+    }
+
     const select = document.getElementById('gnFiltroTipoImpressao');
     if (select) select.value = 'todos';
 
@@ -8806,16 +9015,17 @@ async function imprimirTabelaGestaoNotas(filtroTipo = 'todos', orientacao = 'ret
     const dataEl = document.getElementById('gnFolhaData');
     const tbodyImpressao = document.getElementById('gnTabelaImpressaoBody');
     const rodape = document.getElementById('gnRodapeImpressao');
+    const linkPublicoEl = document.getElementById('gnLinkPublicoImpressao');
     const linhasTela = Array.from(document.querySelectorAll('#gnTabelaBody tr'));
 
-    if (!folha || !dataEl || !tbodyImpressao || !rodape) {
+    if (!folha || !dataEl || !tbodyImpressao || !rodape || !linkPublicoEl) {
         mostrarAvisoSistema('Erro', 'Bloco de impressão da Gestão de Notas não foi encontrado.');
         return;
     }
 
     const linhasValidas = linhasTela.filter(tr => {
         const colunas = tr.querySelectorAll('td');
-        return colunas.length >= 7;
+        return colunas.length >= 10;
     });
 
     if (!linhasValidas.length) {
@@ -8825,7 +9035,7 @@ async function imprimirTabelaGestaoNotas(filtroTipo = 'todos', orientacao = 'ret
 
     const linhasFiltradas = linhasValidas.filter(tr => {
         const colunas = tr.querySelectorAll('td');
-        const tipo = (colunas[2]?.textContent || '')
+        const tipo = (colunas[3]?.textContent || '')
             .trim()
             .toLowerCase()
             .normalize('NFD')
@@ -8846,12 +9056,14 @@ async function imprimirTabelaGestaoNotas(filtroTipo = 'todos', orientacao = 'ret
     tbodyImpressao.innerHTML = linhasFiltradas.map(tr => {
         const colunas = tr.querySelectorAll('td');
 
-        const empenho = (colunas[0]?.textContent || '').trim();
-        const fornecedor = (colunas[1]?.textContent || '').trim();
-        const tipo = (colunas[2]?.textContent || '').trim();
-        const valorTexto = (colunas[3]?.textContent || '').trim();
-        const data = (colunas[4]?.textContent || '').trim();
-        const nota = (colunas[5]?.textContent || '').trim();
+        const empenho = (colunas[1]?.textContent || '').trim();
+        const fornecedor = (colunas[2]?.textContent || '').trim();
+        const tipo = (colunas[3]?.textContent || '').trim();
+        const valorTexto = (colunas[4]?.textContent || '').trim();
+        const data = (colunas[5]?.textContent || '').trim();
+        const nota = (colunas[6]?.textContent || '').trim();
+        const situacao = (colunas[7]?.textContent || '').trim();
+        const local = (colunas[8]?.querySelector('.gn-local-texto')?.textContent || colunas[8]?.textContent || '').trim();
 
         total += limparValorParaNumero(valorTexto);
 
@@ -8863,6 +9075,8 @@ async function imprimirTabelaGestaoNotas(filtroTipo = 'todos', orientacao = 'ret
                 <td>${valorTexto || 'R$ 0,00'}</td>
                 <td>${data || '-'}</td>
                 <td>${nota || '-'}</td>
+                <td>${situacao || '-'}</td>
+                <td>${local || '-'}</td>
             </tr>
         `;
     }).join('');
@@ -8874,6 +9088,8 @@ async function imprimirTabelaGestaoNotas(filtroTipo = 'todos', orientacao = 'ret
     const agora = new Date();
     dataEl.textContent =
         `Data: ${agora.toLocaleDateString('pt-BR')} ${agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })} | Tipo: ${nomeFiltro}`;
+
+    linkPublicoEl.textContent = `Rastreio: ${gestaoNotasLinkPublico}`;
 
     rodape.textContent =
         `Total de notas: ${linhasFiltradas.length} | Valor total: R$ ${formatarValorBR(total)}`;
@@ -8891,6 +9107,147 @@ async function imprimirTabelaGestaoNotas(filtroTipo = 'todos', orientacao = 'ret
         }, 300);
     }, 150);
 }
+
+let rastreioPublicoDados = null;
+let rastreioPublicoTimer = null;
+let rastreioPublicoTentativas = 0;
+
+function obterCodigoRastreioDoHash() {
+    const codigoQuery = new URLSearchParams(window.location.search).get('rastreio');
+    if (codigoQuery) return codigoQuery.trim();
+    const hash = window.location.hash.replace(/^#/, '');
+    const match = hash.match(/^(?:rastreio|r)=(.+)$/i);
+    if (!match) return '';
+    try { return decodeURIComponent(match[1]).trim(); } catch (_) { return match[1].trim(); }
+}
+
+window.carregarRastreioPublicoDoHash = async function(forcar = false) {
+    const codigo = obterCodigoRastreioDoHash();
+    const aviso = document.getElementById('rpAviso');
+    const tbody = document.getElementById('rpTabelaBody');
+    if (!codigo || !aviso || !tbody) return;
+
+    if (!window.db || !window.fsDoc || !window.fsGetDoc) {
+        if (rastreioPublicoTentativas < 20) {
+            rastreioPublicoTentativas++;
+            setTimeout(() => carregarRastreioPublicoDoHash(forcar), 250);
+        } else {
+            aviso.className = 'alert-box alert-normal';
+            aviso.textContent = 'Não foi possível iniciar a consulta. Atualize a página e tente novamente.';
+        }
+        return;
+    }
+
+    rastreioPublicoTentativas = 0;
+    aviso.className = 'alert-box alert-neutro';
+    aviso.textContent = forcar ? 'Atualizando o rastreamento...' : 'Consultando o andamento dos empenhos...';
+
+    try {
+        const snap = await window.fsGetDoc(window.fsDoc(window.db, 'RastreiosPublicos', codigo));
+        if (!snap.exists()) {
+            rastreioPublicoDados = null;
+            aviso.className = 'alert-box alert-normal';
+            aviso.textContent = 'Esta lista pública não existe ou o link está incompleto.';
+            tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:24px;">Lista não encontrada.</td></tr>';
+            return;
+        }
+
+        rastreioPublicoDados = { ...snap.data(), id: codigo };
+        document.getElementById('rpTitulo').textContent = rastreioPublicoDados.titulo || 'Lista pública de empenhos';
+        document.getElementById('rpAtualizacao').textContent = `Lista publicada em ${formatarDataHoraRastreio(rastreioPublicoDados.publicadoEm)} · andamento consultado em ${new Date().toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit' })}`;
+        aviso.className = 'alert-box alert-simples';
+        aviso.textContent = 'Consulta pública carregada. Esta página se atualiza automaticamente a cada 1 hora.';
+        filtrarRastreioPublico();
+    } catch (erro) {
+        console.error('Erro ao carregar rastreamento público:', erro);
+        aviso.className = 'alert-box alert-normal';
+        aviso.textContent = 'Não foi possível consultar o rastreamento agora. Tente novamente em alguns instantes.';
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:24px;">Falha temporária na consulta.</td></tr>';
+    }
+
+    clearTimeout(rastreioPublicoTimer);
+    if (new URLSearchParams(window.location.search).get('rastreio') || /^#(?:rastreio|r)=/i.test(window.location.hash)) {
+        rastreioPublicoTimer = setTimeout(() => carregarRastreioPublicoDoHash(true), 60 * 60 * 1000);
+    }
+};
+
+function obterAnoEmpenhoRastreio(item, dados) {
+    const candidatos = [item?.ano, item?.dataEmissao, dados?.publicadoEm];
+    for (const valor of candidatos) {
+        const match = String(valor || '').match(/(20\d{2})/);
+        if (match) return match[1];
+    }
+    return String(new Date().getFullYear());
+}
+
+window.abrirDetalheEmpenhoRastreio = function(numero, ano) {
+    if (!numero) return;
+    const numeroSemAno = String(numero).trim().split('/')[0].trim();
+    const numeroParaApi = /^\d+$/.test(numeroSemAno)
+        ? numeroSemAno.padStart(6, '0')
+        : numeroSemAno;
+    if (typeof verDetalhesAPI === 'function') {
+        verDetalhesAPI(numeroParaApi, ano);
+    } else {
+        mostrarAvisoSistema('Consulta indisponível', 'Não foi possível abrir os detalhes deste empenho agora.');
+    }
+};
+
+window.filtrarRastreioPublico = function() {
+    const dados = rastreioPublicoDados;
+    const tbody = document.getElementById('rpTabelaBody');
+    const kpis = document.getElementById('rpKpis');
+    if (!dados || !tbody || !kpis) return;
+
+    const busca = normalizarTexto(document.getElementById('rpBusca')?.value || '');
+    const itens = (Array.isArray(dados.itens) ? dados.itens : []).filter(item => {
+        if (!busca) return true;
+        return normalizarTexto([item.empenho, item.fornecedor, item.numeroNota, item.tipoNota].filter(Boolean).join(' ')).includes(busca);
+    });
+    const rastreamento = dados.rastreamento || {};
+    const totalGeral = Array.isArray(dados.itens) ? dados.itens.length : 0;
+    const noAlmox = Object.values(rastreamento).filter(r => r?.status === 'almoxarifado').length;
+    const naTesouraria = Object.values(rastreamento).filter(r => r?.status === 'tesouraria').length;
+    const devolvidos = Object.values(rastreamento).filter(r => r?.status === 'devolvido_compras').length;
+
+    kpis.style.display = 'grid';
+    kpis.innerHTML = `
+        <div class="rastreio-publico-kpi"><strong>${totalGeral}</strong><span>Empenhos na lista</span></div>
+        <div class="rastreio-publico-kpi"><strong>${noAlmox}</strong><span>No Almoxarifado</span></div>
+        <div class="rastreio-publico-kpi"><strong>${naTesouraria}</strong><span>Na Tesouraria</span></div>
+        <div class="rastreio-publico-kpi"><strong>${devolvidos}</strong><span>Devolvidos a Compras</span></div>`;
+
+    if (!itens.length) {
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:24px;">Nenhum empenho corresponde à busca.</td></tr>';
+        return;
+    }
+
+    tbody.innerHTML = itens.map((item, indice) => {
+        const atual = rastreamento[item.id] || {};
+        const codigo = atual.status || 'recebido_contabilidade';
+        const config = GN_STATUS_RASTREIO[codigo] || GN_STATUS_RASTREIO.recebido_contabilidade;
+        const eventos = Array.isArray(atual.eventos) ? [...atual.eventos].reverse() : [];
+        const anoEmpenho = obterAnoEmpenhoRastreio(item, dados);
+        const linhaId = `rp-eventos-${indice}`;
+        const eventosHtml = eventos.length ? eventos.map(evento => {
+            const cfg = GN_STATUS_RASTREIO[evento.status] || config;
+            return `<div class="rastreio-evento"><strong>${escaparHtml(evento.rotulo || cfg.rotulo)}</strong><span>${escaparHtml(evento.local || cfg.local)} · ${escaparHtml(formatarDataHoraRastreio(evento.data))}${evento.observacao ? ` · ${escaparHtml(evento.observacao)}` : ''}</span></div>`;
+        }).join('') : '<div style="font-size:12px; color:#6d7d89;">Aguardando a primeira atualização de andamento.</div>';
+
+        return `
+            <tr>
+                <td><button type="button" class="rp-empenho-link" data-empenho="${escaparHtml(item.empenho || '')}" data-ano="${escaparHtml(anoEmpenho)}" onclick="abrirDetalheEmpenhoRastreio(this.dataset.empenho, this.dataset.ano)" title="Consultar detalhes do empenho">${escaparHtml(item.empenho || '-')}</button></td>
+                <td>${escaparHtml(item.fornecedor || '-')}</td>
+                <td>${escaparHtml(item.numeroNota || '-')}</td>
+                <td>${escaparHtml(item.tipoNota || '-')}</td>
+                <td><span class="gn-status-chip ${config.classe}">${escaparHtml(atual.rotulo || config.rotulo)}</span></td>
+                <td><span class="gn-local-texto">${escaparHtml(atual.local || config.local)}</span></td>
+                <td>${escaparHtml(formatarDataHoraRastreio(atual.atualizadoEm))}</td>
+                <td><button type="button" class="btn-primary" style="width:auto; padding:6px 10px; font-size:11px;" onclick="const el=document.getElementById('${linhaId}'); el.style.display=el.style.display==='none'?'table-row':'none';">Ver trajetória</button></td>
+            </tr>
+            <tr id="${linhaId}" class="rastreio-linha-eventos" style="display:none;"><td colspan="8"><div class="rastreio-timeline">${eventosHtml}</div></td></tr>`;
+    }).join('');
+};
 
 function calcularSomasMateriais(incluirRetencao = false) {
     const linhas = document.querySelectorAll('#materiaisTabelaBody tr');
@@ -10378,11 +10735,15 @@ async function verDetalhesAPI(numEmpenho, numAno) {
         return;
     }
 
+    const numeroSemAno = String(numEmpenho).trim().split('/')[0].trim();
+    const numeroFinal = /^\d+$/.test(numeroSemAno)
+        ? numeroSemAno.padStart(6, '0')
+        : numeroSemAno;
     const anoFinal = String(numAno || '2026').trim();
 
     // Abre direto — a classificação (se ainda não existir) é feita
     // de dentro do próprio modal, pelo botão "Alterar classificação".
-    carregarDetalhesEmpenho(numEmpenho, anoFinal);
+    carregarDetalhesEmpenho(numeroFinal, anoFinal);
 }
 
 async function carregarDetalhesEmpenho(numEmpenho, anoFinal) {
@@ -12474,9 +12835,130 @@ function fecharModalDetalheApiEmpenho() {
 let gestaoNotasItens = [];
 let gestaoNotasFiltrados = [];
 let gestaoNotasTabelaAtualId = null;
+let gestaoNotasPublicoId = null;
+let gestaoNotasLinkPublico = '';
+let gestaoNotasRastreamento = {};
+let gestaoNotasAlterada = false;
+let gestaoNotasSelecionados = new Set();
 let gestaoNotasInicializada = false;
 
+const GN_STATUS_RASTREIO = {
+    recebido_contabilidade: { rotulo: 'Recebido na Contabilidade', local: 'Contabilidade', classe: 'gn-status-contabilidade' },
+    em_liquidacao: { rotulo: 'Em liquidação', local: 'Contabilidade', classe: 'gn-status-contabilidade' },
+    almoxarifado: { rotulo: 'Liquidado e enviado ao Almoxarifado', local: 'Almoxarifado', classe: 'gn-status-almoxarifado' },
+    aguardando_tesouraria: { rotulo: 'Liquidado, aguardando Tesouraria', local: 'Contabilidade', classe: 'gn-status-contabilidade' },
+    tesouraria: { rotulo: 'Enviado à Tesouraria', local: 'Tesouraria', classe: 'gn-status-tesouraria' },
+    devolvido_compras: { rotulo: 'Devolvido ao Setor de Compras', local: 'Setor de Compras', classe: 'gn-status-compras' },
+    finalizado: { rotulo: 'Tramitação finalizada', local: 'Finalizado', classe: 'gn-status-finalizado' },
+    personalizado: { rotulo: 'Movimentação personalizada', local: 'Local informado', classe: 'gn-status-personalizado' }
+};
+
+window.alternarPainelRastreio = function(mostrar) {
+    const painel = document.getElementById('gnRastreioPainel');
+    const reabrir = document.getElementById('gnRastreioMostrarBtn');
+    if (!painel || !reabrir) return;
+    painel.style.display = mostrar ? '' : 'none';
+    reabrir.style.display = mostrar ? 'none' : 'block';
+    localStorage.setItem('gestaoNotasPainelRastreioOculto', mostrar ? '0' : '1');
+};
+
+window.alternarCamposRastreioPersonalizado = function() {
+    const personalizado = document.getElementById('gnAcaoRastreio')?.value === 'personalizado';
+    const campos = document.getElementById('gnRastreioPersonalizado');
+    if (campos) campos.style.display = personalizado ? 'grid' : 'none';
+};
+
+function obterStatusRastreioGestaoNotas(item) {
+    const atual = gestaoNotasRastreamento[item?.id] || {};
+    const codigo = atual.status || 'recebido_contabilidade';
+    const config = GN_STATUS_RASTREIO[codigo] || GN_STATUS_RASTREIO.recebido_contabilidade;
+    return { ...config, ...atual, status: codigo, local: atual.local || config.local };
+}
+
+function formatarDataHoraRastreio(valor) {
+    if (!valor) return 'Ainda não atualizado';
+    const data = new Date(valor);
+    if (Number.isNaN(data.getTime())) return String(valor);
+    return data.toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
+}
+
+function gerarLinkPublicoGestaoNotas(publicoId) {
+    const url = new URL(window.location.href);
+    url.hash = '';
+    url.search = '';
+    url.searchParams.set('rastreio', publicoId);
+    return url.toString();
+}
+
+function atualizarBoxPublicacaoGestaoNotas() {
+    const box = document.getElementById('gnPublicacaoBox');
+    const input = document.getElementById('gnLinkPublico');
+    if (!box || !input) return;
+    if (!gestaoNotasPublicoId) {
+        box.classList.remove('active');
+        input.value = '';
+        return;
+    }
+    gestaoNotasLinkPublico = gestaoNotasLinkPublico || gerarLinkPublicoGestaoNotas(gestaoNotasPublicoId);
+    input.value = gestaoNotasLinkPublico;
+    box.classList.add('active');
+}
+
+window.copiarLinkPublicoGestaoNotas = async function() {
+    if (!gestaoNotasLinkPublico) return;
+    try {
+        await navigator.clipboard.writeText(gestaoNotasLinkPublico);
+        mostrarAvisoSistema('Link copiado', 'O link público de rastreamento foi copiado.');
+    } catch (_) {
+        const input = document.getElementById('gnLinkPublico');
+        input?.select();
+        document.execCommand('copy');
+        mostrarAvisoSistema('Link copiado', 'O link público de rastreamento foi copiado.');
+    }
+};
+
+window.abrirLinkPublicoGestaoNotas = function() {
+    if (gestaoNotasLinkPublico) window.open(gestaoNotasLinkPublico, '_blank', 'noopener');
+};
+
+function atualizarResumoSelecaoGestaoNotas() {
+    const resumo = document.getElementById('gnSelecionadosResumo');
+    if (resumo) resumo.textContent = `${gestaoNotasSelecionados.size} selecionado(s)`;
+    const todos = document.getElementById('gnSelecionarTodos');
+    if (todos) {
+        const visiveis = gestaoNotasFiltrados.length ? gestaoNotasFiltrados : gestaoNotasItens;
+        todos.checked = !!visiveis.length && visiveis.every(item => gestaoNotasSelecionados.has(item.id));
+        todos.indeterminate = gestaoNotasSelecionados.size > 0 && !todos.checked;
+    }
+}
+
+window.alternarSelecaoItemGestaoNotas = function(id, marcado) {
+    if (marcado) gestaoNotasSelecionados.add(id);
+    else gestaoNotasSelecionados.delete(id);
+    atualizarResumoSelecaoGestaoNotas();
+};
+
+window.alternarSelecaoTodosGestaoNotas = function(marcado) {
+    const visiveis = gestaoNotasFiltrados.length ? gestaoNotasFiltrados : gestaoNotasItens;
+    visiveis.forEach(item => marcado ? gestaoNotasSelecionados.add(item.id) : gestaoNotasSelecionados.delete(item.id));
+    renderizarTabelaGestaoNotas(visiveis);
+};
+
+window.selecionarItensGestaoNotas = function(tipo) {
+    gestaoNotasSelecionados.clear();
+    if (tipo !== 'nenhum') {
+        gestaoNotasItens.forEach(item => {
+            if (tipo === 'todos' || normalizarTexto(item.tipoNota) === normalizarTexto(tipo)) {
+                gestaoNotasSelecionados.add(item.id);
+            }
+        });
+    }
+    renderizarTabelaGestaoNotas(gestaoNotasFiltrados.length ? gestaoNotasFiltrados : gestaoNotasItens);
+};
+
 function inicializarGestaoNotas() {
+    alternarPainelRastreio(localStorage.getItem('gestaoNotasPainelRastreioOculto') !== '1');
+    alternarCamposRastreioPersonalizado();
     const campoValor = document.getElementById('gnValorNota');
     if (campoValor) aplicarMascaraValor(campoValor);
 
@@ -12534,11 +13016,18 @@ function limparFormularioGestaoNotasCompleto() {
 
 function novaTabelaGestaoNotas() {
     gestaoNotasTabelaAtualId = null;
+    gestaoNotasPublicoId = null;
+    gestaoNotasLinkPublico = '';
+    gestaoNotasRastreamento = {};
+    gestaoNotasAlterada = false;
+    gestaoNotasSelecionados.clear();
     gestaoNotasItens = [];
     gestaoNotasFiltrados = [];
     limparFiltroGestaoNotas();
     atualizarResumoGestaoNotas();
     limparFormularioGestaoNotasCompleto();
+    atualizarBoxPublicacaoGestaoNotas();
+    atualizarResumoSelecaoGestaoNotas();
     const info = document.getElementById('gnInfoTabela');
     if (info) info.textContent = 'Nova tabela em branco.';
 }
@@ -12546,6 +13035,7 @@ function novaTabelaGestaoNotas() {
 function obterDadosFormularioGestaoNotas() {
     return {
         empenho: document.getElementById('gnEmpenho').value.trim(),
+        ano: String(document.getElementById('api-filtro-ano')?.value || new Date().getFullYear()).trim(),
         fornecedor: document.getElementById('gnFornecedor').value.trim(),
         tipoNota: document.getElementById('gnTipoNota').value.trim(),
         valorNota: limparValorParaNumero(document.getElementById('gnValorNota').value),
@@ -12578,6 +13068,8 @@ function adicionarLinhaGestaoNotas() {
         ...item
     });
 
+    gestaoNotasAlterada = true;
+
     aplicarFiltroGestaoNotas();
     atualizarResumoGestaoNotas();
     limparFormularioGestaoNotas();
@@ -12596,27 +13088,36 @@ function renderizarTabelaGestaoNotas(lista = null) {
             document.getElementById('gnFiltroFornecedor')?.value?.trim() ||
             document.getElementById('gnFiltroData')?.value?.trim()
         );
-        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:20px;">${temFiltro ? 'Nenhum item corresponde aos filtros informados.' : 'Nenhuma linha adicionada.'}</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="10" style="text-align:center; padding:20px;">${temFiltro ? 'Nenhum item corresponde aos filtros informados.' : 'Nenhuma linha adicionada.'}</td></tr>`;
+        atualizarResumoSelecaoGestaoNotas();
         return;
     }
 
-    tbody.innerHTML = dados.map(item => `
-        <tr>
-            <td>${item.empenho || '-'}</td>
-            <td>${item.fornecedor || '-'}</td>
-            <td>${item.tipoNota || '-'}</td>
+    tbody.innerHTML = dados.map(item => {
+        const rastreio = obterStatusRastreioGestaoNotas(item);
+        const idSeguro = String(item.id || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+        return `
+        <tr data-gn-id="${escaparHtml(item.id || '')}">
+            <td style="text-align:center;"><input type="checkbox" class="gn-selecao-box" aria-label="Selecionar empenho ${escaparHtml(item.empenho || '')}" ${gestaoNotasSelecionados.has(item.id) ? 'checked' : ''} onchange="alternarSelecaoItemGestaoNotas('${idSeguro}', this.checked)"></td>
+            <td>${escaparHtml(item.empenho || '-')}</td>
+            <td>${escaparHtml(item.fornecedor || '-')}</td>
+            <td>${escaparHtml(item.tipoNota || '-')}</td>
             <td>R$ ${formatarValorBR(item.valorNota || 0)}</td>
-            <td>${item.dataEmissao || '-'}</td>
-            <td>${item.numeroNota || '-'}</td>
+            <td>${escaparHtml(item.dataEmissao || '-')}</td>
+            <td>${escaparHtml(item.numeroNota || '-')}</td>
+            <td><span class="gn-status-chip ${rastreio.classe}">${escaparHtml(rastreio.rotulo)}</span></td>
+            <td><span class="gn-local-texto">${escaparHtml(rastreio.local)}</span><span class="gn-atualizado-texto">${escaparHtml(formatarDataHoraRastreio(rastreio.atualizadoEm))}</span></td>
             <td>
                 <div style="display:flex; gap:6px; flex-wrap:wrap;">
-                    <button type="button" class="btn-primary" style="width:auto; padding:6px 10px; font-size:12px;" onclick="editarLinhaGestaoNotas('${item.id}')">Editar</button>
-                    <button type="button" class="btn-primary" style="width:auto; padding:6px 10px; font-size:12px; background-color:#6c757d; border-color:#5a6268;" onclick="duplicarLinhaGestaoNotas('${item.id}')">Duplicar</button>
-                    <button type="button" class="btn-primary" style="width:auto; padding:6px 10px; font-size:12px; background-color:#d9534f; border-color:#c9302c;" onclick="excluirLinhaGestaoNotas('${item.id}')">Excluir</button>
+                    <button type="button" class="btn-primary" style="width:auto; padding:6px 10px; font-size:12px;" onclick="editarLinhaGestaoNotas('${idSeguro}')">Editar</button>
+                    <button type="button" class="btn-primary" style="width:auto; padding:6px 10px; font-size:12px; background-color:#6c757d; border-color:#5a6268;" onclick="duplicarLinhaGestaoNotas('${idSeguro}')">Duplicar</button>
+                    <button type="button" class="btn-primary" style="width:auto; padding:6px 10px; font-size:12px; background-color:#d9534f; border-color:#c9302c;" onclick="excluirLinhaGestaoNotas('${idSeguro}')">Excluir</button>
                 </div>
             </td>
         </tr>
-    `).join('');
+    `;
+    }).join('');
+    atualizarResumoSelecaoGestaoNotas();
 }
 
 function atualizarResumoGestaoNotas() {
@@ -12642,6 +13143,8 @@ function editarLinhaGestaoNotas(id) {
     document.getElementById('gnNumeroNota').value = item.numeroNota || '';
 
     gestaoNotasItens = gestaoNotasItens.filter(x => x.id !== id);
+    gestaoNotasSelecionados.delete(id);
+    gestaoNotasAlterada = true;
     aplicarFiltroGestaoNotas();
     atualizarResumoGestaoNotas();
 }
@@ -12655,6 +13158,8 @@ function duplicarLinhaGestaoNotas(id) {
         id: 'gn-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8)
     });
 
+    gestaoNotasAlterada = true;
+
     aplicarFiltroGestaoNotas();
     atualizarResumoGestaoNotas();
 }
@@ -12663,6 +13168,9 @@ function excluirLinhaGestaoNotas(id) {
     if (!confirm('Deseja excluir esta linha?')) return;
 
     gestaoNotasItens = gestaoNotasItens.filter(x => x.id !== id);
+    delete gestaoNotasRastreamento[id];
+    gestaoNotasSelecionados.delete(id);
+    gestaoNotasAlterada = true;
     aplicarFiltroGestaoNotas();
     atualizarResumoGestaoNotas();
 }
@@ -14010,7 +14518,8 @@ window.fazerBackupFirebase = function () {
       'FaturasEnderecos',
       'Fornecedores',
       'HistoricoNotas',
-      'Lembretes'
+      'Lembretes',
+      'RastreiosPublicos'
     ];
 
     const backup = {
@@ -15578,9 +16087,75 @@ if (empenhoNum) {
 
 
 
+function gerarCodigoPublicoRastreio() {
+    const alfabeto = '23456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+    const bytes = new Uint8Array(6);
+    crypto.getRandomValues(bytes);
+    return Array.from(bytes, byte => alfabeto[byte % alfabeto.length]).join('');
+}
+
+async function migrarLinkRastreioParaSeisCaracteres(botao) {
+    const textoOriginal = botao?.innerText || 'Salvar e Gerar Link';
+    try {
+        if (botao) { botao.disabled = true; botao.innerText = 'Criando link curto...'; }
+        const refAntiga = window.fsDoc(window.db, 'RastreiosPublicos', gestaoNotasPublicoId);
+        const snapAntiga = await window.fsGetDoc(refAntiga);
+        if (!snapAntiga.exists()) throw new Error('Lista pública original não encontrada.');
+
+        let novoId = '';
+        for (let tentativa = 0; tentativa < 5; tentativa++) {
+            const candidato = gerarCodigoPublicoRastreio();
+            const existe = await window.fsGetDoc(window.fsDoc(window.db, 'RastreiosPublicos', candidato));
+            if (!existe.exists()) { novoId = candidato; break; }
+        }
+        if (!novoId) throw new Error('Não foi possível reservar um código curto.');
+
+        const dadosAntigos = snapAntiga.data() || {};
+        const novaUrl = gerarLinkPublicoGestaoNotas(novoId);
+        await window.fsSetDoc(window.fsDoc(window.db, 'RastreiosPublicos', novoId), {
+            ...dadosAntigos,
+            id: novoId
+        });
+        await window.fsSetDoc(window.fsDoc(window.db, 'HistoricoNotas', gestaoNotasTabelaAtualId), {
+            publicoId: novoId,
+            urlPublica: novaUrl,
+            dataLinkAtualizacao: new Date().toISOString()
+        }, { merge: true });
+
+        gestaoNotasPublicoId = novoId;
+        gestaoNotasLinkPublico = novaUrl;
+        atualizarBoxPublicacaoGestaoNotas();
+        await carregarHistoricoGestaoNotas();
+        mostrarAvisoSistema('Link curto criado', 'O novo endereço possui somente 6 caracteres após <strong>rastreio=</strong>. O link antigo continuará funcionando.');
+    } finally {
+        if (botao) { botao.disabled = false; botao.innerText = textoOriginal; }
+    }
+}
+
+function criarRastreamentoInicial(itens, agora) {
+    const mapa = {};
+    itens.forEach(item => {
+        const config = GN_STATUS_RASTREIO.recebido_contabilidade;
+        mapa[item.id] = {
+            status: 'recebido_contabilidade',
+            rotulo: config.rotulo,
+            local: config.local,
+            atualizadoEm: agora,
+            eventos: [{
+                status: 'recebido_contabilidade',
+                rotulo: config.rotulo,
+                local: config.local,
+                data: agora,
+                observacao: 'Empenho incluído na relação pela Contabilidade.'
+            }]
+        };
+    });
+    return mapa;
+}
+
 window.salvarTabelaGestaoNotas = async function(botao) {
     if (!window.auth?.currentUser) {
-        alert('Você precisa estar logado para salvar o histórico.');
+        alert('Você precisa estar logado para salvar e publicar a lista.');
         return;
     }
 
@@ -15589,46 +16164,198 @@ window.salvarTabelaGestaoNotas = async function(botao) {
         return;
     }
 
-    const textoOriginal = botao ? botao.innerText : 'Salvar Histórico';
+    if (gestaoNotasPublicoId && !gestaoNotasAlterada) {
+        if (String(gestaoNotasPublicoId).length !== 6) {
+            try {
+                await migrarLinkRastreioParaSeisCaracteres(botao);
+            } catch (erro) {
+                console.error('Erro ao criar link curto:', erro);
+                alert('Não foi possível criar o link curto agora. Tente novamente.');
+            }
+            return;
+        }
+        atualizarBoxPublicacaoGestaoNotas();
+        mostrarAvisoSistema('Lista já publicada', 'Esta lista já possui um link público imutável. Você pode copiá-lo no quadro verde.');
+        return;
+    }
+
+    if (gestaoNotasPublicoId && gestaoNotasAlterada) {
+        const criarNovaVersao = confirm('Esta lista pública é imutável. Deseja salvar as alterações como uma NOVA lista, com um novo link? A lista anterior continuará disponível sem mudanças.');
+        if (!criarNovaVersao) return;
+    }
+
+    const textoOriginal = botao ? botao.innerText : 'Salvar e Gerar Link';
 
     try {
         if (botao) {
             botao.disabled = true;
-            botao.innerText = 'Salvando...';
+            botao.innerText = 'Salvando e publicando...';
         }
 
-        const idTabela = gestaoNotasTabelaAtualId || ('tabela-' + Date.now());
-        const total = gestaoNotasItens.reduce((soma, item) => soma + Number(item.valorNota || 0), 0);
+        const agora = new Date().toISOString();
+        const criandoNovaVersao = !!(gestaoNotasPublicoId && gestaoNotasAlterada);
+        const idTabela = criandoNovaVersao || !gestaoNotasTabelaAtualId ? ('tabela-' + Date.now()) : gestaoNotasTabelaAtualId;
+        const publicoId = gerarCodigoPublicoRastreio();
+        const urlPublica = gerarLinkPublicoGestaoNotas(publicoId);
+        const titulo = `Relação de Empenhos ${new Date().toLocaleDateString('pt-BR')} ${new Date().toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit' })}`;
+        const itensSnapshot = gestaoNotasItens.map(item => ({
+            id: item.id,
+            empenho: item.empenho || '',
+            fornecedor: item.fornecedor || '',
+            tipoNota: item.tipoNota || '',
+            valorNota: Number(item.valorNota || 0),
+            valorNotaTexto: item.valorNotaTexto || '',
+            dataEmissao: item.dataEmissao || '',
+            numeroNota: item.numeroNota || '',
+            ano: String(item.ano || item.anoEmpenho || '').trim() || (String(item.dataEmissao || '').match(/(20\d{2})/) || [])[1] || String(new Date().getFullYear())
+        }));
+        const total = itensSnapshot.reduce((soma, item) => soma + item.valorNota, 0);
+        const rastreamentoInicial = criarRastreamentoInicial(itensSnapshot, agora);
+
+        await window.fsSetDoc(
+            window.fsDoc(window.db, 'RastreiosPublicos', publicoId),
+            {
+                id: publicoId,
+                titulo,
+                publicadoEm: agora,
+                quantidadeLinhas: itensSnapshot.length,
+                valorTotal: total,
+                itens: itensSnapshot,
+                rastreamento: rastreamentoInicial,
+                rastreioAtualizadoEm: agora
+            }
+        );
 
         await window.fsSetDoc(
             window.fsDoc(window.db, 'HistoricoNotas', idTabela),
             {
                 id: idTabela,
-                titulo: `Tabela de Notas ${new Date().toLocaleDateString('pt-BR')} ${new Date().toLocaleTimeString('pt-BR')}`,
+                titulo,
                 criadoPor: window.auth.currentUser.email || '',
-                dataCriacao: new Date().toISOString(),
-                dataAtualizacao: new Date().toISOString(),
-                quantidadeLinhas: gestaoNotasItens.length,
+                dataCriacao: agora,
+                dataAtualizacao: agora,
+                quantidadeLinhas: itensSnapshot.length,
                 valorTotal: total,
-                itens: gestaoNotasItens
+                itens: itensSnapshot,
+                publicoId,
+                urlPublica,
+                rastreamento: rastreamentoInicial
             }
         );
 
         gestaoNotasTabelaAtualId = idTabela;
+        gestaoNotasPublicoId = publicoId;
+        gestaoNotasLinkPublico = urlPublica;
+        gestaoNotasRastreamento = rastreamentoInicial;
+        gestaoNotasAlterada = false;
+        atualizarBoxPublicacaoGestaoNotas();
+        renderizarTabelaGestaoNotas(gestaoNotasFiltrados.length ? gestaoNotasFiltrados : gestaoNotasItens);
 
         const info = document.getElementById('gnInfoTabela');
-        if (info) info.textContent = `Tabela salva com ${gestaoNotasItens.length} linha(s).`;
+        if (info) info.textContent = `Lista publicada com ${gestaoNotasItens.length} empenho(s).`;
 
         await carregarHistoricoGestaoNotas();
-        alert('Histórico salvo com sucesso.');
+        mostrarAvisoSistema('Lista salva e publicada', 'O link público foi criado. A relação de empenhos ficou congelada, mas o rastreamento poderá ser atualizado a qualquer momento.');
     } catch (erro) {
-        console.error('Erro ao salvar histórico:', erro);
-        alert('Erro ao salvar histórico no Firebase.');
+        console.error('Erro ao salvar e publicar a lista:', erro);
+        alert('Erro ao salvar a lista no Firebase. Verifique também se a regra da coleção RastreiosPublicos foi adicionada.');
     } finally {
         if (botao) {
             botao.disabled = false;
             botao.innerText = textoOriginal;
         }
+    }
+};
+
+window.atualizarRastreamentoSelecionados = async function(botao) {
+    if (!window.auth?.currentUser) {
+        alert('Você precisa estar logado para atualizar o rastreamento.');
+        return;
+    }
+    if (!gestaoNotasPublicoId) {
+        mostrarAvisoSistema('Publique a lista primeiro', 'Use <strong>Salvar e Gerar Link</strong> antes de atualizar o andamento.');
+        return;
+    }
+    if (!gestaoNotasSelecionados.size) {
+        mostrarAvisoSistema('Nenhum empenho selecionado', 'Marque um ou mais empenhos na primeira coluna da tabela.');
+        return;
+    }
+
+    const acao = document.getElementById('gnAcaoRastreio')?.value || '';
+    const observacao = document.getElementById('gnObservacaoRastreio')?.value.trim() || '';
+    const descricaoPersonalizada = document.getElementById('gnDescricaoRastreioPersonalizado')?.value.trim() || '';
+    const localPersonalizado = document.getElementById('gnLocalRastreioPersonalizado')?.value.trim() || '';
+    if (!acao) {
+        mostrarAvisoSistema('Escolha o próximo passo', 'Selecione a movimentação que será aplicada aos empenhos marcados.');
+        return;
+    }
+    if (acao === 'personalizado' && (!descricaoPersonalizada || !localPersonalizado)) {
+        mostrarAvisoSistema('Complete o próximo passo', 'Informe a descrição da movimentação e o local atual dos empenhos.');
+        return;
+    }
+
+    const textoOriginal = botao?.innerText || 'Atualizar selecionados';
+    try {
+        if (botao) { botao.disabled = true; botao.innerText = 'Atualizando...'; }
+        const refPublica = window.fsDoc(window.db, 'RastreiosPublicos', gestaoNotasPublicoId);
+        const snapPublica = await window.fsGetDoc(refPublica);
+        if (!snapPublica.exists()) throw new Error('Lista pública não encontrada.');
+
+        const agora = new Date().toISOString();
+        const mapa = { ...(snapPublica.data().rastreamento || {}) };
+        let atualizados = 0;
+
+        gestaoNotasItens.forEach(item => {
+            if (!gestaoNotasSelecionados.has(item.id)) return;
+            let codigo = acao;
+            if (acao === 'liquidado_auto') {
+                codigo = normalizarTexto(item.tipoNota).includes('mercadoria') ? 'almoxarifado' : 'aguardando_tesouraria';
+            }
+            const config = codigo === 'personalizado'
+                ? { rotulo: descricaoPersonalizada, local: localPersonalizado, classe: 'gn-status-personalizado' }
+                : GN_STATUS_RASTREIO[codigo];
+            if (!config) return;
+            const anterior = mapa[item.id] || {};
+            const eventos = Array.isArray(anterior.eventos) ? [...anterior.eventos] : [];
+            eventos.push({
+                status: codigo,
+                rotulo: config.rotulo,
+                local: config.local,
+                data: agora,
+                observacao
+            });
+            mapa[item.id] = {
+                status: codigo,
+                rotulo: config.rotulo,
+                local: config.local,
+                atualizadoEm: agora,
+                observacaoAtual: observacao,
+                eventos: eventos.slice(-50)
+            };
+            atualizados++;
+        });
+
+        await window.fsSetDoc(refPublica, { rastreamento: mapa, rastreioAtualizadoEm: agora }, { merge: true });
+        await window.fsSetDoc(
+            window.fsDoc(window.db, 'HistoricoNotas', gestaoNotasTabelaAtualId),
+            { rastreamento: mapa, dataRastreamentoAtualizacao: agora },
+            { merge: true }
+        );
+
+        gestaoNotasRastreamento = mapa;
+        gestaoNotasSelecionados.clear();
+        document.getElementById('gnObservacaoRastreio').value = '';
+        document.getElementById('gnDescricaoRastreioPersonalizado').value = '';
+        document.getElementById('gnLocalRastreioPersonalizado').value = '';
+        document.getElementById('gnAcaoRastreio').value = '';
+        alternarCamposRastreioPersonalizado();
+        renderizarTabelaGestaoNotas(gestaoNotasFiltrados.length ? gestaoNotasFiltrados : gestaoNotasItens);
+        mostrarAvisoSistema('Rastreamento atualizado', `${atualizados} empenho(s) receberam a nova movimentação. O link público já mostra a alteração.`);
+    } catch (erro) {
+        console.error('Erro ao atualizar rastreamento:', erro);
+        alert('Não foi possível atualizar o rastreamento. Confira as regras do Firebase e tente novamente.');
+    } finally {
+        if (botao) { botao.disabled = false; botao.innerText = textoOriginal; }
     }
 };
 
@@ -15747,6 +16474,7 @@ window.renderizarHistoricoGestaoNotas = function renderizarHistoricoGestaoNotas(
         const correspondentes = obterItensCorrespondentesHistorico(item, filtros);
         const exemplo = correspondentes[0] || null;
         const idSeguroJs = String(item.id || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+        const urlPublica = item.urlPublica || (item.publicoId ? gerarLinkPublicoGestaoNotas(item.publicoId) : '');
         const detalheExemplo = exemplo
             ? [
                 exemplo.empenho ? `Empenho ${escaparHtml(exemplo.empenho)}` : '',
@@ -15766,6 +16494,7 @@ window.renderizarHistoricoGestaoNotas = function renderizarHistoricoGestaoNotas(
             </div>
             <div style="display:flex; gap:8px; flex-wrap:wrap;">
                 <button type="button" class="btn-primary" style="width:auto; padding:8px 12px;" onclick="abrirHistoricoGestaoNotas('${idSeguroJs}')">Abrir</button>
+                ${urlPublica ? `<a href="${escaparHtml(urlPublica)}" target="_blank" rel="noopener" class="btn-primary" style="display:inline-block; width:auto; padding:8px 12px; background:#1e6b3b; border:1px solid #16552f; border-radius:3px; color:#fff; text-decoration:none; font-size:14px;">Consulta pública</a>` : ''}
             </div>
         </div>
     `;
@@ -15808,9 +16537,27 @@ window.abrirHistoricoGestaoNotas = async function(idTabela) {
         gestaoNotasTabelaAtualId = dados.id || idTabela;
         gestaoNotasItens = Array.isArray(dados.itens) ? dados.itens : [];
         gestaoNotasFiltrados = [...gestaoNotasItens];
+        gestaoNotasPublicoId = dados.publicoId || null;
+        gestaoNotasLinkPublico = dados.urlPublica || (gestaoNotasPublicoId ? gerarLinkPublicoGestaoNotas(gestaoNotasPublicoId) : '');
+        gestaoNotasRastreamento = dados.rastreamento || {};
+        gestaoNotasAlterada = false;
+        gestaoNotasSelecionados.clear();
+
+        if (gestaoNotasPublicoId) {
+            try {
+                const snapPublico = await window.fsGetDoc(window.fsDoc(window.db, 'RastreiosPublicos', gestaoNotasPublicoId));
+                if (snapPublico.exists()) {
+                    gestaoNotasRastreamento = snapPublico.data().rastreamento || gestaoNotasRastreamento;
+                }
+            } catch (erroPublico) {
+                console.warn('Não foi possível atualizar o andamento público ao abrir a lista:', erroPublico);
+            }
+        }
 
         limparFiltroGestaoNotas();
         atualizarResumoGestaoNotas();
+        atualizarBoxPublicacaoGestaoNotas();
+        atualizarResumoSelecaoGestaoNotas();
 
         const info = document.getElementById('gnInfoTabela');
         if (info) info.textContent = `Tabela carregada: ${dados.titulo || idTabela}`;
@@ -16657,7 +17404,13 @@ onAuthStateChanged(auth, async (usuario) => {
             await window.carregarFornecedoresNuvem(true);
         }
     } else {
-        bloquearSite();
+        const hashAtual = window.location.hash.replace('#', '').trim();
+        const codigoRastreioQuery = new URLSearchParams(window.location.search).get('rastreio');
+        if (codigoRastreioQuery || /^(?:rastreio|r)=/i.test(hashAtual) || hashAtual === 'consulta-empenho') {
+            abrirTelaPeloHash();
+        } else {
+            bloquearSite();
+        }
         lembretesLista = [];
 
         if (typeof renderizarMuralHome === 'function') {

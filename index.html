@@ -1396,7 +1396,7 @@ body.print-retencao .col-retencao {
         margin: 3px 0 0 !important;
         padding: 0 !important;
         border: 0 !important;
-        font-size: 8px !important;
+        font-size: 13px !important;
         font-weight: normal !important;
         line-height: 1.25 !important;
         color: #666 !important;
@@ -3797,6 +3797,10 @@ body.print-retencao .col-retencao {
     Atualizar Histórico
 </button>
 
+<button type="button" class="btn-primary" onclick="abrirModalLinkPublicoGestaoNotas()" style="width:auto; background:#315f7d; border-color:#244a63;">
+    Link de Rastreio
+</button>
+
 <button
     type="button"
     class="btn-primary"
@@ -3859,16 +3863,6 @@ body.print-retencao .col-retencao {
                         <div class="alert-box alert-neutro" id="gnInfoTabela" style="margin:0;">
                             Nenhuma tabela carregada.
                         </div>
-                    </div>
-                </div>
-
-                <div id="gnPublicacaoBox" class="gn-publicacao-box">
-                    <div style="font-size:13px; font-weight:bold; color:#1e6b3b;">Lista pública criada e congelada</div>
-                    <div style="font-size:12px; color:#456454; margin-top:4px;">Os empenhos desta lista não podem ser alterados. O andamento continuará sendo atualizado normalmente.</div>
-                    <div class="gn-publicacao-linha">
-                        <input type="text" id="gnLinkPublico" readonly aria-label="Link público de rastreamento">
-                        <button type="button" class="btn-primary" onclick="copiarLinkPublicoGestaoNotas()" style="width:auto;">Copiar link</button>
-                        <button type="button" class="btn-primary" onclick="abrirLinkPublicoGestaoNotas()" style="width:auto; background:#1e6b3b; border-color:#16552f;">Abrir consulta</button>
                     </div>
                 </div>
 
@@ -3989,7 +3983,7 @@ body.print-retencao .col-retencao {
         </div>
         <div style="text-align:right; max-width:48%;">
             <div id="gnFolhaData" style="font-size:13px; color:#333;"></div>
-            <div id="gnLinkPublicoImpressao" style="font-size:9px; color:#777; margin-top:3px; word-break:break-all;">Rastreio: lista ainda não publicada.</div>
+            <div id="gnLinkPublicoImpressao" style="font-size:13px; color:#777; margin-top:3px; word-break:break-all;">Rastreio: lista ainda não publicada.</div>
         </div>
     </div>
 
@@ -4040,7 +4034,7 @@ body.print-retencao .col-retencao {
                     <h2 style="margin:7px 0 4px; color:#fff; font-size:23px;">Rastreamento de Empenhos</h2>
                     <div id="rpTitulo" style="font-size:13px; color:rgba(255,255,255,.8);">Carregando lista pública...</div>
                 </div>
-                <button type="button" class="btn-primary" onclick="carregarRastreioPublicoDoHash(true)" style="width:auto; background:rgba(255,255,255,.12); border-color:rgba(255,255,255,.38);">Atualizar agora</button>
+                <button type="button" id="rpAtualizarBtn" class="btn-primary" onclick="solicitarAtualizacaoRastreioPublico()" style="width:auto; background:rgba(255,255,255,.12); border-color:rgba(255,255,255,.38);">Atualizar agora</button>
             </div>
             <div id="rpAtualizacao" style="font-size:11px; color:rgba(255,255,255,.68); margin-top:14px;">Aguardando dados.</div>
         </div>
@@ -4052,13 +4046,14 @@ body.print-retencao .col-retencao {
                 <button type="button" class="btn-primary" onclick="document.getElementById('rpBusca').value=''; filtrarRastreioPublico();" style="width:auto; background:#eef2f6; color:#0f3b5e; border-color:#bac5d0;">Limpar</button>
             </div>
             <div style="overflow-x:auto; border:1px solid #dbe4eb; border-radius:8px;">
-                <table class="data-table" style="margin:0; min-width:980px; table-layout:auto;">
+                <table class="data-table" style="margin:0; min-width:1080px; table-layout:auto;">
                     <thead>
                         <tr>
                             <th style="width:82px; min-width:82px;">Empenho</th>
                             <th style="width:auto; min-width:240px;">Fornecedor</th>
                             <th style="width:86px; min-width:86px;">Nota fiscal</th>
                             <th style="width:92px; min-width:92px;">Tipo</th>
+                            <th style="width:115px; min-width:110px;">Valor</th>
                             <th style="width:210px; min-width:190px;">Situação</th>
                             <th style="width:135px; min-width:125px;">Local atual</th>
                             <th style="width:130px; min-width:120px;">Última atualização</th>
@@ -4066,7 +4061,7 @@ body.print-retencao .col-retencao {
                         </tr>
                     </thead>
                     <tbody id="rpTabelaBody">
-                        <tr><td colspan="8" style="text-align:center; padding:24px;">Carregando...</td></tr>
+                        <tr><td colspan="9" style="text-align:center; padding:24px;">Carregando...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -9111,6 +9106,28 @@ async function imprimirTabelaGestaoNotas(filtroTipo = 'todos', orientacao = 'ret
 let rastreioPublicoDados = null;
 let rastreioPublicoTimer = null;
 let rastreioPublicoTentativas = 0;
+let rastreioPublicoCooldownTimer = null;
+
+window.solicitarAtualizacaoRastreioPublico = function() {
+    const botao = document.getElementById('rpAtualizarBtn');
+    if (!botao || botao.disabled) return;
+
+    carregarRastreioPublicoDoHash(true);
+    let restante = 60;
+    botao.disabled = true;
+    botao.textContent = `Aguarde ${restante}s`;
+    clearInterval(rastreioPublicoCooldownTimer);
+    rastreioPublicoCooldownTimer = setInterval(() => {
+        restante--;
+        if (restante <= 0) {
+            clearInterval(rastreioPublicoCooldownTimer);
+            botao.disabled = false;
+            botao.textContent = 'Atualizar agora';
+            return;
+        }
+        botao.textContent = `Aguarde ${restante}s`;
+    }, 1000);
+};
 
 function obterCodigoRastreioDoHash() {
     const codigoQuery = new URLSearchParams(window.location.search).get('rastreio');
@@ -9148,7 +9165,7 @@ window.carregarRastreioPublicoDoHash = async function(forcar = false) {
             rastreioPublicoDados = null;
             aviso.className = 'alert-box alert-normal';
             aviso.textContent = 'Esta lista pública não existe ou o link está incompleto.';
-            tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:24px;">Lista não encontrada.</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding:24px;">Lista não encontrada.</td></tr>';
             return;
         }
 
@@ -9162,7 +9179,7 @@ window.carregarRastreioPublicoDoHash = async function(forcar = false) {
         console.error('Erro ao carregar rastreamento público:', erro);
         aviso.className = 'alert-box alert-normal';
         aviso.textContent = 'Não foi possível consultar o rastreamento agora. Tente novamente em alguns instantes.';
-        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:24px;">Falha temporária na consulta.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding:24px;">Falha temporária na consulta.</td></tr>';
     }
 
     clearTimeout(rastreioPublicoTimer);
@@ -9218,7 +9235,7 @@ window.filtrarRastreioPublico = function() {
         <div class="rastreio-publico-kpi"><strong>${devolvidos}</strong><span>Devolvidos a Compras</span></div>`;
 
     if (!itens.length) {
-        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:24px;">Nenhum empenho corresponde à busca.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding:24px;">Nenhum empenho corresponde à busca.</td></tr>';
         return;
     }
 
@@ -9227,6 +9244,7 @@ window.filtrarRastreioPublico = function() {
         const codigo = atual.status || 'recebido_contabilidade';
         const config = GN_STATUS_RASTREIO[codigo] || GN_STATUS_RASTREIO.recebido_contabilidade;
         const eventos = Array.isArray(atual.eventos) ? [...atual.eventos].reverse() : [];
+        const valorEmpenho = Number(item.valorEmpenho ?? item.valorNota ?? 0);
         const anoEmpenho = obterAnoEmpenhoRastreio(item, dados);
         const linhaId = `rp-eventos-${indice}`;
         const eventosHtml = eventos.length ? eventos.map(evento => {
@@ -9240,12 +9258,13 @@ window.filtrarRastreioPublico = function() {
                 <td>${escaparHtml(item.fornecedor || '-')}</td>
                 <td>${escaparHtml(item.numeroNota || '-')}</td>
                 <td>${escaparHtml(item.tipoNota || '-')}</td>
+                <td style="white-space:nowrap; font-weight:bold;">R$ ${formatarValorBR(valorEmpenho)}</td>
                 <td><span class="gn-status-chip ${config.classe}">${escaparHtml(atual.rotulo || config.rotulo)}</span></td>
                 <td><span class="gn-local-texto">${escaparHtml(atual.local || config.local)}</span></td>
                 <td>${escaparHtml(formatarDataHoraRastreio(atual.atualizadoEm))}</td>
                 <td><button type="button" class="btn-primary" style="width:auto; padding:6px 10px; font-size:11px;" onclick="const el=document.getElementById('${linhaId}'); el.style.display=el.style.display==='none'?'table-row':'none';">Ver trajetória</button></td>
             </tr>
-            <tr id="${linhaId}" class="rastreio-linha-eventos" style="display:none;"><td colspan="8"><div class="rastreio-timeline">${eventosHtml}</div></td></tr>`;
+            <tr id="${linhaId}" class="rastreio-linha-eventos" style="display:none;"><td colspan="9"><div class="rastreio-timeline">${eventosHtml}</div></td></tr>`;
     }).join('');
 };
 
@@ -10783,7 +10802,10 @@ async function carregarDetalhesEmpenho(numEmpenho, anoFinal) {
         if (!lista.length) {
             abrirModalDetalheApiEmpenho(
                 `Detalhes do Empenho ${numEmpenho}/${anoFinal}`,
-                `<div style="padding:20px; color:#a50e0e;">Nenhum detalhe encontrado para este empenho.</div>`
+                `<div class="alert-box alert-normal" style="margin:0; padding:16px; line-height:1.6;">
+                    <strong>Detalhes ainda não disponíveis.</strong><br>
+                    Empenhos recentes estarão visíveis aqui em até 24 horas, após a atualização dos dados no Portal da Transparência. Tente consultar novamente mais tarde.
+                </div>`
             );
             return;
         }
@@ -12891,18 +12913,36 @@ function gerarLinkPublicoGestaoNotas(publicoId) {
 }
 
 function atualizarBoxPublicacaoGestaoNotas() {
-    const box = document.getElementById('gnPublicacaoBox');
-    const input = document.getElementById('gnLinkPublico');
-    if (!box || !input) return;
-    if (!gestaoNotasPublicoId) {
-        box.classList.remove('active');
+    const input = document.getElementById('gnLinkPublicoModal');
+    const aviso = document.getElementById('gnLinkPublicoModalAviso');
+    const botoes = ['gnBtnRecriarLink', 'gnBtnCopiarLink', 'gnBtnAbrirLink']
+        .map(id => document.getElementById(id)).filter(Boolean);
+    if (!input || !aviso) return;
+
+    const publicado = !!gestaoNotasPublicoId;
+    if (publicado) {
+        gestaoNotasLinkPublico = gestaoNotasLinkPublico || gerarLinkPublicoGestaoNotas(gestaoNotasPublicoId);
+        input.value = gestaoNotasLinkPublico;
+        aviso.className = 'alert-box alert-simples';
+        aviso.textContent = 'A lista está publicada e pode ser consultada sem login.';
+    } else {
         input.value = '';
-        return;
+        aviso.className = 'alert-box alert-neutro';
+        aviso.textContent = 'Salve a tabela para gerar o primeiro link público.';
     }
-    gestaoNotasLinkPublico = gestaoNotasLinkPublico || gerarLinkPublicoGestaoNotas(gestaoNotasPublicoId);
-    input.value = gestaoNotasLinkPublico;
-    box.classList.add('active');
+    botoes.forEach(botao => { botao.disabled = !publicado; });
 }
+
+window.abrirModalLinkPublicoGestaoNotas = function() {
+    atualizarBoxPublicacaoGestaoNotas();
+    const modal = document.getElementById('modalLinkPublicoGestaoNotas');
+    if (modal) modal.style.display = 'flex';
+};
+
+window.fecharModalLinkPublicoGestaoNotas = function() {
+    const modal = document.getElementById('modalLinkPublicoGestaoNotas');
+    if (modal) modal.style.display = 'none';
+};
 
 window.copiarLinkPublicoGestaoNotas = async function() {
     if (!gestaoNotasLinkPublico) return;
@@ -12910,7 +12950,7 @@ window.copiarLinkPublicoGestaoNotas = async function() {
         await navigator.clipboard.writeText(gestaoNotasLinkPublico);
         mostrarAvisoSistema('Link copiado', 'O link público de rastreamento foi copiado.');
     } catch (_) {
-        const input = document.getElementById('gnLinkPublico');
+        const input = document.getElementById('gnLinkPublicoModal');
         input?.select();
         document.execCommand('copy');
         mostrarAvisoSistema('Link copiado', 'O link público de rastreamento foi copiado.');
@@ -16126,11 +16166,25 @@ async function migrarLinkRastreioParaSeisCaracteres(botao) {
         gestaoNotasLinkPublico = novaUrl;
         atualizarBoxPublicacaoGestaoNotas();
         await carregarHistoricoGestaoNotas();
-        mostrarAvisoSistema('Link curto criado', 'O novo endereço possui somente 6 caracteres após <strong>rastreio=</strong>. O link antigo continuará funcionando.');
+        mostrarAvisoSistema('Novo link criado', 'O novo endereço possui 6 caracteres após <strong>rastreio=</strong>. O link anterior continuará funcionando.');
     } finally {
         if (botao) { botao.disabled = false; botao.innerText = textoOriginal; }
     }
 }
+
+window.recriarLinkPublicoGestaoNotas = async function(botao) {
+    if (!gestaoNotasPublicoId || !gestaoNotasTabelaAtualId) {
+        mostrarAvisoSistema('Lista não publicada', 'Salve a tabela antes de recriar o link.');
+        return;
+    }
+    if (!confirm('Deseja criar um novo link público para esta mesma lista? O endereço anterior continuará funcionando.')) return;
+    try {
+        await migrarLinkRastreioParaSeisCaracteres(botao);
+    } catch (erro) {
+        console.error('Erro ao recriar link público:', erro);
+        alert('Não foi possível recriar o link agora. Tente novamente.');
+    }
+};
 
 function criarRastreamentoInicial(itens, agora) {
     const mapa = {};
@@ -16175,7 +16229,7 @@ window.salvarTabelaGestaoNotas = async function(botao) {
             return;
         }
         atualizarBoxPublicacaoGestaoNotas();
-        mostrarAvisoSistema('Lista já publicada', 'Esta lista já possui um link público imutável. Você pode copiá-lo no quadro verde.');
+        mostrarAvisoSistema('Lista já publicada', 'Esta lista já possui um link público. Use o botão <strong>Link de Rastreio</strong> para copiar, abrir ou recriar o endereço.');
         return;
     }
 
@@ -16204,6 +16258,7 @@ window.salvarTabelaGestaoNotas = async function(botao) {
             fornecedor: item.fornecedor || '',
             tipoNota: item.tipoNota || '',
             valorNota: Number(item.valorNota || 0),
+            valorEmpenho: Number(item.valorEmpenho ?? item.valorNota ?? 0),
             valorNotaTexto: item.valorNotaTexto || '',
             dataEmissao: item.dataEmissao || '',
             numeroNota: item.numeroNota || '',
@@ -17499,6 +17554,27 @@ return true;
         <div class="modal-header-custom" id="modalTitulo">Aviso</div>
         <div class="modal-body-custom" id="modalMensagem">Mensagem</div>
         <div class="modal-footer-custom" id="modalFooter"></div>
+    </div>
+</div>
+
+<div id="modalLinkPublicoGestaoNotas" class="modal-overlay" style="display:none; z-index:50010;">
+    <div class="modal-panel" style="width:560px; max-width:calc(100vw - 30px);">
+        <div class="modal-header-custom" style="display:flex; justify-content:space-between; align-items:center; gap:12px;">
+            <strong>Link público de rastreamento</strong>
+            <button type="button" onclick="fecharModalLinkPublicoGestaoNotas()" style="border:0; background:transparent; color:inherit; font-size:22px; cursor:pointer; line-height:1;">&times;</button>
+        </div>
+        <div class="modal-body-custom">
+            <div id="gnLinkPublicoModalAviso" class="alert-box alert-neutro" style="margin-bottom:12px;">Abra ou publique uma lista para acessar seu link.</div>
+            <label for="gnLinkPublicoModal" style="display:block; font-size:12px; font-weight:bold; color:#495057; margin-bottom:6px;">Endereço público</label>
+            <input type="text" id="gnLinkPublicoModal" readonly style="width:100%;" aria-label="Link público de rastreamento">
+            <div style="font-size:11px; color:#6c757d; line-height:1.45; margin-top:10px;">Ao recriar o endereço, o link anterior permanece funcionando e a lista de empenhos continua imutável.</div>
+        </div>
+        <div class="modal-footer-custom" style="display:flex; gap:8px; justify-content:flex-end; flex-wrap:wrap;">
+            <button type="button" class="btn-cancelar-modal" onclick="fecharModalLinkPublicoGestaoNotas()">Fechar</button>
+            <button type="button" class="btn-primary" id="gnBtnRecriarLink" onclick="recriarLinkPublicoGestaoNotas(this)" style="width:auto; background:#6c757d; border-color:#5a6268;">Recriar link</button>
+            <button type="button" class="btn-primary" id="gnBtnCopiarLink" onclick="copiarLinkPublicoGestaoNotas()" style="width:auto;">Copiar</button>
+            <button type="button" class="btn-primary" id="gnBtnAbrirLink" onclick="abrirLinkPublicoGestaoNotas()" style="width:auto; background:#1e6b3b; border-color:#16552f;">Abrir consulta</button>
+        </div>
     </div>
 </div>
 

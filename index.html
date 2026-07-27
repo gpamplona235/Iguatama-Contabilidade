@@ -3725,15 +3725,20 @@ body.print-retencao .col-retencao {
         #tela-gestao-notas .gn-busca-grid .form-group-calc { min-width:0; margin-bottom:0; }
         #tela-gestao-notas .gn-busca-grid input { width:100%; min-width:0; height:38px; box-sizing:border-box; padding:8px 10px; border:1px solid #bac5d0; border-radius:3px; background:#fff; color:#243746; font:inherit; font-size:13px; }
         #tela-gestao-notas .gn-busca-grid input:focus { border-color:#47789f; outline:2px solid rgba(71,120,159,.14); outline-offset:0; }
-        .gn-rastreio-painel { background:#0f3b5e; color:#fff; border-radius:10px; padding:16px; margin-bottom:18px; box-shadow:0 4px 14px rgba(15,59,94,.16); }
+        #tela-gestao-notas .materiais-body { display:flex; flex-direction:column; }
+        #gnItensTabelaBloco { order:1; }
+        #gnRastreioMostrarBtn, #gnRastreioPainel { order:2; margin-top:18px; }
+        #tela-gestao-notas .gn-busca-unificada { order:3; margin-top:18px; margin-bottom:0; }
+        #gnHistoricoBloco { order:4; margin-top:18px !important; }
+        .gn-rastreio-painel { background:#f7f9fb; color:#243746; border:1px solid #d7e0e8; border-radius:10px; padding:16px; margin-bottom:0; box-shadow:none; }
         .gn-rastreio-grid { display:grid; grid-template-columns:minmax(210px,1fr) minmax(220px,1.25fr) auto; gap:10px; align-items:end; }
-        .gn-rastreio-painel label { display:block; color:rgba(255,255,255,.82); font-size:11px; font-weight:bold; margin-bottom:6px; text-transform:uppercase; letter-spacing:.35px; }
-        .gn-rastreio-painel select,.gn-rastreio-painel input { height:40px; border:1px solid rgba(255,255,255,.4); border-radius:5px; background:#fff; color:#243746; }
+        .gn-rastreio-painel label { display:block; color:#5a6774; font-size:11px; font-weight:bold; margin-bottom:6px; text-transform:uppercase; letter-spacing:.35px; }
+        .gn-rastreio-painel select,.gn-rastreio-painel input { height:40px; border:1px solid #bac5d0; border-radius:5px; background:#fff; color:#243746; }
         .gn-rastreio-atalhos { display:flex; gap:7px; flex-wrap:wrap; margin-top:12px; align-items:center; }
-        .gn-rastreio-atalhos button { border:1px solid rgba(255,255,255,.38); color:#fff; background:rgba(255,255,255,.1); border-radius:5px; padding:7px 10px; cursor:pointer; font-size:11px; }
-        .gn-rastreio-atalhos button:hover { background:rgba(255,255,255,.18); }
+        .gn-rastreio-atalhos button { border:1px solid #bac5d0; color:#0f3b5e; background:#eef2f6; border-radius:5px; padding:7px 10px; cursor:pointer; font-size:11px; }
+        .gn-rastreio-atalhos button:hover { background:#e2e9ef; }
         .gn-rastreio-reabrir { display:none; margin:0 0 18px; width:100%; padding:10px 14px; border:1px solid #b9c8d4; border-radius:7px; background:#f4f7f9; color:#0f3b5e; font-size:12px; font-weight:bold; text-align:left; cursor:pointer; }
-        .gn-rastreio-ocultar { border:1px solid rgba(255,255,255,.38); color:#fff; background:transparent; border-radius:5px; padding:6px 9px; cursor:pointer; font-size:11px; }
+        .gn-rastreio-ocultar { border:1px solid #bac5d0; color:#0f3b5e; background:#fff; border-radius:5px; padding:6px 9px; cursor:pointer; font-size:11px; }
         .gn-rastreio-personalizado { display:none; grid-column:1 / -1; grid-template-columns:1.4fr 1fr; gap:10px; padding-top:2px; }
         .gn-publicacao-box { display:none; margin:0 0 18px; padding:14px 16px; background:#edf8f1; border:1px solid #b9dfc5; border-left:5px solid #27864b; border-radius:8px; }
         .gn-publicacao-box.active { display:block; }
@@ -3871,10 +3876,10 @@ body.print-retencao .col-retencao {
                     <div style="display:flex; justify-content:space-between; gap:12px; align-items:flex-start; flex-wrap:wrap; margin-bottom:12px;">
                         <div>
                             <div style="font-size:15px; font-weight:bold;">Atualização rápida do rastreamento</div>
-                            <div style="font-size:11px; color:rgba(255,255,255,.72); margin-top:3px;">Marque os empenhos na tabela, escolha o próximo passo e atualize todos de uma vez.</div>
+                            <div style="font-size:11px; color:#66727d; margin-top:3px;">Marque os empenhos na tabela, escolha o próximo passo e atualize todos de uma vez.</div>
                         </div>
                         <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-                            <span id="gnSelecionadosResumo" style="font-size:12px; font-weight:bold; background:rgba(255,255,255,.12); padding:6px 9px; border-radius:999px;">0 selecionados</span>
+                            <span id="gnSelecionadosResumo" style="font-size:12px; font-weight:bold; color:#0f3b5e; background:#e8eef3; padding:6px 9px; border-radius:999px;">0 selecionados</span>
                             <button type="button" class="gn-rastreio-ocultar" onclick="alternarPainelRastreio(false)">Ocultar</button>
                         </div>
                     </div>
@@ -3911,7 +3916,7 @@ body.print-retencao .col-retencao {
                         </div>
                     </div>
                     <div class="gn-rastreio-atalhos">
-                        <span style="font-size:11px; color:rgba(255,255,255,.72);">Seleção rápida:</span>
+                        <span style="font-size:11px; color:#66727d;">Seleção rápida:</span>
                         <button type="button" onclick="selecionarItensGestaoNotas('todos')">Todos</button>
                         <button type="button" onclick="selecionarItensGestaoNotas('Mercadoria')">Mercadorias</button>
                         <button type="button" onclick="selecionarItensGestaoNotas('Serviço')">Serviços</button>
@@ -3942,7 +3947,7 @@ body.print-retencao .col-retencao {
                     </div>
                 </div>
 
-                <div style="background:#ffffff; border:1px solid #d7e0e8; border-radius:10px; overflow:hidden;">
+                <div id="gnItensTabelaBloco" style="background:#ffffff; border:1px solid #d7e0e8; border-radius:10px; overflow:hidden;">
                     <div style="padding:14px 16px; border-bottom:1px solid #e3eaf0; background:#f7fafc; font-size:13px; font-weight:bold; color:#0f3b5e;">
                         Itens da tabela
                     </div>
@@ -4011,7 +4016,7 @@ body.print-retencao .col-retencao {
 </div>
                 </div>
 
-                <div style="margin-top:18px; background:#fff; border:1px solid #d7e0e8; border-radius:10px; overflow:hidden;">
+                <div id="gnHistoricoBloco" style="margin-top:18px; background:#fff; border:1px solid #d7e0e8; border-radius:10px; overflow:hidden;">
                     <div style="padding:14px 16px; border-bottom:1px solid #e3eaf0; background:#f7fafc; display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;">
                         <span style="font-size:13px; font-weight:bold; color:#0f3b5e;">Histórico salvo</span>
                         <span id="gnHistoricoResumo" style="font-size:11px; font-weight:normal; color:#66727d;"></span>

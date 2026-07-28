@@ -1392,7 +1392,7 @@ body.print-retencao .col-retencao {
     }
 
     body.print-gestao-notas #gnLinkPublicoImpressao {
-        display: block !important;
+        display: none !important;
         margin: 3px 0 0 !important;
         padding: 0 !important;
         border: 0 !important;
@@ -1402,6 +1402,10 @@ body.print-retencao .col-retencao {
         color: #666 !important;
         text-align: right !important;
         word-break: break-all !important;
+    }
+
+    body.print-gestao-notas #gnLinkPublicoImpressao.gn-link-impressao-visivel {
+        display: block !important;
     }
 
     body.print-gestao-notas #gnRodapeImpressao {
@@ -8974,13 +8978,21 @@ function abrirModalImpressaoGestaoNotas() {
         return;
     }
 
-    if (!gestaoNotasPublicoId || !gestaoNotasLinkPublico) {
-        mostrarAvisoSistema('Salve antes de imprimir', 'Use <strong>Salvar e Gerar Link</strong> primeiro. Assim, o link público de rastreamento constará obrigatoriamente na folha impressa.');
-        return;
-    }
-
     const select = document.getElementById('gnFiltroTipoImpressao');
     if (select) select.value = 'todos';
+
+    const incluirLink = document.getElementById('gnIncluirLinkImpressao');
+    const ajudaLink = document.getElementById('gnIncluirLinkImpressaoAjuda');
+    const linkDisponivel = !!(gestaoNotasPublicoId && gestaoNotasLinkPublico);
+    if (incluirLink) {
+        incluirLink.checked = false;
+        incluirLink.disabled = !linkDisponivel;
+    }
+    if (ajudaLink) {
+        ajudaLink.textContent = linkDisponivel
+            ? 'O link aparecerá abaixo da data.'
+            : 'Salve e publique a tabela para disponibilizar esta opção.';
+    }
 
     const radioRetrato = document.querySelector('input[name="orientacaoImpressaoGestaoNotas"][value="retrato"]');
     if (radioRetrato) radioRetrato.checked = true;
@@ -9006,11 +9018,16 @@ function confirmarImpressaoGestaoNotas() {
     const select = document.getElementById('gnFiltroTipoImpressao');
     const filtroTipo = select ? select.value : 'todos';
     const orientacao = obterOrientacaoSelecionada('orientacaoImpressaoGestaoNotas', 'retrato');
+    const incluirLink = !!document.getElementById('gnIncluirLinkImpressao')?.checked;
+    if (incluirLink && !gestaoNotasLinkPublico) {
+        mostrarAvisoSistema('Link indisponível', 'Salve e publique a tabela antes de incluir o rastreamento na impressão.');
+        return;
+    }
     fecharModalImpressaoGestaoNotas();
-    imprimirTabelaGestaoNotas(filtroTipo, orientacao);
+    imprimirTabelaGestaoNotas(filtroTipo, orientacao, incluirLink);
 }
 
-async function imprimirTabelaGestaoNotas(filtroTipo = 'todos', orientacao = 'retrato') {
+async function imprimirTabelaGestaoNotas(filtroTipo = 'todos', orientacao = 'retrato', incluirLink = false) {
     const folha = document.getElementById('gnFolhaImpressao');
     const dataEl = document.getElementById('gnFolhaData');
     const tbodyImpressao = document.getElementById('gnTabelaImpressaoBody');
@@ -9089,7 +9106,8 @@ async function imprimirTabelaGestaoNotas(filtroTipo = 'todos', orientacao = 'ret
     dataEl.textContent =
         `Data: ${agora.toLocaleDateString('pt-BR')} ${agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })} | Tipo: ${nomeFiltro}`;
 
-    linkPublicoEl.textContent = `Rastreio: ${gestaoNotasLinkPublico}`;
+    linkPublicoEl.textContent = incluirLink ? `Rastreio: ${gestaoNotasLinkPublico}` : '';
+    linkPublicoEl.classList.toggle('gn-link-impressao-visivel', incluirLink);
 
     rodape.textContent =
         `Total de notas: ${linhasFiltradas.length} | Valor total: R$ ${formatarValorBR(total)}`;
@@ -9104,6 +9122,7 @@ async function imprimirTabelaGestaoNotas(filtroTipo = 'todos', orientacao = 'ret
         setTimeout(() => {
             document.body.classList.remove('print-gestao-notas');
             folha.style.display = 'none';
+            linkPublicoEl.classList.remove('gn-link-impressao-visivel');
         }, 300);
     }, 150);
 }
@@ -17744,6 +17763,16 @@ return true;
                         Paisagem
                     </label>
                 </div>
+            </div>
+
+            <div style="margin-top:14px; padding-top:12px; border-top:1px solid #e1e7ec;">
+                <label id="gnIncluirLinkImpressaoLabel" style="display:flex; align-items:flex-start; gap:9px; font-weight:normal; cursor:pointer; line-height:1.4;">
+                    <input type="checkbox" id="gnIncluirLinkImpressao" style="width:auto; margin-top:2px;">
+                    <span>
+                        <strong>Incluir link de rastreamento</strong><br>
+                        <span id="gnIncluirLinkImpressaoAjuda" style="font-size:11px; color:#6c757d;">O link aparecerá abaixo da data.</span>
+                    </span>
+                </label>
             </div>
         </div>
 

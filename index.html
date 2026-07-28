@@ -1304,6 +1304,10 @@ body.print-retencao .col-retencao {
         visibility: hidden !important;
     }
 
+    body.print-gestao-notas > *:not(#gnFolhaImpressao) {
+        display: none !important;
+    }
+
     body.print-gestao-notas #gnFolhaImpressao,
     body.print-gestao-notas #gnFolhaImpressao * {
         visibility: visible !important;
@@ -1323,6 +1327,72 @@ body.print-retencao .col-retencao {
         overflow: hidden !important;
     }
 
+    body.print-gestao-notas #gnCabecalhoImpressao {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: flex-start !important;
+        gap: 18px !important;
+        margin-bottom: 14px !important;
+        padding: 10px 0 12px !important;
+        border-top: 3px solid #252525 !important;
+        border-bottom: 1px solid #8a8a8a !important;
+        text-align: left !important;
+    }
+
+    body.print-gestao-notas #gnIdentidadeImpressao {
+        padding: 0 !important;
+    }
+
+    body.print-gestao-notas #gnOrgaoImpressao {
+        margin-bottom: 4px !important;
+        color: #555 !important;
+        font-size: 9px !important;
+        font-weight: bold !important;
+        letter-spacing: 0.7px !important;
+        text-transform: uppercase !important;
+    }
+
+    body.print-gestao-notas #gnTituloImpressao {
+        color: #171717 !important;
+        font-size: 22px !important;
+        font-weight: 600 !important;
+        line-height: 1.1 !important;
+        letter-spacing: 0.2px !important;
+    }
+
+    body.print-gestao-notas #gnSubtituloImpressao {
+        margin-top: 4px !important;
+        color: #666 !important;
+        font-size: 11px !important;
+    }
+
+    body.print-gestao-notas #gnMetadadosImpressao {
+        max-width: 50% !important;
+        padding: 0 !important;
+        border: 0 !important;
+        color: #333 !important;
+        font-size: 11px !important;
+        line-height: 1.35 !important;
+        text-align: right !important;
+    }
+
+    body.print-gestao-notas #gnFolhaData {
+        color: #333 !important;
+        font-size: 13px !important;
+        font-weight: normal !important;
+    }
+
+    body.print-gestao-notas #gnFolhaUsuario {
+        display: none !important;
+        margin-top: 4px !important;
+        color: #555 !important;
+        font-size: 11px !important;
+    }
+
+    body.print-gestao-notas #gnFolhaUsuario.gn-usuario-impressao-visivel {
+        display: block !important;
+    }
+
     body.print-gestao-notas #gnTabelaImpressao {
         width: 100% !important;
         max-width: 100% !important;
@@ -1331,11 +1401,20 @@ body.print-retencao .col-retencao {
         font-size: 11px !important;
     }
 
+    body.print-gestao-notas #gnTabelaImpressao thead {
+        display: table-header-group !important;
+    }
+
+    body.print-gestao-notas #gnTabelaImpressao tr {
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+    }
+
     body.print-gestao-notas #gnTabelaImpressao th,
     body.print-gestao-notas #gnTabelaImpressao td {
-        border: 1px solid #222 !important;
-        padding: 5px 6px !important;
-        color: #111 !important;
+        border: 1px solid #bdbdbd !important;
+        padding: 7px 8px !important;
+        color: #222 !important;
         background: #fff !important;
         text-align: center !important;
         vertical-align: middle !important;
@@ -1346,49 +1425,60 @@ body.print-retencao .col-retencao {
     }
 
     body.print-gestao-notas #gnTabelaImpressao th {
-        font-weight: bold !important;
+        border-color: #969696 !important;
+        background: #d9d9d9 !important;
+        color: #111 !important;
+        font-weight: 600 !important;
         text-transform: uppercase !important;
-        font-size: 10px !important;
+        font-size: 11px !important;
+        letter-spacing: 0.2px !important;
+        padding-top: 8px !important;
+        padding-bottom: 8px !important;
     }
 
-    body.print-gestao-notas #gnTabelaImpressao th:nth-child(1),
-    body.print-gestao-notas #gnTabelaImpressao td:nth-child(1) {
-        width: 8% !important;
+    body.print-gestao-notas #gnTabelaImpressao tbody tr:nth-child(even) td {
+        background: #f2f2f2 !important;
     }
 
     body.print-gestao-notas #gnTabelaImpressao th:nth-child(2),
     body.print-gestao-notas #gnTabelaImpressao td:nth-child(2) {
-        width: 24% !important;
-    }
-
-    body.print-gestao-notas #gnTabelaImpressao th:nth-child(3),
-    body.print-gestao-notas #gnTabelaImpressao td:nth-child(3) {
-        width: 8% !important;
+        text-align: left !important;
     }
 
     body.print-gestao-notas #gnTabelaImpressao th:nth-child(4),
     body.print-gestao-notas #gnTabelaImpressao td:nth-child(4) {
+        text-align: right !important;
+        white-space: nowrap !important;
+    }
+
+    body.print-gestao-notas #gnTabelaImpressao th:nth-child(1),
+    body.print-gestao-notas #gnTabelaImpressao td:nth-child(1) {
         width: 10% !important;
+    }
+
+    body.print-gestao-notas #gnTabelaImpressao th:nth-child(2),
+    body.print-gestao-notas #gnTabelaImpressao td:nth-child(2) {
+        width: 36% !important;
+    }
+
+    body.print-gestao-notas #gnTabelaImpressao th:nth-child(3),
+    body.print-gestao-notas #gnTabelaImpressao td:nth-child(3) {
+        width: 10% !important;
+    }
+
+    body.print-gestao-notas #gnTabelaImpressao th:nth-child(4),
+    body.print-gestao-notas #gnTabelaImpressao td:nth-child(4) {
+        width: 14% !important;
     }
 
     body.print-gestao-notas #gnTabelaImpressao th:nth-child(5),
     body.print-gestao-notas #gnTabelaImpressao td:nth-child(5) {
-        width: 10% !important;
+        width: 15% !important;
     }
 
     body.print-gestao-notas #gnTabelaImpressao th:nth-child(6),
     body.print-gestao-notas #gnTabelaImpressao td:nth-child(6) {
-        width: 9% !important;
-    }
-
-    body.print-gestao-notas #gnTabelaImpressao th:nth-child(7),
-    body.print-gestao-notas #gnTabelaImpressao td:nth-child(7) {
-        width: 17% !important;
-    }
-
-    body.print-gestao-notas #gnTabelaImpressao th:nth-child(8),
-    body.print-gestao-notas #gnTabelaImpressao td:nth-child(8) {
-        width: 14% !important;
+        width: 15% !important;
     }
 
     body.print-gestao-notas #gnLinkPublicoImpressao {
@@ -1409,7 +1499,10 @@ body.print-retencao .col-retencao {
     }
 
     body.print-gestao-notas #gnRodapeImpressao {
-        margin-top: 8px !important;
+        margin-top: 10px !important;
+        padding-top: 8px !important;
+        border-top: 1px solid #aaa !important;
+        color: #333 !important;
         text-align: right !important;
         font-size: 11px !important;
         font-weight: bold !important;
@@ -3981,18 +4074,22 @@ body.print-retencao .col-retencao {
 </div>
 
 <div id="gnFolhaImpressao" style="display:none; padding:30px 24px; background:#fff;">
-    <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:16px; margin-bottom:24px;">
-        <div>
-            <div style="font-size:24px; font-weight:bold; color:#111; text-transform:uppercase; letter-spacing:0.5px;">
+    <div id="gnCabecalhoImpressao" style="display:flex; justify-content:space-between; align-items:flex-start; gap:18px; margin-bottom:14px; padding:10px 0 12px; border-top:3px solid #252525; border-bottom:1px solid #8a8a8a;">
+        <div id="gnIdentidadeImpressao">
+            <div id="gnOrgaoImpressao" style="font-size:9px; font-weight:bold; color:#555; text-transform:uppercase; letter-spacing:0.7px; margin-bottom:4px;">
+                Prefeitura Municipal de Iguatama · Contabilidade
+            </div>
+            <div id="gnTituloImpressao" style="font-size:22px; font-weight:600; color:#171717; letter-spacing:0.2px;">
                 Saída de Notas
             </div>
-            <div style="font-size:13px; color:#666; margin-top:4px;">
+            <div id="gnSubtituloImpressao" style="font-size:11px; color:#666; margin-top:4px;">
                 Relação de notas fiscais lançadas
             </div>
         </div>
-        <div style="text-align:right; max-width:48%;">
+        <div id="gnMetadadosImpressao" style="text-align:right; max-width:50%; font-size:11px; color:#333;">
             <div id="gnFolhaData" style="font-size:13px; color:#333;"></div>
             <div id="gnLinkPublicoImpressao" style="font-size:13px; color:#777; margin-top:3px; word-break:break-all;">Rastreio: lista ainda não publicada.</div>
+            <div id="gnFolhaUsuario" style="font-size:11px; color:#526673; margin-top:4px;"></div>
         </div>
     </div>
 
@@ -4005,13 +4102,11 @@ body.print-retencao .col-retencao {
                 <th>Valor</th>
                 <th>Data Emissão</th>
                 <th>Nº da Nota</th>
-                <th>Situação</th>
-                <th>Local atual</th>
             </tr>
         </thead>
         <tbody id="gnTabelaImpressaoBody">
             <tr>
-                <td colspan="8" style="text-align:center; padding:18px;">Nenhuma linha adicionada.</td>
+                <td colspan="6" style="text-align:center; padding:18px;">Nenhuma linha adicionada.</td>
             </tr>
         </tbody>
     </table>
@@ -7800,6 +7895,18 @@ function aplicarControleAcessoTela(tela) {
 }
 
 function mostrarTela(tela, atualizarHash = true) {
+  if (tela !== 'rastreio-publico' && atualizarHash) {
+    const urlAtual = new URL(window.location.href);
+    const veioDeRastreio = urlAtual.searchParams.has('rastreio') || /^(?:#)?(?:rastreio|r)=/i.test(urlAtual.hash);
+
+    if (veioDeRastreio) {
+      urlAtual.searchParams.delete('rastreio');
+      urlAtual.hash = '';
+      window.history.replaceState(null, '', urlAtual.href);
+      clearTimeout(rastreioPublicoTimer);
+    }
+  }
+
   if (!aplicarControleAcessoTela(tela)) {
     if (atualizarHash && tela !== 'home') {
       window.location.hash = 'home';
@@ -7957,11 +8064,6 @@ function abrirTelaPeloHash() {
   const hash = window.location.hash.replace('#', '').trim();
   const codigoRastreioQuery = new URLSearchParams(window.location.search).get('rastreio');
 
-  if (codigoRastreioQuery || /^(?:rastreio|r)=/i.test(hash)) {
-    mostrarTela('rastreio-publico', false);
-    return;
-  }
-
   const telasValidas = [
     'home',
     'consulta',
@@ -7975,6 +8077,20 @@ function abrirTelaPeloHash() {
     'lembretes',
     'estatisticas'
   ];
+
+  if (codigoRastreioQuery && telasValidas.includes(hash)) {
+    const urlSemRastreio = new URL(window.location.href);
+    urlSemRastreio.searchParams.delete('rastreio');
+    window.history.replaceState(null, '', urlSemRastreio.href);
+    clearTimeout(rastreioPublicoTimer);
+    mostrarTela(hash, false);
+    return;
+  }
+
+  if (codigoRastreioQuery || /^(?:rastreio|r)=/i.test(hash)) {
+    mostrarTela('rastreio-publico', false);
+    return;
+  }
 
   if (telasValidas.includes(hash)) {
     mostrarTela(hash, false);
@@ -8994,6 +9110,9 @@ function abrirModalImpressaoGestaoNotas() {
             : 'Salve e publique a tabela para disponibilizar esta opção.';
     }
 
+    const incluirUsuario = document.getElementById('gnIncluirUsuarioImpressao');
+    if (incluirUsuario) incluirUsuario.checked = false;
+
     const radioRetrato = document.querySelector('input[name="orientacaoImpressaoGestaoNotas"][value="retrato"]');
     if (radioRetrato) radioRetrato.checked = true;
 
@@ -9019,23 +9138,25 @@ function confirmarImpressaoGestaoNotas() {
     const filtroTipo = select ? select.value : 'todos';
     const orientacao = obterOrientacaoSelecionada('orientacaoImpressaoGestaoNotas', 'retrato');
     const incluirLink = !!document.getElementById('gnIncluirLinkImpressao')?.checked;
+    const incluirUsuario = !!document.getElementById('gnIncluirUsuarioImpressao')?.checked;
     if (incluirLink && !gestaoNotasLinkPublico) {
         mostrarAvisoSistema('Link indisponível', 'Salve e publique a tabela antes de incluir o rastreamento na impressão.');
         return;
     }
     fecharModalImpressaoGestaoNotas();
-    imprimirTabelaGestaoNotas(filtroTipo, orientacao, incluirLink);
+    imprimirTabelaGestaoNotas(filtroTipo, orientacao, incluirLink, incluirUsuario);
 }
 
-async function imprimirTabelaGestaoNotas(filtroTipo = 'todos', orientacao = 'retrato', incluirLink = false) {
+async function imprimirTabelaGestaoNotas(filtroTipo = 'todos', orientacao = 'retrato', incluirLink = false, incluirUsuario = false) {
     const folha = document.getElementById('gnFolhaImpressao');
     const dataEl = document.getElementById('gnFolhaData');
+    const usuarioEl = document.getElementById('gnFolhaUsuario');
     const tbodyImpressao = document.getElementById('gnTabelaImpressaoBody');
     const rodape = document.getElementById('gnRodapeImpressao');
     const linkPublicoEl = document.getElementById('gnLinkPublicoImpressao');
     const linhasTela = Array.from(document.querySelectorAll('#gnTabelaBody tr'));
 
-    if (!folha || !dataEl || !tbodyImpressao || !rodape || !linkPublicoEl) {
+    if (!folha || !dataEl || !usuarioEl || !tbodyImpressao || !rodape || !linkPublicoEl) {
         mostrarAvisoSistema('Erro', 'Bloco de impressão da Gestão de Notas não foi encontrado.');
         return;
     }
@@ -9079,8 +9200,6 @@ async function imprimirTabelaGestaoNotas(filtroTipo = 'todos', orientacao = 'ret
         const valorTexto = (colunas[4]?.textContent || '').trim();
         const data = (colunas[5]?.textContent || '').trim();
         const nota = (colunas[6]?.textContent || '').trim();
-        const situacao = (colunas[7]?.textContent || '').trim();
-        const local = (colunas[8]?.querySelector('.gn-local-texto')?.textContent || colunas[8]?.textContent || '').trim();
 
         total += limparValorParaNumero(valorTexto);
 
@@ -9092,8 +9211,6 @@ async function imprimirTabelaGestaoNotas(filtroTipo = 'todos', orientacao = 'ret
                 <td>${valorTexto || 'R$ 0,00'}</td>
                 <td>${data || '-'}</td>
                 <td>${nota || '-'}</td>
-                <td>${situacao || '-'}</td>
-                <td>${local || '-'}</td>
             </tr>
         `;
     }).join('');
@@ -9106,6 +9223,11 @@ async function imprimirTabelaGestaoNotas(filtroTipo = 'todos', orientacao = 'ret
     dataEl.textContent =
         `Data: ${agora.toLocaleDateString('pt-BR')} ${agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })} | Tipo: ${nomeFiltro}`;
 
+    const usuarioAtual = window.auth?.currentUser || null;
+    const nomeUsuario = String(usuarioAtual?.displayName || usuarioAtual?.email || 'Usuário não identificado').trim();
+    usuarioEl.textContent = incluirUsuario ? `Impresso por: ${nomeUsuario}` : '';
+    usuarioEl.classList.toggle('gn-usuario-impressao-visivel', incluirUsuario);
+
     linkPublicoEl.textContent = incluirLink ? `Rastreio: ${gestaoNotasLinkPublico}` : '';
     linkPublicoEl.classList.toggle('gn-link-impressao-visivel', incluirLink);
 
@@ -9114,6 +9236,9 @@ async function imprimirTabelaGestaoNotas(filtroTipo = 'todos', orientacao = 'ret
 
     aplicarOrientacaoImpressao(orientacao);
 
+    const paiOriginalFolha = folha.parentNode;
+    const proximoElementoOriginal = folha.nextSibling;
+    document.body.appendChild(folha);
     folha.style.display = 'block';
     document.body.classList.add('print-gestao-notas');
 
@@ -9123,6 +9248,13 @@ async function imprimirTabelaGestaoNotas(filtroTipo = 'todos', orientacao = 'ret
             document.body.classList.remove('print-gestao-notas');
             folha.style.display = 'none';
             linkPublicoEl.classList.remove('gn-link-impressao-visivel');
+            usuarioEl.classList.remove('gn-usuario-impressao-visivel');
+            if (paiOriginalFolha) {
+                paiOriginalFolha.insertBefore(
+                    folha,
+                    proximoElementoOriginal?.parentNode === paiOriginalFolha ? proximoElementoOriginal : null
+                );
+            }
         }, 300);
     }, 150);
 }
@@ -17771,6 +17903,14 @@ return true;
                     <span>
                         <strong>Incluir link de rastreamento</strong><br>
                         <span id="gnIncluirLinkImpressaoAjuda" style="font-size:11px; color:#6c757d;">O link aparecerá abaixo da data.</span>
+                    </span>
+                </label>
+
+                <label style="display:flex; align-items:flex-start; gap:9px; margin-top:12px; font-weight:normal; cursor:pointer; line-height:1.4;">
+                    <input type="checkbox" id="gnIncluirUsuarioImpressao" style="width:auto; margin-top:2px;">
+                    <span>
+                        <strong>Incluir nome de quem está imprimindo</strong><br>
+                        <span style="font-size:11px; color:#6c757d;">Mostra o nome do perfil ou, se não houver, o e-mail.</span>
                     </span>
                 </label>
             </div>

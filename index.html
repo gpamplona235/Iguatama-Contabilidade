@@ -2579,7 +2579,7 @@ body.print-retencao .col-retencao {
  <div class="brand-topo">
   <a href="#" class="brand-link" onclick="mostrarTela('home'); return false;">
     <h1>SISTEMA INTEGRADO DE CONTABILIDADE - IGUATAMA</h1>
-    <div class="brand-versao">Versão Beta v0.56</div>
+    <div class="brand-versao">Versão Beta v0.59</div>
   </a>
 </div>
 
@@ -2590,6 +2590,9 @@ body.print-retencao .col-retencao {
   </button>
   <button type="button" class="btn-primary" data-require-auth="true" onclick="mostrarTela('faturas')" style="width: auto; padding: 8px 14px;">
     FATURAS
+  </button>
+  <button type="button" class="btn-primary" data-require-auth="true" onclick="mostrarTela('contratos')" style="width: auto; padding: 8px 14px;">
+    CONTRATOS
   </button>
   <button type="button" class="btn-primary" data-require-auth="true" onclick="mostrarTela('lembretes')" style="width: auto; padding: 8px 14px;">
     LEMBRETES
@@ -2757,8 +2760,19 @@ body.print-retencao .col-retencao {
 </div>
 
       <div class="form-group-calc">
-        <label for="fatCadEmpenho">Número do Empenho</label>
-        <input type="text" id="fatCadEmpenho" placeholder="Será reutilizado quando fornecedor + secretaria já existirem" />
+        <label for="fatCadEmpenho">Empenho estimativo atual</label>
+        <div style="display:flex; gap:8px; align-items:center;">
+          <input type="text" id="fatCadEmpenho" placeholder="Será reutilizado quando fornecedor + secretaria já existirem" />
+          <button
+            type="button"
+            id="fatCadAlterarEmpenho"
+            class="btn-primary"
+            onclick="habilitarTrocaEmpenhoFatura()"
+            style="display:none; width:auto; flex:0 0 auto; padding:9px 12px; background:#6c757d; border-color:#5a6268;"
+          >
+            Trocar empenho
+          </button>
+        </div>
       </div>
 
       <div id="fatCadInfoEmpenho" class="alert-box alert-neutro" style="margin-bottom:0;">
@@ -2837,9 +2851,30 @@ body.print-retencao .col-retencao {
     </div>
 
     <div class="form-group-calc fat-linha-inteira">
-  <label for="fatLancObservacao">Observação</label>
-  <textarea id="fatLancObservacao" placeholder="Digite alguma observação sobre esta fatura..."></textarea>
-</div>
+      <label for="fatLancModeloObservacao">Texto salvo para observação</label>
+      <div style="display:flex; gap:8px; align-items:center; margin-bottom:8px;">
+        <select id="fatLancModeloObservacao" style="min-width:0;">
+          <option value="numero_fatura">Nº da fatura</option>
+        </select>
+        <button type="button" class="btn-primary" onclick="aplicarModeloObservacaoFatura()" style="width:auto; flex:0 0 auto; padding:9px 12px;">Usar texto</button>
+      </div>
+      <div style="font-size:11px; color:#66727d; margin-bottom:8px;">Ao usar “Nº da fatura”, basta digitar o número logo depois do texto inserido.</div>
+
+      <details id="fatLancGerenciarModelos" style="margin-bottom:10px; border:1px solid #d7e0e8; border-radius:4px; background:#f8fafc; padding:8px 10px;">
+        <summary style="cursor:pointer; color:#0f3b5e; font-size:12px; font-weight:600;">Gerenciar textos salvos</summary>
+        <div style="display:grid; grid-template-columns:150px minmax(0, 1fr); gap:8px; margin-top:10px;">
+          <input type="text" id="fatLancModeloNome" maxlength="50" placeholder="Nome do texto" aria-label="Nome do texto salvo">
+          <input type="text" id="fatLancModeloTexto" maxlength="180" placeholder="Ex.: Nº do processo: " aria-label="Texto que será inserido na observação">
+        </div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px;">
+          <button type="button" class="btn-primary" onclick="salvarModeloObservacaoFatura()" style="width:auto; padding:7px 10px; font-size:11px;">Salvar novo texto</button>
+          <button type="button" class="btn-primary" onclick="excluirModeloObservacaoFatura()" style="width:auto; padding:7px 10px; font-size:11px; background:#6c757d; border-color:#5a6268;">Excluir selecionado</button>
+        </div>
+      </details>
+
+      <label for="fatLancObservacao">Observação</label>
+      <textarea id="fatLancObservacao" placeholder="Digite alguma observação sobre esta fatura..."></textarea>
+    </div>
   </div>
 </div>
 
@@ -3325,6 +3360,12 @@ body.print-retencao .col-retencao {
     <div class="badge-novo">NOVO</div>
     <div class="card-title">Controle de Faturas</div>
     <div class="card-desc">Cadastre endereços, lance faturas mensais e acompanhe vencimentos.</div>
+  </button>
+
+  <button type="button" class="home-card" data-require-auth="true" onclick="mostrarTela('contratos')">
+    <div class="badge-novo">NOVO</div>
+    <div class="card-title">Gestão de Contratos Mensais</div>
+    <div class="card-desc">Organize aluguéis, repasses e contratos, acompanhe o prazo do dia 10 e confira liquidações dos empenhos.</div>
   </button>
 
   <button type="button" class="home-card" data-require-auth="true" onclick="mostrarTela('lembretes')">
@@ -3891,8 +3932,12 @@ body.print-retencao .col-retencao {
                 <div style="display:flex; gap:8px; flex-wrap:wrap;">
         <button type="button" class="btn-primary" onclick="novaTabelaGestaoNotas()" style="width:auto;">Nova Tabela</button>
 
-<button type="button" class="btn-primary" onclick="salvarTabelaGestaoNotas(this)" style="width:auto; background-color:#27ae60; border-color:#219653;">
+<button type="button" id="gnSalvarTabelaBtn" class="btn-primary" onclick="salvarTabelaGestaoNotas(this)" style="width:auto; background-color:#27ae60; border-color:#219653;">
     Salvar e Gerar Link
+</button>
+
+<button type="button" id="gnExcluirListaAtualBtn" class="btn-primary" onclick="excluirListaGestaoNotasAtual(this)" style="display:none; width:auto; background-color:#b03a2e; border-color:#922b21;">
+    Excluir Permanentemente
 </button>
 
 <button type="button" class="btn-primary" onclick="carregarHistoricoGestaoNotas()" style="width:auto; background-color:#6c757d; border-color:#5a6268;">
@@ -3948,7 +3993,7 @@ body.print-retencao .col-retencao {
 
                         <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:14px;">
                             <button type="button" class="btn-primary" onclick="buscarEmpenhoGestaoNotas()" style="width:auto;">Buscar Empenho</button>
-                            <button type="button" class="btn-primary" onclick="adicionarLinhaGestaoNotas()" style="width:auto;">Adicionar Linha</button>
+                            <button type="button" id="gnAdicionarLinhaBtn" class="btn-primary" onclick="adicionarLinhaGestaoNotas()" style="width:auto;">Adicionar Linha</button>
                             <button type="button" class="btn-primary" onclick="limparFormularioGestaoNotas()" style="width:auto; background-color:#eef2f6; color:#0f3b5e; border-color:#bac5d0;">Limpar</button>
                         </div>
                     </div>
@@ -4268,7 +4313,7 @@ body.print-retencao .col-retencao {
     #tela-consulta-empenho .consulta-avancada-btn[aria-expanded="true"] .consulta-avancada-seta { transform:rotate(180deg); }
     #api-busca-avancada { display:none; margin-bottom:20px; border:1px solid #b9cad9; border-radius:8px; background:#f3f7fa; overflow:hidden; }
     #api-busca-avancada.aberto { display:block; }
-    #api-busca-avancada .busca-avancada-grid { display:grid; grid-template-columns:1.5fr 1fr 150px 135px 135px 145px; gap:12px; align-items:end; padding:16px 18px 6px; }
+    #api-busca-avancada .busca-avancada-grid { display:grid; grid-template-columns:1.35fr .9fr 135px 120px 120px 130px 155px 190px; gap:12px; align-items:end; padding:16px 18px 6px; }
     #api-busca-avancada .busca-avancada-acoes { display:flex; gap:8px; align-items:center; flex-wrap:wrap; padding:8px 18px 16px; }
     #api-busca-avancada .busca-avancada-nota { font-size:11px; color:#66727d; line-height:1.45; margin-left:auto; max-width:560px; }
     #api-busca-avancada-status { display:none; margin:0 18px 16px; }
@@ -4337,12 +4382,29 @@ body.print-retencao .col-retencao {
                                 <option value="anulacao">Anulação</option>
                             </select>
                         </div>
+                        <div class="form-group-calc">
+                            <label for="api-av-quantidade">Quantidade por busca</label>
+                            <select id="api-av-quantidade">
+                                <option value="50">50 empenhos</option>
+                                <option value="100" selected>100 empenhos</option>
+                                <option value="200">200 empenhos</option>
+                                <option value="300">300 empenhos</option>
+                                <option value="600">600 empenhos</option>
+                            </select>
+                        </div>
+                        <div class="form-group-calc">
+                            <label for="api-av-ordem">Ordem da busca</label>
+                            <select id="api-av-ordem">
+                                <option value="decrescente">Decrescente — do último empenho</option>
+                                <option value="crescente">Crescente — a partir do empenho 1</option>
+                            </select>
+                        </div>
                     </div>
                     <div class="busca-avancada-acoes">
                         <button class="btn-primary" id="btn-executar-busca-avancada" type="button" onclick="buscarEmpenhosAvancado()" style="width:auto; padding:9px 16px;">Buscar nos detalhes</button>
-                        <button class="btn-primary" id="btn-continuar-busca-avancada" type="button" onclick="continuarBuscaEmpenhosAvancado()" style="display:none; width:auto; padding:9px 16px; background:#1a4f7a; border-color:#123b5c;">Analisar próximos 600</button>
+                        <button class="btn-primary" id="btn-continuar-busca-avancada" type="button" onclick="continuarBuscaEmpenhosAvancado()" style="display:none; width:auto; padding:9px 16px; background:#1a4f7a; border-color:#123b5c;">Analisar próximo lote</button>
                         <button class="btn-primary" type="button" onclick="limparBuscaAvancada()" style="width:auto; padding:9px 16px; background:#eef2f6; color:#0f3b5e; border-color:#bac5d0;">Limpar</button>
-                        <div class="busca-avancada-nota">Disponível apenas para usuários cadastrados. A pesquisa é feita em lotes de até 600 empenhos; os resultados encontrados são acumulados.</div>
+                        <div class="busca-avancada-nota">Cada empenho exige uma consulta detalhada ao Portal da Transparência. Lotes grandes podem sobrecarregar os servidores; o sistema pedirá confirmação antes de iniciar.</div>
                     </div>
                     <div id="api-busca-avancada-status" class="alert-box alert-neutro" role="status" aria-live="polite"></div>
                 </div>
@@ -4425,6 +4487,293 @@ body.print-retencao .col-retencao {
             </div>
         </div>
     </div>
+</div>
+
+<div id="tela-contratos" class="screen-section">
+  <style>
+    #tela-contratos .ct-wrap { max-width:1750px; margin:0 auto; padding:18px; }
+    #tela-contratos .ct-panel { background:#fff; border:1px solid #c7d3de; border-radius:8px; overflow:hidden; box-shadow:0 1px 3px rgba(15,59,94,.08); }
+    #tela-contratos .ct-header { background:#0f3b5e; color:#fff; padding:18px 20px; display:flex; justify-content:space-between; align-items:center; gap:14px; flex-wrap:wrap; }
+    #tela-contratos .ct-header h2 { margin:0; color:#fff; font-size:19px; }
+    #tela-contratos .ct-header p { margin:4px 0 0; color:rgba(255,255,255,.82); font-size:12px; }
+    #tela-contratos .ct-header-actions { display:flex; gap:8px; flex-wrap:wrap; }
+    #tela-contratos .ct-header-actions .btn-primary { width:auto; background:rgba(255,255,255,.1); border-color:rgba(255,255,255,.35); color:#fff; }
+    #tela-contratos .ct-body { padding:18px 20px 22px; }
+    #tela-contratos .ct-toolbar { display:grid; grid-template-columns:155px 105px 170px 160px minmax(240px,1fr) auto; gap:10px; align-items:end; padding:14px; background:#f5f8fa; border:1px solid #d7e0e8; border-radius:6px; }
+    #tela-contratos .ct-kpis { display:grid; grid-template-columns:repeat(6,minmax(140px,1fr)); gap:12px; margin:16px 0; }
+    #tela-contratos .ct-kpi { background:#f8f9fa; border:1px solid #cbd1d6; border-radius:5px; padding:12px 14px; color:#30383e; }
+    #tela-contratos button.ct-kpi { text-align:left; font:inherit; cursor:pointer; }
+    #tela-contratos button.ct-kpi:hover, #tela-contratos button.ct-kpi:focus-visible { background:#f1f2f3; border-color:#9ca4aa; outline:2px solid rgba(70,77,82,.14); outline-offset:1px; }
+    #tela-contratos .ct-kpi-label { color:#60676c; font-size:10px; text-transform:uppercase; letter-spacing:.45px; font-weight:700; }
+    #tela-contratos .ct-kpi-value { margin-top:5px; color:#30383e; font-size:23px; font-weight:700; }
+    #tela-contratos .ct-table-wrap { overflow-x:auto; border:1px solid #d3dde6; border-radius:6px; }
+    #tela-contratos .ct-table { width:100%; min-width:1320px; border-collapse:collapse; font-size:12px; }
+    #tela-contratos .ct-table thead { background:#e8eef3; }
+    #tela-contratos .ct-table th { padding:10px; color:#173f5f; text-align:left; border-right:1px solid #d2dce5; white-space:nowrap; font-size:11px; text-transform:uppercase; letter-spacing:.35px; }
+    #tela-contratos .ct-table td { padding:10px; vertical-align:top; border-top:1px solid #e4e9ee; border-right:1px solid #edf1f4; color:#2d3d49; }
+    #tela-contratos .ct-table tr:hover td { background:#f8fafc; }
+    #tela-contratos .ct-name { font-weight:700; color:#0f3b5e; font-size:13px; line-height:1.35; }
+    #tela-contratos .ct-muted { color:#74808a; font-size:11px; margin-top:3px; line-height:1.35; }
+    #tela-contratos .ct-badge { display:inline-flex; align-items:center; padding:3px 8px; border-radius:999px; font-size:10px; font-weight:700; border:1px solid #cbd6df; background:#f1f4f7; color:#465662; white-space:nowrap; }
+    #tela-contratos .ct-badge.ok { background:#e6f4ea; color:#1e5b32; border-color:#bdddc7; }
+    #tela-contratos .ct-badge.warn { background:#fff3cd; color:#7a5900; border-color:#ead28a; }
+    #tela-contratos .ct-badge.late { background:#fce8e6; color:#a50e0e; border-color:#efc4bf; }
+    #tela-contratos .ct-actions { display:flex; gap:5px; flex-wrap:wrap; }
+    #tela-contratos .ct-actions button { width:auto; padding:6px 9px; font-size:10px; }
+    #tela-contratos .form-group-calc { min-width:0; margin-bottom:0; }
+    #tela-contratos input[type="text"],
+    #tela-contratos input[type="number"],
+    #tela-contratos input[type="search"],
+    #tela-contratos input[type="url"],
+    #tela-contratos input[type="date"],
+    #tela-contratos select,
+    #modalCadastroContrato input[type="text"],
+    #modalCadastroContrato input[type="number"],
+    #modalCadastroContrato input[type="url"],
+    #modalCadastroContrato input[type="date"],
+    #modalCadastroContrato select,
+    #modalCadastroContrato textarea,
+    #modalExecucaoContrato input[type="text"],
+    #modalExecucaoContrato input[type="number"],
+    #modalExecucaoContrato select,
+    #modalExecucaoContrato textarea,
+    #modalSubstituirEmpenhoContrato input[type="text"],
+    #modalSubstituirEmpenhoContrato input[type="number"],
+    #modalSubstituirEmpenhoContrato input[type="url"],
+    #modalSubstituirEmpenhoContrato input[type="date"],
+    #modalSubstituirEmpenhoContrato select,
+    #modalSubstituirEmpenhoContrato textarea {
+      display:block;
+      width:100%;
+      max-width:100%;
+      box-sizing:border-box;
+      margin:0;
+      padding:10px 12px;
+      border:1px solid #bac5d0;
+      border-radius:3px;
+      background:#fff;
+      color:#333;
+      font-family:Arial,Helvetica,sans-serif;
+      font-size:13px;
+      line-height:1.25;
+    }
+    #tela-contratos input[type="text"],
+    #tela-contratos input[type="number"],
+    #tela-contratos input[type="search"],
+    #tela-contratos input[type="url"],
+    #tela-contratos input[type="date"],
+    #tela-contratos select,
+    #modalCadastroContrato input:not([type="checkbox"]),
+    #modalCadastroContrato select,
+    #modalExecucaoContrato input:not([type="checkbox"]),
+    #modalExecucaoContrato select,
+    #modalSubstituirEmpenhoContrato input:not([type="checkbox"]),
+    #modalSubstituirEmpenhoContrato select { height:38px; }
+    #modalCadastroContrato textarea,
+    #modalExecucaoContrato textarea,
+    #modalSubstituirEmpenhoContrato textarea { min-height:82px; resize:vertical; }
+    #tela-contratos input:focus,
+    #tela-contratos select:focus,
+    #modalCadastroContrato input:focus,
+    #modalCadastroContrato select:focus,
+    #modalCadastroContrato textarea:focus,
+    #modalExecucaoContrato input:focus,
+    #modalExecucaoContrato select:focus,
+    #modalExecucaoContrato textarea:focus,
+    #modalSubstituirEmpenhoContrato input:focus,
+    #modalSubstituirEmpenhoContrato select:focus,
+    #modalSubstituirEmpenhoContrato textarea:focus { outline:none; border-color:#0f3b5e; box-shadow:0 0 0 2px rgba(15,59,94,.15); }
+    #modalCadastroContrato .modal-panel { width:760px; max-width:calc(100vw - 30px); }
+    #modalCadastroContrato .modal-body-custom, #modalExecucaoContrato .modal-body-custom, #modalSubstituirEmpenhoContrato .modal-body-custom { max-height:72vh; overflow-y:auto; }
+    #modalCadastroContrato .ct-form-grid, #modalExecucaoContrato .ct-form-grid, #modalSubstituirEmpenhoContrato .ct-form-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px 14px; }
+    #modalCadastroContrato .ct-full, #modalExecucaoContrato .ct-full, #modalSubstituirEmpenhoContrato .ct-full { grid-column:1 / -1; }
+    #modalExecucaoContrato .modal-panel { width:680px; max-width:calc(100vw - 30px); }
+    @media (max-width:1050px) {
+      #tela-contratos .ct-toolbar { grid-template-columns:repeat(3,1fr); }
+      #tela-contratos .ct-kpis { grid-template-columns:repeat(3,1fr); }
+    }
+    @media (max-width:700px) {
+      #tela-contratos .ct-wrap { padding:10px; }
+      #tela-contratos .ct-body { padding:12px; }
+      #tela-contratos .ct-toolbar, #modalCadastroContrato .ct-form-grid, #modalExecucaoContrato .ct-form-grid, #modalSubstituirEmpenhoContrato .ct-form-grid { grid-template-columns:1fr; }
+      #modalCadastroContrato .ct-full, #modalExecucaoContrato .ct-full, #modalSubstituirEmpenhoContrato .ct-full { grid-column:auto; }
+      #tela-contratos .ct-kpis { grid-template-columns:1fr; }
+    }
+  </style>
+
+  <div class="ct-wrap">
+    <div class="ct-panel">
+      <div class="ct-header">
+        <div>
+          <h2>GESTÃO DE CONTRATOS MENSAIS</h2>
+          <p>Aluguéis, repasses e contratos gerais com execução, documentos e liquidações dos empenhos.</p>
+        </div>
+        <div class="ct-header-actions">
+          <button type="button" class="btn-primary" id="ctBtnAtualizarPortal" onclick="atualizarLiquidacoesContratos()">Atualizar liquidações</button>
+          <button type="button" class="btn-primary" onclick="abrirModalCadastroContrato()">Novo contrato</button>
+        </div>
+      </div>
+
+      <div class="ct-body">
+        <div class="ct-toolbar">
+          <div class="form-group-calc">
+            <label for="ctFiltroMes">Competência</label>
+            <select id="ctFiltroMes" onchange="renderizarGestaoContratos()">
+              <option value="1">Janeiro</option><option value="2">Fevereiro</option><option value="3">Março</option>
+              <option value="4">Abril</option><option value="5">Maio</option><option value="6">Junho</option>
+              <option value="7">Julho</option><option value="8">Agosto</option><option value="9">Setembro</option>
+              <option value="10">Outubro</option><option value="11">Novembro</option><option value="12">Dezembro</option>
+            </select>
+          </div>
+          <div class="form-group-calc">
+            <label for="ctFiltroAno">Ano</label>
+            <input type="number" id="ctFiltroAno" min="2020" max="2100" onchange="renderizarGestaoContratos()">
+          </div>
+          <div class="form-group-calc">
+            <label for="ctFiltroCategoria">Categoria</label>
+            <select id="ctFiltroCategoria" onchange="renderizarGestaoContratos()">
+              <option value="">Todas</option><option value="Aluguel">Aluguéis</option><option value="Repasse">Repasses</option>
+              <option value="Convênio">Convênios</option><option value="Contrato geral">Contratos gerais</option><option value="Outro">Outros</option>
+            </select>
+          </div>
+          <div class="form-group-calc">
+            <label for="ctFiltroStatus">Situação</label>
+            <select id="ctFiltroStatus" onchange="renderizarGestaoContratos()">
+              <option value="">Todas</option><option value="pendente">Pendentes</option><option value="detectado">Detectadas no Portal</option>
+              <option value="concluido">Registradas</option><option value="atrasado">Atrasadas</option>
+              <option value="vencendo">Vencendo em breve</option><option value="aguardando-renovacao">Aguardando renovação</option>
+              <option value="encerrado">Encerrados</option><option value="inativo">Inativos</option>
+            </select>
+          </div>
+          <div class="form-group-calc">
+            <label for="ctFiltroBusca">Buscar</label>
+            <input type="search" id="ctFiltroBusca" placeholder="Fornecedor, secretaria ou empenho" oninput="renderizarGestaoContratos()">
+          </div>
+          <div class="form-group-calc">
+            <label>&nbsp;</label>
+            <button type="button" class="btn-primary" onclick="carregarGestaoContratos()" style="width:auto;">Recarregar</button>
+          </div>
+        </div>
+
+        <div class="ct-kpis">
+          <div class="ct-kpi"><div class="ct-kpi-label">Contratos na competência</div><div class="ct-kpi-value" id="ctKpiTotal">0</div></div>
+          <div class="ct-kpi"><div class="ct-kpi-label">Pendentes</div><div class="ct-kpi-value" id="ctKpiPendentes">0</div></div>
+          <div class="ct-kpi"><div class="ct-kpi-label">Atrasados</div><div class="ct-kpi-value" id="ctKpiAtrasados">0</div></div>
+          <div class="ct-kpi"><div class="ct-kpi-label">Liquidações registradas</div><div class="ct-kpi-value" id="ctKpiConcluidos">0</div></div>
+          <button type="button" class="ct-kpi" onclick="aplicarFiltroCicloContrato('vencendo')" title="Mostrar contratos que terminam nos próximos 60 dias"><div class="ct-kpi-label">Vencendo em breve</div><div class="ct-kpi-value" id="ctKpiVencendo">0</div></button>
+          <button type="button" class="ct-kpi" onclick="aplicarFiltroCicloContrato('aguardando-renovacao')" title="Mostrar contratos encerrados que ainda não foram renovados"><div class="ct-kpi-label">Aguardando renovação</div><div class="ct-kpi-value" id="ctKpiRenovacao">0</div></button>
+        </div>
+
+        <div id="ctAvisoPrazo" class="alert-box alert-neutro" style="margin-bottom:14px;">Carregando a agenda de contratos...</div>
+
+        <div class="ct-table-wrap">
+          <table class="ct-table">
+            <thead><tr>
+              <th style="width:60px;">Ordem</th>
+              <th style="min-width:260px;">Contrato / favorecido</th>
+              <th style="width:150px;">Empenho(s)</th>
+              <th style="width:170px;">Vigência</th>
+              <th style="width:90px;">Prazo</th>
+              <th style="width:100px;">Documentos</th>
+              <th style="min-width:190px;">Liquidações do portal</th>
+              <th style="min-width:200px;">Registro da competência</th>
+              <th style="width:260px;">Ações</th>
+            </tr></thead>
+            <tbody id="ctTabelaCorpo"><tr><td colspan="9" style="text-align:center; padding:24px;">Carregando contratos...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="modalCadastroContrato" class="modal-overlay" style="display:none;">
+  <div class="modal-panel">
+    <div class="modal-header-custom"><h3 id="ctCadTitulo" style="margin:0; font-size:16px;">Novo contrato</h3></div>
+    <div class="modal-body-custom">
+      <div class="ct-form-grid">
+        <div class="form-group-calc ct-full"><label for="ctCadNome">Contrato / favorecido</label><input type="text" id="ctCadNome" maxlength="160" placeholder="Ex.: Maria Aparecida — aluguel do imóvel"></div>
+        <div class="form-group-calc"><label for="ctCadCategoria">Categoria</label><select id="ctCadCategoria"><option value="Aluguel">Aluguel</option><option value="Repasse">Repasse</option><option value="Convênio">Convênio</option><option value="Contrato geral">Contrato geral</option><option value="Outro">Outro</option></select></div>
+        <div class="form-group-calc"><label for="ctCadTipoEmpenho">Tipo do empenho</label><select id="ctCadTipoEmpenho"><option value="Estimativo">Estimativo</option><option value="Global">Global</option></select></div>
+        <div class="form-group-calc"><label for="ctCadEmpenhos">Número(s) do empenho</label><input type="text" id="ctCadEmpenhos" placeholder="Ex.: 1055 ou 213/214/215"></div>
+        <div class="form-group-calc"><label for="ctCadAnoEmpenho">Ano dos empenhos</label><input type="number" id="ctCadAnoEmpenho" min="2020" max="2100"></div>
+        <div id="ctCadInfoEmpenhoContrato" class="alert-box alert-neutro ct-full" style="display:none; margin:0;">Para preservar o histórico, altere estes números pelo botão <strong>Substituir empenho</strong> na tabela.</div>
+        <div class="form-group-calc ct-full"><label for="ctCadSecretaria">Secretaria responsável</label><select id="ctCadSecretaria">
+          <option value="">SELECIONE</option>
+          <option value="SECRETARIA MUNICIPAL DE ADMINISTRAÇÃO E FINANÇAS">SECRETARIA MUNICIPAL DE ADMINISTRAÇÃO E FINANÇAS</option>
+          <option value="SECRETARIA MUNICIPAL DE GOVERNO">SECRETARIA MUNICIPAL DE GOVERNO</option>
+          <option value="SECRETARIA MUNICIPAL DE EDUCAÇÃO E ESPORTE">SECRETARIA MUNICIPAL DE EDUCAÇÃO E ESPORTE</option>
+          <option value="SECRETARIA MUNICIPAL DE ASSISTÊNCIA SOCIAL">SECRETARIA MUNICIPAL DE ASSISTÊNCIA SOCIAL</option>
+          <option value="SECRETARIA MUNICIPAL DE SAÚDE">SECRETARIA MUNICIPAL DE SAÚDE</option>
+          <option value="SECRETARIA MUNICIPAL DE OBRAS E TRANSPORTE">SECRETARIA MUNICIPAL DE OBRAS E TRANSPORTE</option>
+          <option value="SECRETARIA MUNICIPAL DE INDÚSTRIA E MEIO AMBIENTE">SECRETARIA MUNICIPAL DE INDÚSTRIA E MEIO AMBIENTE</option>
+          <option value="SECRETARIA MUNICIPAL DE CULTURA E TURISMO">SECRETARIA MUNICIPAL DE CULTURA E TURISMO</option>
+          <option value="SECRETARIA MUNICIPAL DE LIMPEZA E SANEAMENTO">SECRETARIA MUNICIPAL DE LIMPEZA E SANEAMENTO</option>
+        </select></div>
+        <div class="form-group-calc"><label for="ctCadValor">Valor mensal previsto</label><input type="number" id="ctCadValor" min="0" step="0.01" placeholder="0,00"></div>
+        <div class="form-group-calc"><label for="ctCadDiaLimite">Executar até o dia</label><input type="number" id="ctCadDiaLimite" min="1" max="31" value="10"></div>
+        <div class="form-group-calc"><label for="ctCadInicio">Início da vigência</label><input type="date" id="ctCadInicio"></div>
+        <div class="form-group-calc"><label for="ctCadFim">Fim da vigência</label><input type="date" id="ctCadFim"></div>
+        <div class="form-group-calc ct-full"><label for="ctCadDrive">Link da pasta ou contrato no Drive</label><input type="url" id="ctCadDrive" placeholder="https://drive.google.com/..."></div>
+        <div class="form-group-calc ct-full"><label for="ctCadObservacao">Observações</label><textarea id="ctCadObservacao" maxlength="500" placeholder="Informações importantes para a execução mensal"></textarea></div>
+        <label class="ct-full" style="display:flex; align-items:center; gap:8px; font-size:12px; color:#344753;"><input type="checkbox" id="ctCadAtivo" checked style="width:auto;"> Contrato ativo e incluído na agenda mensal</label>
+      </div>
+    </div>
+    <div class="modal-footer-custom"><button type="button" class="btn-primary" id="ctCadExcluir" onclick="excluirContratoEmEdicao()" style="display:none; width:auto; margin-right:auto; background:#a50e0e; border-color:#8e0c0c;">Excluir contrato</button><button type="button" class="btn-cancelar-modal" onclick="fecharModalCadastroContrato()">Cancelar</button><button type="button" class="btn-primary" id="ctCadSalvar" onclick="salvarContrato()" style="width:auto;">Salvar contrato</button></div>
+  </div>
+</div>
+
+<div id="modalExecucaoContrato" class="modal-overlay" style="display:none;">
+  <div class="modal-panel">
+    <div class="modal-header-custom"><h3 id="ctExecTitulo" style="margin:0; font-size:16px;">Registrar liquidação</h3></div>
+    <div class="modal-body-custom">
+      <div id="ctExecResumo" class="alert-box alert-neutro" style="margin-bottom:12px;"></div>
+      <div id="ctExecPortal" class="alert-box alert-neutro" style="margin-bottom:12px;"></div>
+      <div id="ctExecDriveArea" style="display:none; margin-bottom:12px; padding:10px 12px; border:1px solid #d7e0e8; border-radius:5px; background:#f8fafc; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;">
+        <div style="font-size:12px; color:#53616c;">Abra o documento em outra aba. A impressão precisa ser confirmada no Google Drive ou com <strong>Ctrl+P</strong>.</div>
+        <button type="button" class="btn-primary" onclick="abrirDocumentoContratoExecucao()" style="width:auto; padding:8px 12px;">Abrir documento no Drive</button>
+      </div>
+      <div class="ct-form-grid">
+        <div class="form-group-calc"><label for="ctExecValor">Valor executado</label><input type="number" id="ctExecValor" min="0" step="0.01" placeholder="0,00"></div>
+        <div class="form-group-calc"><label for="ctExecLiquidacoes">Nº da(s) liquidação(ões)</label><input type="text" id="ctExecLiquidacoes" placeholder="Separar por vírgula"></div>
+        <div class="form-group-calc ct-full"><label for="ctExecObservacao">Observação da competência</label><textarea id="ctExecObservacao" maxlength="500"></textarea></div>
+      </div>
+    </div>
+    <div class="modal-footer-custom"><button type="button" class="btn-cancelar-modal" onclick="fecharModalExecucaoContrato()">Cancelar</button><button type="button" class="btn-primary" id="ctExecSalvar" onclick="salvarExecucaoContrato()" style="width:auto;">Registrar liquidação</button></div>
+  </div>
+</div>
+
+<div id="modalSubstituirEmpenhoContrato" class="modal-overlay" style="display:none; z-index:10019;">
+  <div class="modal-panel" style="width:780px; max-width:calc(100vw - 30px);">
+    <div class="modal-header-custom"><h3 id="ctTrocaTitulo" style="margin:0; font-size:16px;">Substituir empenho e contrato</h3></div>
+    <div class="modal-body-custom">
+      <div id="ctTrocaResumo" class="alert-box alert-neutro" style="margin-bottom:14px;"></div>
+      <div class="ct-form-grid">
+        <div class="form-group-calc ct-full"><label for="ctTrocaNome">Novo contrato / favorecido</label><input type="text" id="ctTrocaNome" maxlength="160"></div>
+        <div class="form-group-calc"><label for="ctTrocaCategoria">Categoria</label><select id="ctTrocaCategoria"><option value="Aluguel">Aluguel</option><option value="Repasse">Repasse</option><option value="Convênio">Convênio</option><option value="Contrato geral">Contrato geral</option><option value="Outro">Outro</option></select></div>
+        <div class="form-group-calc"><label for="ctTrocaTipoEmpenho">Tipo do empenho</label><select id="ctTrocaTipoEmpenho"><option value="Estimativo">Estimativo</option><option value="Global">Global</option></select></div>
+        <div class="form-group-calc"><label for="ctTrocaEmpenhos">Novo(s) empenho(s)</label><input type="text" id="ctTrocaEmpenhos" placeholder="Ex.: 2080 ou 2080/2081"></div>
+        <div class="form-group-calc"><label for="ctTrocaAnoEmpenho">Ano do empenho</label><input type="number" id="ctTrocaAnoEmpenho" min="2020" max="2100"></div>
+        <div class="form-group-calc ct-full"><label for="ctTrocaSecretaria">Secretaria responsável</label><select id="ctTrocaSecretaria"></select></div>
+        <div class="form-group-calc"><label for="ctTrocaValor">Valor mensal previsto</label><input type="number" id="ctTrocaValor" min="0" step="0.01" placeholder="0,00"></div>
+        <div class="form-group-calc"><label for="ctTrocaDiaLimite">Executar até o dia</label><input type="number" id="ctTrocaDiaLimite" min="1" max="31" value="10"></div>
+        <div class="form-group-calc"><label for="ctTrocaInicio">Início da nova vigência</label><input type="date" id="ctTrocaInicio"></div>
+        <div class="form-group-calc"><label for="ctTrocaFim">Fim da nova vigência</label><input type="date" id="ctTrocaFim"></div>
+        <div class="form-group-calc ct-full"><label for="ctTrocaDrive">Link da pasta ou contrato no Drive</label><input type="url" id="ctTrocaDrive" placeholder="https://drive.google.com/..."></div>
+        <div class="form-group-calc ct-full"><label for="ctTrocaObservacao">Observações do novo contrato</label><textarea id="ctTrocaObservacao" maxlength="500"></textarea></div>
+      </div>
+      <div class="alert-box alert-simples" style="margin:14px 0 0;">Será criada uma nova versão vinculada. O contrato anterior, seu empenho, suas liquidações e seus documentos continuarão preservados.</div>
+    </div>
+    <div class="modal-footer-custom"><button type="button" class="btn-cancelar-modal" onclick="fecharModalSubstituirEmpenho()">Cancelar</button><button type="button" class="btn-primary" id="ctTrocaSalvar" onclick="salvarSubstituicaoEmpenho()" style="width:auto;">Criar nova versão</button></div>
+  </div>
+</div>
+
+<div id="modalMovimentosContrato" class="modal-overlay" style="display:none; z-index:10020;">
+  <div class="modal-panel" style="width:1050px; max-width:calc(100vw - 30px); max-height:90vh;">
+    <div class="modal-header-custom"><h3 id="ctMovTitulo" style="margin:0; font-size:16px;">Liquidações encontradas</h3></div>
+    <div id="ctMovConteudo" class="modal-body-custom" style="overflow:auto;"></div>
+    <div class="modal-footer-custom"><button type="button" class="btn-primary" onclick="fecharModalMovimentosContrato()" style="width:auto;">Fechar</button></div>
+  </div>
 </div>
 
 <div id="tela-globais-estimativos" class="screen-section">
@@ -7918,6 +8267,7 @@ function mostrarTela(tela, atualizarHash = true) {
     document.getElementById('tela-home'),
     document.getElementById('tela-consulta'),
     document.getElementById('tela-faturas'),
+    document.getElementById('tela-contratos'),
     document.getElementById('tela-materiais'),
     document.getElementById('tela-fornecedores'),
     document.getElementById('tela-empenhos'),
@@ -7963,6 +8313,14 @@ function mostrarTela(tela, atualizarHash = true) {
       if (typeof carregarFaturasTela === 'function' && !faturasJaInicializadas) {
         carregarFaturasTela(true);
       }
+    }, 120);
+    return;
+  }
+
+  if (tela === 'contratos') {
+    document.getElementById('tela-contratos')?.classList.add('active');
+    setTimeout(function () {
+      if (typeof inicializarGestaoContratos === 'function') inicializarGestaoContratos();
     }, 120);
     return;
   }
@@ -8068,6 +8426,7 @@ function abrirTelaPeloHash() {
     'home',
     'consulta',
     'faturas',
+    'contratos',
     'materiais',
     'fornecedores',
     'empenhos',
@@ -9326,8 +9685,20 @@ window.carregarRastreioPublicoDoHash = async function(forcar = false) {
         }
 
         rastreioPublicoDados = { ...snap.data(), id: codigo };
+        if (rastreioPublicoDados.ativa === false) {
+            clearTimeout(rastreioPublicoTimer);
+            aviso.className = 'alert-box alert-normal';
+            aviso.textContent = 'Esta lista foi desativada pela Contabilidade e não está disponível para consulta.';
+            document.getElementById('rpTitulo').textContent = rastreioPublicoDados.titulo || 'Lista pública desativada';
+            document.getElementById('rpAtualizacao').textContent = rastreioPublicoDados.dataDesativacao
+                ? `Desativada em ${formatarDataHoraRastreio(rastreioPublicoDados.dataDesativacao)}`
+                : 'Lista desativada.';
+            document.getElementById('rpKpis').style.display = 'none';
+            tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding:24px;">Lista indisponível.</td></tr>';
+            return;
+        }
         document.getElementById('rpTitulo').textContent = rastreioPublicoDados.titulo || 'Lista pública de empenhos';
-        document.getElementById('rpAtualizacao').textContent = `Lista publicada em ${formatarDataHoraRastreio(rastreioPublicoDados.publicadoEm)} · andamento consultado em ${new Date().toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit' })}`;
+        document.getElementById('rpAtualizacao').textContent = `Lista publicada em ${formatarDataHoraRastreio(rastreioPublicoDados.publicadoEm)}${rastreioPublicoDados.listaAtualizadaEm ? ` · lista atualizada em ${formatarDataHoraRastreio(rastreioPublicoDados.listaAtualizadaEm)}` : ''} · consultada às ${new Date().toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit' })}`;
         aviso.className = 'alert-box alert-simples';
         aviso.textContent = 'Consulta pública carregada. Esta página se atualiza automaticamente a cada 1 hora.';
         filtrarRastreioPublico();
@@ -10171,6 +10542,7 @@ function obterAssinaturaFiltrosBuscaAvancada() {
     const ids = [
         'api-av-historico', 'api-av-nota', 'api-av-tipo-valor',
         'api-av-valor-min', 'api-av-valor-max', 'api-av-movimento',
+        'api-av-quantidade', 'api-av-ordem',
         'api-filtro-empenho', 'api-filtro-ano', 'api-filtro-nome', 'api-filtro-doc'
     ];
     return JSON.stringify(ids.map(id => String(document.getElementById(id)?.value || '').trim()));
@@ -10200,8 +10572,12 @@ function limparBuscaAvancada() {
     });
     const tipoValor = document.getElementById('api-av-tipo-valor');
     const movimento = document.getElementById('api-av-movimento');
+    const quantidade = document.getElementById('api-av-quantidade');
+    const ordem = document.getElementById('api-av-ordem');
     if (tipoValor) tipoValor.value = 'qualquer';
     if (movimento) movimento.value = '';
+    if (quantidade) quantidade.value = '100';
+    if (ordem) ordem.value = 'decrescente';
     const status = document.getElementById('api-busca-avancada-status');
     const continuar = document.getElementById('btn-continuar-busca-avancada');
     if (continuar) continuar.style.display = 'none';
@@ -10235,6 +10611,43 @@ function obterNumeroAnoEmpenhoItem(item, anoPadrao) {
     return {
         numero: item?.numEmpenho || item?.empenho || item?.numeroEmpenho || item?.nrEmpenho || item?.codEmpenho || '',
         ano: item?.numAnoEmpenho || item?.anoEmpenho || (item?.empenhoFormatado ? String(item.empenhoFormatado).split('/')[1] : '') || anoPadrao
+    };
+}
+
+function compararEmpenhosBuscaAvancada(a, b, ordem = 'decrescente') {
+    const compararAno = String(a?.ano || '').localeCompare(String(b?.ano || ''), undefined, { numeric:true });
+    const compararNumero = String(a?.numero || '').localeCompare(String(b?.numero || ''), undefined, { numeric:true });
+    const resultado = compararAno || compararNumero;
+    return ordem === 'crescente' ? resultado : -resultado;
+}
+
+function ordenarEmpenhosBuscaAvancada(lista, ordem = 'decrescente') {
+    return lista.sort((a, b) => compararEmpenhosBuscaAvancada(a, b, ordem));
+}
+
+function paginaValidaBuscaAvancada(pagina, totalPaginas) {
+    return pagina >= 1 && pagina <= totalPaginas;
+}
+
+async function carregarPaginaListaBuscaAvancada(pagina, configuracao) {
+    const url = `https://transparencia.iguatama.mg.gov.br/publico/despesaDetalhada?elementosPorPagina=${configuracao.elementosPorPagina}&pagina=${pagina}&termoBase64=${configuracao.termoBase64}&indAgrupamento=FOR&datInicio=${configuracao.ano}-01-01&datFim=${configuracao.ano}-12-31&desNatureza=&codAdministracao=2&filtrarApenasCovid=false&numEmpenho=${encodeURIComponent(configuracao.filtroEmpenho)}&cpfCnpj=${encodeURIComponent(configuracao.filtroDoc)}`;
+    const resposta = await fetch(url);
+    if (!resposta.ok) throw new Error(`Lista HTTP ${resposta.status}`);
+    const data = await resposta.json();
+    let itens = obterListaRespostaTransparencia(data);
+    if (configuracao.filtroDoc) {
+        itens = itens.filter(item => {
+            const documento = obterDocumentoItem(item);
+            return documento && (documento.includes(configuracao.filtroDoc) || configuracao.filtroDoc.includes(documento));
+        });
+    }
+    const candidatos = itens.map(item => ({ item, ...obterNumeroAnoEmpenhoItem(item, configuracao.ano) }))
+        .filter(item => item.numero);
+    ordenarEmpenhosBuscaAvancada(candidatos, configuracao.ordem);
+    return {
+        candidatos,
+        totalPaginas: Math.max(1, Number(data?.totalPages || 1)),
+        totalDisponivel: Number(data?.totalElements || 0)
     };
 }
 
@@ -10313,7 +10726,7 @@ function analisarMovimentacoesBuscaAvancada(movimentos, filtros) {
     };
 }
 
-function renderizarResultadosBuscaAvancada(resultados, analisados, totalDisponivel, limitado, falhas) {
+function renderizarResultadosBuscaAvancada(resultados, analisados, totalDisponivel, limitado, falhas, quantidadeLote = 100, ordem = 'decrescente') {
     const tbody = document.getElementById('api-tabela-corpo');
     const totalEmp = document.getElementById('api-total-empenhado');
     const totalLiq = document.getElementById('api-total-liquidado');
@@ -10328,7 +10741,10 @@ function renderizarResultadosBuscaAvancada(resultados, analisados, totalDisponiv
     apiTotalPaginas = 1;
     if (btnAnt) btnAnt.disabled = true;
     if (btnProx) btnProx.disabled = true;
-    if (btnContinuar) btnContinuar.style.display = limitado ? 'inline-flex' : 'none';
+    if (btnContinuar) {
+        btnContinuar.style.display = limitado ? 'inline-flex' : 'none';
+        btnContinuar.textContent = `Analisar próximos ${quantidadeLote}`;
+    }
 
     const soma = resultados.reduce((acc, resultado) => {
         acc.empenhado += resultado.analise.totais.empenhado;
@@ -10383,11 +10799,11 @@ function renderizarResultadosBuscaAvancada(resultados, analisados, totalDisponiv
     }
 
     const trechoFalhas = falhas ? ` · ${falhas} não puderam ser verificados` : '';
-    if (infoPag) infoPag.textContent = `Busca avançada: ${resultados.length} resultado(s) em ${analisados} empenho(s) analisado(s)${trechoFalhas}`;
+    if (infoPag) infoPag.textContent = `Busca avançada em ordem ${ordem}: ${resultados.length} resultado(s) em ${analisados} empenho(s) analisado(s)${trechoFalhas}`;
 
     const restantes = Math.max(0, totalDisponivel - analisados);
     const complemento = limitado
-        ? ` Ainda restam aproximadamente ${restantes} registros. Clique em <strong>Analisar próximos 600</strong> para continuar; os resultados serão acumulados.`
+        ? ` Ainda restam aproximadamente ${restantes} registros. Clique em <strong>Analisar próximos ${quantidadeLote}</strong> para continuar na mesma ordem; os resultados serão acumulados.`
         : ' Toda a lista retornada pelos filtros foi verificada.';
     definirStatusBuscaAvancada(
         `<strong>${resultados.length} empenho(s) encontrado(s).</strong> Foram analisados ${analisados} registros nos detalhes.${falhas ? ` ${falhas} registro(s) não responderam à consulta.` : ''}${complemento}`,
@@ -10447,9 +10863,10 @@ async function buscarEmpenhosAvancado() {
     const valorMaxOriginal = document.getElementById('api-av-valor-max')?.value?.trim() || '';
     const movimentoOriginal = document.getElementById('api-av-movimento')?.value || '';
     const tipoValor = document.getElementById('api-av-tipo-valor')?.value || 'qualquer';
-
-    if (!historicoOriginal && !notaOriginal && !valorMinOriginal && !valorMaxOriginal && !movimentoOriginal) {
-        definirStatusBuscaAvancada('Preencha pelo menos um campo da busca avançada.', 'normal');
+    const quantidadeLote = Number(document.getElementById('api-av-quantidade')?.value || 100);
+    const ordemBusca = document.getElementById('api-av-ordem')?.value === 'crescente' ? 'crescente' : 'decrescente';
+    if (![50, 100, 200, 300, 600].includes(quantidadeLote)) {
+        definirStatusBuscaAvancada('Selecione uma quantidade válida de empenhos.', 'normal');
         return;
     }
 
@@ -10467,6 +10884,14 @@ async function buscarEmpenhosAvancado() {
     const ano = document.getElementById('api-filtro-ano')?.value?.trim() || String(new Date().getFullYear());
     if (!/^\d{4}$/.test(ano)) {
         definirStatusBuscaAvancada('Informe um ano válido com quatro dígitos no filtro comum.', 'normal');
+        return;
+    }
+
+    const origemDescricao = ordemBusca === 'crescente'
+        ? 'dos menores números, a partir do empenho 1'
+        : 'dos maiores números, começando pelo último empenho disponível';
+    if (!confirm(`ATENÇÃO: esta busca consultará os detalhes de até ${quantidadeLote} empenhos, ${origemDescricao}. Muitas consultas em sequência podem sobrecarregar os servidores do Portal da Transparência. Tem certeza de que deseja continuar?`)) {
+        definirStatusBuscaAvancada('Busca cancelada antes de consultar os servidores.', 'neutro');
         return;
     }
 
@@ -10498,49 +10923,58 @@ async function buscarEmpenhosAvancado() {
         const filtroDoc = limparDocumento(document.getElementById('api-filtro-doc')?.value || '');
         const termoBase64 = filtroNome ? btoa(unescape(encodeURIComponent(filtroNome))) : '';
         const elementosPorPagina = 50;
-        const maxCandidatos = 600;
-        const maxPaginas = Math.ceil(maxCandidatos / elementosPorPagina);
-        let candidatos = [];
-        let totalPaginas = 1;
-        let totalDisponivel = 0;
-        let ultimaPaginaCarregada = 0;
+        const configuracao = { ano, filtroEmpenho, filtroDoc, termoBase64, elementosPorPagina, ordem: ordemBusca };
+        const primeiraPagina = await carregarPaginaListaBuscaAvancada(1, configuracao);
+        const totalPaginas = primeiraPagina.totalPaginas;
+        const totalDisponivel = primeiraPagina.totalDisponivel;
+        const ultimaPagina = totalPaginas > 1
+            ? await carregarPaginaListaBuscaAvancada(totalPaginas, configuracao)
+            : primeiraPagina;
+        const primeiraOrdenada = ordenarEmpenhosBuscaAvancada([...primeiraPagina.candidatos], 'crescente');
+        const ultimaOrdenada = ordenarEmpenhosBuscaAvancada([...ultimaPagina.candidatos], 'crescente');
+        const menorPrimeira = primeiraOrdenada[0];
+        const maiorPrimeira = primeiraOrdenada[primeiraOrdenada.length - 1];
+        const menorUltima = ultimaOrdenada[0];
+        const maiorUltima = ultimaOrdenada[ultimaOrdenada.length - 1];
+        let paginaInicial = 1;
+        if (totalPaginas > 1 && menorPrimeira && menorUltima && maiorPrimeira && maiorUltima) {
+            paginaInicial = ordemBusca === 'crescente'
+                ? (compararEmpenhosBuscaAvancada(menorPrimeira, menorUltima, 'crescente') <= 0 ? 1 : totalPaginas)
+                : (compararEmpenhosBuscaAvancada(maiorPrimeira, maiorUltima, 'crescente') >= 0 ? 1 : totalPaginas);
+        }
+        const passoPagina = paginaInicial === 1 ? 1 : -1;
+        let proximaPagina = paginaInicial;
+        const paginasCache = new Map([[1, primeiraPagina], [totalPaginas, ultimaPagina]]);
+        const unicos = new Map();
+        const candidatosPendentes = [];
+        const chavesPendentes = new Set();
 
-        for (let pagina = 1; pagina <= totalPaginas && pagina <= maxPaginas; pagina++) {
-            const url = `https://transparencia.iguatama.mg.gov.br/publico/despesaDetalhada?elementosPorPagina=${elementosPorPagina}&pagina=${pagina}&termoBase64=${termoBase64}&indAgrupamento=FOR&datInicio=${ano}-01-01&datFim=${ano}-12-31&desNatureza=&codAdministracao=2&filtrarApenasCovid=false&numEmpenho=${encodeURIComponent(filtroEmpenho)}&cpfCnpj=${encodeURIComponent(filtroDoc)}`;
-            const resposta = await fetch(url);
-            if (!resposta.ok) throw new Error(`Lista HTTP ${resposta.status}`);
-            const data = await resposta.json();
-            ultimaPaginaCarregada = pagina;
-            totalPaginas = Math.max(1, Number(data?.totalPages || 1));
-            totalDisponivel = Number(data?.totalElements || totalDisponivel || 0);
-            let paginaItens = obterListaRespostaTransparencia(data);
+        while (unicos.size < quantidadeLote && paginaValidaBuscaAvancada(proximaPagina, totalPaginas)) {
+            const paginaAtual = proximaPagina;
+            const dadosPagina = paginasCache.get(paginaAtual) || await carregarPaginaListaBuscaAvancada(paginaAtual, configuracao);
+            paginasCache.delete(paginaAtual);
+            proximaPagina += passoPagina;
 
-            if (filtroDoc) {
-                paginaItens = paginaItens.filter(item => {
-                    const documento = obterDocumentoItem(item);
-                    return documento && (documento.includes(filtroDoc) || filtroDoc.includes(documento));
-                });
-            }
-
-            candidatos.push(...paginaItens);
-            if (candidatos.length >= maxCandidatos) break;
+            dadosPagina.candidatos.forEach(candidato => {
+                const chave = `${candidato.numero}/${candidato.ano}`;
+                if (unicos.has(chave) || chavesPendentes.has(chave)) return;
+                if (unicos.size < quantidadeLote) {
+                    unicos.set(chave, candidato);
+                } else {
+                    candidatosPendentes.push(candidato);
+                    chavesPendentes.add(chave);
+                }
+            });
         }
 
-        const unicos = new Map();
-        candidatos.slice(0, maxCandidatos).forEach(item => {
-            const dados = obterNumeroAnoEmpenhoItem(item, ano);
-            if (!dados.numero) return;
-            const chave = `${dados.numero}/${dados.ano}`;
-            if (!unicos.has(chave)) unicos.set(chave, { item, ...dados });
-        });
-        candidatos = Array.from(unicos.values());
+        const candidatos = ordenarEmpenhosBuscaAvancada(Array.from(unicos.values()), ordemBusca);
 
         const resultados = [];
         const processamento = await processarLoteBuscaAvancada(candidatos, filtros, token, resultados, 0);
         if (token !== buscaAvancadaToken) return;
 
-        resultados.sort((a, b) => String(b.ano).localeCompare(String(a.ano)) || String(b.numero).localeCompare(String(a.numero), undefined, { numeric:true }));
-        const limitado = ultimaPaginaCarregada < totalPaginas;
+        ordenarEmpenhosBuscaAvancada(resultados, ordemBusca);
+        const limitado = candidatosPendentes.length > 0 || paginaValidaBuscaAvancada(proximaPagina, totalPaginas);
         buscaAvancadaEstado = {
             filtros,
             ano,
@@ -10548,16 +10982,28 @@ async function buscarEmpenhosAvancado() {
             filtroDoc,
             termoBase64,
             elementosPorPagina,
-            proximaPagina: ultimaPaginaCarregada + 1,
+            quantidadeLote,
+            ordem: ordemBusca,
+            passoPagina,
+            proximaPagina,
             totalPaginas,
             totalDisponivel: totalDisponivel || candidatos.length,
             resultados,
             analisados: processamento.analisadosLote,
             falhas: processamento.falhasLote,
             chavesAnalisadas: new Set(unicos.keys()),
+            candidatosPendentes,
             assinaturaFiltros: obterAssinaturaFiltrosBuscaAvancada()
         };
-        renderizarResultadosBuscaAvancada(resultados, buscaAvancadaEstado.analisados, buscaAvancadaEstado.totalDisponivel, limitado, buscaAvancadaEstado.falhas);
+        renderizarResultadosBuscaAvancada(
+            resultados,
+            buscaAvancadaEstado.analisados,
+            buscaAvancadaEstado.totalDisponivel,
+            limitado,
+            buscaAvancadaEstado.falhas,
+            quantidadeLote,
+            ordemBusca
+        );
     } catch (erro) {
         console.error('Erro na busca avançada de empenhos:', erro);
         if (tbody) tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; padding:22px; color:#a50e0e;">Não foi possível concluir a busca avançada.</td></tr>`;
@@ -10574,13 +11020,20 @@ async function continuarBuscaEmpenhosAvancado() {
         return;
     }
     const estado = buscaAvancadaEstado;
-    if (!estado || buscaAvancadaEmAndamento || estado.proximaPagina > estado.totalPaginas) return;
+    if (!estado || buscaAvancadaEmAndamento) return;
+    const temPendente = Array.isArray(estado.candidatosPendentes) && estado.candidatosPendentes.length > 0;
+    if (!temPendente && !paginaValidaBuscaAvancada(estado.proximaPagina, estado.totalPaginas)) return;
 
     if (estado.assinaturaFiltros !== obterAssinaturaFiltrosBuscaAvancada()) {
         buscaAvancadaEstado = null;
         const continuarInvalido = document.getElementById('btn-continuar-busca-avancada');
         if (continuarInvalido) continuarInvalido.style.display = 'none';
         definirStatusBuscaAvancada('Os filtros mudaram desde a última consulta. Clique em <strong>Buscar nos detalhes</strong> para iniciar uma nova pesquisa.', 'neutro');
+        return;
+    }
+
+    if (!confirm(`ATENÇÃO: esta ação consultará os detalhes de mais até ${estado.quantidadeLote} empenhos em ordem ${estado.ordem}. Isso pode sobrecarregar os servidores do Portal da Transparência. Tem certeza de que deseja continuar?`)) {
+        definirStatusBuscaAvancada('Continuação cancelada antes de consultar os servidores.', 'neutro');
         return;
     }
 
@@ -10592,38 +11045,49 @@ async function continuarBuscaEmpenhosAvancado() {
     if (botaoBuscar) botaoBuscar.disabled = true;
 
     try {
-        const paginaInicial = estado.proximaPagina;
-        const paginaFinal = Math.min(estado.totalPaginas, paginaInicial + 11);
-        let candidatos = [];
+        const novosUnicos = [];
+        const chavesLote = new Set();
+        const configuracao = {
+            ano: estado.ano,
+            filtroEmpenho: estado.filtroEmpenho,
+            filtroDoc: estado.filtroDoc,
+            termoBase64: estado.termoBase64,
+            elementosPorPagina: estado.elementosPorPagina,
+            ordem: estado.ordem
+        };
 
-        definirStatusBuscaAvancada(`Carregando o próximo lote: páginas ${paginaInicial} a ${paginaFinal} de ${estado.totalPaginas}...`, 'neutro');
+        definirStatusBuscaAvancada(`Carregando o próximo lote de até ${estado.quantidadeLote} empenhos em ordem ${estado.ordem}...`, 'neutro');
 
-        for (let pagina = paginaInicial; pagina <= paginaFinal; pagina++) {
-            const url = `https://transparencia.iguatama.mg.gov.br/publico/despesaDetalhada?elementosPorPagina=${estado.elementosPorPagina}&pagina=${pagina}&termoBase64=${estado.termoBase64}&indAgrupamento=FOR&datInicio=${estado.ano}-01-01&datFim=${estado.ano}-12-31&desNatureza=&codAdministracao=2&filtrarApenasCovid=false&numEmpenho=${encodeURIComponent(estado.filtroEmpenho)}&cpfCnpj=${encodeURIComponent(estado.filtroDoc)}`;
-            const resposta = await fetch(url);
-            if (!resposta.ok) throw new Error(`Lista HTTP ${resposta.status}`);
-            const data = await resposta.json();
-            let paginaItens = obterListaRespostaTransparencia(data);
-
-            if (estado.filtroDoc) {
-                paginaItens = paginaItens.filter(item => {
-                    const documento = obterDocumentoItem(item);
-                    return documento && (documento.includes(estado.filtroDoc) || estado.filtroDoc.includes(documento));
-                });
-            }
-            candidatos.push(...paginaItens);
+        function incluirNoLote(candidato) {
+            const chave = `${candidato.numero}/${candidato.ano}`;
+            if (estado.chavesAnalisadas.has(chave) || chavesLote.has(chave)) return false;
+            if (novosUnicos.length >= estado.quantidadeLote) return false;
+            novosUnicos.push(candidato);
+            chavesLote.add(chave);
+            estado.chavesAnalisadas.add(chave);
+            return true;
         }
 
-        estado.proximaPagina = paginaFinal + 1;
-        const novosUnicos = [];
-        candidatos.forEach(item => {
-            const dados = obterNumeroAnoEmpenhoItem(item, estado.ano);
-            if (!dados.numero) return;
-            const chave = `${dados.numero}/${dados.ano}`;
-            if (estado.chavesAnalisadas.has(chave)) return;
-            estado.chavesAnalisadas.add(chave);
-            novosUnicos.push({ item, ...dados });
-        });
+        while (estado.candidatosPendentes.length && novosUnicos.length < estado.quantidadeLote) {
+            incluirNoLote(estado.candidatosPendentes.shift());
+        }
+
+        while (novosUnicos.length < estado.quantidadeLote && paginaValidaBuscaAvancada(estado.proximaPagina, estado.totalPaginas)) {
+            const paginaAtual = estado.proximaPagina;
+            estado.proximaPagina += estado.passoPagina;
+            const dadosPagina = await carregarPaginaListaBuscaAvancada(paginaAtual, configuracao);
+            dadosPagina.candidatos.forEach(candidato => {
+                if (novosUnicos.length < estado.quantidadeLote) {
+                    incluirNoLote(candidato);
+                    return;
+                }
+                const chave = `${candidato.numero}/${candidato.ano}`;
+                const jaPendente = estado.candidatosPendentes.some(item => `${item.numero}/${item.ano}` === chave);
+                if (!estado.chavesAnalisadas.has(chave) && !jaPendente) estado.candidatosPendentes.push(candidato);
+            });
+        }
+
+        ordenarEmpenhosBuscaAvancada(novosUnicos, estado.ordem);
 
         const processamento = await processarLoteBuscaAvancada(
             novosUnicos,
@@ -10636,15 +11100,17 @@ async function continuarBuscaEmpenhosAvancado() {
 
         estado.analisados += processamento.analisadosLote;
         estado.falhas += processamento.falhasLote;
-        estado.resultados.sort((a, b) => String(b.ano).localeCompare(String(a.ano)) || String(b.numero).localeCompare(String(a.numero), undefined, { numeric:true }));
+        ordenarEmpenhosBuscaAvancada(estado.resultados, estado.ordem);
 
-        const aindaHaPaginas = estado.proximaPagina <= estado.totalPaginas;
+        const aindaHaPaginas = estado.candidatosPendentes.length > 0 || paginaValidaBuscaAvancada(estado.proximaPagina, estado.totalPaginas);
         renderizarResultadosBuscaAvancada(
             estado.resultados,
             estado.analisados,
             estado.totalDisponivel,
             aindaHaPaginas,
-            estado.falhas
+            estado.falhas,
+            estado.quantidadeLote,
+            estado.ordem
         );
     } catch (erro) {
         console.error('Erro ao continuar busca avançada:', erro);
@@ -10652,7 +11118,7 @@ async function continuarBuscaEmpenhosAvancado() {
         if (botaoContinuar) botaoContinuar.style.display = 'inline-flex';
     } finally {
         buscaAvancadaEmAndamento = false;
-        if (botaoContinuar) { botaoContinuar.disabled = false; botaoContinuar.textContent = 'Analisar próximos 600'; }
+        if (botaoContinuar) { botaoContinuar.disabled = false; botaoContinuar.textContent = `Analisar próximos ${estado.quantidadeLote}`; }
         if (botaoBuscar) botaoBuscar.disabled = false;
     }
 }
@@ -10661,6 +11127,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const idsBuscaAvancada = [
         'api-av-historico', 'api-av-nota', 'api-av-tipo-valor',
         'api-av-valor-min', 'api-av-valor-max', 'api-av-movimento',
+        'api-av-quantidade', 'api-av-ordem',
         'api-filtro-empenho', 'api-filtro-ano', 'api-filtro-nome', 'api-filtro-doc'
     ];
 
@@ -13019,6 +13486,23 @@ let gestaoNotasRastreamento = {};
 let gestaoNotasAlterada = false;
 let gestaoNotasSelecionados = new Set();
 let gestaoNotasInicializada = false;
+let gestaoNotasItemEmEdicaoId = null;
+
+function atualizarEstadoListaGestaoNotas() {
+    const salvar = document.getElementById('gnSalvarTabelaBtn');
+    const excluir = document.getElementById('gnExcluirListaAtualBtn');
+    const adicionar = document.getElementById('gnAdicionarLinhaBtn');
+    const listaAberta = !!gestaoNotasTabelaAtualId;
+
+    if (salvar) salvar.textContent = listaAberta ? 'Salvar Alterações' : 'Salvar e Gerar Link';
+    if (excluir) excluir.style.display = listaAberta ? 'inline-block' : 'none';
+    if (adicionar) adicionar.textContent = gestaoNotasItemEmEdicaoId ? 'Salvar Alteração da Linha' : 'Adicionar Linha';
+}
+
+function encerrarEdicaoLinhaGestaoNotas() {
+    gestaoNotasItemEmEdicaoId = null;
+    atualizarEstadoListaGestaoNotas();
+}
 
 const GN_STATUS_RASTREIO = {
     recebido_contabilidade: { rotulo: 'Recebido na Contabilidade', local: 'Contabilidade', classe: 'gn-status-contabilidade' },
@@ -13187,6 +13671,7 @@ function inicializarGestaoNotas() {
 
         campoFornecedorGN.dataset.autocompleteAtivo = '1';
     }
+    atualizarEstadoListaGestaoNotas();
 }
 
 function limparFormularioGestaoNotas() {
@@ -13196,6 +13681,7 @@ function limparFormularioGestaoNotas() {
 
     document.getElementById('gn-status-empenho').className = 'alert-box alert-neutro';
     document.getElementById('gn-status-empenho').textContent = 'Digite um número de empenho para tentar preencher os dados básicos automaticamente.';
+    encerrarEdicaoLinhaGestaoNotas();
 }
 
 function limparFormularioGestaoNotasCompleto() {
@@ -13208,9 +13694,11 @@ function limparFormularioGestaoNotasCompleto() {
 
     document.getElementById('gn-status-empenho').className = 'alert-box alert-neutro';
     document.getElementById('gn-status-empenho').textContent = 'Digite um número de empenho para tentar preencher os dados básicos automaticamente.';
+    encerrarEdicaoLinhaGestaoNotas();
 }
 
 function novaTabelaGestaoNotas() {
+    if (gestaoNotasAlterada && gestaoNotasItens.length && !confirm('Há alterações ainda não salvas. Deseja descartá-las e iniciar uma nova lista?')) return;
     gestaoNotasTabelaAtualId = null;
     gestaoNotasPublicoId = null;
     gestaoNotasLinkPublico = '';
@@ -13226,6 +13714,7 @@ function novaTabelaGestaoNotas() {
     atualizarResumoSelecaoGestaoNotas();
     const info = document.getElementById('gnInfoTabela');
     if (info) info.textContent = 'Nova tabela em branco.';
+    atualizarEstadoListaGestaoNotas();
 }
 
 function obterDadosFormularioGestaoNotas() {
@@ -13259,10 +13748,17 @@ function adicionarLinhaGestaoNotas() {
         return;
     }
 
-    gestaoNotasItens.push({
-        id: 'gn-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8),
-        ...item
-    });
+    if (gestaoNotasItemEmEdicaoId) {
+        const indice = gestaoNotasItens.findIndex(x => x.id === gestaoNotasItemEmEdicaoId);
+        if (indice >= 0) {
+            gestaoNotasItens[indice] = { ...gestaoNotasItens[indice], ...item, id: gestaoNotasItemEmEdicaoId };
+        }
+    } else {
+        gestaoNotasItens.push({
+            id: 'gn-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8),
+            ...item
+        });
+    }
 
     gestaoNotasAlterada = true;
 
@@ -13338,11 +13834,9 @@ function editarLinhaGestaoNotas(id) {
     document.getElementById('gnDataEmissao').value = item.dataEmissao || '';
     document.getElementById('gnNumeroNota').value = item.numeroNota || '';
 
-    gestaoNotasItens = gestaoNotasItens.filter(x => x.id !== id);
-    gestaoNotasSelecionados.delete(id);
-    gestaoNotasAlterada = true;
-    aplicarFiltroGestaoNotas();
-    atualizarResumoGestaoNotas();
+    gestaoNotasItemEmEdicaoId = id;
+    atualizarEstadoListaGestaoNotas();
+    document.getElementById('gnEmpenho')?.focus();
 }
 
 function duplicarLinhaGestaoNotas(id) {
@@ -13755,8 +14249,16 @@ const LIMITE_FATURAS_POR_PAGINA = 10;
 let faturasCache = [];
 let faturamentoEnderecoAtual = null;
 let faturaEnderecoEditandoId = null;
+let faturaEmpenhoCompartilhadoOriginal = '';
 let faturasDetalhesAbertos = new Set();
 let faturasTotalGeral = 0;
+
+const FATURA_MODELOS_OBSERVACAO_DOC = '__MODELOS_OBSERVACAO__';
+const FATURA_MODELOS_OBSERVACAO_PADRAO = [
+  { id: 'numero_fatura', nome: 'Nº da fatura', texto: 'Nº da fatura: ', padrao: true }
+];
+let faturaModelosObservacaoPersonalizados = [];
+let faturaModelosObservacaoCarregados = false;
 
 let faturasPaginaAtual = 1;
 let faturasCursorPorPagina = { 1: null };
@@ -13836,6 +14338,7 @@ function recolherFaturaEndereco(enderecoId) {
 
 function abrirModalCadastroFatura() {
   faturaEnderecoEditandoId = null;
+  faturaEmpenhoCompartilhadoOriginal = '';
 
   document.getElementById('modalCadastroFatura').style.display = 'flex';
   document.getElementById('fatCadFornecedor').value = '';
@@ -13844,6 +14347,8 @@ function abrirModalCadastroFatura() {
   document.getElementById('fatCadSecretaria').value = '';
   document.getElementById('fatCadEmpenho').value = '';
   document.getElementById('fatCadEmpenho').readOnly = false;
+  const botaoTrocar = document.getElementById('fatCadAlterarEmpenho');
+  if (botaoTrocar) botaoTrocar.style.display = 'none';
 
   const info = document.getElementById('fatCadInfoEmpenho');
   info.className = 'alert-box alert-neutro';
@@ -13889,6 +14394,7 @@ verificarEmpenhoCompartilhadoFatura();
 function fecharModalCadastroFatura() {
   document.getElementById('modalCadastroFatura').style.display = 'none';
   faturaEnderecoEditandoId = null;
+  faturaEmpenhoCompartilhadoOriginal = '';
 }
 
 function abrirModalLancamentoFatura(enderecoId, mes) {
@@ -13896,6 +14402,7 @@ function abrirModalLancamentoFatura(enderecoId, mes) {
   const anoFiltro = Number(document.getElementById('fatFiltroAno')?.value || new Date().getFullYear());
 
   document.getElementById('modalLancamentoFatura').style.display = 'flex';
+  carregarModelosObservacaoFatura();
   document.getElementById('fatLancMes').value = String(mes || 1);
   document.getElementById('fatLancAno').value = anoFiltro;
 
@@ -13926,8 +14433,9 @@ function abrirModalLancamentoFatura(enderecoId, mes) {
   document.getElementById('fatLancResumoEndereco').textContent =
     item?.endereco || 'Endereço não encontrado';
 
+  const empenhoDoLancamento = lancamentoExistente?.numeroEmpenho || item?.numeroEmpenho || '-';
   document.getElementById('fatLancResumoDetalhes').textContent =
-    `Fornecedor: ${item?.fornecedor || '-'} | Instalação: ${item?.numeroInstalacao || '-'} | Empenho: ${item?.numeroEmpenho || '-'}`;
+    `Fornecedor: ${item?.fornecedor || '-'} | Instalação: ${item?.numeroInstalacao || '-'} | Empenho deste lançamento: ${empenhoDoLancamento}`;
 
   // Atualiza título do modal conforme contexto
   const tituloModal = document.querySelector('#modalLancamentoFatura .modal-header-custom h3');
@@ -13945,14 +14453,167 @@ function fecharModalLancamentoFatura() {
   faturamentoEnderecoAtual = null;
 }
 
+function obterModelosObservacaoFatura() {
+  return [...FATURA_MODELOS_OBSERVACAO_PADRAO, ...faturaModelosObservacaoPersonalizados];
+}
+
+function renderizarModelosObservacaoFatura(selecionarId = '') {
+  const select = document.getElementById('fatLancModeloObservacao');
+  if (!select) return;
+
+  const selecaoAnterior = selecionarId || select.value || 'numero_fatura';
+  select.innerHTML = '';
+  obterModelosObservacaoFatura().forEach(modelo => {
+    const option = document.createElement('option');
+    option.value = modelo.id;
+    option.textContent = modelo.nome;
+    select.appendChild(option);
+  });
+  select.value = obterModelosObservacaoFatura().some(modelo => modelo.id === selecaoAnterior)
+    ? selecaoAnterior
+    : 'numero_fatura';
+}
+
+async function carregarModelosObservacaoFatura(forcar = false) {
+  if (faturaModelosObservacaoCarregados && !forcar) {
+    renderizarModelosObservacaoFatura();
+    return;
+  }
+  if (!window.db || !window.fsDoc || !window.fsGetDoc) {
+    renderizarModelosObservacaoFatura();
+    return;
+  }
+
+  try {
+    const ref = window.fsDoc(window.db, 'FaturasEmpenhosCompartilhados', FATURA_MODELOS_OBSERVACAO_DOC);
+    const snap = await window.fsGetDoc(ref);
+    const modelos = snap.exists() && Array.isArray(snap.data()?.modelos) ? snap.data().modelos : [];
+    faturaModelosObservacaoPersonalizados = modelos
+      .map(modelo => ({
+        id: String(modelo?.id || '').trim(),
+        nome: String(modelo?.nome || '').trim(),
+        texto: String(modelo?.texto || '')
+      }))
+      .filter(modelo => modelo.id && modelo.nome && modelo.texto && modelo.id !== 'numero_fatura');
+    faturaModelosObservacaoCarregados = true;
+  } catch (erro) {
+    console.error('Erro ao carregar textos salvos das faturas:', erro);
+  }
+
+  renderizarModelosObservacaoFatura();
+}
+
+function aplicarModeloObservacaoFatura() {
+  const select = document.getElementById('fatLancModeloObservacao');
+  const campo = document.getElementById('fatLancObservacao');
+  const modelo = obterModelosObservacaoFatura().find(item => item.id === select?.value);
+  if (!campo || !modelo) return;
+
+  const textoAtual = campo.value.trimEnd();
+  campo.value = textoAtual ? `${textoAtual}\n${modelo.texto}` : modelo.texto;
+  campo.focus();
+  campo.setSelectionRange(campo.value.length, campo.value.length);
+}
+
+async function salvarModeloObservacaoFatura() {
+  if (!window.auth?.currentUser) {
+    mostrarAvisoSistema('Acesso negado', 'Você precisa estar logado para salvar textos de observação.');
+    return;
+  }
+
+  const campoNome = document.getElementById('fatLancModeloNome');
+  const campoTexto = document.getElementById('fatLancModeloTexto');
+  const nome = campoNome?.value.trim() || '';
+  const textoModelo = campoTexto?.value || '';
+  if (!nome || !textoModelo.trim()) {
+    mostrarAvisoSistema('Preencha o texto salvo', 'Informe um nome e o texto que será inserido na observação.');
+    return;
+  }
+
+  const id = `modelo_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
+  const novoModelo = { id, nome, texto: textoModelo };
+  const novaLista = [...faturaModelosObservacaoPersonalizados, novoModelo];
+
+  try {
+    await window.fsSetDoc(
+      window.fsDoc(window.db, 'FaturasEmpenhosCompartilhados', FATURA_MODELOS_OBSERVACAO_DOC),
+      {
+        tipo: 'modelosObservacao',
+        modelos: novaLista,
+        dataAtualizacao: new Date().toISOString(),
+        usuarioEmail: window.auth.currentUser.email || ''
+      },
+      { merge: true }
+    );
+    faturaModelosObservacaoPersonalizados = novaLista;
+    faturaModelosObservacaoCarregados = true;
+    renderizarModelosObservacaoFatura(id);
+    if (campoNome) campoNome.value = '';
+    if (campoTexto) campoTexto.value = '';
+    mostrarAvisoSistema('Texto salvo', 'O texto foi adicionado aos modelos de observação.');
+  } catch (erro) {
+    console.error('Erro ao salvar texto de observação:', erro);
+    mostrarAvisoSistema('Erro ao salvar', 'Não foi possível salvar o texto de observação.');
+  }
+}
+
+async function excluirModeloObservacaoFatura() {
+  const select = document.getElementById('fatLancModeloObservacao');
+  const id = select?.value || '';
+  const modelo = faturaModelosObservacaoPersonalizados.find(item => item.id === id);
+  if (!modelo) {
+    mostrarAvisoSistema('Texto padrão', 'O texto “Nº da fatura” é padrão do sistema e não pode ser excluído.');
+    return;
+  }
+  if (!confirm(`Excluir permanentemente o texto salvo “${modelo.nome}”?`)) return;
+
+  const novaLista = faturaModelosObservacaoPersonalizados.filter(item => item.id !== id);
+  try {
+    await window.fsSetDoc(
+      window.fsDoc(window.db, 'FaturasEmpenhosCompartilhados', FATURA_MODELOS_OBSERVACAO_DOC),
+      {
+        modelos: novaLista,
+        dataAtualizacao: new Date().toISOString(),
+        usuarioEmail: window.auth?.currentUser?.email || ''
+      },
+      { merge: true }
+    );
+    faturaModelosObservacaoPersonalizados = novaLista;
+    renderizarModelosObservacaoFatura('numero_fatura');
+    mostrarAvisoSistema('Texto excluído', 'O texto salvo foi removido.');
+  } catch (erro) {
+    console.error('Erro ao excluir texto de observação:', erro);
+    mostrarAvisoSistema('Erro ao excluir', 'Não foi possível excluir o texto salvo.');
+  }
+}
+
+function habilitarTrocaEmpenhoFatura() {
+  const campo = document.getElementById('fatCadEmpenho');
+  const botao = document.getElementById('fatCadAlterarEmpenho');
+  const info = document.getElementById('fatCadInfoEmpenho');
+  if (!campo) return;
+
+  campo.readOnly = false;
+  if (botao) botao.style.display = 'none';
+  if (info) {
+    info.className = 'alert-box alert-normal';
+    info.textContent = 'Informe o novo empenho estimativo. Ao salvar, ele será usado nos próximos lançamentos; as faturas anteriores manterão o empenho antigo.';
+  }
+  campo.focus();
+  campo.select();
+}
+
 async function verificarEmpenhoCompartilhadoFatura() {
   const fornecedor = document.getElementById('fatCadFornecedor').value.trim();
   const secretaria = document.getElementById('fatCadSecretaria').value.trim();
   const campoEmpenho = document.getElementById('fatCadEmpenho');
   const info = document.getElementById('fatCadInfoEmpenho');
+  const botaoTrocar = document.getElementById('fatCadAlterarEmpenho');
 
   if (!fornecedor || !secretaria || !window.db) {
+    faturaEmpenhoCompartilhadoOriginal = '';
     campoEmpenho.readOnly = false;
+    if (botaoTrocar) botaoTrocar.style.display = 'none';
     info.className = 'alert-box alert-neutro';
     info.textContent = 'Preencha fornecedor e secretaria para verificar o empenho compartilhado.';
     return;
@@ -13965,22 +14626,102 @@ const snap = await window.fsGetDoc(ref);
 
     if (snap.exists()) {
       const dados = snap.data();
-      campoEmpenho.value = dados.numeroEmpenho || '';
+      faturaEmpenhoCompartilhadoOriginal = String(dados.numeroEmpenho || '').trim();
+      campoEmpenho.value = faturaEmpenhoCompartilhadoOriginal;
       campoEmpenho.readOnly = true;
+      if (botaoTrocar) botaoTrocar.style.display = 'inline-flex';
       info.className = 'alert-box alert-simples';
-      info.textContent = `Empenho compartilhado encontrado: ${dados.numeroEmpenho || 'Sem número'}. Este número será usado para este fornecedor e secretaria.`;
+      info.textContent = `Empenho atual: ${dados.numeroEmpenho || 'Sem número'}. Use “Trocar empenho” quando o saldo estimativo se esgotar.`;
     } else {
+      faturaEmpenhoCompartilhadoOriginal = '';
       campoEmpenho.value = '';
       campoEmpenho.readOnly = false;
+      if (botaoTrocar) botaoTrocar.style.display = 'none';
       info.className = 'alert-box alert-normal';
       info.textContent = 'Nenhum empenho compartilhado encontrado. Você pode informar um novo número de empenho.';
     }
   } catch (erro) {
     console.error('Erro ao verificar empenho compartilhado:', erro);
+    faturaEmpenhoCompartilhadoOriginal = '';
     campoEmpenho.readOnly = false;
+    if (botaoTrocar) botaoTrocar.style.display = 'none';
     info.className = 'alert-box alert-normal';
     info.textContent = 'Não foi possível verificar o empenho automaticamente.';
   }
+}
+
+async function preservarFaturasAoTrocarEmpenho(fornecedor, secretaria, novoEmpenho, agora) {
+  const enderecosSnapshot = await window.fsGetDocs(window.fsCollection(window.db, 'FaturasEnderecos'));
+  const enderecosRelacionados = enderecosSnapshot.docs.filter(docItem => {
+    const dados = docItem.data();
+    return String(dados?.fornecedor || '').trim().toUpperCase() === fornecedor.toUpperCase()
+      && String(dados?.secretaria || '').trim().toUpperCase() === secretaria.toUpperCase();
+  });
+
+  let lancamentosPreservados = 0;
+  let enderecosAtualizados = 0;
+
+  for (const docEndereco of enderecosRelacionados) {
+    const dadosEndereco = docEndereco.data();
+    const empenhoAnterior = String(dadosEndereco?.numeroEmpenho || faturaEmpenhoCompartilhadoOriginal || '').trim();
+    if (!empenhoAnterior || empenhoAnterior === novoEmpenho) continue;
+
+    const lancamentosSnapshot = await window.fsGetDocs(
+      window.fsCollection(window.db, 'FaturasEnderecos', docEndereco.id, 'lancamentos')
+    );
+    const gravacoes = [];
+    lancamentosSnapshot.forEach(docLancamento => {
+      const dadosLancamento = docLancamento.data();
+      if (String(dadosLancamento?.numeroEmpenho || '').trim()) return;
+      gravacoes.push(
+        window.fsSetDoc(
+          window.fsDoc(window.db, 'FaturasEnderecos', docEndereco.id, 'lancamentos', docLancamento.id),
+          { numeroEmpenho: empenhoAnterior, empenhoPreservadoEm: agora },
+          { merge: true }
+        )
+      );
+    });
+
+    for (let inicio = 0; inicio < gravacoes.length; inicio += 8) {
+      await Promise.all(gravacoes.slice(inicio, inicio + 8));
+    }
+    lancamentosPreservados += gravacoes.length;
+
+    const historico = Array.isArray(dadosEndereco?.historicoEmpenhos)
+      ? [...dadosEndereco.historicoEmpenhos]
+      : [];
+    historico.push({
+      numeroEmpenho: empenhoAnterior,
+      substituidoPor: novoEmpenho,
+      dataSubstituicao: agora,
+      usuarioEmail: window.auth?.currentUser?.email || ''
+    });
+
+    await window.fsSetDoc(
+      window.fsDoc(window.db, 'FaturasEnderecos', docEndereco.id),
+      {
+        numeroEmpenho: novoEmpenho,
+        historicoEmpenhos: historico,
+        dataAtualizacao: agora,
+        usuarioEmail: window.auth?.currentUser?.email || ''
+      },
+      { merge: true }
+    );
+    enderecosAtualizados++;
+  }
+
+  faturasCache.forEach(item => {
+    const mesmoVinculo = String(item?.fornecedor || '').trim().toUpperCase() === fornecedor.toUpperCase()
+      && String(item?.secretaria || '').trim().toUpperCase() === secretaria.toUpperCase();
+    if (!mesmoVinculo) return;
+    const empenhoAnterior = String(item.numeroEmpenho || faturaEmpenhoCompartilhadoOriginal || '').trim();
+    (item.lancamentos || []).forEach(lancamento => {
+      if (!lancamento.numeroEmpenho) lancamento.numeroEmpenho = empenhoAnterior;
+    });
+    item.numeroEmpenho = novoEmpenho;
+  });
+
+  return { lancamentosPreservados, enderecosAtualizados };
 }
 
 async function salvarCadastroFatura() {
@@ -14009,7 +14750,7 @@ async function salvarCadastroFatura() {
       throw new Error('Firestore não foi inicializado.');
     }
 
-    if (!window.fsDoc || !window.fsSetDoc || !window.fsCollection) {
+    if (!window.fsDoc || !window.fsSetDoc || !window.fsGetDoc || !window.fsGetDocs || !window.fsCollection) {
       throw new Error('As funções globais do Firestore não estão disponíveis.');
     }
 
@@ -14020,13 +14761,38 @@ async function salvarCadastroFatura() {
 
     const agora = new Date().toISOString();
     const chaveEmpenho = `${fornecedor}__${secretaria}`.toUpperCase();
+    const refEmpenhoCompartilhado = window.fsDoc(window.db, 'FaturasEmpenhosCompartilhados', chaveEmpenho);
+    const snapEmpenhoCompartilhado = await window.fsGetDoc(refEmpenhoCompartilhado);
+    const empenhoAnteriorCompartilhado = String(
+      (snapEmpenhoCompartilhado.exists() ? snapEmpenhoCompartilhado.data()?.numeroEmpenho : '')
+      || faturaEmpenhoCompartilhadoOriginal
+      || ''
+    ).trim();
+    const houveTrocaEmpenho = !!empenhoAnteriorCompartilhado && empenhoAnteriorCompartilhado !== numeroEmpenho;
+    let preservacaoTroca = null;
+
+    if (houveTrocaEmpenho) {
+      const confirmou = confirm(
+        `Trocar o empenho atual de ${empenhoAnteriorCompartilhado} para ${numeroEmpenho}?\n\n` +
+        'O novo número será usado nos próximos lançamentos deste fornecedor e secretaria. ' +
+        'As faturas já cadastradas continuarão vinculadas ao empenho antigo.'
+      );
+      if (!confirmou) return;
+
+      if (botaoSalvar) botaoSalvar.textContent = 'Preservando faturas antigas...';
+      preservacaoTroca = await preservarFaturasAoTrocarEmpenho(fornecedor, secretaria, numeroEmpenho, agora);
+    }
 
     await window.fsSetDoc(
-      window.fsDoc(window.db, 'FaturasEmpenhosCompartilhados', chaveEmpenho),
+      refEmpenhoCompartilhado,
       {
         fornecedor,
         secretaria,
         numeroEmpenho,
+        ...(houveTrocaEmpenho ? {
+          numeroEmpenhoAnterior: empenhoAnteriorCompartilhado,
+          ultimaTrocaEmpenhoEm: agora
+        } : {}),
         dataAtualizacao: agora,
         usuarioEmail: window.auth.currentUser.email || ''
       },
@@ -14071,10 +14837,18 @@ async function salvarCadastroFatura() {
     aplicarFiltrosFaturas();
     fecharModalCadastroFatura();
     
-    mostrarAvisoSistema(
-      estaEditando ? 'Endereço atualizado' : 'Endereço salvo',
-      estaEditando ? 'As alterações do endereço foram salvas com sucesso.' : 'O endereço da fatura foi salvo com sucesso.'
-    );
+    if (houveTrocaEmpenho) {
+      mostrarAvisoSistema(
+        'Empenho estimativo atualizado',
+        `O empenho atual agora é ${numeroEmpenho}. ` +
+        `${preservacaoTroca?.lancamentosPreservados || 0} lançamento(s) anterior(es) foram preservados com o empenho ${empenhoAnteriorCompartilhado}.`
+      );
+    } else {
+      mostrarAvisoSistema(
+        estaEditando ? 'Endereço atualizado' : 'Endereço salvo',
+        estaEditando ? 'As alterações do endereço foram salvas com sucesso.' : 'O endereço da fatura foi salvo com sucesso.'
+      );
+    }
   } catch (erro) {
     console.error('Erro ao salvar cadastro de fatura:', erro);
 
@@ -14146,6 +14920,13 @@ async function salvarLancamentoFatura() {
       'lancamentos',
       lancamentoId
     );
+    const item = faturasCache.find(f => f.id === faturamentoEnderecoAtual);
+    const lancamentoAnterior = Array.isArray(item?.lancamentos)
+      ? item.lancamentos.find(l => l.id === lancamentoId)
+      : null;
+    const numeroEmpenhoLancamento = String(
+      lancamentoAnterior?.numeroEmpenho || item?.numeroEmpenho || ''
+    ).trim();
 
      const novoLancamento = {
       mes,
@@ -14155,13 +14936,13 @@ async function salvarLancamentoFatura() {
       dataRegistro,
       status,
       observacao,
+      numeroEmpenho: numeroEmpenhoLancamento,
       dataAtualizacao: new Date().toISOString(),
       usuarioEmail: window.auth.currentUser.email || ''
     };
 
     await window.fsSetDoc(ref, novoLancamento, { merge: true });
     
-    const item = faturasCache.find(f => f.id === faturamentoEnderecoAtual);
     if (item) {
       if (!Array.isArray(item.lancamentos)) item.lancamentos = [];
       const idx = item.lancamentos.findIndex(l => l.id === lancamentoId);
@@ -14428,10 +15209,11 @@ function renderizarFaturasLista(listaDados, ano) {
           </div>
 
           <div style="overflow-x:auto;">
-            <table class="data-table" style="min-width: 920px; background:#fff;">
+            <table class="data-table" style="min-width: 1040px; background:#fff;">
               <thead>
                 <tr>
                   <th style="width: 120px;">Mês</th>
+                  <th style="width: 120px;">Empenho</th>
                   <th style="width: 150px;">Valor</th>
                   <th style="width: 140px;">Status</th>
                   <th style="width: 150px;">Vencimento</th>
@@ -14455,6 +15237,7 @@ function renderizarFaturasLista(listaDados, ano) {
         html += `
           <tr>
             <td style="font-weight:bold; color:#0f3b5e;">${nomeMes}</td>
+            <td>${dadoMes.numeroEmpenho || item.numeroEmpenho || '-'}</td>
             <td>${Number(dadoMes.valor || 0).toLocaleString('pt-BR', { style:'currency', currency:'BRL' })}</td>
             <td>
               <span style="display:inline-block; padding:4px 8px; border-radius:999px; font-size:11px; font-weight:bold; color:${statusCor}; background:${statusBg};">
@@ -14480,6 +15263,7 @@ function renderizarFaturasLista(listaDados, ano) {
         html += `
           <tr>
             <td style="font-weight:bold; color:#0f3b5e;">${nomeMes}</td>
+            <td>-</td>
             <td>-</td>
             <td>
               <span style="display:inline-block; padding:4px 8px; border-radius:999px; font-size:11px; font-weight:bold; color:#6c757d; background:#eef2f5;">
@@ -14709,6 +15493,7 @@ window.fazerBackupFirebase = function () {
   const executarBackup = async () => {
     const colecoes = [
       'ContasPagasEnderecos',
+      'ContratosExecucao',
       'Empenhos',
       'FaturasEmpenhosCompartilhados',
       'FaturasEnderecos',
@@ -15238,7 +16023,7 @@ async function gerarRelatorioFaturas() {
                 + '  <div class="rfat-inst-sub">'
                 + '    <span><strong>Fornecedor:</strong> ' + escapeHtmlRelFat(item.fornecedor || '-') + '</span>'
                 + '    &nbsp;·&nbsp;<span><strong>Instalação:</strong> ' + escapeHtmlRelFat(item.numeroInstalacao || '-') + '</span>'
-                + '    &nbsp;·&nbsp;<span><strong>Empenho:</strong> ' + escapeHtmlRelFat(item.numeroEmpenho || '-') + '</span>'
+                + '    &nbsp;·&nbsp;<span><strong>Empenho atual:</strong> ' + escapeHtmlRelFat(item.numeroEmpenho || '-') + '</span>'
                 + '  </div>'
                 + '  <div class="rfat-inst-sub" style="margin-top:2px;"><strong>Secretaria:</strong> ' + escapeHtmlRelFat(item.secretaria || '-') + '</div>'
                 + '</div>'
@@ -15251,6 +16036,7 @@ async function gerarRelatorioFaturas() {
             corpoHtml += '<table class="rfat-tabela-completa">'
                 + '<thead><tr>'
                 + '<th style="width:13%;">Mês</th>'
+                + '<th style="width:11%;">Empenho</th>'
                 + '<th style="width:16%;">Valor</th>'
                 + '<th style="width:11%;">Status</th>'
                 + '<th style="width:15%;">Vencimento</th>'
@@ -15267,6 +16053,7 @@ async function gerarRelatorioFaturas() {
                     var statusCls = String(lan.status || '').toLowerCase() === 'pago' ? 'rfat-tag-pago' : 'rfat-tag-pend';
                     corpoHtml += '<tr class="rfat-linha-com-dados">'
                         + '<td class="rfat-mes">' + nomeMes + '</td>'
+                        + '<td>' + escapeHtmlRelFat(lan.numeroEmpenho || item.numeroEmpenho || '—') + '</td>'
                         + '<td class="rfat-valor">' + formatarMoedaRelatorio(Number(lan.valor || 0)) + '</td>'
                         + '<td><span class="rfat-tag ' + statusCls + '">' + statusTexto + '</span></td>'
                         + '<td>' + escapeHtmlRelFat(lan.dataVencimento || '—') + '</td>'
@@ -15276,13 +16063,13 @@ async function gerarRelatorioFaturas() {
                 } else {
                     corpoHtml += '<tr class="rfat-linha-vazia">'
                         + '<td class="rfat-mes">' + nomeMes + '</td>'
-                        + '<td colspan="5" class="rfat-sem-lancamento">Sem lançamento</td>'
+                        + '<td colspan="6" class="rfat-sem-lancamento">Sem lançamento</td>'
                         + '</tr>';
                 }
             });
 
             corpoHtml += '<tr class="rfat-linha-total">'
-                + '<td colspan="5" style="text-align:right; font-weight:bold; padding-right:14px;">TOTAL DO ANO ' + anoSelecionado + '</td>'
+                + '<td colspan="6" style="text-align:right; font-weight:bold; padding-right:14px;">TOTAL DO ANO ' + anoSelecionado + '</td>'
                 + '<td style="font-weight:bold;">' + formatarMoedaRelatorio(totalItem) + '</td>'
                 + '</tr>';
 
@@ -16089,6 +16876,812 @@ function estGerarRelatorio(){
   if (!w){ mostrarAvisoSistema('Estatísticas', 'Permita pop-ups (janelas) para gerar o relatório.'); return; }
   w.document.open(); w.document.write(html); w.document.close(); w.focus();
 }
+
+// ============================================================
+// GESTÃO DE CONTRATOS MENSAIS
+// Agenda de aluguéis, repasses e contratos gerais. Cada contrato
+// mantém suas execuções por competência e uma cópia resumida das
+// movimentações consultadas no Portal da Transparência.
+// ============================================================
+
+let contratosGestaoCache = [];
+let contratoGestaoEditandoId = null;
+let contratoGestaoExecutandoId = null;
+let contratoGestaoRenovandoOrigemId = null;
+let contratoGestaoTrocandoEmpenhoId = null;
+let contratosGestaoInicializados = false;
+let contratosGestaoCarregando = false;
+
+const CT_MESES = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+
+function ctCompetenciaAtual() {
+  const mes = Number(document.getElementById('ctFiltroMes')?.value || (new Date().getMonth() + 1));
+  const ano = Number(document.getElementById('ctFiltroAno')?.value || new Date().getFullYear());
+  return { mes, ano, chave: `${ano}_${String(mes).padStart(2, '0')}` };
+}
+
+function ctNormalizarEmpenhos(valor) {
+  return [...new Set((String(valor || '').match(/\d+/g) || []).map(numero => String(Number(numero))).filter(numero => numero !== '0'))];
+}
+
+function ctFormatarMoeda(valor) {
+  return Number(valor || 0).toLocaleString('pt-BR', { style:'currency', currency:'BRL' });
+}
+
+function ctFormatarData(valor) {
+  if (!valor) return '-';
+  const texto = String(valor).slice(0, 10);
+  if (/^\d{4}-\d{2}-\d{2}$/.test(texto)) {
+    const [ano, mes, dia] = texto.split('-');
+    return `${dia}/${mes}/${ano}`;
+  }
+  return texto;
+}
+
+function ctSomarDiasData(valor, dias) {
+  if (!valor) return '';
+  const data = new Date(`${valor}T12:00:00`);
+  data.setDate(data.getDate() + Number(dias || 0));
+  return `${data.getFullYear()}-${String(data.getMonth() + 1).padStart(2, '0')}-${String(data.getDate()).padStart(2, '0')}`;
+}
+
+function ctFimVigenciaAnual(inicio) {
+  if (!inicio) return '';
+  const data = new Date(`${inicio}T12:00:00`);
+  data.setFullYear(data.getFullYear() + 1);
+  data.setDate(data.getDate() - 1);
+  return `${data.getFullYear()}-${String(data.getMonth() + 1).padStart(2, '0')}-${String(data.getDate()).padStart(2, '0')}`;
+}
+
+function ctAnoMesDaData(valor) {
+  const texto = String(valor || '').trim();
+  let achado = texto.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (achado) return { ano:Number(achado[1]), mes:Number(achado[2]) };
+  achado = texto.match(/^(\d{2})\/(\d{2})\/(\d{4})/);
+  if (achado) return { ano:Number(achado[3]), mes:Number(achado[2]) };
+  return null;
+}
+
+function ctChaveCompetencia(mes, ano) {
+  return `${Number(ano)}_${String(Number(mes)).padStart(2, '0')}`;
+}
+
+function ctCompararCompetencias(chaveA, chaveB) {
+  return String(chaveA || '').localeCompare(String(chaveB || ''));
+}
+
+function ctCompetenciaAnterior(chave) {
+  const [ano, mes] = String(chave || '').split('_').map(Number);
+  const data = new Date(ano, mes - 2, 1);
+  return ctChaveCompetencia(data.getMonth() + 1, data.getFullYear());
+}
+
+function ctEmpenhosNaCompetencia(contrato, mes, ano) {
+  const chave = ctChaveCompetencia(mes, ano);
+  const execucao = contrato?.execucoes?.[chave];
+  if (Array.isArray(execucao?.empenhos) && execucao.empenhos.length) {
+    return { empenhos:execucao.empenhos, anoEmpenho:Number(execucao.anoEmpenho || contrato.anoEmpenho) };
+  }
+
+  const historico = Array.isArray(contrato?.historicoEmpenhos) ? contrato.historicoEmpenhos : [];
+  const periodo = historico.find(item => {
+    const inicio = item.inicioCompetencia || '0000_01';
+    const fim = item.fimCompetencia || '9999_12';
+    return ctCompararCompetencias(chave, inicio) >= 0 && ctCompararCompetencias(chave, fim) <= 0;
+  });
+  if (periodo) return { empenhos:periodo.empenhos || [], anoEmpenho:Number(periodo.anoEmpenho || contrato.anoEmpenho) };
+
+  return { empenhos:contrato?.empenhos || [], anoEmpenho:Number(contrato?.anoEmpenho || ano) };
+}
+
+function ctSituacaoVigencia(contrato, referencia = new Date()) {
+  const renovado = !!contrato?.renovadoPorId || contrato?.situacaoContrato === 'renovado';
+  const substituido = !!contrato?.substituidoPorId || contrato?.situacaoContrato === 'substituido';
+  const dispensado = !!contrato?.renovacaoDispensada;
+  const dataFimConsiderada = contrato?.encerramentoEfetivo || contrato?.vigenciaFim;
+  const fim = dataFimConsiderada ? new Date(`${dataFimConsiderada}T23:59:59`) : null;
+  const hoje = new Date(referencia.getFullYear(), referencia.getMonth(), referencia.getDate());
+  const diasRestantes = fim ? Math.ceil((fim.getTime() - hoje.getTime()) / 86400000) : null;
+  const encerrado = !!fim && diasRestantes < 0;
+  const consideradoAtivo = contrato?.ativo !== false;
+  const vencendo = consideradoAtivo && !renovado && !substituido && !dispensado && !encerrado && diasRestantes !== null && diasRestantes <= 60;
+  const aguardandoRenovacao = consideradoAtivo && encerrado && !renovado && !substituido && !dispensado;
+  return { renovado, substituido, dispensado, fim, diasRestantes, encerrado, vencendo, aguardandoRenovacao };
+}
+
+function aplicarFiltroCicloContrato(valor) {
+  const select = document.getElementById('ctFiltroStatus');
+  if (select) select.value = valor;
+  renderizarGestaoContratos();
+}
+
+function ctMovimentosDaCompetencia(contrato, mes, ano, apenasLiquidacoes = false) {
+  const lista = Array.isArray(contrato?.portalMovimentacoes) ? contrato.portalMovimentacoes : [];
+  return lista.filter(item => {
+    const competencia = ctAnoMesDaData(item.data);
+    if (!competencia || competencia.ano !== Number(ano) || competencia.mes !== Number(mes)) return false;
+    return !apenasLiquidacoes || Number(item.valorLiquidado || 0) > 0;
+  });
+}
+
+function ctContratoVigenteNaCompetencia(contrato, mes, ano) {
+  const inicioCompetencia = new Date(Number(ano), Number(mes) - 1, 1);
+  const fimCompetencia = new Date(Number(ano), Number(mes), 0, 23, 59, 59);
+  const inicio = contrato?.vigenciaInicio ? new Date(`${contrato.vigenciaInicio}T00:00:00`) : null;
+  const dataFimConsiderada = contrato?.encerramentoEfetivo || contrato?.vigenciaFim;
+  const fim = dataFimConsiderada ? new Date(`${dataFimConsiderada}T23:59:59`) : null;
+  return (!inicio || inicio <= fimCompetencia) && (!fim || fim >= inicioCompetencia);
+}
+
+function ctContratoVisivelNaCompetencia(contrato, mes, ano) {
+  if (ctContratoVigenteNaCompetencia(contrato, mes, ano)) return true;
+  if (contrato?.ativo === false || contrato?.pendenciasEncerradas) return false;
+  const inicioCompetencia = new Date(Number(ano), Number(mes) - 1, 1);
+  const fimCompetencia = new Date(Number(ano), Number(mes), 0, 23, 59, 59);
+  const inicio = contrato?.vigenciaInicio ? new Date(`${contrato.vigenciaInicio}T00:00:00`) : null;
+  const dataFimConsiderada = contrato?.encerramentoEfetivo || contrato?.vigenciaFim;
+  const fim = dataFimConsiderada ? new Date(`${dataFimConsiderada}T23:59:59`) : null;
+  return !!fim && (!inicio || inicio <= fimCompetencia) && fim < inicioCompetencia;
+}
+
+function ctReferenciaDaCompetencia(mes, ano) {
+  const hoje = new Date();
+  if (hoje.getMonth() + 1 === Number(mes) && hoje.getFullYear() === Number(ano)) return hoje;
+  return new Date(Number(ano), Number(mes) - 1, 1);
+}
+
+function ctEstadoContrato(contrato, mes, ano) {
+  const chave = `${ano}_${String(mes).padStart(2, '0')}`;
+  const execucao = contrato?.execucoes?.[chave] || {};
+  const liquidacoesPortal = ctMovimentosDaCompetencia(contrato, mes, ano, true);
+  const concluido = !!execucao.concluido || !!execucao.liquidado;
+  const detectadoPortal = liquidacoesPortal.length > 0;
+  const percentual = concluido ? 100 : 0;
+  const ultimoDiaMes = new Date(Number(ano), Number(mes), 0).getDate();
+  const diaLimite = Math.min(ultimoDiaMes, Math.max(1, Number(contrato?.diaLimite || 10)));
+  const vencimento = new Date(Number(ano), Number(mes) - 1, diaLimite, 23, 59, 59);
+  const agora = new Date();
+  const competenciaFutura = new Date(Number(ano), Number(mes) - 1, 1) > new Date(agora.getFullYear(), agora.getMonth(), 1);
+  const atrasado = !concluido && !detectadoPortal && !competenciaFutura && agora > vencimento;
+  const estado = contrato?.ativo === false ? 'inativo' : concluido ? 'concluido' : detectadoPortal ? 'detectado' : atrasado ? 'atrasado' : 'pendente';
+  return { execucao, liquidacoesPortal, percentual, concluido, detectadoPortal, atrasado, estado, diaLimite };
+}
+
+function inicializarGestaoContratos() {
+  const hoje = new Date();
+  const mes = document.getElementById('ctFiltroMes');
+  const ano = document.getElementById('ctFiltroAno');
+  if (!contratosGestaoInicializados) {
+    if (mes) mes.value = String(hoje.getMonth() + 1);
+    if (ano) ano.value = String(hoje.getFullYear());
+    contratosGestaoInicializados = true;
+  }
+  carregarGestaoContratos();
+}
+
+async function carregarGestaoContratos() {
+  if (contratosGestaoCarregando) return;
+  const tbody = document.getElementById('ctTabelaCorpo');
+  const aviso = document.getElementById('ctAvisoPrazo');
+  if (!window.auth?.currentUser || !window.db || !window.fsCollection || !window.fsGetDocs) return;
+
+  contratosGestaoCarregando = true;
+  if (tbody) tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding:24px;">Carregando contratos...</td></tr>';
+  if (aviso) { aviso.className = 'alert-box alert-neutro'; aviso.textContent = 'Carregando a agenda de contratos...'; }
+
+  try {
+    const snapshot = await window.fsGetDocs(window.fsCollection(window.db, 'ContratosExecucao'));
+    contratosGestaoCache = snapshot.docs.map(docItem => ({ id:docItem.id, ...docItem.data() }));
+    contratosGestaoCache.sort((a, b) => {
+      const dia = Number(a.diaLimite || 10) - Number(b.diaLimite || 10);
+      return dia || String(a.nome || '').localeCompare(String(b.nome || ''), 'pt-BR');
+    });
+    renderizarGestaoContratos();
+  } catch (erro) {
+    console.error('Erro ao carregar contratos:', erro);
+    if (tbody) tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding:24px; color:#a50e0e;">Não foi possível carregar os contratos.</td></tr>';
+    if (aviso) { aviso.className = 'alert-box alert-normal'; aviso.textContent = 'O Firebase recusou ou não conseguiu concluir a leitura dos contratos. Confira as regras antes de usar esta página.'; }
+  } finally {
+    contratosGestaoCarregando = false;
+  }
+}
+
+function renderizarGestaoContratos() {
+  const tbody = document.getElementById('ctTabelaCorpo');
+  if (!tbody) return;
+  const { mes, ano } = ctCompetenciaAtual();
+  const categoria = document.getElementById('ctFiltroCategoria')?.value || '';
+  const status = document.getElementById('ctFiltroStatus')?.value || '';
+  const busca = normalizarTexto(document.getElementById('ctFiltroBusca')?.value || '');
+  const filtrosCiclo = ['vencendo', 'aguardando-renovacao', 'encerrado'];
+  const filtrandoCiclo = filtrosCiclo.includes(status);
+
+  let lista = filtrandoCiclo
+    ? [...contratosGestaoCache]
+    : contratosGestaoCache.filter(contrato => ctContratoVisivelNaCompetencia(contrato, mes, ano));
+  lista = lista.filter(contrato => {
+    if (categoria && contrato.categoria !== categoria) return false;
+    const estado = ctEstadoContrato(contrato, mes, ano);
+    const ciclo = ctSituacaoVigencia(contrato);
+    if (status === 'vencendo' && !ciclo.vencendo) return false;
+    if (status === 'aguardando-renovacao' && !ciclo.aguardandoRenovacao) return false;
+    if (status === 'encerrado' && !(ciclo.encerrado || ciclo.dispensado)) return false;
+    if (status && !filtrandoCiclo && estado.estado !== status) return false;
+    const texto = normalizarTexto(`${contrato.nome || ''} ${contrato.secretaria || ''} ${(contrato.empenhos || []).join(' ')} ${contrato.categoria || ''}`);
+    return !busca || texto.includes(busca);
+  });
+  if (filtrandoCiclo) {
+    lista.sort((a, b) => String(a.vigenciaFim || '').localeCompare(String(b.vigenciaFim || '')) || String(a.nome || '').localeCompare(String(b.nome || ''), 'pt-BR'));
+  }
+
+  const estadosTodos = contratosGestaoCache
+    .filter(contrato => ctContratoVisivelNaCompetencia(contrato, mes, ano))
+    .map(contrato => ctEstadoContrato(contrato, mes, ano));
+  document.getElementById('ctKpiTotal').textContent = String(estadosTodos.length);
+  document.getElementById('ctKpiPendentes').textContent = String(estadosTodos.filter(item => !['concluido', 'inativo'].includes(item.estado)).length);
+  document.getElementById('ctKpiAtrasados').textContent = String(estadosTodos.filter(item => item.estado !== 'inativo' && item.atrasado).length);
+  document.getElementById('ctKpiConcluidos').textContent = String(estadosTodos.filter(item => item.estado !== 'inativo' && item.concluido).length);
+  document.getElementById('ctKpiVencendo').textContent = String(contratosGestaoCache.filter(item => ctSituacaoVigencia(item).vencendo).length);
+  document.getElementById('ctKpiRenovacao').textContent = String(contratosGestaoCache.filter(item => ctSituacaoVigencia(item).aguardandoRenovacao).length);
+
+  const aviso = document.getElementById('ctAvisoPrazo');
+  const atrasados = estadosTodos.filter(item => item.estado !== 'inativo' && item.atrasado).length;
+  if (aviso) {
+    const vencendo = contratosGestaoCache.filter(item => ctSituacaoVigencia(item).vencendo).length;
+    const aguardando = contratosGestaoCache.filter(item => ctSituacaoVigencia(item).aguardandoRenovacao).length;
+    aviso.className = atrasados || aguardando ? 'alert-box alert-normal' : 'alert-box alert-simples';
+    if (status === 'vencendo') aviso.innerHTML = `<strong>${lista.length} contrato(s) vencem nos próximos 60 dias.</strong> Use Renovar para preparar a próxima vigência sem alterar o histórico atual.`;
+    else if (status === 'aguardando-renovacao') aviso.innerHTML = `<strong>${lista.length} contrato(s) encerrados aguardam uma decisão.</strong> Renove ou marque como “Não renovar”.`;
+    else if (status === 'encerrado') aviso.innerHTML = `<strong>Histórico de contratos encerrados.</strong> Os empenhos, liquidações e competências anteriores permanecem preservados.`;
+    else if (atrasados) aviso.innerHTML = `<strong>${atrasados} contrato(s) ultrapassaram o prazo da competência ${CT_MESES[mes - 1]}/${ano}.</strong> Priorize os itens marcados como atrasados.`;
+    else aviso.innerHTML = `Agenda de <strong>${CT_MESES[mes - 1]}/${ano}</strong> organizada.${vencendo ? ` ${vencendo} contrato(s) vencem em breve.` : ''}${aguardando ? ` ${aguardando} aguardam renovação.` : ''}`;
+  }
+
+  if (!lista.length) {
+    tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding:24px;">Nenhum contrato encontrado para esta competência e filtros.</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = lista.map((contrato, indice) => {
+    const estado = ctEstadoContrato(contrato, mes, ano);
+    const ciclo = ctSituacaoVigencia(contrato, filtrandoCiclo ? new Date() : ctReferenciaDaCompetencia(mes, ano));
+    const cicloHoje = ctSituacaoVigencia(contrato);
+    const empenhoCompetencia = ctEmpenhosNaCompetencia(contrato, mes, ano);
+    const execucao = estado.execucao;
+    const liquidacoes = estado.liquidacoesPortal;
+    const numerosLiquidacao = [...new Set(liquidacoes.map(item => item.numeroLiquidacao).filter(Boolean))];
+    const valorLiquidado = liquidacoes.reduce((soma, item) => soma + Number(item.valorLiquidado || 0), 0);
+    const totalMovComp = ctMovimentosDaCompetencia(contrato, mes, ano, false).length;
+    const classeEstado = filtrandoCiclo ? (ciclo.aguardandoRenovacao ? 'late' : ciclo.vencendo ? 'warn' : '') : ciclo.encerrado ? 'late' : estado.estado === 'inativo' ? '' : estado.concluido ? 'ok' : estado.atrasado ? 'late' : estado.estado === 'detectado' ? 'warn' : '';
+    const textoEstado = filtrandoCiclo ? (ciclo.substituido ? 'Substituído' : ciclo.renovado ? 'Renovado' : ciclo.aguardandoRenovacao ? 'Aguardando renovação' : ciclo.vencendo ? `Vence em ${Math.max(0, ciclo.diasRestantes)} dia(s)` : ciclo.dispensado ? 'Encerrado — não renovar' : 'Encerrado') : ciclo.encerrado ? (estado.concluido ? 'Pagamento registrado · contrato vencido' : 'Vencido — pagamento pendente') : estado.estado === 'inativo' ? 'Inativo' : estado.concluido ? 'Liquidação registrada' : estado.estado === 'detectado' ? 'Detectada no Portal' : estado.atrasado ? 'Atrasada' : 'Pendente';
+    const driveValido = /^https?:\/\//i.test(String(contrato.linkDrive || ''));
+    const idSeguro = String(contrato.id).replace(/'/g, "\\'");
+    const valorPrevisto = Number(contrato.valorPrevisto || 0);
+
+    return `<tr>
+      <td style="text-align:center; font-weight:700; color:#66727d;">${indice + 1}</td>
+      <td><div class="ct-name">${escaparHtml(contrato.nome || 'Sem identificação')}</div>${contrato.substituicaoDeId ? '<div style="margin-top:4px;"><span class="ct-badge ok">Nova versão contratual</span></div>' : contrato.substituidoPorId ? '<div style="margin-top:4px;"><span class="ct-badge">Substituído por nova versão</span></div>' : contrato.contratoAnteriorId ? '<div style="margin-top:4px;"><span class="ct-badge ok">Renovação</span></div>' : contrato.renovadoPorId ? '<div style="margin-top:4px;"><span class="ct-badge">Possui renovação vinculada</span></div>' : ''}<div class="ct-muted">${escaparHtml(contrato.categoria || 'Outro')} · ${escaparHtml(contrato.tipoEmpenho || '-')}</div><div class="ct-muted">${escaparHtml(contrato.secretaria || 'Secretaria não informada')}</div>${valorPrevisto ? `<div class="ct-muted">Previsto: ${ctFormatarMoeda(valorPrevisto)}</div>` : ''}</td>
+      <td><strong>${escaparHtml((empenhoCompetencia.empenhos || []).join(' / ') || '-')}</strong><div class="ct-muted">Exercício ${escaparHtml(empenhoCompetencia.anoEmpenho || ano)}</div>${Array.isArray(contrato.historicoEmpenhos) && contrato.historicoEmpenhos.length ? '<div class="ct-muted">Possui histórico de empenhos</div>' : ''}</td>
+      <td>${ctFormatarData(contrato.vigenciaInicio)}<div class="ct-muted">até ${ctFormatarData(contrato.vigenciaFim)}</div>${contrato.encerramentoEfetivo ? `<div class="ct-muted">substituído em ${ctFormatarData(contrato.encerramentoEfetivo)}</div>` : ''}${ciclo.vencendo ? `<div style="margin-top:5px;"><span class="ct-badge warn">Vence em ${Math.max(0, ciclo.diasRestantes)} dia(s)</span></div>` : ''}${ciclo.encerrado ? '<div style="margin-top:5px;"><span class="ct-badge late">Vencido</span></div>' : ''}</td>
+      <td><span class="ct-badge ${estado.atrasado ? 'late' : ''}">Até dia ${estado.diaLimite}</span></td>
+      <td>${driveValido ? `<a href="${escaparHtml(contrato.linkDrive)}" target="_blank" rel="noopener noreferrer" class="btn-primary" style="display:inline-flex; width:auto; padding:6px 9px; font-size:10px; text-decoration:none;">Abrir Drive</a>` : '<span class="ct-muted">Sem link</span>'}</td>
+      <td>${liquidacoes.length ? `<span class="ct-badge ok">${liquidacoes.length} liquidação(ões)</span><div class="ct-muted">${totalMovComp} movimentação(ões) na competência</div><div class="ct-muted">${escaparHtml(numerosLiquidacao.length ? `Nº ${numerosLiquidacao.join(', ')}` : ctFormatarMoeda(valorLiquidado))}</div>` : `<span class="ct-badge">Nenhuma detectada</span><div class="ct-muted">${totalMovComp} movimentação(ões) na competência</div>`}<div class="ct-muted">Consulta: ${ctFormatarData(contrato.portalAtualizadoEm)}</div></td>
+      <td><span class="ct-badge ${classeEstado}">${textoEstado}</span><div class="ct-muted">${filtrandoCiclo ? (ciclo.substituido ? 'Nova versão contratual já vinculada.' : ciclo.renovado ? 'Nova vigência já vinculada.' : ciclo.aguardandoRenovacao ? `Vigência encerrada em ${ctFormatarData(contrato.vigenciaFim)}.` : ciclo.vencendo ? `Término em ${ctFormatarData(contrato.vigenciaFim)}.` : 'Histórico preservado.') : estado.concluido ? `${execucao.numerosLiquidacao ? `Liquidação nº ${escaparHtml(execucao.numerosLiquidacao)} · ` : ''}${Number(execucao.valorExecutado || 0) ? ctFormatarMoeda(execucao.valorExecutado) : 'valor não informado'}` : estado.detectadoPortal ? 'Abra e confirme o registro encontrado.' : 'Nenhuma liquidação registrada.'}</div></td>
+      <td><div class="ct-actions">${!filtrandoCiclo ? `<button type="button" class="btn-primary" onclick="abrirModalExecucaoContrato('${idSeguro}')">${estado.concluido ? 'Editar registro' : 'Registrar'}</button><button type="button" class="btn-primary" onclick="atualizarLiquidacoesContrato('${idSeguro}')" style="background:#315f7d; border-color:#244a63;">Consultar</button>` : ''}${!cicloHoje.renovado && !cicloHoje.substituido && !cicloHoje.dispensado ? `<button type="button" class="btn-primary" onclick="abrirModalRenovarContrato('${idSeguro}')" style="background:#1f6f43; border-color:#185a36;">Renovar</button>` : ''}${!filtrandoCiclo && !cicloHoje.encerrado && !cicloHoje.substituido && contrato.ativo !== false ? `<button type="button" class="btn-primary" onclick="abrirModalSubstituirEmpenho('${idSeguro}')" style="background:#7a5b16; border-color:#624910;">Substituir empenho</button>` : ''}${cicloHoje.aguardandoRenovacao ? `<button type="button" class="btn-primary" onclick="marcarContratoSemRenovacao('${idSeguro}')" style="background:#6c757d; border-color:#5a6268;">Não renovar</button>` : ''}${cicloHoje.encerrado && !cicloHoje.aguardandoRenovacao && !contrato.pendenciasEncerradas ? `<button type="button" class="btn-primary" onclick="marcarPendenciasContratoConcluidas('${idSeguro}')" style="background:#6c757d; border-color:#5a6268;">Finalizar pendências</button>` : ''}<button type="button" class="btn-primary" onclick="abrirMovimentosContrato('${idSeguro}')" style="background:#6c757d; border-color:#5a6268;">Movimentos</button><button type="button" class="btn-primary" onclick="abrirModalCadastroContrato('${idSeguro}')" style="background:#6c757d; border-color:#5a6268;">Editar</button></div></td>
+    </tr>`;
+  }).join('');
+}
+
+function abrirModalCadastroContrato(id = '', manterModoRenovacao = false) {
+  if (!manterModoRenovacao) contratoGestaoRenovandoOrigemId = null;
+  contratoGestaoEditandoId = id || null;
+  const contrato = id ? contratosGestaoCache.find(item => item.id === id) : null;
+  const hoje = new Date();
+  document.getElementById('modalCadastroContrato').style.display = 'flex';
+  document.getElementById('ctCadTitulo').textContent = contrato ? 'Editar contrato' : 'Novo contrato';
+  document.getElementById('ctCadNome').value = contrato?.nome || '';
+  document.getElementById('ctCadCategoria').value = contrato?.categoria || 'Aluguel';
+  document.getElementById('ctCadTipoEmpenho').value = contrato?.tipoEmpenho || 'Estimativo';
+  document.getElementById('ctCadEmpenhos').value = (contrato?.empenhos || []).join(' / ');
+  document.getElementById('ctCadAnoEmpenho').value = contrato?.anoEmpenho || hoje.getFullYear();
+  document.getElementById('ctCadEmpenhos').readOnly = !!contrato;
+  document.getElementById('ctCadAnoEmpenho').readOnly = !!contrato;
+  document.getElementById('ctCadInfoEmpenhoContrato').style.display = contrato ? 'block' : 'none';
+  document.getElementById('ctCadSecretaria').value = contrato?.secretaria || '';
+  document.getElementById('ctCadValor').value = contrato?.valorPrevisto ?? '';
+  document.getElementById('ctCadDiaLimite').value = contrato?.diaLimite || 10;
+  document.getElementById('ctCadInicio').value = contrato?.vigenciaInicio || '';
+  document.getElementById('ctCadFim').value = contrato?.vigenciaFim || '';
+  document.getElementById('ctCadDrive').value = contrato?.linkDrive || '';
+  document.getElementById('ctCadObservacao').value = contrato?.observacao || '';
+  document.getElementById('ctCadAtivo').checked = contrato ? contrato.ativo !== false : true;
+  document.getElementById('ctCadSalvar').textContent = contrato ? 'Salvar alterações' : 'Salvar contrato';
+  document.getElementById('ctCadExcluir').style.display = contrato ? 'inline-flex' : 'none';
+}
+
+function fecharModalCadastroContrato() {
+  document.getElementById('modalCadastroContrato').style.display = 'none';
+  contratoGestaoEditandoId = null;
+  contratoGestaoRenovandoOrigemId = null;
+}
+
+function abrirModalRenovarContrato(id) {
+  const origem = contratosGestaoCache.find(item => item.id === id);
+  if (!origem) return;
+  if (origem.renovadoPorId) return mostrarAvisoSistema('Contrato já renovado', 'Este contrato já possui uma nova vigência vinculada.');
+
+  contratoGestaoRenovandoOrigemId = id;
+  abrirModalCadastroContrato('', true);
+  contratoGestaoRenovandoOrigemId = id;
+  contratoGestaoEditandoId = null;
+
+  const novoInicio = ctSomarDiasData(origem.vigenciaFim, 1);
+  document.getElementById('ctCadTitulo').textContent = 'Renovar contrato — nova vigência';
+  document.getElementById('ctCadNome').value = origem.nome || '';
+  document.getElementById('ctCadCategoria').value = origem.categoria || 'Contrato geral';
+  document.getElementById('ctCadTipoEmpenho').value = origem.tipoEmpenho || 'Estimativo';
+  document.getElementById('ctCadEmpenhos').value = '';
+  document.getElementById('ctCadAnoEmpenho').value = novoInicio ? Number(novoInicio.slice(0, 4)) : new Date().getFullYear();
+  document.getElementById('ctCadEmpenhos').readOnly = false;
+  document.getElementById('ctCadAnoEmpenho').readOnly = false;
+  document.getElementById('ctCadInfoEmpenhoContrato').style.display = 'none';
+  document.getElementById('ctCadSecretaria').value = origem.secretaria || '';
+  document.getElementById('ctCadValor').value = origem.valorPrevisto ?? '';
+  document.getElementById('ctCadDiaLimite').value = origem.diaLimite || 10;
+  document.getElementById('ctCadInicio').value = novoInicio;
+  document.getElementById('ctCadFim').value = ctFimVigenciaAnual(novoInicio);
+  document.getElementById('ctCadDrive').value = origem.linkDrive || '';
+  document.getElementById('ctCadObservacao').value = origem.observacao ? `${origem.observacao}\nRenovação vinculada ao contrato anterior.` : 'Renovação vinculada ao contrato anterior.';
+  document.getElementById('ctCadAtivo').checked = true;
+  document.getElementById('ctCadSalvar').textContent = 'Criar renovação';
+  document.getElementById('ctCadExcluir').style.display = 'none';
+  setTimeout(() => document.getElementById('ctCadEmpenhos')?.focus(), 30);
+}
+
+async function salvarContrato() {
+  if (!window.auth?.currentUser) return mostrarAvisoSistema('Acesso negado', 'Faça login para salvar contratos.');
+  const nome = document.getElementById('ctCadNome').value.trim();
+  const empenhos = ctNormalizarEmpenhos(document.getElementById('ctCadEmpenhos').value);
+  const anoEmpenho = Number(document.getElementById('ctCadAnoEmpenho').value);
+  const vigenciaInicio = document.getElementById('ctCadInicio').value;
+  const vigenciaFim = document.getElementById('ctCadFim').value;
+  const linkDrive = document.getElementById('ctCadDrive').value.trim();
+  if (!nome || !empenhos.length || !anoEmpenho || !vigenciaInicio || !vigenciaFim) return mostrarAvisoSistema('Campos obrigatórios', 'Informe contrato/favorecido, empenho, ano e o período de vigência.');
+  if (vigenciaInicio > vigenciaFim) return mostrarAvisoSistema('Vigência inválida', 'O início da vigência não pode ser posterior ao término.');
+  if (linkDrive && !/^https?:\/\//i.test(linkDrive)) return mostrarAvisoSistema('Link inválido', 'Informe um endereço completo do Drive começando por https://.');
+
+  const botao = document.getElementById('ctCadSalvar');
+  const original = botao.textContent;
+  botao.disabled = true;
+  botao.textContent = 'Salvando...';
+  try {
+    const existente = contratoGestaoEditandoId ? contratosGestaoCache.find(item => item.id === contratoGestaoEditandoId) : null;
+    const origemRenovacao = contratoGestaoRenovandoOrigemId
+      ? contratosGestaoCache.find(item => item.id === contratoGestaoRenovandoOrigemId)
+      : null;
+    const agora = new Date().toISOString();
+    const dados = {
+      nome,
+      categoria: document.getElementById('ctCadCategoria').value,
+      tipoEmpenho: document.getElementById('ctCadTipoEmpenho').value,
+      empenhos,
+      anoEmpenho,
+      secretaria: document.getElementById('ctCadSecretaria').value,
+      valorPrevisto: Number(document.getElementById('ctCadValor').value || 0),
+      diaLimite: Math.min(31, Math.max(1, Number(document.getElementById('ctCadDiaLimite').value || 10))),
+      vigenciaInicio,
+      vigenciaFim,
+      linkDrive,
+      observacao: document.getElementById('ctCadObservacao').value.trim(),
+      ativo: document.getElementById('ctCadAtivo').checked,
+      dataAtualizacao: agora,
+      usuarioEmail: window.auth.currentUser.email || ''
+    };
+    let ref;
+    if (existente) {
+      ref = window.fsDoc(window.db, 'ContratosExecucao', existente.id);
+      await window.fsSetDoc(ref, dados, { merge:true });
+    } else {
+      ref = window.fsDoc(window.fsCollection(window.db, 'ContratosExecucao'));
+      await window.fsSetDoc(ref, {
+        ...dados,
+        dataCriacao:agora,
+        situacaoContrato:'ativo',
+        execucoes:{},
+        portalMovimentacoes:[],
+        ...(origemRenovacao ? {
+          contratoAnteriorId:origemRenovacao.id,
+          renovacaoDe:origemRenovacao.vigenciaFim || '',
+          numeroRenovacao:Number(origemRenovacao.numeroRenovacao || 0) + 1
+        } : {})
+      });
+      if (origemRenovacao) {
+        await window.fsSetDoc(
+          window.fsDoc(window.db, 'ContratosExecucao', origemRenovacao.id),
+          {
+            renovadoPorId:ref.id,
+            renovadoEm:agora,
+            situacaoContrato:'renovado',
+            dataAtualizacao:agora,
+            usuarioEmail:window.auth.currentUser.email || ''
+          },
+          { merge:true }
+        );
+      }
+    }
+    fecharModalCadastroContrato();
+    await carregarGestaoContratos();
+    mostrarAvisoSistema(
+      existente ? 'Contrato atualizado' : origemRenovacao ? 'Renovação criada' : 'Contrato cadastrado',
+      existente ? 'As alterações foram salvas.' : origemRenovacao ? 'A nova vigência foi criada. O contrato e o empenho anteriores permanecem no histórico.' : 'O contrato já foi incluído na agenda mensal.'
+    );
+  } catch (erro) {
+    console.error('Erro ao salvar contrato:', erro);
+    mostrarAvisoSistema('Erro ao salvar', erro?.code === 'permission-denied' ? 'O Firebase negou a gravação. Publique as novas regras de segurança.' : 'Não foi possível salvar o contrato.');
+  } finally {
+    botao.disabled = false;
+    botao.textContent = original;
+  }
+}
+
+async function excluirContrato(id) {
+  const contrato = contratosGestaoCache.find(item => item.id === id);
+  if (!contrato || !confirm(`Excluir permanentemente o contrato “${contrato.nome}” e todo o seu histórico mensal?`)) return;
+  try {
+    await window.fsDeleteDoc(window.fsDoc(window.db, 'ContratosExecucao', id));
+    contratosGestaoCache = contratosGestaoCache.filter(item => item.id !== id);
+    renderizarGestaoContratos();
+    fecharModalCadastroContrato();
+    mostrarAvisoSistema('Contrato excluído', 'O cadastro e suas competências foram removidos permanentemente.');
+  } catch (erro) {
+    console.error('Erro ao excluir contrato:', erro);
+    mostrarAvisoSistema('Erro ao excluir', 'Não foi possível excluir o contrato.');
+  }
+}
+
+function excluirContratoEmEdicao() {
+  if (contratoGestaoEditandoId) excluirContrato(contratoGestaoEditandoId);
+}
+
+function abrirModalSubstituirEmpenho(id) {
+  const contrato = contratosGestaoCache.find(item => item.id === id);
+  if (!contrato) return;
+  contratoGestaoTrocandoEmpenhoId = id;
+  const { mes, ano } = ctCompetenciaAtual();
+  const primeiroDiaCompetencia = `${ano}-${String(mes).padStart(2, '0')}-01`;
+  const inicioSugerido = primeiroDiaCompetencia > String(contrato.vigenciaInicio || '')
+    ? primeiroDiaCompetencia
+    : ctSomarDiasData(contrato.vigenciaInicio, 1);
+  document.getElementById('modalSubstituirEmpenhoContrato').style.display = 'flex';
+  document.getElementById('ctTrocaTitulo').textContent = `Substituir empenho e contrato — ${contrato.nome}`;
+  document.getElementById('ctTrocaResumo').innerHTML = `<strong>Versão atual:</strong> ${escaparHtml(contrato.nome || '-')} · empenho ${escaparHtml((contrato.empenhos || []).join(' / ') || '-')} · exercício ${escaparHtml(contrato.anoEmpenho || ano)}.<br>Preencha abaixo os dados da nova versão. A anterior continuará disponível no histórico.`;
+  document.getElementById('ctTrocaNome').value = contrato.nome || '';
+  document.getElementById('ctTrocaCategoria').value = contrato.categoria || 'Contrato geral';
+  document.getElementById('ctTrocaTipoEmpenho').value = contrato.tipoEmpenho || 'Estimativo';
+  document.getElementById('ctTrocaEmpenhos').value = '';
+  document.getElementById('ctTrocaAnoEmpenho').value = ano;
+  const secretaria = document.getElementById('ctTrocaSecretaria');
+  secretaria.innerHTML = document.getElementById('ctCadSecretaria').innerHTML;
+  secretaria.value = contrato.secretaria || '';
+  document.getElementById('ctTrocaValor').value = contrato.valorPrevisto ?? '';
+  document.getElementById('ctTrocaDiaLimite').value = contrato.diaLimite || 10;
+  document.getElementById('ctTrocaInicio').value = inicioSugerido;
+  document.getElementById('ctTrocaFim').value = ctFimVigenciaAnual(inicioSugerido);
+  document.getElementById('ctTrocaDrive').value = contrato.linkDrive || '';
+  document.getElementById('ctTrocaObservacao').value = contrato.observacao || '';
+  setTimeout(() => document.getElementById('ctTrocaEmpenhos')?.focus(), 30);
+}
+
+function fecharModalSubstituirEmpenho() {
+  document.getElementById('modalSubstituirEmpenhoContrato').style.display = 'none';
+  contratoGestaoTrocandoEmpenhoId = null;
+}
+
+async function salvarSubstituicaoEmpenho() {
+  const contrato = contratosGestaoCache.find(item => item.id === contratoGestaoTrocandoEmpenhoId);
+  if (!contrato) return;
+  if (!window.auth?.currentUser) return mostrarAvisoSistema('Acesso negado', 'Faça login para substituir o contrato.');
+  const novoNome = document.getElementById('ctTrocaNome').value.trim();
+  const novosEmpenhos = ctNormalizarEmpenhos(document.getElementById('ctTrocaEmpenhos').value);
+  const novoAnoEmpenho = Number(document.getElementById('ctTrocaAnoEmpenho').value);
+  const novaVigenciaInicio = document.getElementById('ctTrocaInicio').value;
+  const novaVigenciaFim = document.getElementById('ctTrocaFim').value;
+  const novoLinkDrive = document.getElementById('ctTrocaDrive').value.trim();
+  if (!novoNome || !novosEmpenhos.length || !novoAnoEmpenho || !novaVigenciaInicio || !novaVigenciaFim) return mostrarAvisoSistema('Campos obrigatórios', 'Informe o contrato/favorecido, o novo empenho, o ano e a nova vigência.');
+  if (novaVigenciaInicio > novaVigenciaFim) return mostrarAvisoSistema('Vigência inválida', 'O início da nova vigência não pode ser posterior ao término.');
+  if (novaVigenciaInicio <= String(contrato.vigenciaInicio || '')) return mostrarAvisoSistema('Início inválido', 'A nova versão precisa começar depois do início da versão atual.');
+  if (novoLinkDrive && !/^https?:\/\//i.test(novoLinkDrive)) return mostrarAvisoSistema('Link inválido', 'Informe um endereço completo começando por https://.');
+  const numerosAtuais = (contrato.empenhos || []).map(String);
+  if (!confirm(`Criar uma nova versão para “${contrato.nome}” com o empenho ${novosEmpenhos.join(' / ')}?\n\nA versão anterior e todas as suas liquidações permanecerão preservadas.`)) return;
+
+  const botao = document.getElementById('ctTrocaSalvar');
+  botao.disabled = true;
+  botao.textContent = 'Criando nova versão...';
+  try {
+    const agora = new Date().toISOString();
+    const novaRef = window.fsDoc(window.fsCollection(window.db, 'ContratosExecucao'));
+    await window.fsSetDoc(novaRef, {
+      nome:novoNome,
+      categoria:document.getElementById('ctTrocaCategoria').value,
+      tipoEmpenho:document.getElementById('ctTrocaTipoEmpenho').value,
+      empenhos:novosEmpenhos,
+      anoEmpenho:novoAnoEmpenho,
+      secretaria:document.getElementById('ctTrocaSecretaria').value,
+      valorPrevisto:Number(document.getElementById('ctTrocaValor').value || 0),
+      diaLimite:Math.min(31, Math.max(1, Number(document.getElementById('ctTrocaDiaLimite').value || 10))),
+      vigenciaInicio:novaVigenciaInicio,
+      vigenciaFim:novaVigenciaFim,
+      linkDrive:novoLinkDrive,
+      observacao:document.getElementById('ctTrocaObservacao').value.trim(),
+      ativo:true,
+      situacaoContrato:'ativo',
+      contratoAnteriorId:contrato.id,
+      substituicaoDeId:contrato.id,
+      numeroVersao:Number(contrato.numeroVersao || 1) + 1,
+      execucoes:{},
+      portalMovimentacoes:[],
+      dataCriacao:agora,
+      dataAtualizacao:agora,
+      usuarioEmail:window.auth.currentUser.email || ''
+    });
+    await window.fsSetDoc(
+      window.fsDoc(window.db, 'ContratosExecucao', contrato.id),
+      {
+        substituidoPorId:novaRef.id,
+        substituidoEm:agora,
+        encerramentoEfetivo:ctSomarDiasData(novaVigenciaInicio, -1),
+        situacaoContrato:'substituido',
+        dataAtualizacao:agora,
+        usuarioEmail:window.auth.currentUser.email || ''
+      },
+      { merge:true }
+    );
+    fecharModalSubstituirEmpenho();
+    await carregarGestaoContratos();
+    mostrarAvisoSistema('Nova versão criada', 'O novo contrato e empenho foram cadastrados. A versão anterior e suas liquidações continuam preservadas.');
+  } catch (erro) {
+    console.error('Erro ao substituir empenho:', erro);
+    mostrarAvisoSistema('Erro ao substituir', 'Não foi possível criar a nova versão contratual.');
+  } finally {
+    botao.disabled = false;
+    botao.textContent = 'Criar nova versão';
+  }
+}
+
+async function marcarContratoSemRenovacao(id) {
+  const contrato = contratosGestaoCache.find(item => item.id === id);
+  if (!contrato || !confirm(`Marcar “${contrato.nome}” como encerrado sem renovação?\n\nO histórico continuará disponível no filtro Encerrados.`)) return;
+  try {
+    const agora = new Date().toISOString();
+    await window.fsSetDoc(
+      window.fsDoc(window.db, 'ContratosExecucao', id),
+      { renovacaoDispensada:true, pendenciasEncerradas:true, situacaoContrato:'encerrado', ativo:false, encerradoEm:agora, dataAtualizacao:agora, usuarioEmail:window.auth?.currentUser?.email || '' },
+      { merge:true }
+    );
+    await carregarGestaoContratos();
+    mostrarAvisoSistema('Contrato encerrado', 'O contrato saiu das pendências de renovação e permanece disponível em Encerrados.');
+  } catch (erro) {
+    console.error('Erro ao encerrar contrato:', erro);
+    mostrarAvisoSistema('Erro ao encerrar', 'Não foi possível atualizar o contrato.');
+  }
+}
+
+async function marcarPendenciasContratoConcluidas(id) {
+  const contrato = contratosGestaoCache.find(item => item.id === id);
+  if (!contrato || !confirm(`Finalizar as pendências de “${contrato.nome}”?\n\nO contrato deixará de aparecer na agenda mensal, mas continuará disponível em Encerrados com todo o histórico.`)) return;
+  try {
+    const agora = new Date().toISOString();
+    await window.fsSetDoc(
+      window.fsDoc(window.db, 'ContratosExecucao', id),
+      { pendenciasEncerradas:true, pendenciasEncerradasEm:agora, dataAtualizacao:agora, usuarioEmail:window.auth?.currentUser?.email || '' },
+      { merge:true }
+    );
+    await carregarGestaoContratos();
+    mostrarAvisoSistema('Pendências finalizadas', 'O contrato saiu da agenda mensal e permanece disponível no histórico de Encerrados.');
+  } catch (erro) {
+    console.error('Erro ao finalizar pendências do contrato:', erro);
+    mostrarAvisoSistema('Erro ao finalizar', 'Não foi possível finalizar as pendências deste contrato.');
+  }
+}
+
+function abrirModalExecucaoContrato(id) {
+  const contrato = contratosGestaoCache.find(item => item.id === id);
+  if (!contrato) return;
+  contratoGestaoExecutandoId = id;
+  const { mes, ano, chave } = ctCompetenciaAtual();
+  const estado = ctEstadoContrato(contrato, mes, ano);
+  const cicloCompetencia = ctSituacaoVigencia(contrato, ctReferenciaDaCompetencia(mes, ano));
+  const empenhoCompetencia = ctEmpenhosNaCompetencia(contrato, mes, ano);
+  const execucao = contrato.execucoes?.[chave] || {};
+  document.getElementById('modalExecucaoContrato').style.display = 'flex';
+  document.getElementById('ctExecTitulo').textContent = `Registrar liquidação — ${contrato.nome} — ${CT_MESES[mes - 1]}/${ano}`;
+  document.getElementById('ctExecResumo').innerHTML = `<strong>Empenho(s):</strong> ${escaparHtml((empenhoCompetencia.empenhos || []).join(' / '))} · <strong>Exercício:</strong> ${empenhoCompetencia.anoEmpenho} · <strong>Prazo:</strong> dia ${estado.diaLimite} · <strong>Vigência:</strong> ${ctFormatarData(contrato.vigenciaInicio)} a ${ctFormatarData(contrato.vigenciaFim)}${cicloCompetencia.encerrado ? '<br><strong>Contrato vencido:</strong> este registro será mantido como pagamento realizado após o término da vigência.' : ''}`;
+  const numeros = [...new Set(estado.liquidacoesPortal.map(item => item.numeroLiquidacao).filter(Boolean))];
+  const valor = estado.liquidacoesPortal.reduce((soma, item) => soma + Number(item.valorLiquidado || 0), 0);
+  document.getElementById('ctExecPortal').innerHTML = estado.liquidacoesPortal.length
+    ? `<strong>Portal:</strong> ${estado.liquidacoesPortal.length} liquidação(ões) detectada(s) nesta competência${numeros.length ? ` — nº ${escaparHtml(numeros.join(', '))}` : ''}, totalizando ${ctFormatarMoeda(valor)}.`
+    : '<strong>Portal:</strong> nenhuma liquidação detectada nesta competência. Use “Atualizar liquidações” para consultar novamente.';
+  document.getElementById('ctExecValor').value = execucao.valorExecutado ?? (valor || '');
+  document.getElementById('ctExecLiquidacoes').value = execucao.numerosLiquidacao || numeros.join(', ');
+  document.getElementById('ctExecObservacao').value = execucao.observacao || '';
+  document.getElementById('ctExecSalvar').textContent = estado.concluido ? 'Atualizar registro' : 'Registrar liquidação';
+  const areaDrive = document.getElementById('ctExecDriveArea');
+  if (areaDrive) areaDrive.style.display = /^https?:\/\//i.test(String(contrato.linkDrive || '')) ? 'flex' : 'none';
+}
+
+function fecharModalExecucaoContrato() {
+  document.getElementById('modalExecucaoContrato').style.display = 'none';
+  contratoGestaoExecutandoId = null;
+}
+
+function abrirDocumentoContratoExecucao() {
+  const contrato = contratosGestaoCache.find(item => item.id === contratoGestaoExecutandoId);
+  if (!contrato) return;
+  const link = String(contrato.linkDrive || '').trim();
+  if (!/^https?:\/\//i.test(link)) return mostrarAvisoSistema('Documento não informado', 'Cadastre primeiro o link do documento no Google Drive.');
+  window.open(link, '_blank', 'noopener,noreferrer');
+}
+
+async function salvarExecucaoContrato() {
+  const contrato = contratosGestaoCache.find(item => item.id === contratoGestaoExecutandoId);
+  if (!contrato) return;
+  const { mes, ano, chave } = ctCompetenciaAtual();
+  const empenhoCompetencia = ctEmpenhosNaCompetencia(contrato, mes, ano);
+  const pagamentoPosVigencia = ctSituacaoVigencia(contrato, ctReferenciaDaCompetencia(mes, ano)).encerrado;
+  const valorExecutado = Number(document.getElementById('ctExecValor').value || 0);
+  const numerosLiquidacao = document.getElementById('ctExecLiquidacoes').value.trim();
+  if (!valorExecutado && !numerosLiquidacao) {
+    mostrarAvisoSistema('Informe a liquidação', 'Preencha o valor executado ou o número da liquidação antes de registrar.');
+    return;
+  }
+  const execucoes = { ...(contrato.execucoes || {}) };
+  execucoes[chave] = {
+    mes, ano,
+    liquidado: true,
+    empenhos:[...(empenhoCompetencia.empenhos || [])],
+    anoEmpenho:Number(empenhoCompetencia.anoEmpenho || contrato.anoEmpenho),
+    valorExecutado,
+    numerosLiquidacao,
+    observacao: document.getElementById('ctExecObservacao').value.trim(),
+    concluido: true,
+    detectadoNoPortal: ctMovimentosDaCompetencia(contrato, mes, ano, true).length > 0,
+    pagamentoPosVigencia,
+    vigenciaEncerradaEm: pagamentoPosVigencia ? (contrato.encerramentoEfetivo || contrato.vigenciaFim || '') : '',
+    registradoEm: new Date().toISOString(),
+    dataAtualizacao: new Date().toISOString(),
+    usuarioEmail: window.auth?.currentUser?.email || ''
+  };
+  const botao = document.getElementById('ctExecSalvar');
+  botao.disabled = true;
+  botao.textContent = 'Salvando...';
+  try {
+    await window.fsSetDoc(window.fsDoc(window.db, 'ContratosExecucao', contrato.id), { execucoes, dataAtualizacao:new Date().toISOString() }, { merge:true });
+    contrato.execucoes = execucoes;
+    fecharModalExecucaoContrato();
+    renderizarGestaoContratos();
+    mostrarAvisoSistema('Liquidação registrada', `A competência ${CT_MESES[mes - 1]}/${ano} foi concluída.`);
+  } catch (erro) {
+    console.error('Erro ao salvar execução:', erro);
+    mostrarAvisoSistema('Erro ao salvar', 'Não foi possível salvar a execução mensal.');
+  } finally {
+    botao.disabled = false;
+    botao.textContent = 'Registrar liquidação';
+  }
+}
+
+async function ctConsultarPortalContrato(contrato) {
+  const movimentos = [];
+  let fornecedorPortal = '';
+  for (const numero of contrato.empenhos || []) {
+    const numeroConsulta = /^\d+$/.test(String(numero)) ? String(numero).padStart(6, '0') : String(numero);
+    const url = `https://transparencia.iguatama.mg.gov.br/publico/despesaDetalhada/buscarMovimentacao?numEmpenho=${encodeURIComponent(numeroConsulta)}&numAnoEmpenho=${encodeURIComponent(contrato.anoEmpenho)}&codAdministracao=2`;
+    const resposta = await fetch(url);
+    if (!resposta.ok) throw new Error(`Empenho ${numero}: HTTP ${resposta.status}`);
+    const dados = await resposta.json();
+    const lista = Array.isArray(dados) ? dados : (dados ? [dados] : []);
+    _ApiCache.setSession(lista, 'mov', numeroConsulta, contrato.anoEmpenho);
+    lista.forEach(item => {
+      fornecedorPortal = fornecedorPortal || item.nomFornecedor || item.desFavorecido || item.nomCredor || '';
+      movimentos.push({
+        empenho:String(numero), ano:Number(contrato.anoEmpenho),
+        data:item.datMovimento || item.datUltimoMovimento || item.datLiquidacao || item.datPagamento || '',
+        tipo:item.desMovimento || '',
+        numeroLiquidacao:item.numLiquidacao && String(item.numLiquidacao) !== '0' ? String(item.numLiquidacao) : '',
+        numeroPagamento:item.numPagamento && String(item.numPagamento) !== '0' ? String(item.numPagamento) : '',
+        notaFiscal:String(item.numNotaFiscal && item.numNotaFiscal !== '0' ? item.numNotaFiscal : ''),
+        valorEmpenhado:Number(item.vlrEmpenhado || 0), valorLiquidado:Number(item.vlrLiquidado || 0), valorPago:Number(item.vlrPago || 0)
+      });
+    });
+  }
+  const mapaMovimentos = new Map();
+  [...(Array.isArray(contrato.portalMovimentacoes) ? contrato.portalMovimentacoes : []), ...movimentos].forEach(item => {
+    const chave = [item.empenho, item.ano, item.data, item.tipo, item.numeroLiquidacao, item.numeroPagamento, item.notaFiscal, item.valorEmpenhado, item.valorLiquidado, item.valorPago].join('|');
+    mapaMovimentos.set(chave, item);
+  });
+  const todosMovimentos = Array.from(mapaMovimentos.values());
+  todosMovimentos.sort((a, b) => String(b.data || '').localeCompare(String(a.data || '')));
+  const agora = new Date().toISOString();
+  const resumo = {
+    totalMovimentacoes:todosMovimentos.length,
+    totalLiquidacoes:todosMovimentos.filter(item => item.valorLiquidado > 0).length,
+    totalLiquidado:todosMovimentos.reduce((soma, item) => soma + Number(item.valorLiquidado || 0), 0),
+    totalPago:todosMovimentos.reduce((soma, item) => soma + Number(item.valorPago || 0), 0)
+  };
+  await window.fsSetDoc(window.fsDoc(window.db, 'ContratosExecucao', contrato.id), { portalMovimentacoes:todosMovimentos, portalResumo:resumo, portalAtualizadoEm:agora, fornecedorPortal }, { merge:true });
+  contrato.portalMovimentacoes = todosMovimentos;
+  contrato.portalResumo = resumo;
+  contrato.portalAtualizadoEm = agora;
+  contrato.fornecedorPortal = fornecedorPortal;
+}
+
+async function atualizarLiquidacoesContrato(id) {
+  const contrato = contratosGestaoCache.find(item => item.id === id);
+  if (!contrato) return;
+  const botaoGeral = document.getElementById('ctBtnAtualizarPortal');
+  if (botaoGeral) botaoGeral.disabled = true;
+  try {
+    await ctConsultarPortalContrato(contrato);
+    renderizarGestaoContratos();
+    const { mes, ano } = ctCompetenciaAtual();
+    const liquidacoes = ctMovimentosDaCompetencia(contrato, mes, ano, true);
+    mostrarAvisoSistema('Consulta concluída', `${liquidacoes.length} liquidação(ões) encontrada(s) para ${CT_MESES[mes - 1]}/${ano}.`);
+  } catch (erro) {
+    console.error('Erro ao atualizar contrato:', erro);
+    mostrarAvisoSistema('Falha na consulta', `Não foi possível consultar todos os empenhos de “${contrato.nome}”.`);
+  } finally {
+    if (botaoGeral) botaoGeral.disabled = false;
+  }
+}
+
+async function atualizarLiquidacoesContratos() {
+  const { mes, ano } = ctCompetenciaAtual();
+  const contratos = contratosGestaoCache.filter(item => item.ativo !== false && ctContratoVigenteNaCompetencia(item, mes, ano));
+  const totalEmpenhos = contratos.reduce((soma, item) => soma + (item.empenhos || []).length, 0);
+  if (!contratos.length) return mostrarAvisoSistema('Sem contratos', 'Não há contratos vigentes nesta competência.');
+  if (!confirm(`Esta atualização consultará ${totalEmpenhos} empenho(s) de ${contratos.length} contrato(s) no Portal da Transparência. Deseja continuar?`)) return;
+
+  const botao = document.getElementById('ctBtnAtualizarPortal');
+  botao.disabled = true;
+  botao.textContent = 'Atualizando 0/' + contratos.length;
+  let proximo = 0;
+  let concluidos = 0;
+  let falhas = 0;
+  async function trabalhador() {
+    while (true) {
+      const indice = proximo++;
+      if (indice >= contratos.length) return;
+      try { await ctConsultarPortalContrato(contratos[indice]); } catch (erro) { falhas++; console.warn('Falha em contrato:', contratos[indice].nome, erro); }
+      concluidos++;
+      botao.textContent = `Atualizando ${concluidos}/${contratos.length}`;
+    }
+  }
+  try {
+    await Promise.all(Array.from({ length:Math.min(3, contratos.length) }, () => trabalhador()));
+    renderizarGestaoContratos();
+    mostrarAvisoSistema('Liquidações atualizadas', `${concluidos - falhas} contrato(s) foram conferidos com sucesso.${falhas ? ` ${falhas} apresentaram falha.` : ''}`);
+  } finally {
+    botao.disabled = false;
+    botao.textContent = 'Atualizar liquidações';
+  }
+}
+
+function abrirMovimentosContrato(id) {
+  const contrato = contratosGestaoCache.find(item => item.id === id);
+  if (!contrato) return;
+  const movimentos = Array.isArray(contrato.portalMovimentacoes) ? contrato.portalMovimentacoes : [];
+  document.getElementById('ctMovTitulo').textContent = `Movimentações — ${contrato.nome}`;
+  const conteudo = document.getElementById('ctMovConteudo');
+  if (!movimentos.length) {
+    conteudo.innerHTML = '<div class="alert-box alert-neutro">Nenhuma movimentação foi carregada. Clique em Consultar na tabela.</div>';
+  } else {
+    conteudo.innerHTML = `<div class="alert-box alert-neutro" style="margin-bottom:12px;"><strong>${movimentos.length}</strong> movimentação(ões) dos empenhos ${escaparHtml((contrato.empenhos || []).join(' / '))}. Última consulta: ${ctFormatarData(contrato.portalAtualizadoEm)}.</div><div style="overflow:auto; border:1px solid #d5dfe7; border-radius:5px;"><table class="data-table" style="min-width:900px;"><thead><tr><th>Data</th><th>Empenho</th><th>Movimento</th><th>Nº liquidação</th><th>Nota fiscal</th><th>Liquidado</th><th>Pago</th></tr></thead><tbody>${movimentos.map(item => `<tr><td>${ctFormatarData(item.data)}</td><td>${escaparHtml(item.empenho)}</td><td>${escaparHtml(item.tipo || '-')}</td><td>${escaparHtml(item.numeroLiquidacao || '-')}</td><td>${escaparHtml(item.notaFiscal || '-')}</td><td>${item.valorLiquidado ? ctFormatarMoeda(item.valorLiquidado) : '-'}</td><td>${item.valorPago ? ctFormatarMoeda(item.valorPago) : '-'}</td></tr>`).join('')}</tbody></table></div>`;
+  }
+  document.getElementById('modalMovimentosContrato').style.display = 'flex';
+}
+
+function fecharModalMovimentosContrato() {
+  document.getElementById('modalMovimentosContrato').style.display = 'none';
+}
     </script>
 <script src="https://cdn.jsdelivr.net/npm/quill@2/dist/quill.js"></script>
  <script type="module">
@@ -16312,10 +17905,22 @@ async function migrarLinkRastreioParaSeisCaracteres(botao) {
             ...dadosAntigos,
             id: novoId
         });
-        await window.fsSetDoc(window.fsDoc(window.db, 'HistoricoNotas', gestaoNotasTabelaAtualId), {
+        const agora = new Date().toISOString();
+        const refHistorico = window.fsDoc(window.db, 'HistoricoNotas', gestaoNotasTabelaAtualId);
+        const snapHistorico = await window.fsGetDoc(refHistorico);
+        const dadosHistorico = snapHistorico.exists() ? (snapHistorico.data() || {}) : {};
+        const alteracoes = adicionarEventoAlteracaoGestaoNotas(dadosHistorico, {
+            tipo: 'recriacao_link',
+            data: agora,
+            usuario: obterUsuarioAuditoriaGestaoNotas(),
+            resumo: `Novo link de rastreio criado: ${novoId}. O endereço anterior foi preservado como cópia.`
+        });
+        await window.fsSetDoc(refHistorico, {
             publicoId: novoId,
             urlPublica: novaUrl,
-            dataLinkAtualizacao: new Date().toISOString()
+            dataLinkAtualizacao: agora,
+            dataAtualizacao: agora,
+            alteracoes
         }, { merge: true });
 
         gestaoNotasPublicoId = novoId;
@@ -16363,9 +17968,80 @@ function criarRastreamentoInicial(itens, agora) {
     return mapa;
 }
 
+function criarSnapshotItensGestaoNotas() {
+    return gestaoNotasItens.map(item => ({
+        id: item.id,
+        empenho: item.empenho || '',
+        fornecedor: item.fornecedor || '',
+        tipoNota: item.tipoNota || '',
+        valorNota: Number(item.valorNota || 0),
+        valorEmpenho: Number(item.valorEmpenho ?? item.valorNota ?? 0),
+        valorNotaTexto: item.valorNotaTexto || '',
+        dataEmissao: item.dataEmissao || '',
+        numeroNota: item.numeroNota || '',
+        ano: String(item.ano || item.anoEmpenho || '').trim() || (String(item.dataEmissao || '').match(/(20\d{2})/) || [])[1] || String(new Date().getFullYear())
+    }));
+}
+
+function sincronizarRastreamentoGestaoNotas(itens, rastreamentoExistente, agora) {
+    const inicial = criarRastreamentoInicial(itens, agora);
+    const existente = rastreamentoExistente || {};
+    return itens.reduce((mapa, item) => {
+        mapa[item.id] = existente[item.id] || inicial[item.id];
+        return mapa;
+    }, {});
+}
+
+function resumirItemAuditoriaGestaoNotas(item) {
+    return {
+        id: item?.id || '',
+        empenho: item?.empenho || '',
+        numeroNota: item?.numeroNota || '',
+        fornecedor: item?.fornecedor || ''
+    };
+}
+
+function compararItensGestaoNotas(anteriores, atuais) {
+    const antes = new Map((anteriores || []).map(item => [item.id, item]));
+    const depois = new Map((atuais || []).map(item => [item.id, item]));
+    const campos = ['empenho', 'fornecedor', 'tipoNota', 'valorNota', 'valorEmpenho', 'dataEmissao', 'numeroNota', 'ano'];
+    const adicionados = (atuais || []).filter(item => !antes.has(item.id));
+    const removidos = (anteriores || []).filter(item => !depois.has(item.id));
+    const editados = (atuais || []).filter(item => {
+        const anterior = antes.get(item.id);
+        return anterior && campos.some(campo => String(anterior[campo] ?? '') !== String(item[campo] ?? ''));
+    });
+    const partes = [];
+    if (adicionados.length) partes.push(`${adicionados.length} incluído(s)`);
+    if (editados.length) partes.push(`${editados.length} editado(s)`);
+    if (removidos.length) partes.push(`${removidos.length} removido(s)`);
+    if (!partes.length) partes.push('dados gerais atualizados');
+    return {
+        quantidadeAntes: (anteriores || []).length,
+        quantidadeDepois: (atuais || []).length,
+        totalAdicionados: adicionados.length,
+        totalEditados: editados.length,
+        totalRemovidos: removidos.length,
+        adicionados: adicionados.slice(0, 30).map(resumirItemAuditoriaGestaoNotas),
+        editados: editados.slice(0, 30).map(resumirItemAuditoriaGestaoNotas),
+        removidos: removidos.slice(0, 30).map(resumirItemAuditoriaGestaoNotas),
+        resumo: partes.join(' · ')
+    };
+}
+
+function obterUsuarioAuditoriaGestaoNotas() {
+    const usuario = window.auth?.currentUser;
+    return usuario?.displayName || usuario?.email || 'Usuário não identificado';
+}
+
 window.salvarTabelaGestaoNotas = async function(botao) {
     if (!window.auth?.currentUser) {
         alert('Você precisa estar logado para salvar e publicar a lista.');
+        return;
+    }
+
+    if (gestaoNotasItemEmEdicaoId) {
+        mostrarAvisoSistema('Conclua a edição da linha', 'Use o botão <strong>Salvar Alteração da Linha</strong> antes de salvar a lista.');
         return;
     }
 
@@ -16389,11 +18065,6 @@ window.salvarTabelaGestaoNotas = async function(botao) {
         return;
     }
 
-    if (gestaoNotasPublicoId && gestaoNotasAlterada) {
-        const criarNovaVersao = confirm('Esta lista pública é imutável. Deseja salvar as alterações como uma NOVA lista, com um novo link? A lista anterior continuará disponível sem mudanças.');
-        if (!criarNovaVersao) return;
-    }
-
     const textoOriginal = botao ? botao.innerText : 'Salvar e Gerar Link';
 
     try {
@@ -16403,70 +18074,97 @@ window.salvarTabelaGestaoNotas = async function(botao) {
         }
 
         const agora = new Date().toISOString();
-        const criandoNovaVersao = !!(gestaoNotasPublicoId && gestaoNotasAlterada);
-        const idTabela = criandoNovaVersao || !gestaoNotasTabelaAtualId ? ('tabela-' + Date.now()) : gestaoNotasTabelaAtualId;
-        const publicoId = gerarCodigoPublicoRastreio();
+        const novaLista = !gestaoNotasTabelaAtualId;
+        const idTabela = gestaoNotasTabelaAtualId || ('tabela-' + Date.now());
+        let dadosAnteriores = {};
+        let dadosPublicosAnteriores = {};
+
+        if (!novaLista) {
+            const snapHistorico = await window.fsGetDoc(window.fsDoc(window.db, 'HistoricoNotas', idTabela));
+            if (snapHistorico.exists()) dadosAnteriores = snapHistorico.data() || {};
+        }
+
+        const publicoId = gestaoNotasPublicoId || dadosAnteriores.publicoId || gerarCodigoPublicoRastreio();
+        const snapPublico = await window.fsGetDoc(window.fsDoc(window.db, 'RastreiosPublicos', publicoId));
+        if (snapPublico.exists()) dadosPublicosAnteriores = snapPublico.data() || {};
         const urlPublica = gerarLinkPublicoGestaoNotas(publicoId);
-        const titulo = `Relação de Empenhos ${new Date().toLocaleDateString('pt-BR')} ${new Date().toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit' })}`;
-        const itensSnapshot = gestaoNotasItens.map(item => ({
-            id: item.id,
-            empenho: item.empenho || '',
-            fornecedor: item.fornecedor || '',
-            tipoNota: item.tipoNota || '',
-            valorNota: Number(item.valorNota || 0),
-            valorEmpenho: Number(item.valorEmpenho ?? item.valorNota ?? 0),
-            valorNotaTexto: item.valorNotaTexto || '',
-            dataEmissao: item.dataEmissao || '',
-            numeroNota: item.numeroNota || '',
-            ano: String(item.ano || item.anoEmpenho || '').trim() || (String(item.dataEmissao || '').match(/(20\d{2})/) || [])[1] || String(new Date().getFullYear())
-        }));
+        const titulo = dadosAnteriores.titulo || `Relação de Empenhos ${new Date().toLocaleDateString('pt-BR')} ${new Date().toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit' })}`;
+        const itensSnapshot = criarSnapshotItensGestaoNotas();
         const total = itensSnapshot.reduce((soma, item) => soma + item.valorNota, 0);
-        const rastreamentoInicial = criarRastreamentoInicial(itensSnapshot, agora);
+        const rastreamentoAtual = sincronizarRastreamentoGestaoNotas(
+            itensSnapshot,
+            dadosPublicosAnteriores.rastreamento || dadosAnteriores.rastreamento || gestaoNotasRastreamento,
+            agora
+        );
+        const comparacao = compararItensGestaoNotas(dadosAnteriores.itens || [], itensSnapshot);
+        const alteracoesAnteriores = Array.isArray(dadosAnteriores.alteracoes) ? dadosAnteriores.alteracoes : [];
+        const eventoAlteracao = {
+            tipo: novaLista ? 'criacao' : 'atualizacao',
+            data: agora,
+            usuario: obterUsuarioAuditoriaGestaoNotas(),
+            ...comparacao
+        };
+        const alteracoes = [...alteracoesAnteriores, eventoAlteracao].slice(-100);
 
         await window.fsSetDoc(
             window.fsDoc(window.db, 'RastreiosPublicos', publicoId),
             {
                 id: publicoId,
                 titulo,
-                publicadoEm: agora,
+                ativa: true,
+                publicadoEm: dadosPublicosAnteriores.publicadoEm || dadosAnteriores.dataCriacao || agora,
+                listaAtualizadaEm: agora,
+                alteradoPor: obterUsuarioAuditoriaGestaoNotas(),
                 quantidadeLinhas: itensSnapshot.length,
                 valorTotal: total,
                 itens: itensSnapshot,
-                rastreamento: rastreamentoInicial,
-                rastreioAtualizadoEm: agora
+                rastreamento: rastreamentoAtual,
+                rastreioAtualizadoEm: dadosPublicosAnteriores.rastreioAtualizadoEm || agora
             }
         );
 
         await window.fsSetDoc(
             window.fsDoc(window.db, 'HistoricoNotas', idTabela),
             {
+                ...dadosAnteriores,
                 id: idTabela,
                 titulo,
-                criadoPor: window.auth.currentUser.email || '',
-                dataCriacao: agora,
+                criadoPor: dadosAnteriores.criadoPor || window.auth.currentUser.email || '',
+                dataCriacao: dadosAnteriores.dataCriacao || agora,
                 dataAtualizacao: agora,
+                atualizadoPor: obterUsuarioAuditoriaGestaoNotas(),
                 quantidadeLinhas: itensSnapshot.length,
                 valorTotal: total,
                 itens: itensSnapshot,
                 publicoId,
                 urlPublica,
-                rastreamento: rastreamentoInicial
+                rastreamento: rastreamentoAtual,
+                alteracoes,
+                excluida: false,
+                dataExclusao: null,
+                excluidoPor: ''
             }
         );
 
         gestaoNotasTabelaAtualId = idTabela;
         gestaoNotasPublicoId = publicoId;
         gestaoNotasLinkPublico = urlPublica;
-        gestaoNotasRastreamento = rastreamentoInicial;
+        gestaoNotasRastreamento = rastreamentoAtual;
         gestaoNotasAlterada = false;
+        encerrarEdicaoLinhaGestaoNotas();
         atualizarBoxPublicacaoGestaoNotas();
         renderizarTabelaGestaoNotas(gestaoNotasFiltrados.length ? gestaoNotasFiltrados : gestaoNotasItens);
 
         const info = document.getElementById('gnInfoTabela');
-        if (info) info.textContent = `Lista publicada com ${gestaoNotasItens.length} empenho(s).`;
+        if (info) info.textContent = `${novaLista ? 'Lista criada' : 'Lista atualizada'} com ${gestaoNotasItens.length} empenho(s). O mesmo link público acompanha as alterações.`;
 
         await carregarHistoricoGestaoNotas();
-        mostrarAvisoSistema('Lista salva e publicada', 'O link público foi criado. A relação de empenhos ficou congelada, mas o rastreamento poderá ser atualizado a qualquer momento.');
+        mostrarAvisoSistema(
+            novaLista ? 'Lista criada e publicada' : 'Alterações salvas',
+            novaLista
+                ? 'O link público foi criado. A lista poderá ser alterada posteriormente e todas as mudanças ficarão registradas.'
+                : 'A lista e o link público foram atualizados sem criar outra lista. Esta mudança foi adicionada ao registro de alterações.'
+        );
     } catch (erro) {
         console.error('Erro ao salvar e publicar a lista:', erro);
         alert('Erro ao salvar a lista no Firebase. Verifique também se a regra da coleção RastreiosPublicos foi adicionada.');
@@ -16475,6 +18173,7 @@ window.salvarTabelaGestaoNotas = async function(botao) {
             botao.disabled = false;
             botao.innerText = textoOriginal;
         }
+        atualizarEstadoListaGestaoNotas();
     }
 };
 
@@ -16546,10 +18245,27 @@ window.atualizarRastreamentoSelecionados = async function(botao) {
             atualizados++;
         });
 
+        const empenhosAtualizados = gestaoNotasItens
+            .filter(item => gestaoNotasSelecionados.has(item.id))
+            .map(item => String(item.empenho || item.numeroNota || item.id))
+            .filter(Boolean);
+        const refHistorico = window.fsDoc(window.db, 'HistoricoNotas', gestaoNotasTabelaAtualId);
+        const snapHistorico = await window.fsGetDoc(refHistorico);
+        const dadosHistorico = snapHistorico.exists() ? (snapHistorico.data() || {}) : {};
+        const descricaoMovimentacao = acao === 'personalizado'
+            ? descricaoPersonalizada
+            : (acao === 'liquidado_auto' ? 'Encaminhamento automático após liquidação' : (GN_STATUS_RASTREIO[acao]?.rotulo || 'Movimentação atualizada'));
+        const alteracoes = adicionarEventoAlteracaoGestaoNotas(dadosHistorico, {
+            tipo: 'rastreamento',
+            data: agora,
+            usuario: obterUsuarioAuditoriaGestaoNotas(),
+            resumo: `${descricaoMovimentacao} em ${atualizados} empenho(s)${empenhosAtualizados.length ? `: ${empenhosAtualizados.slice(0, 12).join(', ')}${empenhosAtualizados.length > 12 ? '…' : ''}` : ''}.`
+        });
+
         await window.fsSetDoc(refPublica, { rastreamento: mapa, rastreioAtualizadoEm: agora }, { merge: true });
         await window.fsSetDoc(
-            window.fsDoc(window.db, 'HistoricoNotas', gestaoNotasTabelaAtualId),
-            { rastreamento: mapa, dataRastreamentoAtualizacao: agora },
+            refHistorico,
+            { rastreamento: mapa, dataRastreamentoAtualizacao: agora, dataAtualizacao: agora, alteracoes },
             { merge: true }
         );
 
@@ -16592,9 +18308,10 @@ function obterItensCorrespondentesHistorico(tabela, filtros) {
 window.filtrarHistoricoGestaoNotas = function() {
     const filtros = obterFiltrosGestaoNotas();
     const temFiltro = !!(filtros.empenho || filtros.nota || filtros.fornecedor || filtros.data);
+    const base = gnHistoricoCompleto.filter(tabela => !tabela.excluida);
     gnHistoricoFiltrado = temFiltro
-        ? gnHistoricoCompleto.filter(tabela => obterItensCorrespondentesHistorico(tabela, filtros).length > 0)
-        : [...gnHistoricoCompleto];
+        ? base.filter(tabela => obterItensCorrespondentesHistorico(tabela, filtros).length > 0)
+        : base;
 
     gnHistoricoPaginaAtual = 1;
     renderizarHistoricoGestaoNotas();
@@ -16603,7 +18320,7 @@ window.filtrarHistoricoGestaoNotas = function() {
     if (resumoFiltro) {
         resumoFiltro.textContent = temFiltro
             ? `${gestaoNotasFiltrados.length} item(ns) na tabela atual · ${gnHistoricoFiltrado.length} tabela(s) no histórico.`
-            : `Exibindo ${gestaoNotasItens.length} item(ns) e ${gnHistoricoCompleto.length} histórico(s).`;
+            : `Exibindo ${gestaoNotasItens.length} item(ns) e ${base.length} lista(s).`;
     }
 };
 
@@ -16661,13 +18378,12 @@ window.renderizarHistoricoGestaoNotas = function renderizarHistoricoGestaoNotas(
         return;
     }
 
-    const listaExibida = Array.isArray(gnHistoricoFiltrado) ? gnHistoricoFiltrado : gnHistoricoCompleto;
-    if (resumo) resumo.textContent = listaExibida.length === gnHistoricoCompleto.length
-        ? `${gnHistoricoCompleto.length} tabela(s) salva(s)`
-        : `${listaExibida.length} de ${gnHistoricoCompleto.length} tabela(s)`;
+    const listaExibida = Array.isArray(gnHistoricoFiltrado) ? gnHistoricoFiltrado : gnHistoricoCompleto.filter(item => !item.excluida);
+    const ativas = gnHistoricoCompleto.filter(item => !item.excluida).length;
+    if (resumo) resumo.textContent = `${ativas} lista(s) salva(s)`;
 
     if (!listaExibida.length) {
-        box.innerHTML = `<div style="padding:12px 0; text-align:center; color:#66727d;">Nenhum histórico corresponde à busca informada.</div>`;
+        box.innerHTML = '<div style="padding:12px 0; text-align:center; color:#66727d;">Nenhuma lista corresponde à busca informada.</div>';
         return;
     }
 
@@ -16686,6 +18402,8 @@ window.renderizarHistoricoGestaoNotas = function renderizarHistoricoGestaoNotas(
         const exemplo = correspondentes[0] || null;
         const idSeguroJs = String(item.id || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'");
         const urlPublica = item.urlPublica || (item.publicoId ? gerarLinkPublicoGestaoNotas(item.publicoId) : '');
+        const alteracoes = Array.isArray(item.alteracoes) ? item.alteracoes : [];
+        const ultimaAlteracao = alteracoes[alteracoes.length - 1] || null;
         const detalheExemplo = exemplo
             ? [
                 exemplo.empenho ? `Empenho ${escaparHtml(exemplo.empenho)}` : '',
@@ -16697,15 +18415,18 @@ window.renderizarHistoricoGestaoNotas = function renderizarHistoricoGestaoNotas(
         return `
         <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; padding:12px 0; border-bottom:1px solid #e7edf2; flex-wrap:wrap;">
             <div style="min-width:240px; flex:1;">
-                <div style="font-weight:bold; color:#243746;">${escaparHtml(item.titulo || 'Tabela sem título')}</div>
+                <div style="font-weight:bold; color:#243746;">${escaparHtml(item.titulo || 'Tabela de empenhos')}</div>
                 <div style="font-size:12px; color:#66727d; margin-top:4px;">
                     ${item.quantidadeLinhas || 0} linha(s) · R$ ${formatarValorBR(item.valorTotal || 0)}
                 </div>
+                <div style="font-size:11px; color:#66727d; margin-top:4px;">${alteracoes.length} registro(s) de alteração${ultimaAlteracao?.data ? ` · última em ${escaparHtml(formatarDataHoraRastreio(ultimaAlteracao.data))}` : ''}</div>
                 ${temFiltro ? `<div style="font-size:11px; color:#0f3b5e; margin-top:5px;"><strong>${correspondentes.length}</strong> item(ns) correspondente(s)${detalheExemplo ? ` · ${detalheExemplo}` : ''}</div>` : ''}
             </div>
             <div style="display:flex; gap:8px; flex-wrap:wrap;">
-                <button type="button" class="btn-primary" style="width:auto; padding:8px 12px;" onclick="abrirHistoricoGestaoNotas('${idSeguroJs}')">Abrir</button>
+                <button type="button" class="btn-primary" style="width:auto; padding:8px 12px;" onclick="abrirHistoricoGestaoNotas('${idSeguroJs}')">Abrir e editar</button>
                 ${urlPublica ? `<a href="${escaparHtml(urlPublica)}" target="_blank" rel="noopener" class="btn-primary" style="display:inline-block; width:auto; padding:8px 12px; background:#1e6b3b; border:1px solid #16552f; border-radius:3px; color:#fff; text-decoration:none; font-size:14px;">Consulta pública</a>` : ''}
+                <button type="button" class="btn-primary" style="width:auto; padding:8px 12px; background:#6c757d; border-color:#5a6268;" onclick="abrirRegistroAlteracoesGestaoNotas('${idSeguroJs}')">Registro</button>
+                <button type="button" class="btn-primary" style="width:auto; padding:8px 12px; background:#b03a2e; border-color:#922b21;" onclick="excluirListaGestaoNotas('${idSeguroJs}', this)">Excluir permanentemente</button>
             </div>
         </div>
     `;
@@ -16732,6 +18453,95 @@ window.mudarPaginaHistoricoGestaoNotas = function(delta) {
     renderizarHistoricoGestaoNotas();
 };
 
+function adicionarEventoAlteracaoGestaoNotas(dados, evento) {
+    const anteriores = Array.isArray(dados?.alteracoes) ? dados.alteracoes : [];
+    return [...anteriores, evento].slice(-100);
+}
+
+window.excluirListaGestaoNotasAtual = function(botao) {
+    if (!gestaoNotasTabelaAtualId) return;
+    window.excluirListaGestaoNotas(gestaoNotasTabelaAtualId, botao);
+};
+
+window.excluirListaGestaoNotas = async function(idTabela, botao) {
+    if (!window.auth?.currentUser) {
+        alert('Você precisa estar logado para excluir uma lista.');
+        return;
+    }
+    if (!confirm('ATENÇÃO: esta exclusão é permanente. A lista, seu histórico e o link público serão apagados e não poderão ser restaurados. Deseja continuar?')) return;
+
+    const textoOriginal = botao?.textContent || 'Excluir';
+    try {
+        if (botao) { botao.disabled = true; botao.textContent = 'Excluindo permanentemente...'; }
+        const refHistorico = window.fsDoc(window.db, 'HistoricoNotas', idTabela);
+        const snapHistorico = await window.fsGetDoc(refHistorico);
+        if (!snapHistorico.exists()) throw new Error('Lista não encontrada.');
+        const dados = snapHistorico.data() || {};
+
+        if (dados.publicoId) {
+            const refPublica = window.fsDoc(window.db, 'RastreiosPublicos', dados.publicoId);
+            const snapPublica = await window.fsGetDoc(refPublica);
+            if (snapPublica.exists()) await window.fsDeleteDoc(refPublica);
+        }
+        await window.fsDeleteDoc(refHistorico);
+
+        if (gestaoNotasTabelaAtualId === idTabela) {
+            gestaoNotasAlterada = false;
+            novaTabelaGestaoNotas();
+        }
+        await carregarHistoricoGestaoNotas();
+        mostrarAvisoSistema('Lista excluída permanentemente', 'A lista, o histórico salvo e o link público foram apagados. Esta ação não pode ser desfeita.');
+    } catch (erro) {
+        console.error('Erro ao excluir lista:', erro);
+        alert('Não foi possível excluir a lista permanentemente. Confira se as regras do Firebase permitem exclusão e tente novamente.');
+    } finally {
+        if (botao) { botao.disabled = false; botao.textContent = textoOriginal; }
+        atualizarEstadoListaGestaoNotas();
+    }
+};
+
+window.fecharRegistroAlteracoesGestaoNotas = function() {
+    const modal = document.getElementById('modalRegistroAlteracoesGestaoNotas');
+    if (modal) modal.style.display = 'none';
+};
+
+window.abrirRegistroAlteracoesGestaoNotas = async function(idTabela) {
+    const modal = document.getElementById('modalRegistroAlteracoesGestaoNotas');
+    const titulo = document.getElementById('gnRegistroAlteracoesTitulo');
+    const lista = document.getElementById('gnRegistroAlteracoesLista');
+    if (!modal || !titulo || !lista) return;
+    modal.style.display = 'flex';
+    lista.innerHTML = 'Carregando registro...';
+    try {
+        const snap = await window.fsGetDoc(window.fsDoc(window.db, 'HistoricoNotas', idTabela));
+        if (!snap.exists()) throw new Error('Registro não encontrado.');
+        const dados = snap.data() || {};
+        const alteracoes = Array.isArray(dados.alteracoes) ? [...dados.alteracoes].reverse() : [];
+        titulo.textContent = `Registro de alterações · ${dados.titulo || 'Lista sem título'}`;
+        if (!alteracoes.length) {
+            lista.innerHTML = '<div class="alert-box alert-neutro">Esta lista foi criada antes do registro detalhado. As próximas alterações serão armazenadas aqui.</div>';
+            return;
+        }
+        const rotulos = {
+            criacao: 'Lista criada', atualizacao: 'Lista atualizada', rastreamento: 'Rastreamento atualizado',
+            renomeacao: 'Lista renomeada', exclusao: 'Lista excluída', restauracao: 'Lista restaurada', recriacao_link: 'Link recriado'
+        };
+        lista.innerHTML = alteracoes.map(evento => `
+            <div style="padding:11px 0; border-bottom:1px solid #e1e7ec;">
+                <div style="display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap;">
+                    <strong style="color:#243746;">${escaparHtml(rotulos[evento.tipo] || 'Alteração')}</strong>
+                    <span style="font-size:11px; color:#66727d;">${escaparHtml(formatarDataHoraRastreio(evento.data))}</span>
+                </div>
+                <div style="margin-top:4px; color:#495763;">${escaparHtml(evento.resumo || 'Alteração registrada.')}</div>
+                <div style="margin-top:4px; font-size:11px; color:#66727d;">Responsável: ${escaparHtml(evento.usuario || 'Não identificado')}</div>
+            </div>
+        `).join('');
+    } catch (erro) {
+        console.error('Erro ao abrir registro de alterações:', erro);
+        lista.innerHTML = '<div class="alert-box alert-normal">Não foi possível carregar o registro.</div>';
+    }
+};
+
 window.abrirHistoricoGestaoNotas = async function(idTabela) {
     if (!window.db || !window.fsDoc || !window.fsGetDoc) return;
 
@@ -16745,6 +18555,11 @@ window.abrirHistoricoGestaoNotas = async function(idTabela) {
         }
 
         const dados = snap.data() || {};
+        if (dados.excluida) {
+            mostrarAvisoSistema('Lista indisponível', 'Este é um registro antigo marcado como excluído e não pode ser aberto para edição.');
+            return;
+        }
+        if (gestaoNotasAlterada && !confirm('Há alterações não salvas na lista atual. Deseja descartá-las e abrir outra lista?')) return;
         gestaoNotasTabelaAtualId = dados.id || idTabela;
         gestaoNotasItens = Array.isArray(dados.itens) ? dados.itens : [];
         gestaoNotasFiltrados = [...gestaoNotasItens];
@@ -16752,6 +18567,7 @@ window.abrirHistoricoGestaoNotas = async function(idTabela) {
         gestaoNotasLinkPublico = dados.urlPublica || (gestaoNotasPublicoId ? gerarLinkPublicoGestaoNotas(gestaoNotasPublicoId) : '');
         gestaoNotasRastreamento = dados.rastreamento || {};
         gestaoNotasAlterada = false;
+        gestaoNotasItemEmEdicaoId = null;
         gestaoNotasSelecionados.clear();
 
         if (gestaoNotasPublicoId) {
@@ -16769,6 +18585,7 @@ window.abrirHistoricoGestaoNotas = async function(idTabela) {
         atualizarResumoGestaoNotas();
         atualizarBoxPublicacaoGestaoNotas();
         atualizarResumoSelecaoGestaoNotas();
+        atualizarEstadoListaGestaoNotas();
 
         const info = document.getElementById('gnInfoTabela');
         if (info) info.textContent = `Tabela carregada: ${dados.titulo || idTabela}`;
@@ -17723,13 +19540,26 @@ return true;
             <div id="gnLinkPublicoModalAviso" class="alert-box alert-neutro" style="margin-bottom:12px;">Abra ou publique uma lista para acessar seu link.</div>
             <label for="gnLinkPublicoModal" style="display:block; font-size:12px; font-weight:bold; color:#495057; margin-bottom:6px;">Endereço público</label>
             <input type="text" id="gnLinkPublicoModal" readonly style="width:100%;" aria-label="Link público de rastreamento">
-            <div style="font-size:11px; color:#6c757d; line-height:1.45; margin-top:10px;">Ao recriar o endereço, o link anterior permanece funcionando e a lista de empenhos continua imutável.</div>
+            <div style="font-size:11px; color:#6c757d; line-height:1.45; margin-top:10px;">As alterações salvas aparecem neste endereço. Ao recriar o link, o endereço anterior permanece como uma cópia da versão existente naquele momento.</div>
         </div>
         <div class="modal-footer-custom" style="display:flex; gap:8px; justify-content:flex-end; flex-wrap:wrap;">
             <button type="button" class="btn-cancelar-modal" onclick="fecharModalLinkPublicoGestaoNotas()">Fechar</button>
             <button type="button" class="btn-primary" id="gnBtnRecriarLink" onclick="recriarLinkPublicoGestaoNotas(this)" style="width:auto; background:#6c757d; border-color:#5a6268;">Recriar link</button>
             <button type="button" class="btn-primary" id="gnBtnCopiarLink" onclick="copiarLinkPublicoGestaoNotas()" style="width:auto;">Copiar</button>
             <button type="button" class="btn-primary" id="gnBtnAbrirLink" onclick="abrirLinkPublicoGestaoNotas()" style="width:auto; background:#1e6b3b; border-color:#16552f;">Abrir consulta</button>
+        </div>
+    </div>
+</div>
+
+<div id="modalRegistroAlteracoesGestaoNotas" class="modal-overlay" style="display:none; z-index:50012;">
+    <div class="modal-panel" style="width:720px; max-width:calc(100vw - 30px); max-height:88vh; display:flex; flex-direction:column;">
+        <div class="modal-header-custom" style="display:flex; justify-content:space-between; align-items:center; gap:12px;">
+            <strong id="gnRegistroAlteracoesTitulo">Registro de alterações</strong>
+            <button type="button" onclick="fecharRegistroAlteracoesGestaoNotas()" style="border:0; background:transparent; color:inherit; font-size:22px; cursor:pointer; line-height:1;">&times;</button>
+        </div>
+        <div id="gnRegistroAlteracoesLista" class="modal-body-custom" style="overflow-y:auto; line-height:1.5;">Carregando...</div>
+        <div class="modal-footer-custom">
+            <button type="button" class="btn-primary" style="width:auto; padding:8px 15px;" onclick="fecharRegistroAlteracoesGestaoNotas()">Fechar</button>
         </div>
     </div>
 </div>
